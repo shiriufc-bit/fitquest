@@ -1,0 +1,1394 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>FitQuest – Rennan Dias Assessoria</title>
+<style>
+  :root {
+    --bg: #0a0a0f;
+    --surface: #13131f;
+    --card: #1a1a2e;
+    --accent: #6c63ff;
+    --accent-glow: rgba(108,99,255,.25);
+    --orange: #ff6b35;
+    --green: #00d68f;
+    --yellow: #ffd60a;
+    --text: #e8e8f0;
+    --muted: #6b6b8a;
+    --border: #2a2a40;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    min-height: 100vh;
+  }
+
+  /* ── SCREENS ── */
+  .screen { display: none; }
+  .screen.active { display: block; }
+
+  /* ── AUTH SCREEN ── */
+  #screen-auth {
+    min-height: 100vh;
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 24px 20px;
+    background: radial-gradient(ellipse at 50% 0%, rgba(108,99,255,.18) 0%, transparent 70%), var(--bg);
+  }
+  #screen-auth.active { display: flex; }
+
+  .auth-logo {
+    font-size: 32px;
+    font-weight: 900;
+    letter-spacing: -1px;
+    margin-bottom: 4px;
+  }
+  .auth-logo span.accent { color: var(--accent); }
+  .auth-sub {
+    font-size: 11px;
+    color: var(--muted);
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    margin-bottom: 36px;
+  }
+  .auth-card {
+    width: 100%;
+    max-width: 400px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 28px 24px;
+  }
+  .auth-tabs {
+    display: flex;
+    background: var(--surface);
+    border-radius: 12px;
+    padding: 4px;
+    margin-bottom: 24px;
+  }
+  .auth-tab {
+    flex: 1;
+    padding: 10px;
+    border: none;
+    background: transparent;
+    color: var(--muted);
+    font-size: 13px;
+    font-weight: 700;
+    border-radius: 9px;
+    cursor: pointer;
+    transition: all .2s;
+  }
+  .auth-tab.active {
+    background: var(--accent);
+    color: #fff;
+    box-shadow: 0 2px 12px var(--accent-glow);
+  }
+  .form-group { margin-bottom: 16px; }
+  .form-label {
+    display: block;
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 6px;
+  }
+  .form-input {
+    width: 100%;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 12px 14px;
+    color: var(--text);
+    font-size: 14px;
+    outline: none;
+    transition: border-color .2s;
+  }
+  .form-input:focus { border-color: var(--accent); }
+  .form-input::placeholder { color: var(--muted); }
+  .btn-primary {
+    width: 100%;
+    padding: 14px;
+    background: linear-gradient(135deg, var(--accent), #a78bfa);
+    border: none;
+    border-radius: 12px;
+    color: #fff;
+    font-size: 15px;
+    font-weight: 800;
+    cursor: pointer;
+    margin-top: 4px;
+    box-shadow: 0 4px 20px var(--accent-glow);
+    transition: opacity .2s;
+  }
+  .btn-primary:hover { opacity: .9; }
+  .auth-error {
+    background: rgba(255,80,80,.12);
+    border: 1px solid rgba(255,80,80,.3);
+    border-radius: 10px;
+    padding: 10px 14px;
+    font-size: 13px;
+    color: #ff6b6b;
+    margin-bottom: 14px;
+    display: none;
+  }
+
+  /* ── ANAMNESE SCREEN ── */
+  #screen-anamnese {
+    min-height: 100vh;
+    padding: 0 0 60px;
+    display: none;
+  }
+  #screen-anamnese.active { display: block; }
+
+  .anam-header {
+    background: linear-gradient(135deg, #1a1040, #0f0f2a);
+    border-bottom: 1px solid var(--border);
+    padding: 24px 20px 20px;
+    text-align: center;
+  }
+  .anam-header h1 { font-size: 22px; font-weight: 900; margin-bottom: 4px; }
+  .anam-header p { font-size: 13px; color: var(--muted); }
+  .anam-progress-wrap { padding: 16px 20px 0; }
+  .anam-step-label {
+    display: flex;
+    justify-content: space-between;
+    font-size: 11px;
+    color: var(--muted);
+    margin-bottom: 8px;
+    font-weight: 600;
+  }
+  .progress-bar-bg {
+    background: var(--border);
+    border-radius: 99px;
+    height: 6px;
+    overflow: hidden;
+  }
+  .progress-bar-fill {
+    height: 100%;
+    border-radius: 99px;
+    background: linear-gradient(90deg, var(--accent), #a78bfa);
+    transition: width .4s ease;
+  }
+
+  .anam-section {
+    margin: 20px 16px 0;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 20px;
+  }
+  .anam-section-title {
+    font-size: 13px;
+    font-weight: 800;
+    color: var(--accent);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  select.form-input { appearance: none; cursor: pointer; }
+  textarea.form-input { resize: vertical; min-height: 80px; }
+
+  .radio-group { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 6px; }
+  .radio-option {
+    flex: 1;
+    min-width: 80px;
+    text-align: center;
+    padding: 9px 10px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--muted);
+    cursor: pointer;
+    transition: all .2s;
+    user-select: none;
+  }
+  .radio-option input { display: none; }
+  .radio-option.selected {
+    background: rgba(108,99,255,.15);
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+
+  .checkbox-group { display: flex; flex-direction: column; gap: 8px; margin-top: 6px; }
+  .checkbox-option {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 12px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 13px;
+    color: var(--text);
+    transition: all .2s;
+    user-select: none;
+  }
+  .checkbox-option.selected {
+    background: rgba(108,99,255,.12);
+    border-color: var(--accent);
+  }
+  .checkbox-option input { display: none; }
+  .check-box {
+    width: 18px; height: 18px;
+    border-radius: 5px;
+    border: 2px solid var(--border);
+    background: var(--card);
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+    transition: all .2s;
+    font-size: 11px;
+  }
+  .checkbox-option.selected .check-box {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: #fff;
+  }
+
+  .anam-nav {
+    position: fixed;
+    bottom: 0; left: 0; right: 0;
+    background: var(--surface);
+    border-top: 1px solid var(--border);
+    padding: 12px 20px 20px;
+    display: flex;
+    gap: 12px;
+  }
+  .btn-back {
+    flex: 1;
+    padding: 14px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    color: var(--text);
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: opacity .2s;
+  }
+  .btn-next {
+    flex: 2;
+    padding: 14px;
+    background: linear-gradient(135deg, var(--accent), #a78bfa);
+    border: none;
+    border-radius: 12px;
+    color: #fff;
+    font-size: 14px;
+    font-weight: 800;
+    cursor: pointer;
+    box-shadow: 0 4px 16px var(--accent-glow);
+    transition: opacity .2s;
+  }
+  .btn-back:hover, .btn-next:hover { opacity: .85; }
+
+  /* ── APP SCREEN ── */
+  #screen-app { display: none; flex-direction: column; min-height: 100vh; }
+  #screen-app.active { display: flex; }
+
+  .app-header {
+    background: var(--bg);
+    border-bottom: 1px solid var(--border);
+    padding: 14px 20px 12px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+  }
+  .app-logo { font-size: 19px; font-weight: 900; letter-spacing: -0.5px; }
+  .app-logo .accent { color: var(--accent); }
+  .streak-chip {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 6px 12px;
+    font-size: 13px;
+    font-weight: 800;
+    color: var(--orange);
+  }
+
+  .app-content {
+    flex: 1;
+    overflow-y: auto;
+    padding: 16px 16px 90px;
+    max-width: 500px;
+    width: 100%;
+    margin: 0 auto;
+  }
+
+  /* hero card */
+  .hero-card {
+    background: linear-gradient(135deg, #1a1040 0%, #0f0f2a 100%);
+    border: 1px solid rgba(108,99,255,.3);
+    border-radius: 20px;
+    padding: 20px;
+    margin-bottom: 14px;
+    box-shadow: 0 0 40px var(--accent-glow);
+  }
+  .hero-top { display: flex; align-items: center; gap: 14px; margin-bottom: 16px; }
+  .hero-avatar {
+    width: 52px; height: 52px;
+    border-radius: 14px;
+    background: linear-gradient(135deg, var(--accent), #a78bfa);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 26px;
+    box-shadow: 0 4px 20px var(--accent-glow);
+    flex-shrink: 0;
+  }
+  .hero-info { flex: 1; }
+  .hero-greeting { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 2px; }
+  .hero-name { font-size: 18px; font-weight: 900; }
+  .hero-badges { display: flex; gap: 8px; margin-top: 4px; }
+  .hero-badge { font-size: 11px; font-weight: 700; }
+  .hero-coins { text-align: center; }
+  .hero-coins .coins-val { font-size: 20px; font-weight: 900; color: var(--yellow); }
+  .hero-coins .coins-lbl { font-size: 10px; color: var(--muted); }
+
+  .xp-labels { display: flex; justify-content: space-between; font-size: 11px; color: var(--muted); margin-bottom: 4px; }
+  .xp-bg { background: var(--border); border-radius: 99px; height: 8px; overflow: hidden; }
+  .xp-fill {
+    height: 100%;
+    border-radius: 99px;
+    background: linear-gradient(90deg, var(--accent), #a78bfa);
+    box-shadow: 0 0 12px var(--accent-glow);
+    transition: width .8s cubic-bezier(.4,0,.2,1);
+  }
+
+  /* stats grid */
+  .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 14px; }
+  .stat-chip {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+  .stat-icon { font-size: 20px; }
+  .stat-val { font-size: 22px; font-weight: 900; letter-spacing: -0.5px; }
+  .stat-lbl { font-size: 11px; color: var(--muted); font-weight: 500; }
+
+  /* section title */
+  .section-title {
+    font-size: 11px;
+    font-weight: 800;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 10px;
+  }
+
+  /* missions */
+  .mission-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 14px;
+    margin-bottom: 8px;
+  }
+  .mission-card.done {
+    background: rgba(0,214,143,.07);
+    border-color: rgba(0,214,143,.3);
+  }
+  .mission-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px; }
+  .mission-left { display: flex; gap: 8px; align-items: center; }
+  .mission-info-title { font-size: 13px; font-weight: 700; }
+  .mission-info-sub { font-size: 11px; color: var(--muted); margin-top: 2px; }
+  .mission-xp-chip {
+    border-radius: 8px;
+    padding: 3px 8px;
+    font-size: 11px;
+    font-weight: 800;
+    flex-shrink: 0;
+  }
+  .mission-bar-bg { background: var(--border); border-radius: 99px; height: 6px; overflow: hidden; }
+  .mission-bar-fill { height: 100%; border-radius: 99px; }
+
+  /* badges */
+  .badges-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .badge-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 14px;
+    text-align: center;
+  }
+  .badge-card.earned {
+    background: rgba(255,214,10,.08);
+    border-color: rgba(255,214,10,.35);
+  }
+  .badge-icon { font-size: 32px; margin-bottom: 6px; }
+  .badge-name { font-size: 12px; font-weight: 700; }
+  .badge-card.locked { opacity: .45; }
+  .badge-card.locked .badge-icon { filter: grayscale(1); }
+
+  /* ranking */
+  .ranking-hero {
+    background: linear-gradient(135deg, #1a1040, #0f0f2a);
+    border: 1px solid rgba(108,99,255,.25);
+    border-radius: 16px;
+    padding: 16px;
+    text-align: center;
+    margin-bottom: 14px;
+  }
+  .ranking-hero .pos { font-size: 40px; font-weight: 900; color: var(--accent); }
+  .ranking-row {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 12px 14px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 8px;
+  }
+  .ranking-row.me {
+    background: rgba(108,99,255,.12);
+    border-color: rgba(108,99,255,.4);
+  }
+  .rank-pos { width: 28px; text-align: center; font-size: 18px; font-weight: 800; color: var(--yellow); }
+  .rank-pos.num { font-size: 14px; color: var(--muted); }
+  .rank-av {
+    width: 38px; height: 38px;
+    border-radius: 10px;
+    background: var(--card);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 20px;
+    border: 1px solid var(--border);
+    flex-shrink: 0;
+  }
+  .rank-av.me { background: linear-gradient(135deg, var(--accent), #a78bfa); border-color: var(--accent); }
+  .rank-info { flex: 1; }
+  .rank-name { font-size: 13px; font-weight: 700; }
+  .rank-name.me { color: var(--accent); }
+  .rank-level { font-size: 11px; color: var(--muted); }
+  .rank-xp { font-size: 13px; font-weight: 800; }
+
+  /* prs */
+  .pr-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 14px 16px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 10px;
+  }
+  .pr-icon-wrap {
+    width: 44px; height: 44px;
+    border-radius: 12px;
+    background: rgba(255,214,10,.1);
+    border: 1px solid rgba(255,214,10,.3);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 22px;
+    flex-shrink: 0;
+  }
+  .pr-info { flex: 1; }
+  .pr-exercise { font-size: 13px; font-weight: 700; }
+  .pr-date { font-size: 11px; color: var(--muted); margin-top: 2px; }
+  .pr-value {
+    background: rgba(255,214,10,.12);
+    border: 1px solid rgba(255,214,10,.35);
+    border-radius: 10px;
+    padding: 6px 12px;
+    font-size: 16px;
+    font-weight: 900;
+    color: var(--yellow);
+  }
+
+  /* bottom nav */
+  .bottom-nav {
+    position: fixed;
+    bottom: 0; left: 0; right: 0;
+    background: var(--surface);
+    border-top: 1px solid var(--border);
+    display: flex;
+    padding: 8px 4px 18px;
+    z-index: 10;
+  }
+  .nav-btn {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 3px;
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    padding: 6px 4px;
+  }
+  .nav-icon { font-size: 20px; }
+  .nav-lbl { font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: .5px; color: var(--muted); }
+  .nav-dot { width: 4px; height: 4px; border-radius: 50%; background: var(--accent); margin-top: -2px; opacity: 0; }
+  .nav-btn.active .nav-lbl { color: var(--accent); }
+  .nav-btn.active .nav-dot { opacity: 1; }
+
+  /* tab panels */
+  .tab-panel { display: none; }
+  .tab-panel.active { display: block; }
+
+  /* log workout */
+  .log-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 14px;
+    text-align: center;
+    margin-top: 10px;
+  }
+  .log-card p { font-size: 13px; color: var(--muted); margin-bottom: 10px; }
+
+  /* success screen */
+  #screen-success {
+    display: none;
+    min-height: 100vh;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    padding: 40px 24px;
+    text-align: center;
+    background: radial-gradient(ellipse at 50% 40%, rgba(0,214,143,.12) 0%, transparent 70%), var(--bg);
+  }
+  #screen-success.active { display: flex; }
+  .success-icon { font-size: 72px; margin-bottom: 20px; animation: pop .4s ease; }
+  @keyframes pop { 0% { transform: scale(.5); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
+  .success-title { font-size: 26px; font-weight: 900; margin-bottom: 10px; }
+  .success-sub { font-size: 14px; color: var(--muted); line-height: 1.6; margin-bottom: 32px; max-width: 300px; }
+
+  /* responsive */
+  @media (max-width: 380px) {
+    .form-row { grid-template-columns: 1fr; }
+    .stats-grid { grid-template-columns: 1fr 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ══ AUTH SCREEN ══════════════════════════════════════════════════════════ -->
+<div id="screen-auth" class="screen active">
+  <div class="auth-logo"><span class="accent">FIT</span>QUEST</div>
+  <div class="auth-sub">Rennan Dias Assessoria</div>
+
+  <div class="auth-card">
+    <div class="auth-tabs">
+      <button class="auth-tab active" onclick="switchAuth('login')">Entrar</button>
+      <button class="auth-tab" onclick="switchAuth('register')">Criar conta</button>
+    </div>
+
+    <div id="auth-error" class="auth-error"></div>
+
+    <!-- LOGIN -->
+    <div id="form-login">
+      <div class="form-group">
+        <label class="form-label">E-mail</label>
+        <input id="login-email" class="form-input" type="email" placeholder="seu@email.com"/>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Senha</label>
+        <input id="login-pass" class="form-input" type="password" placeholder="••••••••"/>
+      </div>
+      <button class="btn-primary" onclick="doLogin()">Entrar no FitQuest</button>
+    </div>
+
+    <!-- REGISTER -->
+    <div id="form-register" style="display:none;">
+      <div class="form-group">
+        <label class="form-label">Nome completo</label>
+        <input id="reg-name" class="form-input" type="text" placeholder="Seu nome"/>
+      </div>
+      <div class="form-group">
+        <label class="form-label">E-mail</label>
+        <input id="reg-email" class="form-input" type="email" placeholder="seu@email.com"/>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Senha</label>
+        <input id="reg-pass" class="form-input" type="password" placeholder="Mínimo 6 caracteres"/>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Confirmar senha</label>
+        <input id="reg-pass2" class="form-input" type="password" placeholder="Repita a senha"/>
+      </div>
+      <button class="btn-primary" onclick="doRegister()">Criar minha conta</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ ANAMNESE SCREEN ══════════════════════════════════════════════════════ -->
+<div id="screen-anamnese" class="screen">
+  <div class="anam-header">
+    <h1>📋 Ficha de Anamnese</h1>
+    <p>Preencha para personalizar seu treino</p>
+  </div>
+
+  <div class="anam-progress-wrap">
+    <div class="anam-step-label">
+      <span id="step-label">Etapa 1 de 5</span>
+      <span id="step-pct">20%</span>
+    </div>
+    <div class="progress-bar-bg">
+      <div class="progress-bar-fill" id="anam-progress" style="width:20%"></div>
+    </div>
+  </div>
+
+  <!-- STEP 1: Dados pessoais -->
+  <div id="anam-step-1" class="anam-step">
+    <div class="anam-section">
+      <div class="anam-section-title">👤 Dados Pessoais</div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Data de nascimento</label>
+          <input class="form-input" type="date" id="a-nasc"/>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Sexo</label>
+          <select class="form-input" id="a-sexo">
+            <option value="">Selecionar</option>
+            <option>Masculino</option>
+            <option>Feminino</option>
+            <option>Prefiro não informar</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Peso atual (kg)</label>
+          <input class="form-input" type="number" id="a-peso" placeholder="Ex: 75"/>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Altura (cm)</label>
+          <input class="form-input" type="number" id="a-altura" placeholder="Ex: 175"/>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Profissão</label>
+        <input class="form-input" type="text" id="a-prof" placeholder="Ex: Professor, Engenheiro..."/>
+      </div>
+      <div class="form-group">
+        <label class="form-label">WhatsApp</label>
+        <input class="form-input" type="tel" id="a-fone" placeholder="(11) 99999-9999"/>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 2: Experiência -->
+  <div id="anam-step-2" class="anam-step" style="display:none">
+    <div class="anam-section">
+      <div class="anam-section-title">🏋️ Experiência com Treino</div>
+      <div class="form-group">
+        <label class="form-label">Tempo de treino</label>
+        <div class="radio-group" id="rg-tempo">
+          <label class="radio-option"><input type="radio" name="tempo" value="Iniciante (0–6 meses)">Iniciante<br><small>0–6 meses</small></label>
+          <label class="radio-option"><input type="radio" name="tempo" value="Intermediário (6m–2a)">Intermediário<br><small>6m – 2 anos</small></label>
+          <label class="radio-option"><input type="radio" name="tempo" value="Avançado (2a+)">Avançado<br><small>2+ anos</small></label>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Modalidade principal</label>
+        <div class="radio-group" id="rg-modal">
+          <label class="radio-option"><input type="radio" name="modal" value="Musculação">💪 Musculação</label>
+          <label class="radio-option"><input type="radio" name="modal" value="Corrida">🏃 Corrida</label>
+          <label class="radio-option"><input type="radio" name="modal" value="Ambos">⚡ Ambos</label>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Dias disponíveis por semana</label>
+        <div class="radio-group" id="rg-dias">
+          <label class="radio-option"><input type="radio" name="dias" value="2x">2x</label>
+          <label class="radio-option"><input type="radio" name="dias" value="3x">3x</label>
+          <label class="radio-option"><input type="radio" name="dias" value="4x">4x</label>
+          <label class="radio-option"><input type="radio" name="dias" value="5x+">5x+</label>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Duração média do treino</label>
+        <div class="radio-group" id="rg-dur">
+          <label class="radio-option"><input type="radio" name="dur" value="Até 45 min">Até 45 min</label>
+          <label class="radio-option"><input type="radio" name="dur" value="45–60 min">45–60 min</label>
+          <label class="radio-option"><input type="radio" name="dur" value="60–90 min">60–90 min</label>
+          <label class="radio-option"><input type="radio" name="dur" value="90+ min">90+ min</label>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Local de treino</label>
+        <div class="radio-group" id="rg-local">
+          <label class="radio-option"><input type="radio" name="local" value="Academia">🏢 Academia</label>
+          <label class="radio-option"><input type="radio" name="local" value="Casa">🏠 Casa</label>
+          <label class="radio-option"><input type="radio" name="local" value="Rua / Pista">🛤️ Rua/Pista</label>
+          <label class="radio-option"><input type="radio" name="local" value="Híbrido">🔄 Híbrido</label>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 3: Objetivos -->
+  <div id="anam-step-3" class="anam-step" style="display:none">
+    <div class="anam-section">
+      <div class="anam-section-title">🎯 Objetivos</div>
+      <div class="form-group">
+        <label class="form-label">Objetivo principal</label>
+        <div class="radio-group" id="rg-obj">
+          <label class="radio-option"><input type="radio" name="obj" value="Hipertrofia">💪 Hipertrofia</label>
+          <label class="radio-option"><input type="radio" name="obj" value="Emagrecimento">🔥 Emagrecer</label>
+          <label class="radio-option"><input type="radio" name="obj" value="Condicionamento">❤️ Condicionamento</label>
+          <label class="radio-option"><input type="radio" name="obj" value="Força">⚡ Força</label>
+          <label class="radio-option"><input type="radio" name="obj" value="Resistência">🏃 Resistência</label>
+          <label class="radio-option"><input type="radio" name="obj" value="Saúde geral">🌿 Saúde</label>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Meta de corrida (se aplicável)</label>
+        <div class="radio-group" id="rg-meta-corrida">
+          <label class="radio-option"><input type="radio" name="mc" value="Não pratico">Não pratico</label>
+          <label class="radio-option"><input type="radio" name="mc" value="5km">5 km</label>
+          <label class="radio-option"><input type="radio" name="mc" value="10km">10 km</label>
+          <label class="radio-option"><input type="radio" name="mc" value="Meia maratona">21 km</label>
+          <label class="radio-option"><input type="radio" name="mc" value="Maratona">42 km</label>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Em quantos meses quer atingir sua meta?</label>
+        <select class="form-input" id="a-prazo">
+          <option value="">Selecionar</option>
+          <option>1–2 meses</option>
+          <option>3–6 meses</option>
+          <option>6–12 meses</option>
+          <option>Sem prazo definido</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">O que te motiva a treinar?</label>
+        <textarea class="form-input" id="a-motiv" placeholder="Saúde, estética, esporte, qualidade de vida..."></textarea>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 4: Saúde -->
+  <div id="anam-step-4" class="anam-step" style="display:none">
+    <div class="anam-section">
+      <div class="anam-section-title">❤️ Histórico de Saúde</div>
+      <div class="form-group">
+        <label class="form-label">Possui alguma condição de saúde?</label>
+        <div class="checkbox-group" id="cg-saude">
+          <label class="checkbox-option"><input type="checkbox" value="Hipertensão"><span class="check-box"></span>Hipertensão</label>
+          <label class="checkbox-option"><input type="checkbox" value="Diabetes"><span class="check-box"></span>Diabetes</label>
+          <label class="checkbox-option"><input type="checkbox" value="Problemas cardíacos"><span class="check-box"></span>Problemas cardíacos</label>
+          <label class="checkbox-option"><input type="checkbox" value="Colesterol alto"><span class="check-box"></span>Colesterol alto</label>
+          <label class="checkbox-option"><input type="checkbox" value="Problemas respiratórios"><span class="check-box"></span>Problemas respiratórios</label>
+          <label class="checkbox-option"><input type="checkbox" value="Nenhuma"><span class="check-box"></span>Nenhuma</label>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Lesões ou limitações físicas</label>
+        <div class="checkbox-group" id="cg-lesoes">
+          <label class="checkbox-option"><input type="checkbox" value="Joelho"><span class="check-box"></span>Joelho</label>
+          <label class="checkbox-option"><input type="checkbox" value="Ombro"><span class="check-box"></span>Ombro</label>
+          <label class="checkbox-option"><input type="checkbox" value="Lombar"><span class="check-box"></span>Lombar / coluna</label>
+          <label class="checkbox-option"><input type="checkbox" value="Tornozelo"><span class="check-box"></span>Tornozelo / pé</label>
+          <label class="checkbox-option"><input type="checkbox" value="Quadril"><span class="check-box"></span>Quadril</label>
+          <label class="checkbox-option"><input type="checkbox" value="Nenhuma"><span class="check-box"></span>Nenhuma</label>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Faz uso de medicamentos?</label>
+        <div class="radio-group" id="rg-med">
+          <label class="radio-option"><input type="radio" name="med" value="Não">Não</label>
+          <label class="radio-option"><input type="radio" name="med" value="Sim">Sim</label>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Se sim, quais? (opcional)</label>
+        <textarea class="form-input" id="a-med-desc" placeholder="Nome dos medicamentos..."></textarea>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Já fez alguma cirurgia relevante?</label>
+        <textarea class="form-input" id="a-cirurgia" placeholder="Se sim, descreva. Se não, escreva 'Não'."></textarea>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 5: Estilo de vida -->
+  <div id="anam-step-5" class="anam-step" style="display:none">
+    <div class="anam-section">
+      <div class="anam-section-title">🌙 Estilo de Vida</div>
+      <div class="form-group">
+        <label class="form-label">Horas de sono por noite</label>
+        <div class="radio-group" id="rg-sono">
+          <label class="radio-option"><input type="radio" name="sono" value="Menos de 5h">Menos de 5h</label>
+          <label class="radio-option"><input type="radio" name="sono" value="5–6h">5–6h</label>
+          <label class="radio-option"><input type="radio" name="sono" value="7–8h">7–8h</label>
+          <label class="radio-option"><input type="radio" name="sono" value="Mais de 8h">Mais de 8h</label>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Nível de estresse no dia a dia</label>
+        <div class="radio-group" id="rg-stress">
+          <label class="radio-option"><input type="radio" name="stress" value="Baixo">😌 Baixo</label>
+          <label class="radio-option"><input type="radio" name="stress" value="Moderado">😐 Moderado</label>
+          <label class="radio-option"><input type="radio" name="stress" value="Alto">😰 Alto</label>
+          <label class="radio-option"><input type="radio" name="stress" value="Muito alto">😤 Muito alto</label>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Alimentação atual</label>
+        <div class="radio-group" id="rg-alim">
+          <label class="radio-option"><input type="radio" name="alim" value="Muito ruim">😔 Muito ruim</label>
+          <label class="radio-option"><input type="radio" name="alim" value="Regular">😐 Regular</label>
+          <label class="radio-option"><input type="radio" name="alim" value="Boa">😊 Boa</label>
+          <label class="radio-option"><input type="radio" name="alim" value="Ótima">🤩 Ótima</label>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Usa suplementação?</label>
+        <div class="checkbox-group" id="cg-supl">
+          <label class="checkbox-option"><input type="checkbox" value="Whey protein"><span class="check-box"></span>Whey protein</label>
+          <label class="checkbox-option"><input type="checkbox" value="Creatina"><span class="check-box"></span>Creatina</label>
+          <label class="checkbox-option"><input type="checkbox" value="Pré-treino"><span class="check-box"></span>Pré-treino</label>
+          <label class="checkbox-option"><input type="checkbox" value="BCAA"><span class="check-box"></span>BCAA</label>
+          <label class="checkbox-option"><input type="checkbox" value="Vitaminas"><span class="check-box"></span>Vitaminas</label>
+          <label class="checkbox-option"><input type="checkbox" value="Não uso"><span class="check-box"></span>Não uso</label>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Observações adicionais</label>
+        <textarea class="form-input" id="a-obs" placeholder="Alguma informação importante que devemos saber?"></textarea>
+      </div>
+    </div>
+  </div>
+
+  <div style="height:80px"></div>
+
+  <div class="anam-nav">
+    <button class="btn-back" id="btn-back" onclick="anamPrev()" style="display:none">← Voltar</button>
+    <button class="btn-next" id="btn-next" onclick="anamNext()">Próxima etapa →</button>
+  </div>
+</div>
+
+<!-- ══ SUCCESS SCREEN ════════════════════════════════════════════════════════ -->
+<div id="screen-success" class="screen">
+  <div class="success-icon">🎉</div>
+  <div class="success-title">Ficha enviada!</div>
+  <div class="success-sub">Rennan vai analisar seu perfil e montar seu treino personalizado. Agora acesse seu painel!</div>
+  <button class="btn-primary" style="max-width:280px" onclick="goToApp()">Ir para o FitQuest 🚀</button>
+</div>
+
+<!-- ══ APP SCREEN ═════════════════════════════════════════════════════════── -->
+<div id="screen-app" class="screen">
+  <div class="app-header">
+    <div class="app-logo"><span class="accent">FIT</span>QUEST</div>
+    <div class="streak-chip">🔥 <span id="streak-val">1</span> dia</div>
+  </div>
+
+  <div class="app-content">
+
+    <!-- HOME -->
+    <div class="tab-panel active" id="panel-home">
+      <div class="hero-card">
+        <div class="hero-top">
+          <div class="hero-avatar">💪</div>
+          <div class="hero-info">
+            <div class="hero-greeting">Bem-vindo de volta</div>
+            <div class="hero-name" id="app-user-name">Atleta</div>
+            <div class="hero-badges">
+              <span class="hero-badge" style="color:var(--accent)">⚡ Nível <span id="app-level">1</span></span>
+              <span class="hero-badge" style="color:var(--orange)">🔥 <span id="app-streak2">1</span> dias</span>
+            </div>
+          </div>
+          <div class="hero-coins">
+            <div class="coins-val">🪙 <span id="app-coins">0</span></div>
+            <div class="coins-lbl">moedas</div>
+          </div>
+        </div>
+        <div class="xp-labels"><span id="app-xp">0 XP</span><span id="app-xp-next">1000 XP</span></div>
+        <div class="xp-bg"><div class="xp-fill" id="app-xp-bar" style="width:0%"></div></div>
+      </div>
+
+      <div class="stats-grid">
+        <div class="stat-chip"><div class="stat-icon">🏋️</div><div class="stat-val" style="color:var(--accent)" id="s-treinos">0</div><div class="stat-lbl">Treinos</div></div>
+        <div class="stat-chip"><div class="stat-icon">🏃</div><div class="stat-val" style="color:var(--orange)" id="s-km">0</div><div class="stat-lbl">km rodados</div></div>
+        <div class="stat-chip"><div class="stat-icon">⭐</div><div class="stat-val" style="color:var(--yellow)" id="s-prs">0</div><div class="stat-lbl">Recordes (PR)</div></div>
+        <div class="stat-chip"><div class="stat-icon">📅</div><div class="stat-val" style="color:var(--green)" id="s-semanas">0</div><div class="stat-lbl">Semanas ativas</div></div>
+      </div>
+
+      <div class="section-title" style="margin-top:16px">Missões ativas</div>
+      <div id="home-missions"></div>
+    </div>
+
+    <!-- MISSIONS -->
+    <div class="tab-panel" id="panel-missions">
+      <div style="display:flex;gap:10px;margin-bottom:14px">
+        <div style="flex:1;background:rgba(108,99,255,.12);border:1px solid rgba(108,99,255,.3);border-radius:12px;padding:12px;text-align:center">
+          <div style="font-size:22px;font-weight:900;color:var(--accent)" id="m-active-count">0</div>
+          <div style="font-size:11px;color:var(--muted)">Em andamento</div>
+        </div>
+        <div style="flex:1;background:rgba(0,214,143,.1);border:1px solid rgba(0,214,143,.3);border-radius:12px;padding:12px;text-align:center">
+          <div style="font-size:22px;font-weight:900;color:var(--green)" id="m-done-count">0</div>
+          <div style="font-size:11px;color:var(--muted)">Concluídas</div>
+        </div>
+        <div style="flex:1;background:rgba(255,214,10,.1);border:1px solid rgba(255,214,10,.3);border-radius:12px;padding:12px;text-align:center">
+          <div style="font-size:22px;font-weight:900;color:var(--yellow)" id="m-xp-earned">0</div>
+          <div style="font-size:11px;color:var(--muted)">XP ganho</div>
+        </div>
+      </div>
+      <div class="section-title">Em andamento</div>
+      <div id="missions-active"></div>
+      <div class="section-title" style="margin-top:14px">Concluídas</div>
+      <div id="missions-done"></div>
+    </div>
+
+    <!-- BADGES -->
+    <div class="tab-panel" id="panel-badges">
+      <div style="background:linear-gradient(135deg,#1a1040,#0f0f2a);border:1px solid rgba(255,214,10,.25);border-radius:16px;padding:16px;text-align:center;margin-bottom:16px">
+        <div style="font-size:32px;font-weight:900;color:var(--yellow)" id="badges-count">0/8</div>
+        <div style="color:var(--muted);font-size:13px">conquistas desbloqueadas</div>
+        <div class="progress-bar-bg" style="margin-top:12px"><div class="progress-bar-fill" id="badges-bar" style="width:0%;background:linear-gradient(90deg,var(--yellow),var(--orange))"></div></div>
+      </div>
+      <div class="section-title">Conquistadas</div>
+      <div class="badges-grid" id="badges-earned" style="margin-bottom:16px"></div>
+      <div class="section-title">Bloqueadas</div>
+      <div class="badges-grid" id="badges-locked"></div>
+    </div>
+
+    <!-- RANKING -->
+    <div class="tab-panel" id="panel-ranking">
+      <div class="ranking-hero">
+        <div style="font-size:13px;color:var(--muted);margin-bottom:4px">Sua posição</div>
+        <div class="pos">#<span id="my-rank">–</span></div>
+        <div style="font-size:12px;color:var(--muted)">ranking desta semana</div>
+      </div>
+      <div id="ranking-list"></div>
+    </div>
+
+    <!-- RECORDES -->
+    <div class="tab-panel" id="panel-prs">
+      <div style="background:linear-gradient(135deg,#1a1040,#0f0f2a);border:1px solid rgba(255,214,10,.25);border-radius:16px;padding:16px;text-align:center;margin-bottom:16px;box-shadow:0 0 30px rgba(255,214,10,.08)">
+        <div style="font-size:36px">⭐</div>
+        <div style="font-size:20px;font-weight:900;color:var(--yellow)"><span id="pr-count">0</span> Recordes Pessoais</div>
+        <div style="font-size:12px;color:var(--muted);margin-top:4px">Continue quebrando barreiras!</div>
+      </div>
+      <div id="prs-list"></div>
+      <div class="log-card">
+        <p>Registre um novo treino ou PR</p>
+        <button class="btn-primary" onclick="logWorkout()">+ Novo Treino / PR</button>
+      </div>
+    </div>
+
+  </div><!-- /app-content -->
+
+  <div class="bottom-nav">
+    <button class="nav-btn active" onclick="switchTab('home',this)"><span class="nav-icon">🏠</span><span class="nav-lbl">Início</span><div class="nav-dot"></div></button>
+    <button class="nav-btn" onclick="switchTab('missions',this)"><span class="nav-icon">🎯</span><span class="nav-lbl">Missões</span><div class="nav-dot"></div></button>
+    <button class="nav-btn" onclick="switchTab('badges',this)"><span class="nav-icon">🏆</span><span class="nav-lbl">Conquistas</span><div class="nav-dot"></div></button>
+    <button class="nav-btn" onclick="switchTab('ranking',this)"><span class="nav-icon">📊</span><span class="nav-lbl">Ranking</span><div class="nav-dot"></div></button>
+    <button class="nav-btn" onclick="switchTab('prs',this)"><span class="nav-icon">⭐</span><span class="nav-lbl">Recordes</span><div class="nav-dot"></div></button>
+  </div>
+</div>
+
+<script>
+// ── STORAGE ─────────────────────────────────────────────────────────────────
+const DB = {
+  get(k){ try { return JSON.parse(localStorage.getItem(k)); } catch{ return null; } },
+  set(k,v){ localStorage.setItem(k, JSON.stringify(v)); },
+  del(k){ localStorage.removeItem(k); }
+};
+
+// ── SHOW SCREEN ──────────────────────────────────────────────────────────────
+function show(id){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  window.scrollTo(0,0);
+}
+
+// ── AUTH ─────────────────────────────────────────────────────────────────────
+let authMode = 'login';
+function switchAuth(mode){
+  authMode = mode;
+  document.getElementById('form-login').style.display = mode==='login'?'block':'none';
+  document.getElementById('form-register').style.display = mode==='register'?'block':'none';
+  document.querySelectorAll('.auth-tab').forEach((t,i)=>{
+    t.classList.toggle('active', (i===0 && mode==='login')||(i===1 && mode==='register'));
+  });
+  document.getElementById('auth-error').style.display='none';
+}
+
+function showError(msg){
+  const el = document.getElementById('auth-error');
+  el.textContent = msg;
+  el.style.display = 'block';
+}
+
+function doLogin(){
+  const email = document.getElementById('login-email').value.trim();
+  const pass  = document.getElementById('login-pass').value;
+  if(!email||!pass){ showError('Preencha e-mail e senha.'); return; }
+  const users = DB.get('fitquest_users') || {};
+  if(!users[email]){ showError('Conta não encontrada. Crie uma conta primeiro.'); return; }
+  if(users[email].pass !== btoa(pass)){ showError('Senha incorreta.'); return; }
+  DB.set('fitquest_current', email);
+  const userData = users[email];
+  if(!userData.anamneseDone){
+    initAnamnese();
+    show('screen-anamnese');
+  } else {
+    loadApp(email);
+    show('screen-app');
+  }
+}
+
+function doRegister(){
+  const name  = document.getElementById('reg-name').value.trim();
+  const email = document.getElementById('reg-email').value.trim();
+  const pass  = document.getElementById('reg-pass').value;
+  const pass2 = document.getElementById('reg-pass2').value;
+  if(!name||!email||!pass){ showError('Preencha todos os campos.'); return; }
+  if(pass.length < 6){ showError('Senha deve ter pelo menos 6 caracteres.'); return; }
+  if(pass !== pass2){ showError('As senhas não conferem.'); return; }
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if(!emailRegex.test(email)){ showError('E-mail inválido.'); return; }
+  const users = DB.get('fitquest_users') || {};
+  if(users[email]){ showError('Este e-mail já está cadastrado.'); return; }
+  users[email] = {
+    name, email, pass: btoa(pass), anamneseDone: false,
+    createdAt: new Date().toISOString(),
+    xp: 0, level: 1, streak: 1, coins: 0,
+    stats: { treinos: 0, distancia: 0, prs: 0, semanas: 0 },
+    badges: [],
+    missions: [
+      { id:1, title:'Treinar 4x esta semana', xp:150, progress:0, total:4, type:'gym', done:false },
+      { id:2, title:'Correr 10km esta semana', xp:200, progress:0, total:10, type:'run', done:false },
+      { id:3, title:'Bater PR no supino', xp:300, progress:0, total:1, type:'pr', done:false },
+    ],
+    prs: [],
+    ranking: { pos: null }
+  };
+  DB.set('fitquest_users', users);
+  DB.set('fitquest_current', email);
+  initAnamnese();
+  show('screen-anamnese');
+}
+
+// ── ANAMNESE ─────────────────────────────────────────────────────────────────
+let anamStep = 1;
+const ANAM_TOTAL = 5;
+
+function initAnamnese(){
+  anamStep = 1;
+  updateAnamUI();
+  // radio & checkbox interactivity
+  setupRadioGroups();
+  setupCheckboxGroups();
+}
+
+function setupRadioGroups(){
+  document.querySelectorAll('.radio-group').forEach(group=>{
+    group.querySelectorAll('.radio-option').forEach(opt=>{
+      opt.addEventListener('click',()=>{
+        group.querySelectorAll('.radio-option').forEach(o=>o.classList.remove('selected'));
+        opt.classList.add('selected');
+        opt.querySelector('input').checked = true;
+      });
+    });
+  });
+}
+
+function setupCheckboxGroups(){
+  document.querySelectorAll('.checkbox-group').forEach(group=>{
+    group.querySelectorAll('.checkbox-option').forEach(opt=>{
+      opt.addEventListener('click',()=>{
+        opt.classList.toggle('selected');
+        const cb = opt.querySelector('input');
+        cb.checked = !cb.checked;
+        // check box visual
+        const box = opt.querySelector('.check-box');
+        box.textContent = cb.checked ? '✓' : '';
+      });
+    });
+  });
+}
+
+function updateAnamUI(){
+  const pct = Math.round((anamStep / ANAM_TOTAL) * 100);
+  document.getElementById('anam-progress').style.width = pct + '%';
+  document.getElementById('step-label').textContent = `Etapa ${anamStep} de ${ANAM_TOTAL}`;
+  document.getElementById('step-pct').textContent = pct + '%';
+  document.querySelectorAll('.anam-step').forEach((s,i)=>{
+    s.style.display = (i+1 === anamStep) ? 'block' : 'none';
+  });
+  document.getElementById('btn-back').style.display = anamStep > 1 ? 'block' : 'none';
+  document.getElementById('btn-next').textContent = anamStep === ANAM_TOTAL ? 'Enviar ficha ✅' : 'Próxima etapa →';
+}
+
+function anamNext(){
+  if(anamStep < ANAM_TOTAL){
+    anamStep++;
+    updateAnamUI();
+    window.scrollTo(0,0);
+  } else {
+    submitAnamnese();
+  }
+}
+
+function anamPrev(){
+  if(anamStep > 1){ anamStep--; updateAnamUI(); window.scrollTo(0,0); }
+}
+
+function submitAnamnese(){
+  const email = DB.get('fitquest_current');
+  const users = DB.get('fitquest_users') || {};
+  if(!users[email]) return;
+
+  // collect data
+  const getRadio = name => { const el = document.querySelector(`input[name="${name}"]:checked`); return el ? el.value : ''; };
+  const getChecks = groupId => Array.from(document.querySelectorAll(`#${groupId} input:checked`)).map(e=>e.value);
+
+  users[email].anamnese = {
+    nascimento: document.getElementById('a-nasc').value,
+    sexo: document.getElementById('a-sexo').value,
+    peso: document.getElementById('a-peso').value,
+    altura: document.getElementById('a-altura').value,
+    profissao: document.getElementById('a-prof').value,
+    fone: document.getElementById('a-fone').value,
+    tempoTreino: getRadio('tempo'),
+    modalidade: getRadio('modal'),
+    diasSemana: getRadio('dias'),
+    duracao: getRadio('dur'),
+    local: getRadio('local'),
+    objetivo: getRadio('obj'),
+    metaCorrida: getRadio('mc'),
+    prazo: document.getElementById('a-prazo').value,
+    motivacao: document.getElementById('a-motiv').value,
+    condicoesSaude: getChecks('cg-saude'),
+    lesoes: getChecks('cg-lesoes'),
+    medicamentos: getRadio('med'),
+    medicamentosDesc: document.getElementById('a-med-desc').value,
+    cirurgia: document.getElementById('a-cirurgia').value,
+    sono: getRadio('sono'),
+    stress: getRadio('stress'),
+    alimentacao: getRadio('alim'),
+    suplementacao: getChecks('cg-supl'),
+    obs: document.getElementById('a-obs').value,
+    submittedAt: new Date().toISOString()
+  };
+  users[email].anamneseDone = true;
+  users[email].xp = 100;
+  users[email].coins = 50;
+  DB.set('fitquest_users', users);
+  show('screen-success');
+}
+
+function goToApp(){
+  const email = DB.get('fitquest_current');
+  loadApp(email);
+  show('screen-app');
+}
+
+// ── APP ──────────────────────────────────────────────────────────────────────
+const BADGES_DEF = [
+  { id:'b1', icon:'🔥', name:'Streak 7 dias',    condition: u => u.streak >= 7 },
+  { id:'b2', icon:'🏃', name:'Primeira corrida', condition: u => u.stats.distancia > 0 },
+  { id:'b3', icon:'💎', name:'Primeiro PR',       condition: u => u.prs.length > 0 },
+  { id:'b4', icon:'⚡', name:'10 treinos',        condition: u => u.stats.treinos >= 10 },
+  { id:'b5', icon:'🏋️', name:'50 treinos',        condition: u => u.stats.treinos >= 50 },
+  { id:'b6', icon:'🌟', name:'Streak 30 dias',   condition: u => u.streak >= 30 },
+  { id:'b7', icon:'🚀', name:'42 km total',       condition: u => u.stats.distancia >= 42 },
+  { id:'b8', icon:'👑', name:'Top 3 ranking',    condition: u => u.ranking && u.ranking.pos <= 3 },
+];
+
+const RANKING_MOCK = [
+  { name:'Marina Costa',  xp:5800, avatar:'🦁', level:9 },
+  { name:'Rafael Mendes', xp:5100, avatar:'⚡', level:8 },
+  { name:'Ana Rodrigues', xp:3200, avatar:'🌟', level:7 },
+  { name:'Carlos Lima',   xp:2900, avatar:'🔥', level:6 },
+  { name:'Bianca Torres', xp:2400, avatar:'🚀', level:6 },
+];
+
+function loadApp(email){
+  const users = DB.get('fitquest_users') || {};
+  const u = users[email];
+  if(!u) return;
+
+  // update badges
+  BADGES_DEF.forEach(b => { if(b.condition(u) && !u.badges.includes(b.id)) u.badges.push(b.id); });
+
+  // ranking position
+  const allUsers = Object.values(users).filter(x=>x.anamneseDone).sort((a,b)=>b.xp-a.xp);
+  const myPos = allUsers.findIndex(x=>x.email===email) + 1;
+  u.ranking = { pos: myPos };
+  if(myPos <= 3){ if(!u.badges.includes('b8')) u.badges.push('b8'); }
+  DB.set('fitquest_users', users);
+
+  // header
+  document.getElementById('streak-val').textContent = u.streak;
+  document.getElementById('app-user-name').textContent = u.name;
+  document.getElementById('app-level').textContent = u.level;
+  document.getElementById('app-streak2').textContent = u.streak;
+  document.getElementById('app-coins').textContent = u.coins;
+
+  // xp
+  const xpNext = u.level * 1000;
+  const pct = Math.min((u.xp / xpNext)*100, 100);
+  document.getElementById('app-xp').textContent = u.xp.toLocaleString() + ' XP';
+  document.getElementById('app-xp-next').textContent = xpNext.toLocaleString() + ' XP';
+  document.getElementById('app-xp-bar').style.width = pct + '%';
+
+  // stats
+  document.getElementById('s-treinos').textContent  = u.stats.treinos;
+  document.getElementById('s-km').textContent       = u.stats.distancia;
+  document.getElementById('s-prs').textContent      = u.prs.length;
+  document.getElementById('s-semanas').textContent  = u.stats.semanas;
+
+  // missions
+  renderMissions(u.missions);
+
+  // badges
+  renderBadges(u.badges);
+
+  // ranking
+  renderRanking(u, email, users);
+
+  // prs
+  renderPRs(u.prs);
+}
+
+function renderMissions(missions){
+  const typeColors = { gym:'var(--accent)', run:'var(--orange)', pr:'var(--yellow)', scale:'var(--green)' };
+  const typeIcons  = { gym:'🏋️', run:'🏃', pr:'⭐', scale:'⚖️' };
+  const html = (m) => {
+    const pct = Math.min((m.progress/m.total)*100,100);
+    const color = typeColors[m.type]||'var(--accent)';
+    return `<div class="mission-card ${m.done?'done':''}">
+      <div class="mission-top">
+        <div class="mission-left">
+          <span style="font-size:18px">${typeIcons[m.type]||'🎯'}</span>
+          <div>
+            <div class="mission-info-title">${m.title}</div>
+            <div class="mission-info-sub">${m.done?'✅ Concluída!':m.progress+' / '+m.total}</div>
+          </div>
+        </div>
+        <div class="mission-xp-chip" style="background:${color}22;border:1px solid ${color}55;color:${color}">+${m.xp} XP</div>
+      </div>
+      ${!m.done?`<div class="mission-bar-bg"><div class="mission-bar-fill" style="width:${pct}%;background:${color}"></div></div>`:''}
+    </div>`;
+  };
+  const active = missions.filter(m=>!m.done);
+  const done   = missions.filter(m=>m.done);
+  document.getElementById('home-missions').innerHTML = active.slice(0,2).map(html).join('');
+  document.getElementById('missions-active').innerHTML = active.map(html).join('') || '<div style="color:var(--muted);font-size:13px;padding:10px">Nenhuma missão ativa 🎉</div>';
+  document.getElementById('missions-done').innerHTML   = done.map(html).join('')   || '<div style="color:var(--muted);font-size:13px;padding:10px">Nenhuma concluída ainda</div>';
+  document.getElementById('m-active-count').textContent = active.length;
+  document.getElementById('m-done-count').textContent   = done.length;
+  document.getElementById('m-xp-earned').textContent    = done.reduce((a,m)=>a+m.xp,0);
+}
+
+function renderBadges(earned){
+  const earnedSet = new Set(earned);
+  const earnedDefs = BADGES_DEF.filter(b=>earnedSet.has(b.id));
+  const lockedDefs = BADGES_DEF.filter(b=>!earnedSet.has(b.id));
+  const card = (b, isEarned) =>
+    `<div class="badge-card ${isEarned?'earned':'locked'}">
+      <div class="badge-icon">${b.icon}</div>
+      <div class="badge-name">${b.name}</div>
+    </div>`;
+  document.getElementById('badges-earned').innerHTML = earnedDefs.map(b=>card(b,true)).join('') || '<div style="color:var(--muted);font-size:13px">Nenhuma ainda — comece a treinar!</div>';
+  document.getElementById('badges-locked').innerHTML = lockedDefs.map(b=>card(b,false)).join('');
+  document.getElementById('badges-count').textContent = `${earnedDefs.length}/${BADGES_DEF.length}`;
+  document.getElementById('badges-bar').style.width = (earnedDefs.length/BADGES_DEF.length*100)+'%';
+}
+
+function renderRanking(u, email, users){
+  const allReal = Object.values(users).filter(x=>x.anamneseDone).map(x=>({name:x.name,xp:x.xp,level:x.level,avatar:'💪',isMe:x.email===email}));
+  const combined = [...RANKING_MOCK, ...allReal].sort((a,b)=>b.xp-a.xp);
+  // deduplicate names
+  const seen = new Set();
+  const unique = combined.filter(r=>{ if(seen.has(r.name))return false; seen.add(r.name); return true; });
+  const medals = ['🥇','🥈','🥉'];
+  const myPos = unique.findIndex(r=>r.isMe)+1;
+  document.getElementById('my-rank').textContent = myPos || '–';
+  document.getElementById('ranking-list').innerHTML = unique.map((r,i)=>{
+    const pos = i+1;
+    return `<div class="ranking-row ${r.isMe?'me':''}">
+      <div class="rank-pos ${pos>3?'num':''}">${pos<=3?medals[pos-1]:'#'+pos}</div>
+      <div class="rank-av ${r.isMe?'me':''}">${r.avatar}</div>
+      <div class="rank-info">
+        <div class="rank-name ${r.isMe?'me':''}">${r.name}${r.isMe?' <span style="font-size:10px;color:var(--muted)">(você)</span>':''}</div>
+        <div class="rank-level">Nível ${r.level}</div>
+      </div>
+      <div>
+        <div class="rank-xp" style="color:${r.isMe?'var(--accent)':'var(--text)'}">${r.xp.toLocaleString()}</div>
+        <div style="font-size:10px;color:var(--muted);text-align:right">XP</div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function renderPRs(prs){
+  document.getElementById('pr-count').textContent = prs.length;
+  if(!prs.length){
+    document.getElementById('prs-list').innerHTML = '<div style="color:var(--muted);font-size:13px;padding:10px 0">Nenhum PR registrado ainda. Quebre o primeiro recorde!</div>';
+    return;
+  }
+  document.getElementById('prs-list').innerHTML = prs.map(pr=>`
+    <div class="pr-card">
+      <div class="pr-icon-wrap">${pr.icon||'⭐'}</div>
+      <div class="pr-info"><div class="pr-exercise">${pr.exercise}</div><div class="pr-date">${pr.date}</div></div>
+      <div class="pr-value">${pr.value}</div>
+    </div>`).join('');
+}
+
+function logWorkout(){
+  const email = DB.get('fitquest_current');
+  const users = DB.get('fitquest_users')||{};
+  const u = users[email]; if(!u) return;
+
+  const ex = prompt('Nome do exercício ou atividade (ex: Supino, Corrida 5km):');
+  if(!ex) return;
+  const val = prompt('Resultado (ex: 90kg, 24:30, 8km):');
+  if(!val) return;
+
+  u.prs.push({ exercise: ex, value: val, date: new Date().toLocaleDateString('pt-BR',{day:'2-digit',month:'2-digit'}), icon:'⭐' });
+  u.stats.treinos++;
+  u.xp += 50;
+  u.coins += 10;
+  if(u.xp >= u.level*1000){ u.level++; u.xp = 0; alert('🎉 Subiu para o Nível '+u.level+'!'); }
+
+  DB.set('fitquest_users', users);
+  loadApp(email);
+  switchTab('prs', document.querySelectorAll('.nav-btn')[4]);
+}
+
+// ── NAV ──────────────────────────────────────────────────────────────────────
+function switchTab(name, btn){
+  document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('panel-'+name).classList.add('active');
+  if(btn) btn.classList.add('active');
+  window.scrollTo(0,0);
+}
+
+// ── INIT ─────────────────────────────────────────────────────────────────────
+(function init(){
+  const email = DB.get('fitquest_current');
+  if(!email){ show('screen-auth'); return; }
+  const users = DB.get('fitquest_users')||{};
+  const u = users[email];
+  if(!u){ DB.del('fitquest_current'); show('screen-auth'); return; }
+  if(!u.anamneseDone){ initAnamnese(); show('screen-anamnese'); return; }
+  loadApp(email);
+  show('screen-app');
+})();
+</script>
+</body>
+</html>
