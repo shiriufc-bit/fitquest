@@ -720,13 +720,13 @@ function updateAnam(){
 }
 function anamNext(){if(anamStep<5){anamStep++;updateAnam();window.scrollTo(0,0);}else submitAnam();}
 function anamPrev(){if(anamStep>1){anamStep--;updateAnam();window.scrollTo(0,0);}}
-function submitAnam(){
+async function submitAnam(){
   const email=DB.get('fq_cur');
   const users=DB.get('fq_users')||{};
   if(!users[email])return;
   const gr=n=>{const e=document.querySelector(`input[name="${n}"]:checked`);return e?e.value:'';};
   const gc=id=>Array.from(document.querySelectorAll(`#${id} input:checked`)).map(e=>e.value);
-  users[email].anamnese={
+  const an={
     nasc:document.getElementById('a-nasc').value,sexo:document.getElementById('a-sexo').value,
     peso:document.getElementById('a-peso').value,altura:document.getElementById('a-altura').value,
     prof:document.getElementById('a-prof').value,fone:document.getElementById('a-fone').value,
@@ -739,9 +739,109 @@ function submitAnam(){
     sono:gr('sono'),stress:gr('stress'),alim:gr('alim'),supl:gc('cg-supl'),
     obs:document.getElementById('a-obs').value,at:new Date().toISOString()
   };
+  users[email].anamnese=an;
   users[email].anamneseDone=true;users[email].xp=100;users[email].coins=50;
-  DB.set('fq_users',users);show('screen-success');
+  users[email].trainApproved=false;
+  users[email].aiPlan=null;
+  DB.set('fq_users',users);
+
+  // Mostrar tela de geração
+  show('screen-success');
+  document.querySelector('.stit').textContent='🤖 Gerando seu treino...';
+  document.querySelector('.ssub').textContent='A IA está analisando sua ficha e montando um plano personalizado. Isso leva alguns segundos!';
+  document.querySelector('#screen-success .btn-p').style.display='none';
+
+  try {
+    await generateAIPlan(email, an);
+    document.querySelector('.sico').textContent='🎉';
+    document.querySelector('.stit').textContent='Treino pronto!';
+    document.querySelector('.ssub').textContent='Seu plano personalizado foi gerado pela IA com base na sua ficha. Bora treinar!';
+    document.querySelector('#screen-success .btn-p').style.display='block';
+  } catch(e) {
+    document.querySelector('.sico').textContent='⚠️';
+    document.querySelector('.stit').textContent='Treino padrão ativado';
+    document.querySelector('.ssub').textContent='Não foi possível conectar à IA agora, mas seu treino padrão já está disponível!';
+    document.querySelector('#screen-success .btn-p').style.display='block';
+    const u2=DB.get('fq_users')||{};
+    if(u2[email]){u2[email].trainApproved=true;DB.set('fq_users',u2);}
+  }
 }
+
+async function generateAIPlan(email, an){
+  const prompt=`Você é personal trainer e assessor de corrida especialista. Com base na ficha de anamnese abaixo, crie um plano de treino personalizado em JSON.
+
+FICHA:
+- Nível: ${an.tempo||'Iniciante'}
+- Modalidade: ${an.modal||'Ambos'}
+- Objetivo: ${an.obj||'Saúde'}
+- Dias/semana: ${an.dias||'3x'}
+- Duração: ${an.dur||'60 min'}
+- Local: ${an.local||'Academia'}
+- Lesões: ${(an.lesoes||[]).join(', ')||'Nenhuma'}
+- Condições de saúde: ${(an.saude||[]).join(', ')||'Nenhuma'}
+- Meta corrida: ${an.mc||'Não pratica'}
+- Peso: ${an.peso||'?'}kg, Altura: ${an.altura||'?'}cm
+
+Retorne APENAS um JSON válido (sem markdown, sem texto extra) com esta estrutura exata:
+{
+  "gym": {
+    "Semana 1": {
+      "fase": "Nome da fase",
+      "days": {
+        "Treino A": [
+          {"name":"Nome do exercício","muscle":"Músculo","sets":3,"reps":"12","load":"Moderada","obs":"Dica curta"}
+        ],
+        "Treino B": [...]
+      }
+    },
+    "Semana 2": { ... },
+    "Semana 3": { ... },
+    "Semana 4": { ... }
+  },
+  "run": {
+    "Semana 1": {
+      "meta": "Objetivo da semana",
+      "sessions": [
+        {"day":"Seg","type":"Tipo de treino","dist":"3 km","pace":"7:00 min/km","dur":"~20 min","tip":"Dica"}
+      ]
+    },
+    "Semana 2": { ... },
+    "Semana 3": { ... },
+    "Semana 4": { ... }
+  }
+}
+
+Regras:
+- Gere exatamente 4 semanas de musculação e 4 de corrida
+- Adapte os exercícios às lesões e limitações informadas
+- Se a modalidade for só musculação, deixe "run" com sessões leves de caminhada
+- Se for só corrida, deixe "gym" com exercícios funcionais leves
+- Progressão lógica entre semanas
+- Máximo 7 exercícios por treino
+- Máximo 3 sessões de corrida por semana`;
+
+  const res=await fetch('https://api.anthropic.com/v1/messages',{
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({
+      model:'claude-sonnet-4-6',
+      max_tokens:4000,
+      messages:[{role:'user',content:prompt}]
+    })
+  });
+  const data=await res.json();
+  const text=data.content.map(i=>i.text||'').join('').trim();
+  const clean=text.replace(/```json|```/g,'').trim();
+  const plan=JSON.parse(clean);
+
+  const users=DB.get('fq_users')||{};
+  if(users[email]){
+    users[email].aiPlan=plan;
+    users[email].trainApproved=true;
+    DB.set('fq_users',users);
+  }
+}
+
 function goToApp(){const email=DB.get('fq_cur');loadApp(email);show('screen-app');}
 
 // ── APP ───────────────────────────────────────────────────────────────────────
@@ -788,35 +888,45 @@ function loadApp(email){
 }
 
 // GYM
+function getGymProgram(u){
+  if(u.aiPlan&&u.aiPlan.gym)return u.aiPlan.gym;
+  return GYM_PROGRAM;
+}
+function getRunProgram(u){
+  if(u.aiPlan&&u.aiPlan.run)return u.aiPlan.run;
+  return RUN_PROGRAM;
+}
+
 function renderGym(u){
-  const weeks=Object.keys(GYM_PROGRAM);
+  const PROG=getGymProgram(u);
+  const weeks=Object.keys(PROG);
   const curWeek=`Semana ${u.gymWeek||1}`;
-  const prog=GYM_PROGRAM[curWeek];
+  const prog=PROG[curWeek]||PROG[weeks[0]];
   if(!u.trainApproved){
     document.getElementById('gym-content').innerHTML=`
-      <div class="pending-badge">⏳ Aguardando liberação do seu treino por Rennan Dias. Você será notificado assim que estiver disponível!</div>
-      <div style="background:var(--card);border:1px solid var(--border);border-radius:16px;padding:20px;text-align:center">
-        <div style="font-size:48px;margin-bottom:12px">💪</div>
-        <div style="font-size:16px;font-weight:800;margin-bottom:8px">Treino personalizado a caminho!</div>
-        <div style="font-size:13px;color:var(--muted);line-height:1.6">Rennan está analisando sua ficha de anamnese para montar o treino ideal para você. Isso garante máximos resultados com segurança.</div>
+      <div style="background:var(--card);border:1px solid var(--border);border-radius:16px;padding:24px;text-align:center">
+        <div style="font-size:48px;margin-bottom:12px">🤖</div>
+        <div style="font-size:16px;font-weight:800;margin-bottom:8px">Gerando seu treino com IA...</div>
+        <div style="font-size:13px;color:var(--muted);line-height:1.6">Aguarde enquanto a IA analisa sua ficha de anamnese e monta seu plano personalizado.</div>
+        <div style="margin-top:16px;background:var(--border);border-radius:99px;height:6px;overflow:hidden"><div style="width:60%;height:100%;background:linear-gradient(90deg,var(--accent),#a78bfa);animation:pulse 1.5s ease-in-out infinite"></div></div>
       </div>`;
     return;
   }
-  const days=Object.keys(prog.days);
+  const aiTag=u.aiPlan?'<span style="background:rgba(108,99,255,.2);border:1px solid rgba(108,99,255,.4);border-radius:6px;padding:2px 8px;font-size:10px;color:var(--accent);font-weight:700;margin-left:8px">🤖 IA</span>':'';
   let html=`
     <div style="background:linear-gradient(135deg,#1a1040,#0f0f2a);border:1px solid rgba(108,99,255,.25);border-radius:16px;padding:16px;margin-bottom:14px">
-      <div style="font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:4px">Progresso do programa</div>
-      <div style="font-size:20px;font-weight:900;color:var(--accent)">${curWeek} <span style="font-size:13px;color:var(--muted)">– ${prog.fase}</span></div>
+      <div style="font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:4px">Progresso do programa ${aiTag}</div>
+      <div style="font-size:20px;font-weight:900;color:var(--accent)">${curWeek} <span style="font-size:13px;color:var(--muted)">– ${prog.fase||prog.meta||''}</span></div>
       <div style="background:var(--border);border-radius:99px;height:6px;margin-top:10px;overflow:hidden">
-        <div style="width:${Math.round((u.gymWeek/12)*100)}%;height:100%;border-radius:99px;background:linear-gradient(90deg,var(--accent),#a78bfa)"></div>
+        <div style="width:${Math.round(((u.gymWeek||1)/weeks.length)*100)}%;height:100%;border-radius:99px;background:linear-gradient(90deg,var(--accent),#a78bfa)"></div>
       </div>
-      <div style="font-size:11px;color:var(--muted);margin-top:6px">${u.gymWeek} de 12 semanas</div>
+      <div style="font-size:11px;color:var(--muted);margin-top:6px">${u.gymWeek||1} de ${weeks.length} semanas</div>
     </div>
     <div class="week-tabs" id="gym-week-tabs">`;
   weeks.forEach(w=>{
     const wn=parseInt(w.split(' ')[1]);
-    const locked=wn>u.gymWeek;
-    const done=wn<u.gymWeek;
+    const locked=wn>(u.gymWeek||1);
+    const done=wn<(u.gymWeek||1);
     html+=`<div class="wtab ${w===curWeek?'active':''} ${locked?'locked-tab':''}" onclick="selectGymWeek('${w}',this)" style="${locked?'opacity:.4;cursor:not-allowed':''}">${done?'✅ ':locked?'🔒 ':''} ${w}</div>`;
   });
   html+=`</div><div id="gym-week-content"></div>`;
@@ -834,7 +944,8 @@ function selectGymWeek(week,el){
 }
 
 function renderGymWeek(week,u){
-  const prog=GYM_PROGRAM[week];
+  const PROG=getGymProgram(u);
+  const prog=PROG[week];
   const days=Object.keys(prog.days);
   let html=`<div class="day-tabs">`;
   days.forEach((d,i)=>{
@@ -855,7 +966,8 @@ function selectGymDay(week,day,el){
 }
 
 function renderGymDay(week,day,u){
-  const exercises=GYM_PROGRAM[week].days[day];
+  const PROG=getGymProgram(u);
+  const exercises=PROG[week].days[day];
   const doneKey=`${week}_${day}`;
   const isDone=u.gymDone&&u.gymDone[doneKey];
   let html='';
@@ -881,19 +993,20 @@ function markGymDone(week,day){
   const email=DB.get('fq_cur');
   const users=DB.get('fq_users')||{};
   const u=users[email];if(!u)return;
+  const PROG=getGymProgram(u);
   const doneKey=`${week}_${day}`;
   if(!u.gymDone)u.gymDone={};
   if(u.gymDone[doneKey])return;
   u.gymDone[doneKey]=true;
   u.stats.treinos++;
   u.xp+=80;u.coins+=15;
-  // Verifica se completou todos os treinos da semana atual
-  const prog=GYM_PROGRAM[week];
+  const prog=PROG[week];
   const allDays=Object.keys(prog.days);
+  const totalWeeks=Object.keys(PROG).length;
   const allDone=allDays.every(d=>u.gymDone[`${week}_${d}`]);
   if(allDone){
     const wn=parseInt(week.split(' ')[1]);
-    if(wn===u.gymWeek&&u.gymWeek<12){u.gymWeek++;u.xp+=200;u.coins+=50;u.stats.semanas++;}
+    if(wn===(u.gymWeek||1)&&(u.gymWeek||1)<totalWeeks){u.gymWeek=(u.gymWeek||1)+1;u.xp+=200;u.coins+=50;u.stats.semanas++;}
   }
   if(u.xp>=u.level*1000){u.level++;u.xp=0;setTimeout(()=>alert('🎉 Subiu para o Nível '+u.level+'!'),100);}
   DB.set('fq_users',users);
@@ -904,28 +1017,30 @@ function markGymDone(week,day){
 // RUN
 function renderRun(u){
   const weeks=Object.keys(RUN_PROGRAM);
+  const RUN=getRunProgram(u);
   const curWeek=`Semana ${u.runWeek||1}`;
-  const prog=RUN_PROGRAM[curWeek];
+  const prog=RUN[curWeek]||RUN[Object.keys(RUN)[0]];
   if(!u.trainApproved){
     document.getElementById('run-content').innerHTML=`
-      <div class="pending-badge">⏳ Aguardando liberação do seu treino de corrida por Rennan Dias.</div>
-      <div style="background:var(--card);border:1px solid var(--border);border-radius:16px;padding:20px;text-align:center">
-        <div style="font-size:48px;margin-bottom:12px">🏃</div>
-        <div style="font-size:16px;font-weight:800;margin-bottom:8px">Programa de corrida a caminho!</div>
-        <div style="font-size:13px;color:var(--muted);line-height:1.6">12 semanas de progressão do zero até 10km+ esperando por você.</div>
+      <div style="background:var(--card);border:1px solid var(--border);border-radius:16px;padding:24px;text-align:center">
+        <div style="font-size:48px;margin-bottom:12px">🤖</div>
+        <div style="font-size:16px;font-weight:800;margin-bottom:8px">Gerando seu programa de corrida...</div>
+        <div style="font-size:13px;color:var(--muted);line-height:1.6">A IA está montando seu plano de corrida personalizado com base na sua ficha.</div>
       </div>`;
     return;
   }
+  const totalWeeks=Object.keys(RUN).length;
+  const aiTag=u.aiPlan?'🤖 ':'';
   let html=`
     <div class="run-week">
-      <div class="run-week-title">🏃 ${curWeek} – ${prog.meta}</div>
-      <div class="run-week-sub">Programa 12 semanas · Você está na semana ${u.runWeek||1} de 12</div>
+      <div class="run-week-title">🏃 ${aiTag}${curWeek} – ${prog.meta}</div>
+      <div class="run-week-sub">Programa ${totalWeeks} semanas · Semana ${u.runWeek||1} de ${totalWeeks}</div>
       <div style="background:rgba(255,107,53,.2);border-radius:99px;height:6px;margin-top:10px;overflow:hidden">
-        <div style="width:${Math.round(((u.runWeek||1)/12)*100)}%;height:100%;border-radius:99px;background:var(--orange)"></div>
+        <div style="width:${Math.round(((u.runWeek||1)/totalWeeks)*100)}%;height:100%;border-radius:99px;background:var(--orange)"></div>
       </div>
     </div>
     <div class="week-tabs" id="run-week-tabs">`;
-  weeks.forEach(w=>{
+  Object.keys(RUN).forEach(w=>{
     const wn=parseInt(w.split(' ')[1]);
     const locked=wn>(u.runWeek||1);
     const done=wn<(u.runWeek||1);
@@ -946,7 +1061,8 @@ function selectRunWeek(week,el){
 }
 
 function renderRunWeek(week,u){
-  const prog=RUN_PROGRAM[week];
+  const RUN=getRunProgram(u);
+  const prog=RUN[week];
   let html='';
   prog.sessions.forEach((s,i)=>{
     const doneKey=`run_${week}_${i}`;
@@ -972,18 +1088,19 @@ function markRunDone(week,idx){
   const email=DB.get('fq_cur');
   const users=DB.get('fq_users')||{};
   const u=users[email];if(!u)return;
+  const RUN=getRunProgram(u);
   const doneKey=`run_${week}_${idx}`;
   if(!u.runDone)u.runDone={};
   if(u.runDone[doneKey])return;
   u.runDone[doneKey]=true;
-  const s=RUN_PROGRAM[week].sessions[idx];
+  const s=RUN[week].sessions[idx];
   const km=parseFloat(s.dist);
   if(!isNaN(km))u.stats.distancia=Math.round((u.stats.distancia+km)*10)/10;
   u.xp+=60;u.coins+=10;
-  // Verifica se completou todas as sessões da semana
-  const total=RUN_PROGRAM[week].sessions.length;
+  const total=RUN[week].sessions.length;
+  const totalRunWeeks=Object.keys(RUN).length;
   const allDone=[...Array(total).keys()].every(i=>u.runDone[`run_${week}_${i}`]);
-  if(allDone){const wn=parseInt(week.split(' ')[1]);if(wn===u.runWeek&&u.runWeek<12){u.runWeek++;u.xp+=150;u.coins+=30;}}
+  if(allDone){const wn=parseInt(week.split(' ')[1]);if(wn===(u.runWeek||1)&&(u.runWeek||1)<totalRunWeeks){u.runWeek=(u.runWeek||1)+1;u.xp+=150;u.coins+=30;}}
   if(u.xp>=u.level*1000){u.level++;u.xp=0;setTimeout(()=>alert('🎉 Subiu para o Nível '+u.level+'!'),100);}
   DB.set('fq_users',users);
   loadApp(email);
