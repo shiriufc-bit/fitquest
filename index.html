@@ -5,966 +5,440 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>FitQuest – Rennan Dias Assessoria</title>
 <style>
-  :root {
-    --bg: #0a0a0f;
-    --surface: #13131f;
-    --card: #1a1a2e;
-    --accent: #6c63ff;
-    --accent-glow: rgba(108,99,255,.25);
-    --orange: #ff6b35;
-    --green: #00d68f;
-    --yellow: #ffd60a;
-    --text: #e8e8f0;
-    --muted: #6b6b8a;
-    --border: #2a2a40;
-  }
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  body {
-    background: var(--bg);
-    color: var(--text);
-    font-family: 'Inter', system-ui, -apple-system, sans-serif;
-    min-height: 100vh;
-  }
-
-  /* ── SCREENS ── */
-  .screen { display: none; }
-  .screen.active { display: block; }
-
-  /* ── AUTH SCREEN ── */
-  #screen-auth {
-    min-height: 100vh;
-    display: none;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    padding: 24px 20px;
-    background: radial-gradient(ellipse at 50% 0%, rgba(108,99,255,.18) 0%, transparent 70%), var(--bg);
-  }
-  #screen-auth.active { display: flex; }
-
-  .auth-logo {
-    font-size: 32px;
-    font-weight: 900;
-    letter-spacing: -1px;
-    margin-bottom: 4px;
-  }
-  .auth-logo span.accent { color: var(--accent); }
-  .auth-sub {
-    font-size: 11px;
-    color: var(--muted);
-    letter-spacing: 3px;
-    text-transform: uppercase;
-    margin-bottom: 36px;
-  }
-  .auth-card {
-    width: 100%;
-    max-width: 400px;
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: 20px;
-    padding: 28px 24px;
-  }
-  .auth-tabs {
-    display: flex;
-    background: var(--surface);
-    border-radius: 12px;
-    padding: 4px;
-    margin-bottom: 24px;
-  }
-  .auth-tab {
-    flex: 1;
-    padding: 10px;
-    border: none;
-    background: transparent;
-    color: var(--muted);
-    font-size: 13px;
-    font-weight: 700;
-    border-radius: 9px;
-    cursor: pointer;
-    transition: all .2s;
-  }
-  .auth-tab.active {
-    background: var(--accent);
-    color: #fff;
-    box-shadow: 0 2px 12px var(--accent-glow);
-  }
-  .form-group { margin-bottom: 16px; }
-  .form-label {
-    display: block;
-    font-size: 11px;
-    font-weight: 700;
-    color: var(--muted);
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    margin-bottom: 6px;
-  }
-  .form-input {
-    width: 100%;
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    padding: 12px 14px;
-    color: var(--text);
-    font-size: 14px;
-    outline: none;
-    transition: border-color .2s;
-  }
-  .form-input:focus { border-color: var(--accent); }
-  .form-input::placeholder { color: var(--muted); }
-  .btn-primary {
-    width: 100%;
-    padding: 14px;
-    background: linear-gradient(135deg, var(--accent), #a78bfa);
-    border: none;
-    border-radius: 12px;
-    color: #fff;
-    font-size: 15px;
-    font-weight: 800;
-    cursor: pointer;
-    margin-top: 4px;
-    box-shadow: 0 4px 20px var(--accent-glow);
-    transition: opacity .2s;
-  }
-  .btn-primary:hover { opacity: .9; }
-  .auth-error {
-    background: rgba(255,80,80,.12);
-    border: 1px solid rgba(255,80,80,.3);
-    border-radius: 10px;
-    padding: 10px 14px;
-    font-size: 13px;
-    color: #ff6b6b;
-    margin-bottom: 14px;
-    display: none;
-  }
-
-  /* ── ANAMNESE SCREEN ── */
-  #screen-anamnese {
-    min-height: 100vh;
-    padding: 0 0 60px;
-    display: none;
-  }
-  #screen-anamnese.active { display: block; }
-
-  .anam-header {
-    background: linear-gradient(135deg, #1a1040, #0f0f2a);
-    border-bottom: 1px solid var(--border);
-    padding: 24px 20px 20px;
-    text-align: center;
-  }
-  .anam-header h1 { font-size: 22px; font-weight: 900; margin-bottom: 4px; }
-  .anam-header p { font-size: 13px; color: var(--muted); }
-  .anam-progress-wrap { padding: 16px 20px 0; }
-  .anam-step-label {
-    display: flex;
-    justify-content: space-between;
-    font-size: 11px;
-    color: var(--muted);
-    margin-bottom: 8px;
-    font-weight: 600;
-  }
-  .progress-bar-bg {
-    background: var(--border);
-    border-radius: 99px;
-    height: 6px;
-    overflow: hidden;
-  }
-  .progress-bar-fill {
-    height: 100%;
-    border-radius: 99px;
-    background: linear-gradient(90deg, var(--accent), #a78bfa);
-    transition: width .4s ease;
-  }
-
-  .anam-section {
-    margin: 20px 16px 0;
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: 16px;
-    padding: 20px;
-  }
-  .anam-section-title {
-    font-size: 13px;
-    font-weight: 800;
-    color: var(--accent);
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    margin-bottom: 16px;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-  }
-  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-  select.form-input { appearance: none; cursor: pointer; }
-  textarea.form-input { resize: vertical; min-height: 80px; }
-
-  .radio-group { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 6px; }
-  .radio-option {
-    flex: 1;
-    min-width: 80px;
-    text-align: center;
-    padding: 9px 10px;
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    font-size: 12px;
-    font-weight: 600;
-    color: var(--muted);
-    cursor: pointer;
-    transition: all .2s;
-    user-select: none;
-  }
-  .radio-option input { display: none; }
-  .radio-option.selected {
-    background: rgba(108,99,255,.15);
-    border-color: var(--accent);
-    color: var(--accent);
-  }
-
-  .checkbox-group { display: flex; flex-direction: column; gap: 8px; margin-top: 6px; }
-  .checkbox-option {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    padding: 10px 12px;
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    cursor: pointer;
-    font-size: 13px;
-    color: var(--text);
-    transition: all .2s;
-    user-select: none;
-  }
-  .checkbox-option.selected {
-    background: rgba(108,99,255,.12);
-    border-color: var(--accent);
-  }
-  .checkbox-option input { display: none; }
-  .check-box {
-    width: 18px; height: 18px;
-    border-radius: 5px;
-    border: 2px solid var(--border);
-    background: var(--card);
-    display: flex; align-items: center; justify-content: center;
-    flex-shrink: 0;
-    transition: all .2s;
-    font-size: 11px;
-  }
-  .checkbox-option.selected .check-box {
-    background: var(--accent);
-    border-color: var(--accent);
-    color: #fff;
-  }
-
-  .anam-nav {
-    position: fixed;
-    bottom: 0; left: 0; right: 0;
-    background: var(--surface);
-    border-top: 1px solid var(--border);
-    padding: 12px 20px 20px;
-    display: flex;
-    gap: 12px;
-  }
-  .btn-back {
-    flex: 1;
-    padding: 14px;
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    color: var(--text);
-    font-size: 14px;
-    font-weight: 700;
-    cursor: pointer;
-    transition: opacity .2s;
-  }
-  .btn-next {
-    flex: 2;
-    padding: 14px;
-    background: linear-gradient(135deg, var(--accent), #a78bfa);
-    border: none;
-    border-radius: 12px;
-    color: #fff;
-    font-size: 14px;
-    font-weight: 800;
-    cursor: pointer;
-    box-shadow: 0 4px 16px var(--accent-glow);
-    transition: opacity .2s;
-  }
-  .btn-back:hover, .btn-next:hover { opacity: .85; }
-
-  /* ── APP SCREEN ── */
-  #screen-app { display: none; flex-direction: column; min-height: 100vh; }
-  #screen-app.active { display: flex; }
-
-  .app-header {
-    background: var(--bg);
-    border-bottom: 1px solid var(--border);
-    padding: 14px 20px 12px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    position: sticky;
-    top: 0;
-    z-index: 10;
-  }
-  .app-logo { font-size: 19px; font-weight: 900; letter-spacing: -0.5px; }
-  .app-logo .accent { color: var(--accent); }
-  .streak-chip {
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    padding: 6px 12px;
-    font-size: 13px;
-    font-weight: 800;
-    color: var(--orange);
-  }
-
-  .app-content {
-    flex: 1;
-    overflow-y: auto;
-    padding: 16px 16px 90px;
-    max-width: 500px;
-    width: 100%;
-    margin: 0 auto;
-  }
-
-  /* hero card */
-  .hero-card {
-    background: linear-gradient(135deg, #1a1040 0%, #0f0f2a 100%);
-    border: 1px solid rgba(108,99,255,.3);
-    border-radius: 20px;
-    padding: 20px;
-    margin-bottom: 14px;
-    box-shadow: 0 0 40px var(--accent-glow);
-  }
-  .hero-top { display: flex; align-items: center; gap: 14px; margin-bottom: 16px; }
-  .hero-avatar {
-    width: 52px; height: 52px;
-    border-radius: 14px;
-    background: linear-gradient(135deg, var(--accent), #a78bfa);
-    display: flex; align-items: center; justify-content: center;
-    font-size: 26px;
-    box-shadow: 0 4px 20px var(--accent-glow);
-    flex-shrink: 0;
-  }
-  .hero-info { flex: 1; }
-  .hero-greeting { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 2px; }
-  .hero-name { font-size: 18px; font-weight: 900; }
-  .hero-badges { display: flex; gap: 8px; margin-top: 4px; }
-  .hero-badge { font-size: 11px; font-weight: 700; }
-  .hero-coins { text-align: center; }
-  .hero-coins .coins-val { font-size: 20px; font-weight: 900; color: var(--yellow); }
-  .hero-coins .coins-lbl { font-size: 10px; color: var(--muted); }
-
-  .xp-labels { display: flex; justify-content: space-between; font-size: 11px; color: var(--muted); margin-bottom: 4px; }
-  .xp-bg { background: var(--border); border-radius: 99px; height: 8px; overflow: hidden; }
-  .xp-fill {
-    height: 100%;
-    border-radius: 99px;
-    background: linear-gradient(90deg, var(--accent), #a78bfa);
-    box-shadow: 0 0 12px var(--accent-glow);
-    transition: width .8s cubic-bezier(.4,0,.2,1);
-  }
-
-  /* stats grid */
-  .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 14px; }
-  .stat-chip {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 14px;
-    padding: 14px;
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-  }
-  .stat-icon { font-size: 20px; }
-  .stat-val { font-size: 22px; font-weight: 900; letter-spacing: -0.5px; }
-  .stat-lbl { font-size: 11px; color: var(--muted); font-weight: 500; }
-
-  /* section title */
-  .section-title {
-    font-size: 11px;
-    font-weight: 800;
-    color: var(--muted);
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    margin-bottom: 10px;
-  }
-
-  /* missions */
-  .mission-card {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 14px;
-    padding: 14px;
-    margin-bottom: 8px;
-  }
-  .mission-card.done {
-    background: rgba(0,214,143,.07);
-    border-color: rgba(0,214,143,.3);
-  }
-  .mission-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px; }
-  .mission-left { display: flex; gap: 8px; align-items: center; }
-  .mission-info-title { font-size: 13px; font-weight: 700; }
-  .mission-info-sub { font-size: 11px; color: var(--muted); margin-top: 2px; }
-  .mission-xp-chip {
-    border-radius: 8px;
-    padding: 3px 8px;
-    font-size: 11px;
-    font-weight: 800;
-    flex-shrink: 0;
-  }
-  .mission-bar-bg { background: var(--border); border-radius: 99px; height: 6px; overflow: hidden; }
-  .mission-bar-fill { height: 100%; border-radius: 99px; }
-
-  /* badges */
-  .badges-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-  .badge-card {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 14px;
-    padding: 14px;
-    text-align: center;
-  }
-  .badge-card.earned {
-    background: rgba(255,214,10,.08);
-    border-color: rgba(255,214,10,.35);
-  }
-  .badge-icon { font-size: 32px; margin-bottom: 6px; }
-  .badge-name { font-size: 12px; font-weight: 700; }
-  .badge-card.locked { opacity: .45; }
-  .badge-card.locked .badge-icon { filter: grayscale(1); }
-
-  /* ranking */
-  .ranking-hero {
-    background: linear-gradient(135deg, #1a1040, #0f0f2a);
-    border: 1px solid rgba(108,99,255,.25);
-    border-radius: 16px;
-    padding: 16px;
-    text-align: center;
-    margin-bottom: 14px;
-  }
-  .ranking-hero .pos { font-size: 40px; font-weight: 900; color: var(--accent); }
-  .ranking-row {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 14px;
-    padding: 12px 14px;
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    margin-bottom: 8px;
-  }
-  .ranking-row.me {
-    background: rgba(108,99,255,.12);
-    border-color: rgba(108,99,255,.4);
-  }
-  .rank-pos { width: 28px; text-align: center; font-size: 18px; font-weight: 800; color: var(--yellow); }
-  .rank-pos.num { font-size: 14px; color: var(--muted); }
-  .rank-av {
-    width: 38px; height: 38px;
-    border-radius: 10px;
-    background: var(--card);
-    display: flex; align-items: center; justify-content: center;
-    font-size: 20px;
-    border: 1px solid var(--border);
-    flex-shrink: 0;
-  }
-  .rank-av.me { background: linear-gradient(135deg, var(--accent), #a78bfa); border-color: var(--accent); }
-  .rank-info { flex: 1; }
-  .rank-name { font-size: 13px; font-weight: 700; }
-  .rank-name.me { color: var(--accent); }
-  .rank-level { font-size: 11px; color: var(--muted); }
-  .rank-xp { font-size: 13px; font-weight: 800; }
-
-  /* prs */
-  .pr-card {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 14px;
-    padding: 14px 16px;
-    display: flex;
-    align-items: center;
-    gap: 14px;
-    margin-bottom: 10px;
-  }
-  .pr-icon-wrap {
-    width: 44px; height: 44px;
-    border-radius: 12px;
-    background: rgba(255,214,10,.1);
-    border: 1px solid rgba(255,214,10,.3);
-    display: flex; align-items: center; justify-content: center;
-    font-size: 22px;
-    flex-shrink: 0;
-  }
-  .pr-info { flex: 1; }
-  .pr-exercise { font-size: 13px; font-weight: 700; }
-  .pr-date { font-size: 11px; color: var(--muted); margin-top: 2px; }
-  .pr-value {
-    background: rgba(255,214,10,.12);
-    border: 1px solid rgba(255,214,10,.35);
-    border-radius: 10px;
-    padding: 6px 12px;
-    font-size: 16px;
-    font-weight: 900;
-    color: var(--yellow);
-  }
-
-  /* bottom nav */
-  .bottom-nav {
-    position: fixed;
-    bottom: 0; left: 0; right: 0;
-    background: var(--surface);
-    border-top: 1px solid var(--border);
-    display: flex;
-    padding: 8px 4px 18px;
-    z-index: 10;
-  }
-  .nav-btn {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 3px;
-    border: none;
-    background: transparent;
-    cursor: pointer;
-    padding: 6px 4px;
-  }
-  .nav-icon { font-size: 20px; }
-  .nav-lbl { font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: .5px; color: var(--muted); }
-  .nav-dot { width: 4px; height: 4px; border-radius: 50%; background: var(--accent); margin-top: -2px; opacity: 0; }
-  .nav-btn.active .nav-lbl { color: var(--accent); }
-  .nav-btn.active .nav-dot { opacity: 1; }
-
-  /* tab panels */
-  .tab-panel { display: none; }
-  .tab-panel.active { display: block; }
-
-  /* log workout */
-  .log-card {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 14px;
-    padding: 14px;
-    text-align: center;
-    margin-top: 10px;
-  }
-  .log-card p { font-size: 13px; color: var(--muted); margin-bottom: 10px; }
-
-  /* success screen */
-  #screen-success {
-    display: none;
-    min-height: 100vh;
-    align-items: center;
-    justify-content: center;
-    flex-direction: column;
-    padding: 40px 24px;
-    text-align: center;
-    background: radial-gradient(ellipse at 50% 40%, rgba(0,214,143,.12) 0%, transparent 70%), var(--bg);
-  }
-  #screen-success.active { display: flex; }
-  .success-icon { font-size: 72px; margin-bottom: 20px; animation: pop .4s ease; }
-  @keyframes pop { 0% { transform: scale(.5); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
-  .success-title { font-size: 26px; font-weight: 900; margin-bottom: 10px; }
-  .success-sub { font-size: 14px; color: var(--muted); line-height: 1.6; margin-bottom: 32px; max-width: 300px; }
-
-  /* responsive */
-  @media (max-width: 380px) {
-    .form-row { grid-template-columns: 1fr; }
-    .stats-grid { grid-template-columns: 1fr 1fr; }
-  }
+:root{--bg:#0a0a0f;--surface:#13131f;--card:#1a1a2e;--accent:#6c63ff;--ag:rgba(108,99,255,.25);--orange:#ff6b35;--green:#00d68f;--yellow:#ffd60a;--text:#e8e8f0;--muted:#6b6b8a;--border:#2a2a40;}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:var(--bg);color:var(--text);font-family:'Inter',system-ui,sans-serif;min-height:100vh;}
+.screen{display:none;}.screen.active{display:block;}
+#screen-auth{min-height:100vh;display:none;flex-direction:column;align-items:center;justify-content:center;padding:24px 20px;background:radial-gradient(ellipse at 50% 0%,rgba(108,99,255,.18),transparent 70%),var(--bg);}
+#screen-auth.active{display:flex;}
+.auth-logo{font-size:32px;font-weight:900;letter-spacing:-1px;margin-bottom:4px;}
+.auth-logo .ac{color:var(--accent);}
+.auth-sub{font-size:11px;color:var(--muted);letter-spacing:3px;text-transform:uppercase;margin-bottom:36px;}
+.auth-card{width:100%;max-width:400px;background:var(--card);border:1px solid var(--border);border-radius:20px;padding:28px 24px;}
+.auth-tabs{display:flex;background:var(--surface);border-radius:12px;padding:4px;margin-bottom:24px;}
+.auth-tab{flex:1;padding:10px;border:none;background:transparent;color:var(--muted);font-size:13px;font-weight:700;border-radius:9px;cursor:pointer;transition:all .2s;}
+.auth-tab.active{background:var(--accent);color:#fff;box-shadow:0 2px 12px var(--ag);}
+.fg{margin-bottom:16px;}
+.fl{display:block;font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px;}
+.fi{width:100%;background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:12px 14px;color:var(--text);font-size:14px;outline:none;transition:border-color .2s;}
+.fi:focus{border-color:var(--accent);}
+.fi::placeholder{color:var(--muted);}
+.btn-p{width:100%;padding:14px;background:linear-gradient(135deg,var(--accent),#a78bfa);border:none;border-radius:12px;color:#fff;font-size:15px;font-weight:800;cursor:pointer;margin-top:4px;box-shadow:0 4px 20px var(--ag);transition:opacity .2s;}
+.btn-p:hover{opacity:.9;}
+.aerr{background:rgba(255,80,80,.12);border:1px solid rgba(255,80,80,.3);border-radius:10px;padding:10px 14px;font-size:13px;color:#ff6b6b;margin-bottom:14px;display:none;}
+/* ANAMNESE */
+#screen-anamnese{min-height:100vh;padding:0 0 80px;display:none;}
+#screen-anamnese.active{display:block;}
+.anam-hdr{background:linear-gradient(135deg,#1a1040,#0f0f2a);border-bottom:1px solid var(--border);padding:24px 20px 20px;text-align:center;}
+.anam-hdr h1{font-size:22px;font-weight:900;margin-bottom:4px;}
+.anam-hdr p{font-size:13px;color:var(--muted);}
+.apw{padding:16px 20px 0;}
+.asl{display:flex;justify-content:space-between;font-size:11px;color:var(--muted);margin-bottom:8px;font-weight:600;}
+.pbb{background:var(--border);border-radius:99px;height:6px;overflow:hidden;}
+.pbf{height:100%;border-radius:99px;background:linear-gradient(90deg,var(--accent),#a78bfa);transition:width .4s ease;}
+.asec{margin:20px 16px 0;background:var(--card);border:1px solid var(--border);border-radius:16px;padding:20px;}
+.asect{font-size:13px;font-weight:800;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin-bottom:16px;}
+.fr{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+select.fi{appearance:none;cursor:pointer;}
+textarea.fi{resize:vertical;min-height:80px;}
+.rg{display:flex;flex-wrap:wrap;gap:8px;margin-top:6px;}
+.ro{flex:1;min-width:80px;text-align:center;padding:9px 10px;background:var(--surface);border:1px solid var(--border);border-radius:10px;font-size:12px;font-weight:600;color:var(--muted);cursor:pointer;transition:all .2s;user-select:none;}
+.ro input{display:none;}
+.ro.sel{background:rgba(108,99,255,.15);border-color:var(--accent);color:var(--accent);}
+.cg{display:flex;flex-direction:column;gap:8px;margin-top:6px;}
+.co{display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--surface);border:1px solid var(--border);border-radius:10px;cursor:pointer;font-size:13px;color:var(--text);transition:all .2s;user-select:none;}
+.co.sel{background:rgba(108,99,255,.12);border-color:var(--accent);}
+.co input{display:none;}
+.cb{width:18px;height:18px;border-radius:5px;border:2px solid var(--border);background:var(--card);display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .2s;font-size:11px;}
+.co.sel .cb{background:var(--accent);border-color:var(--accent);color:#fff;}
+.anam-nav{position:fixed;bottom:0;left:0;right:0;background:var(--surface);border-top:1px solid var(--border);padding:12px 20px 20px;display:flex;gap:12px;}
+.btn-back{flex:1;padding:14px;background:var(--card);border:1px solid var(--border);border-radius:12px;color:var(--text);font-size:14px;font-weight:700;cursor:pointer;}
+.btn-nxt{flex:2;padding:14px;background:linear-gradient(135deg,var(--accent),#a78bfa);border:none;border-radius:12px;color:#fff;font-size:14px;font-weight:800;cursor:pointer;box-shadow:0 4px 16px var(--ag);}
+/* SUCCESS */
+#screen-success{display:none;min-height:100vh;align-items:center;justify-content:center;flex-direction:column;padding:40px 24px;text-align:center;background:radial-gradient(ellipse at 50% 40%,rgba(0,214,143,.12),transparent 70%),var(--bg);}
+#screen-success.active{display:flex;}
+.sico{font-size:72px;margin-bottom:20px;animation:pop .4s ease;}
+@keyframes pop{0%{transform:scale(.5);opacity:0;}100%{transform:scale(1);opacity:1;}}
+.stit{font-size:26px;font-weight:900;margin-bottom:10px;}
+.ssub{font-size:14px;color:var(--muted);line-height:1.6;margin-bottom:32px;max-width:300px;}
+/* APP */
+#screen-app{display:none;flex-direction:column;min-height:100vh;}
+#screen-app.active{display:flex;}
+.app-hdr{background:var(--bg);border-bottom:1px solid var(--border);padding:14px 20px 12px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:10;}
+.app-logo{font-size:19px;font-weight:900;letter-spacing:-.5px;}
+.app-logo .ac{color:var(--accent);}
+.sc{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:6px 12px;font-size:13px;font-weight:800;color:var(--orange);}
+.app-content{flex:1;overflow-y:auto;padding:16px 16px 90px;max-width:500px;width:100%;margin:0 auto;}
+.hcard{background:linear-gradient(135deg,#1a1040,#0f0f2a);border:1px solid rgba(108,99,255,.3);border-radius:20px;padding:20px;margin-bottom:14px;box-shadow:0 0 40px var(--ag);}
+.htop{display:flex;align-items:center;gap:14px;margin-bottom:16px;}
+.hav{width:52px;height:52px;border-radius:14px;background:linear-gradient(135deg,var(--accent),#a78bfa);display:flex;align-items:center;justify-content:center;font-size:26px;box-shadow:0 4px 20px var(--ag);flex-shrink:0;}
+.hi{flex:1;}
+.hg{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:2px;}
+.hn{font-size:18px;font-weight:900;}
+.hb{display:flex;gap:8px;margin-top:4px;}
+.hbg{font-size:11px;font-weight:700;}
+.hco{text-align:center;}
+.hcv{font-size:20px;font-weight:900;color:var(--yellow);}
+.hcl{font-size:10px;color:var(--muted);}
+.xpl{display:flex;justify-content:space-between;font-size:11px;color:var(--muted);margin-bottom:4px;}
+.xpb{background:var(--border);border-radius:99px;height:8px;overflow:hidden;}
+.xpf{height:100%;border-radius:99px;background:linear-gradient(90deg,var(--accent),#a78bfa);box-shadow:0 0 12px var(--ag);transition:width .8s cubic-bezier(.4,0,.2,1);}
+.sg{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px;}
+.sc2{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:14px;display:flex;flex-direction:column;gap:4px;}
+.si{font-size:20px;}
+.sv{font-size:22px;font-weight:900;letter-spacing:-.5px;}
+.sl{font-size:11px;color:var(--muted);font-weight:500;}
+.stl{font-size:11px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px;}
+/* MISSIONS */
+.mc{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:14px;margin-bottom:8px;}
+.mc.done{background:rgba(0,214,143,.07);border-color:rgba(0,214,143,.3);}
+.mt{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px;}
+.ml{display:flex;gap:8px;align-items:center;}
+.mit{font-size:13px;font-weight:700;}
+.mis{font-size:11px;color:var(--muted);margin-top:2px;}
+.mxc{border-radius:8px;padding:3px 8px;font-size:11px;font-weight:800;flex-shrink:0;}
+.mbb{background:var(--border);border-radius:99px;height:6px;overflow:hidden;}
+.mbf{height:100%;border-radius:99px;}
+/* BADGES */
+.bgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.bcard{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:14px;text-align:center;}
+.bcard.earned{background:rgba(255,214,10,.08);border-color:rgba(255,214,10,.35);}
+.bico{font-size:32px;margin-bottom:6px;}
+.bnm{font-size:12px;font-weight:700;}
+.bcard.locked{opacity:.45;}
+.bcard.locked .bico{filter:grayscale(1);}
+/* RANKING */
+.rkhero{background:linear-gradient(135deg,#1a1040,#0f0f2a);border:1px solid rgba(108,99,255,.25);border-radius:16px;padding:16px;text-align:center;margin-bottom:14px;}
+.rkhero .pos{font-size:40px;font-weight:900;color:var(--accent);}
+.rkrow{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:12px 14px;display:flex;align-items:center;gap:12px;margin-bottom:8px;}
+.rkrow.me{background:rgba(108,99,255,.12);border-color:rgba(108,99,255,.4);}
+.rp{width:28px;text-align:center;font-size:18px;font-weight:800;color:var(--yellow);}
+.rp.num{font-size:14px;color:var(--muted);}
+.rav{width:38px;height:38px;border-radius:10px;background:var(--card);display:flex;align-items:center;justify-content:center;font-size:20px;border:1px solid var(--border);flex-shrink:0;}
+.rav.me{background:linear-gradient(135deg,var(--accent),#a78bfa);border-color:var(--accent);}
+.ri{flex:1;}
+.rn{font-size:13px;font-weight:700;}
+.rn.me{color:var(--accent);}
+.rlv{font-size:11px;color:var(--muted);}
+/* PR */
+.prc{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:14px 16px;display:flex;align-items:center;gap:14px;margin-bottom:10px;}
+.priw{width:44px;height:44px;border-radius:12px;background:rgba(255,214,10,.1);border:1px solid rgba(255,214,10,.3);display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;}
+.pri{flex:1;}
+.pre{font-size:13px;font-weight:700;}
+.prd{font-size:11px;color:var(--muted);margin-top:2px;}
+.prv{background:rgba(255,214,10,.12);border:1px solid rgba(255,214,10,.35);border-radius:10px;padding:6px 12px;font-size:16px;font-weight:900;color:var(--yellow);}
+/* TREINOS */
+.week-tabs{display:flex;gap:6px;overflow-x:auto;padding-bottom:8px;margin-bottom:14px;scrollbar-width:none;}
+.week-tabs::-webkit-scrollbar{display:none;}
+.wtab{flex-shrink:0;padding:8px 14px;background:var(--surface);border:1px solid var(--border);border-radius:10px;font-size:12px;font-weight:700;color:var(--muted);cursor:pointer;white-space:nowrap;transition:all .2s;}
+.wtab.active{background:var(--accent);border-color:var(--accent);color:#fff;}
+.day-tabs{display:flex;gap:6px;margin-bottom:14px;overflow-x:auto;scrollbar-width:none;}
+.day-tabs::-webkit-scrollbar{display:none;}
+.dtab{flex-shrink:0;padding:7px 12px;background:var(--surface);border:1px solid var(--border);border-radius:8px;font-size:11px;font-weight:700;color:var(--muted);cursor:pointer;transition:all .2s;}
+.dtab.active{background:rgba(108,99,255,.2);border-color:var(--accent);color:var(--accent);}
+.dtab.done{background:rgba(0,214,143,.1);border-color:rgba(0,214,143,.4);color:var(--green);}
+.excard{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:14px;margin-bottom:10px;}
+.exhead{display:flex;align-items:center;gap:10px;margin-bottom:10px;}
+.exnum{width:28px;height:28px;border-radius:8px;background:var(--accent);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:900;color:#fff;flex-shrink:0;}
+.exnm{font-size:14px;font-weight:800;}
+.exmu{font-size:11px;color:var(--muted);margin-top:2px;}
+.sets-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:10px;}
+.set-chip{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:8px;text-align:center;}
+.set-lbl{font-size:10px;color:var(--muted);margin-bottom:3px;}
+.set-val{font-size:15px;font-weight:900;}
+.ex-obs{font-size:11px;color:var(--muted);background:var(--surface);border-radius:8px;padding:8px 10px;line-height:1.5;}
+.btn-done{width:100%;padding:11px;background:rgba(0,214,143,.12);border:1px solid rgba(0,214,143,.3);border-radius:10px;color:var(--green);font-size:13px;font-weight:800;cursor:pointer;margin-top:10px;transition:all .2s;}
+.btn-done.marked{background:rgba(0,214,143,.25);border-color:var(--green);}
+/* CORRIDA */
+.run-week{background:linear-gradient(135deg,#1a1040,#0f0f2a);border:1px solid rgba(255,107,53,.25);border-radius:16px;padding:16px;margin-bottom:14px;}
+.run-week-title{font-size:14px;font-weight:900;color:var(--orange);margin-bottom:4px;}
+.run-week-sub{font-size:12px;color:var(--muted);}
+.run-session{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:14px;margin-bottom:10px;}
+.rs-head{display:flex;align-items:center;gap:10px;margin-bottom:12px;}
+.rs-ico{width:36px;height:36px;border-radius:10px;background:rgba(255,107,53,.15);border:1px solid rgba(255,107,53,.3);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;}
+.rs-title{font-size:13px;font-weight:800;}
+.rs-sub{font-size:11px;color:var(--muted);margin-top:2px;}
+.run-metrics{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:10px;}
+.rm{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:8px;text-align:center;}
+.rm-lbl{font-size:10px;color:var(--muted);margin-bottom:3px;}
+.rm-val{font-size:14px;font-weight:900;color:var(--orange);}
+.run-tip{font-size:11px;color:var(--muted);background:var(--surface);border-radius:8px;padding:8px 10px;line-height:1.5;}
+/* PENDING */
+.pending-badge{background:rgba(255,107,53,.15);border:1px solid rgba(255,107,53,.35);border-radius:10px;padding:12px 14px;font-size:13px;color:var(--orange);font-weight:600;text-align:center;margin-bottom:14px;}
+/* NAV */
+.bnav{position:fixed;bottom:0;left:0;right:0;background:var(--surface);border-top:1px solid var(--border);display:flex;padding:8px 2px 18px;z-index:10;}
+.nbtn{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;border:none;background:transparent;cursor:pointer;padding:6px 2px;}
+.nico{font-size:18px;}
+.nlbl{font-size:8px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--muted);}
+.ndot{width:4px;height:4px;border-radius:50%;background:var(--accent);margin-top:-2px;opacity:0;}
+.nbtn.active .nlbl{color:var(--accent);}
+.nbtn.active .ndot{opacity:1;}
+.tab-panel{display:none;}
+.tab-panel.active{display:block;}
+.lcard{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:14px;text-align:center;margin-top:10px;}
+.lcard p{font-size:13px;color:var(--muted);margin-bottom:10px;}
+@media(max-width:380px){.fr{grid-template-columns:1fr;}}
 </style>
 </head>
 <body>
 
-<!-- ══ AUTH SCREEN ══════════════════════════════════════════════════════════ -->
+<!-- AUTH -->
 <div id="screen-auth" class="screen active">
-  <div class="auth-logo"><span class="accent">FIT</span>QUEST</div>
+  <div class="auth-logo"><span class="ac">FIT</span>QUEST</div>
   <div class="auth-sub">Rennan Dias Assessoria</div>
-
   <div class="auth-card">
     <div class="auth-tabs">
       <button class="auth-tab active" onclick="switchAuth('login')">Entrar</button>
       <button class="auth-tab" onclick="switchAuth('register')">Criar conta</button>
     </div>
-
-    <div id="auth-error" class="auth-error"></div>
-
-    <!-- LOGIN -->
+    <div id="auth-error" class="aerr"></div>
     <div id="form-login">
-      <div class="form-group">
-        <label class="form-label">E-mail</label>
-        <input id="login-email" class="form-input" type="email" placeholder="seu@email.com"/>
-      </div>
-      <div class="form-group">
-        <label class="form-label">Senha</label>
-        <input id="login-pass" class="form-input" type="password" placeholder="••••••••"/>
-      </div>
-      <button class="btn-primary" onclick="doLogin()">Entrar no FitQuest</button>
+      <div class="fg"><label class="fl">E-mail</label><input id="login-email" class="fi" type="email" placeholder="seu@email.com"/></div>
+      <div class="fg"><label class="fl">Senha</label><input id="login-pass" class="fi" type="password" placeholder="••••••••"/></div>
+      <button class="btn-p" onclick="doLogin()">Entrar no FitQuest</button>
     </div>
-
-    <!-- REGISTER -->
-    <div id="form-register" style="display:none;">
-      <div class="form-group">
-        <label class="form-label">Nome completo</label>
-        <input id="reg-name" class="form-input" type="text" placeholder="Seu nome"/>
-      </div>
-      <div class="form-group">
-        <label class="form-label">E-mail</label>
-        <input id="reg-email" class="form-input" type="email" placeholder="seu@email.com"/>
-      </div>
-      <div class="form-group">
-        <label class="form-label">Senha</label>
-        <input id="reg-pass" class="form-input" type="password" placeholder="Mínimo 6 caracteres"/>
-      </div>
-      <div class="form-group">
-        <label class="form-label">Confirmar senha</label>
-        <input id="reg-pass2" class="form-input" type="password" placeholder="Repita a senha"/>
-      </div>
-      <button class="btn-primary" onclick="doRegister()">Criar minha conta</button>
+    <div id="form-register" style="display:none">
+      <div class="fg"><label class="fl">Nome completo</label><input id="reg-name" class="fi" type="text" placeholder="Seu nome"/></div>
+      <div class="fg"><label class="fl">E-mail</label><input id="reg-email" class="fi" type="email" placeholder="seu@email.com"/></div>
+      <div class="fg"><label class="fl">Senha</label><input id="reg-pass" class="fi" type="password" placeholder="Mínimo 6 caracteres"/></div>
+      <div class="fg"><label class="fl">Confirmar senha</label><input id="reg-pass2" class="fi" type="password" placeholder="Repita a senha"/></div>
+      <button class="btn-p" onclick="doRegister()">Criar minha conta</button>
     </div>
   </div>
 </div>
 
-<!-- ══ ANAMNESE SCREEN ══════════════════════════════════════════════════════ -->
+<!-- ANAMNESE -->
 <div id="screen-anamnese" class="screen">
-  <div class="anam-header">
-    <h1>📋 Ficha de Anamnese</h1>
-    <p>Preencha para personalizar seu treino</p>
+  <div class="anam-hdr"><h1>📋 Ficha de Anamnese</h1><p>Preencha para personalizar seu treino</p></div>
+  <div class="apw">
+    <div class="asl"><span id="step-label">Etapa 1 de 5</span><span id="step-pct">20%</span></div>
+    <div class="pbb"><div class="pbf" id="anam-progress" style="width:20%"></div></div>
   </div>
-
-  <div class="anam-progress-wrap">
-    <div class="anam-step-label">
-      <span id="step-label">Etapa 1 de 5</span>
-      <span id="step-pct">20%</span>
-    </div>
-    <div class="progress-bar-bg">
-      <div class="progress-bar-fill" id="anam-progress" style="width:20%"></div>
-    </div>
-  </div>
-
-  <!-- STEP 1: Dados pessoais -->
   <div id="anam-step-1" class="anam-step">
-    <div class="anam-section">
-      <div class="anam-section-title">👤 Dados Pessoais</div>
-      <div class="form-row">
-        <div class="form-group">
-          <label class="form-label">Data de nascimento</label>
-          <input class="form-input" type="date" id="a-nasc"/>
-        </div>
-        <div class="form-group">
-          <label class="form-label">Sexo</label>
-          <select class="form-input" id="a-sexo">
-            <option value="">Selecionar</option>
-            <option>Masculino</option>
-            <option>Feminino</option>
-            <option>Prefiro não informar</option>
-          </select>
-        </div>
+    <div class="asec"><div class="asect">👤 Dados Pessoais</div>
+      <div class="fr">
+        <div class="fg"><label class="fl">Nascimento</label><input class="fi" type="date" id="a-nasc"/></div>
+        <div class="fg"><label class="fl">Sexo</label><select class="fi" id="a-sexo"><option value="">Selecionar</option><option>Masculino</option><option>Feminino</option><option>Prefiro não informar</option></select></div>
       </div>
-      <div class="form-row">
-        <div class="form-group">
-          <label class="form-label">Peso atual (kg)</label>
-          <input class="form-input" type="number" id="a-peso" placeholder="Ex: 75"/>
-        </div>
-        <div class="form-group">
-          <label class="form-label">Altura (cm)</label>
-          <input class="form-input" type="number" id="a-altura" placeholder="Ex: 175"/>
-        </div>
+      <div class="fr">
+        <div class="fg"><label class="fl">Peso (kg)</label><input class="fi" type="number" id="a-peso" placeholder="75"/></div>
+        <div class="fg"><label class="fl">Altura (cm)</label><input class="fi" type="number" id="a-altura" placeholder="175"/></div>
       </div>
-      <div class="form-group">
-        <label class="form-label">Profissão</label>
-        <input class="form-input" type="text" id="a-prof" placeholder="Ex: Professor, Engenheiro..."/>
-      </div>
-      <div class="form-group">
-        <label class="form-label">WhatsApp</label>
-        <input class="form-input" type="tel" id="a-fone" placeholder="(11) 99999-9999"/>
-      </div>
+      <div class="fg"><label class="fl">Profissão</label><input class="fi" type="text" id="a-prof" placeholder="Ex: Professor"/></div>
+      <div class="fg"><label class="fl">WhatsApp</label><input class="fi" type="tel" id="a-fone" placeholder="(11) 99999-9999"/></div>
     </div>
   </div>
-
-  <!-- STEP 2: Experiência -->
   <div id="anam-step-2" class="anam-step" style="display:none">
-    <div class="anam-section">
-      <div class="anam-section-title">🏋️ Experiência com Treino</div>
-      <div class="form-group">
-        <label class="form-label">Tempo de treino</label>
-        <div class="radio-group" id="rg-tempo">
-          <label class="radio-option"><input type="radio" name="tempo" value="Iniciante (0–6 meses)">Iniciante<br><small>0–6 meses</small></label>
-          <label class="radio-option"><input type="radio" name="tempo" value="Intermediário (6m–2a)">Intermediário<br><small>6m – 2 anos</small></label>
-          <label class="radio-option"><input type="radio" name="tempo" value="Avançado (2a+)">Avançado<br><small>2+ anos</small></label>
+    <div class="asec"><div class="asect">🏋️ Experiência</div>
+      <div class="fg"><label class="fl">Tempo de treino</label>
+        <div class="rg" id="rg-tempo">
+          <label class="ro"><input type="radio" name="tempo" value="Iniciante">Iniciante<br><small>0–6 meses</small></label>
+          <label class="ro"><input type="radio" name="tempo" value="Intermediário">Intermediário<br><small>6m–2 anos</small></label>
+          <label class="ro"><input type="radio" name="tempo" value="Avançado">Avançado<br><small>2+ anos</small></label>
         </div>
       </div>
-      <div class="form-group">
-        <label class="form-label">Modalidade principal</label>
-        <div class="radio-group" id="rg-modal">
-          <label class="radio-option"><input type="radio" name="modal" value="Musculação">💪 Musculação</label>
-          <label class="radio-option"><input type="radio" name="modal" value="Corrida">🏃 Corrida</label>
-          <label class="radio-option"><input type="radio" name="modal" value="Ambos">⚡ Ambos</label>
+      <div class="fg"><label class="fl">Modalidade</label>
+        <div class="rg" id="rg-modal">
+          <label class="ro"><input type="radio" name="modal" value="Musculação">💪 Musculação</label>
+          <label class="ro"><input type="radio" name="modal" value="Corrida">🏃 Corrida</label>
+          <label class="ro"><input type="radio" name="modal" value="Ambos">⚡ Ambos</label>
         </div>
       </div>
-      <div class="form-group">
-        <label class="form-label">Dias disponíveis por semana</label>
-        <div class="radio-group" id="rg-dias">
-          <label class="radio-option"><input type="radio" name="dias" value="2x">2x</label>
-          <label class="radio-option"><input type="radio" name="dias" value="3x">3x</label>
-          <label class="radio-option"><input type="radio" name="dias" value="4x">4x</label>
-          <label class="radio-option"><input type="radio" name="dias" value="5x+">5x+</label>
+      <div class="fg"><label class="fl">Dias por semana</label>
+        <div class="rg" id="rg-dias">
+          <label class="ro"><input type="radio" name="dias" value="2x">2x</label>
+          <label class="ro"><input type="radio" name="dias" value="3x">3x</label>
+          <label class="ro"><input type="radio" name="dias" value="4x">4x</label>
+          <label class="ro"><input type="radio" name="dias" value="5x+">5x+</label>
         </div>
       </div>
-      <div class="form-group">
-        <label class="form-label">Duração média do treino</label>
-        <div class="radio-group" id="rg-dur">
-          <label class="radio-option"><input type="radio" name="dur" value="Até 45 min">Até 45 min</label>
-          <label class="radio-option"><input type="radio" name="dur" value="45–60 min">45–60 min</label>
-          <label class="radio-option"><input type="radio" name="dur" value="60–90 min">60–90 min</label>
-          <label class="radio-option"><input type="radio" name="dur" value="90+ min">90+ min</label>
+      <div class="fg"><label class="fl">Duração do treino</label>
+        <div class="rg" id="rg-dur">
+          <label class="ro"><input type="radio" name="dur" value="Até 45 min">Até 45 min</label>
+          <label class="ro"><input type="radio" name="dur" value="45–60 min">45–60 min</label>
+          <label class="ro"><input type="radio" name="dur" value="60–90 min">60–90 min</label>
+          <label class="ro"><input type="radio" name="dur" value="90+ min">90+ min</label>
         </div>
       </div>
-      <div class="form-group">
-        <label class="form-label">Local de treino</label>
-        <div class="radio-group" id="rg-local">
-          <label class="radio-option"><input type="radio" name="local" value="Academia">🏢 Academia</label>
-          <label class="radio-option"><input type="radio" name="local" value="Casa">🏠 Casa</label>
-          <label class="radio-option"><input type="radio" name="local" value="Rua / Pista">🛤️ Rua/Pista</label>
-          <label class="radio-option"><input type="radio" name="local" value="Híbrido">🔄 Híbrido</label>
+      <div class="fg"><label class="fl">Local de treino</label>
+        <div class="rg" id="rg-local">
+          <label class="ro"><input type="radio" name="local" value="Academia">🏢 Academia</label>
+          <label class="ro"><input type="radio" name="local" value="Casa">🏠 Casa</label>
+          <label class="ro"><input type="radio" name="local" value="Rua / Pista">🛤️ Rua/Pista</label>
+          <label class="ro"><input type="radio" name="local" value="Híbrido">🔄 Híbrido</label>
         </div>
       </div>
     </div>
   </div>
-
-  <!-- STEP 3: Objetivos -->
   <div id="anam-step-3" class="anam-step" style="display:none">
-    <div class="anam-section">
-      <div class="anam-section-title">🎯 Objetivos</div>
-      <div class="form-group">
-        <label class="form-label">Objetivo principal</label>
-        <div class="radio-group" id="rg-obj">
-          <label class="radio-option"><input type="radio" name="obj" value="Hipertrofia">💪 Hipertrofia</label>
-          <label class="radio-option"><input type="radio" name="obj" value="Emagrecimento">🔥 Emagrecer</label>
-          <label class="radio-option"><input type="radio" name="obj" value="Condicionamento">❤️ Condicionamento</label>
-          <label class="radio-option"><input type="radio" name="obj" value="Força">⚡ Força</label>
-          <label class="radio-option"><input type="radio" name="obj" value="Resistência">🏃 Resistência</label>
-          <label class="radio-option"><input type="radio" name="obj" value="Saúde geral">🌿 Saúde</label>
+    <div class="asec"><div class="asect">🎯 Objetivos</div>
+      <div class="fg"><label class="fl">Objetivo principal</label>
+        <div class="rg" id="rg-obj">
+          <label class="ro"><input type="radio" name="obj" value="Hipertrofia">💪 Hipertrofia</label>
+          <label class="ro"><input type="radio" name="obj" value="Emagrecimento">🔥 Emagrecer</label>
+          <label class="ro"><input type="radio" name="obj" value="Condicionamento">❤️ Condicionamento</label>
+          <label class="ro"><input type="radio" name="obj" value="Força">⚡ Força</label>
+          <label class="ro"><input type="radio" name="obj" value="Resistência">🏃 Resistência</label>
+          <label class="ro"><input type="radio" name="obj" value="Saúde">🌿 Saúde</label>
         </div>
       </div>
-      <div class="form-group">
-        <label class="form-label">Meta de corrida (se aplicável)</label>
-        <div class="radio-group" id="rg-meta-corrida">
-          <label class="radio-option"><input type="radio" name="mc" value="Não pratico">Não pratico</label>
-          <label class="radio-option"><input type="radio" name="mc" value="5km">5 km</label>
-          <label class="radio-option"><input type="radio" name="mc" value="10km">10 km</label>
-          <label class="radio-option"><input type="radio" name="mc" value="Meia maratona">21 km</label>
-          <label class="radio-option"><input type="radio" name="mc" value="Maratona">42 km</label>
+      <div class="fg"><label class="fl">Meta de corrida</label>
+        <div class="rg" id="rg-mc">
+          <label class="ro"><input type="radio" name="mc" value="Não pratico">Não pratico</label>
+          <label class="ro"><input type="radio" name="mc" value="5km">5 km</label>
+          <label class="ro"><input type="radio" name="mc" value="10km">10 km</label>
+          <label class="ro"><input type="radio" name="mc" value="Meia maratona">21 km</label>
+          <label class="ro"><input type="radio" name="mc" value="Maratona">42 km</label>
         </div>
       </div>
-      <div class="form-group">
-        <label class="form-label">Em quantos meses quer atingir sua meta?</label>
-        <select class="form-input" id="a-prazo">
-          <option value="">Selecionar</option>
-          <option>1–2 meses</option>
-          <option>3–6 meses</option>
-          <option>6–12 meses</option>
-          <option>Sem prazo definido</option>
-        </select>
+      <div class="fg"><label class="fl">Prazo</label>
+        <select class="fi" id="a-prazo"><option value="">Selecionar</option><option>1–2 meses</option><option>3–6 meses</option><option>6–12 meses</option><option>Sem prazo</option></select>
       </div>
-      <div class="form-group">
-        <label class="form-label">O que te motiva a treinar?</label>
-        <textarea class="form-input" id="a-motiv" placeholder="Saúde, estética, esporte, qualidade de vida..."></textarea>
-      </div>
+      <div class="fg"><label class="fl">O que te motiva?</label><textarea class="fi" id="a-motiv" placeholder="Saúde, estética, esporte..."></textarea></div>
     </div>
   </div>
-
-  <!-- STEP 4: Saúde -->
   <div id="anam-step-4" class="anam-step" style="display:none">
-    <div class="anam-section">
-      <div class="anam-section-title">❤️ Histórico de Saúde</div>
-      <div class="form-group">
-        <label class="form-label">Possui alguma condição de saúde?</label>
-        <div class="checkbox-group" id="cg-saude">
-          <label class="checkbox-option"><input type="checkbox" value="Hipertensão"><span class="check-box"></span>Hipertensão</label>
-          <label class="checkbox-option"><input type="checkbox" value="Diabetes"><span class="check-box"></span>Diabetes</label>
-          <label class="checkbox-option"><input type="checkbox" value="Problemas cardíacos"><span class="check-box"></span>Problemas cardíacos</label>
-          <label class="checkbox-option"><input type="checkbox" value="Colesterol alto"><span class="check-box"></span>Colesterol alto</label>
-          <label class="checkbox-option"><input type="checkbox" value="Problemas respiratórios"><span class="check-box"></span>Problemas respiratórios</label>
-          <label class="checkbox-option"><input type="checkbox" value="Nenhuma"><span class="check-box"></span>Nenhuma</label>
+    <div class="asec"><div class="asect">❤️ Saúde</div>
+      <div class="fg"><label class="fl">Condições de saúde</label>
+        <div class="cg" id="cg-saude">
+          <label class="co"><input type="checkbox" value="Hipertensão"><span class="cb"></span>Hipertensão</label>
+          <label class="co"><input type="checkbox" value="Diabetes"><span class="cb"></span>Diabetes</label>
+          <label class="co"><input type="checkbox" value="Problemas cardíacos"><span class="cb"></span>Problemas cardíacos</label>
+          <label class="co"><input type="checkbox" value="Colesterol alto"><span class="cb"></span>Colesterol alto</label>
+          <label class="co"><input type="checkbox" value="Nenhuma"><span class="cb"></span>Nenhuma</label>
         </div>
       </div>
-      <div class="form-group">
-        <label class="form-label">Lesões ou limitações físicas</label>
-        <div class="checkbox-group" id="cg-lesoes">
-          <label class="checkbox-option"><input type="checkbox" value="Joelho"><span class="check-box"></span>Joelho</label>
-          <label class="checkbox-option"><input type="checkbox" value="Ombro"><span class="check-box"></span>Ombro</label>
-          <label class="checkbox-option"><input type="checkbox" value="Lombar"><span class="check-box"></span>Lombar / coluna</label>
-          <label class="checkbox-option"><input type="checkbox" value="Tornozelo"><span class="check-box"></span>Tornozelo / pé</label>
-          <label class="checkbox-option"><input type="checkbox" value="Quadril"><span class="check-box"></span>Quadril</label>
-          <label class="checkbox-option"><input type="checkbox" value="Nenhuma"><span class="check-box"></span>Nenhuma</label>
+      <div class="fg"><label class="fl">Lesões</label>
+        <div class="cg" id="cg-lesoes">
+          <label class="co"><input type="checkbox" value="Joelho"><span class="cb"></span>Joelho</label>
+          <label class="co"><input type="checkbox" value="Ombro"><span class="cb"></span>Ombro</label>
+          <label class="co"><input type="checkbox" value="Lombar"><span class="cb"></span>Lombar / coluna</label>
+          <label class="co"><input type="checkbox" value="Tornozelo"><span class="cb"></span>Tornozelo / pé</label>
+          <label class="co"><input type="checkbox" value="Nenhuma"><span class="cb"></span>Nenhuma</label>
         </div>
       </div>
-      <div class="form-group">
-        <label class="form-label">Faz uso de medicamentos?</label>
-        <div class="radio-group" id="rg-med">
-          <label class="radio-option"><input type="radio" name="med" value="Não">Não</label>
-          <label class="radio-option"><input type="radio" name="med" value="Sim">Sim</label>
-        </div>
+      <div class="fg"><label class="fl">Medicamentos?</label>
+        <div class="rg" id="rg-med"><label class="ro"><input type="radio" name="med" value="Não">Não</label><label class="ro"><input type="radio" name="med" value="Sim">Sim</label></div>
       </div>
-      <div class="form-group">
-        <label class="form-label">Se sim, quais? (opcional)</label>
-        <textarea class="form-input" id="a-med-desc" placeholder="Nome dos medicamentos..."></textarea>
-      </div>
-      <div class="form-group">
-        <label class="form-label">Já fez alguma cirurgia relevante?</label>
-        <textarea class="form-input" id="a-cirurgia" placeholder="Se sim, descreva. Se não, escreva 'Não'."></textarea>
-      </div>
+      <div class="fg"><label class="fl">Quais medicamentos?</label><textarea class="fi" id="a-med" placeholder="Se não usa, deixe em branco"></textarea></div>
+      <div class="fg"><label class="fl">Cirurgias?</label><textarea class="fi" id="a-cir" placeholder="Se não, escreva Não"></textarea></div>
     </div>
   </div>
-
-  <!-- STEP 5: Estilo de vida -->
   <div id="anam-step-5" class="anam-step" style="display:none">
-    <div class="anam-section">
-      <div class="anam-section-title">🌙 Estilo de Vida</div>
-      <div class="form-group">
-        <label class="form-label">Horas de sono por noite</label>
-        <div class="radio-group" id="rg-sono">
-          <label class="radio-option"><input type="radio" name="sono" value="Menos de 5h">Menos de 5h</label>
-          <label class="radio-option"><input type="radio" name="sono" value="5–6h">5–6h</label>
-          <label class="radio-option"><input type="radio" name="sono" value="7–8h">7–8h</label>
-          <label class="radio-option"><input type="radio" name="sono" value="Mais de 8h">Mais de 8h</label>
+    <div class="asec"><div class="asect">🌙 Estilo de Vida</div>
+      <div class="fg"><label class="fl">Horas de sono</label>
+        <div class="rg" id="rg-sono">
+          <label class="ro"><input type="radio" name="sono" value="Menos de 5h">Menos de 5h</label>
+          <label class="ro"><input type="radio" name="sono" value="5–6h">5–6h</label>
+          <label class="ro"><input type="radio" name="sono" value="7–8h">7–8h</label>
+          <label class="ro"><input type="radio" name="sono" value="Mais de 8h">Mais de 8h</label>
         </div>
       </div>
-      <div class="form-group">
-        <label class="form-label">Nível de estresse no dia a dia</label>
-        <div class="radio-group" id="rg-stress">
-          <label class="radio-option"><input type="radio" name="stress" value="Baixo">😌 Baixo</label>
-          <label class="radio-option"><input type="radio" name="stress" value="Moderado">😐 Moderado</label>
-          <label class="radio-option"><input type="radio" name="stress" value="Alto">😰 Alto</label>
-          <label class="radio-option"><input type="radio" name="stress" value="Muito alto">😤 Muito alto</label>
+      <div class="fg"><label class="fl">Nível de estresse</label>
+        <div class="rg" id="rg-stress">
+          <label class="ro"><input type="radio" name="stress" value="Baixo">😌 Baixo</label>
+          <label class="ro"><input type="radio" name="stress" value="Moderado">😐 Moderado</label>
+          <label class="ro"><input type="radio" name="stress" value="Alto">😰 Alto</label>
+          <label class="ro"><input type="radio" name="stress" value="Muito alto">😤 Muito alto</label>
         </div>
       </div>
-      <div class="form-group">
-        <label class="form-label">Alimentação atual</label>
-        <div class="radio-group" id="rg-alim">
-          <label class="radio-option"><input type="radio" name="alim" value="Muito ruim">😔 Muito ruim</label>
-          <label class="radio-option"><input type="radio" name="alim" value="Regular">😐 Regular</label>
-          <label class="radio-option"><input type="radio" name="alim" value="Boa">😊 Boa</label>
-          <label class="radio-option"><input type="radio" name="alim" value="Ótima">🤩 Ótima</label>
+      <div class="fg"><label class="fl">Alimentação</label>
+        <div class="rg" id="rg-alim">
+          <label class="ro"><input type="radio" name="alim" value="Muito ruim">😔 Muito ruim</label>
+          <label class="ro"><input type="radio" name="alim" value="Regular">😐 Regular</label>
+          <label class="ro"><input type="radio" name="alim" value="Boa">😊 Boa</label>
+          <label class="ro"><input type="radio" name="alim" value="Ótima">🤩 Ótima</label>
         </div>
       </div>
-      <div class="form-group">
-        <label class="form-label">Usa suplementação?</label>
-        <div class="checkbox-group" id="cg-supl">
-          <label class="checkbox-option"><input type="checkbox" value="Whey protein"><span class="check-box"></span>Whey protein</label>
-          <label class="checkbox-option"><input type="checkbox" value="Creatina"><span class="check-box"></span>Creatina</label>
-          <label class="checkbox-option"><input type="checkbox" value="Pré-treino"><span class="check-box"></span>Pré-treino</label>
-          <label class="checkbox-option"><input type="checkbox" value="BCAA"><span class="check-box"></span>BCAA</label>
-          <label class="checkbox-option"><input type="checkbox" value="Vitaminas"><span class="check-box"></span>Vitaminas</label>
-          <label class="checkbox-option"><input type="checkbox" value="Não uso"><span class="check-box"></span>Não uso</label>
+      <div class="fg"><label class="fl">Suplementação</label>
+        <div class="cg" id="cg-supl">
+          <label class="co"><input type="checkbox" value="Whey protein"><span class="cb"></span>Whey protein</label>
+          <label class="co"><input type="checkbox" value="Creatina"><span class="cb"></span>Creatina</label>
+          <label class="co"><input type="checkbox" value="Pré-treino"><span class="cb"></span>Pré-treino</label>
+          <label class="co"><input type="checkbox" value="Não uso"><span class="cb"></span>Não uso</label>
         </div>
       </div>
-      <div class="form-group">
-        <label class="form-label">Observações adicionais</label>
-        <textarea class="form-input" id="a-obs" placeholder="Alguma informação importante que devemos saber?"></textarea>
-      </div>
+      <div class="fg"><label class="fl">Observações</label><textarea class="fi" id="a-obs" placeholder="Algo importante para saber?"></textarea></div>
     </div>
   </div>
-
   <div style="height:80px"></div>
-
   <div class="anam-nav">
     <button class="btn-back" id="btn-back" onclick="anamPrev()" style="display:none">← Voltar</button>
-    <button class="btn-next" id="btn-next" onclick="anamNext()">Próxima etapa →</button>
+    <button class="btn-nxt" id="btn-nxt" onclick="anamNext()">Próxima etapa →</button>
   </div>
 </div>
 
-<!-- ══ SUCCESS SCREEN ════════════════════════════════════════════════════════ -->
+<!-- SUCCESS -->
 <div id="screen-success" class="screen">
-  <div class="success-icon">🎉</div>
-  <div class="success-title">Ficha enviada!</div>
-  <div class="success-sub">Rennan vai analisar seu perfil e montar seu treino personalizado. Agora acesse seu painel!</div>
-  <button class="btn-primary" style="max-width:280px" onclick="goToApp()">Ir para o FitQuest 🚀</button>
+  <div class="sico">🎉</div>
+  <div class="stit">Ficha enviada!</div>
+  <div class="ssub">Rennan vai analisar seu perfil e liberar seu treino personalizado em breve!</div>
+  <button class="btn-p" style="max-width:280px" onclick="goToApp()">Ir para o FitQuest 🚀</button>
 </div>
 
-<!-- ══ APP SCREEN ═════════════════════════════════════════════════════════── -->
+<!-- APP -->
 <div id="screen-app" class="screen">
-  <div class="app-header">
-    <div class="app-logo"><span class="accent">FIT</span>QUEST</div>
-    <div class="streak-chip">🔥 <span id="streak-val">1</span> dia</div>
+  <div class="app-hdr">
+    <div class="app-logo"><span class="ac">FIT</span>QUEST</div>
+    <div style="display:flex;align-items:center;gap:8px">
+      <div class="sc">🔥 <span id="streak-val">1</span> dia</div>
+      <button onclick="doLogout()" style="background:rgba(255,80,80,.12);border:1px solid rgba(255,80,80,.3);border-radius:10px;padding:6px 10px;color:#ff6b6b;font-size:12px;font-weight:700;cursor:pointer;">Sair</button>
+    </div>
   </div>
-
   <div class="app-content">
 
     <!-- HOME -->
     <div class="tab-panel active" id="panel-home">
-      <div class="hero-card">
-        <div class="hero-top">
-          <div class="hero-avatar">💪</div>
-          <div class="hero-info">
-            <div class="hero-greeting">Bem-vindo de volta</div>
-            <div class="hero-name" id="app-user-name">Atleta</div>
-            <div class="hero-badges">
-              <span class="hero-badge" style="color:var(--accent)">⚡ Nível <span id="app-level">1</span></span>
-              <span class="hero-badge" style="color:var(--orange)">🔥 <span id="app-streak2">1</span> dias</span>
+      <div class="hcard">
+        <div class="htop">
+          <div class="hav">💪</div>
+          <div class="hi">
+            <div class="hg">Bem-vindo de volta</div>
+            <div class="hn" id="app-user-name">Atleta</div>
+            <div class="hb">
+              <span class="hbg" style="color:var(--accent)">⚡ Nível <span id="app-level">1</span></span>
+              <span class="hbg" style="color:var(--orange)">🔥 <span id="app-streak2">1</span> dias</span>
             </div>
           </div>
-          <div class="hero-coins">
-            <div class="coins-val">🪙 <span id="app-coins">0</span></div>
-            <div class="coins-lbl">moedas</div>
-          </div>
+          <div class="hco"><div class="hcv">🪙 <span id="app-coins">0</span></div><div class="hcl">moedas</div></div>
         </div>
-        <div class="xp-labels"><span id="app-xp">0 XP</span><span id="app-xp-next">1000 XP</span></div>
-        <div class="xp-bg"><div class="xp-fill" id="app-xp-bar" style="width:0%"></div></div>
+        <div class="xpl"><span id="app-xp">0 XP</span><span id="app-xp-next">1000 XP</span></div>
+        <div class="xpb"><div class="xpf" id="app-xp-bar" style="width:0%"></div></div>
       </div>
-
-      <div class="stats-grid">
-        <div class="stat-chip"><div class="stat-icon">🏋️</div><div class="stat-val" style="color:var(--accent)" id="s-treinos">0</div><div class="stat-lbl">Treinos</div></div>
-        <div class="stat-chip"><div class="stat-icon">🏃</div><div class="stat-val" style="color:var(--orange)" id="s-km">0</div><div class="stat-lbl">km rodados</div></div>
-        <div class="stat-chip"><div class="stat-icon">⭐</div><div class="stat-val" style="color:var(--yellow)" id="s-prs">0</div><div class="stat-lbl">Recordes (PR)</div></div>
-        <div class="stat-chip"><div class="stat-icon">📅</div><div class="stat-val" style="color:var(--green)" id="s-semanas">0</div><div class="stat-lbl">Semanas ativas</div></div>
+      <div class="sg">
+        <div class="sc2"><div class="si">🏋️</div><div class="sv" style="color:var(--accent)" id="s-treinos">0</div><div class="sl">Treinos</div></div>
+        <div class="sc2"><div class="si">🏃</div><div class="sv" style="color:var(--orange)" id="s-km">0</div><div class="sl">km rodados</div></div>
+        <div class="sc2"><div class="si">⭐</div><div class="sv" style="color:var(--yellow)" id="s-prs">0</div><div class="sl">Recordes</div></div>
+        <div class="sc2"><div class="si">📅</div><div class="sv" style="color:var(--green)" id="s-semanas">0</div><div class="sl">Semanas</div></div>
       </div>
-
-      <div class="section-title" style="margin-top:16px">Missões ativas</div>
+      <div class="stl">Missões ativas</div>
       <div id="home-missions"></div>
     </div>
 
-    <!-- MISSIONS -->
-    <div class="tab-panel" id="panel-missions">
-      <div style="display:flex;gap:10px;margin-bottom:14px">
-        <div style="flex:1;background:rgba(108,99,255,.12);border:1px solid rgba(108,99,255,.3);border-radius:12px;padding:12px;text-align:center">
-          <div style="font-size:22px;font-weight:900;color:var(--accent)" id="m-active-count">0</div>
-          <div style="font-size:11px;color:var(--muted)">Em andamento</div>
-        </div>
-        <div style="flex:1;background:rgba(0,214,143,.1);border:1px solid rgba(0,214,143,.3);border-radius:12px;padding:12px;text-align:center">
-          <div style="font-size:22px;font-weight:900;color:var(--green)" id="m-done-count">0</div>
-          <div style="font-size:11px;color:var(--muted)">Concluídas</div>
-        </div>
-        <div style="flex:1;background:rgba(255,214,10,.1);border:1px solid rgba(255,214,10,.3);border-radius:12px;padding:12px;text-align:center">
-          <div style="font-size:22px;font-weight:900;color:var(--yellow)" id="m-xp-earned">0</div>
-          <div style="font-size:11px;color:var(--muted)">XP ganho</div>
-        </div>
-      </div>
-      <div class="section-title">Em andamento</div>
-      <div id="missions-active"></div>
-      <div class="section-title" style="margin-top:14px">Concluídas</div>
-      <div id="missions-done"></div>
+    <!-- MUSCULAÇÃO -->
+    <div class="tab-panel" id="panel-gym">
+      <div id="gym-content"></div>
     </div>
 
-    <!-- BADGES -->
-    <div class="tab-panel" id="panel-badges">
-      <div style="background:linear-gradient(135deg,#1a1040,#0f0f2a);border:1px solid rgba(255,214,10,.25);border-radius:16px;padding:16px;text-align:center;margin-bottom:16px">
-        <div style="font-size:32px;font-weight:900;color:var(--yellow)" id="badges-count">0/8</div>
-        <div style="color:var(--muted);font-size:13px">conquistas desbloqueadas</div>
-        <div class="progress-bar-bg" style="margin-top:12px"><div class="progress-bar-fill" id="badges-bar" style="width:0%;background:linear-gradient(90deg,var(--yellow),var(--orange))"></div></div>
+    <!-- CORRIDA -->
+    <div class="tab-panel" id="panel-run">
+      <div id="run-content"></div>
+    </div>
+
+    <!-- MISSÕES -->
+    <div class="tab-panel" id="panel-missions">
+      <div style="display:flex;gap:10px;margin-bottom:14px">
+        <div style="flex:1;background:rgba(108,99,255,.12);border:1px solid rgba(108,99,255,.3);border-radius:12px;padding:12px;text-align:center"><div style="font-size:22px;font-weight:900;color:var(--accent)" id="m-active">0</div><div style="font-size:11px;color:var(--muted)">Em andamento</div></div>
+        <div style="flex:1;background:rgba(0,214,143,.1);border:1px solid rgba(0,214,143,.3);border-radius:12px;padding:12px;text-align:center"><div style="font-size:22px;font-weight:900;color:var(--green)" id="m-done">0</div><div style="font-size:11px;color:var(--muted)">Concluídas</div></div>
+        <div style="flex:1;background:rgba(255,214,10,.1);border:1px solid rgba(255,214,10,.3);border-radius:12px;padding:12px;text-align:center"><div style="font-size:22px;font-weight:900;color:var(--yellow)" id="m-xp">0</div><div style="font-size:11px;color:var(--muted)">XP ganho</div></div>
       </div>
-      <div class="section-title">Conquistadas</div>
-      <div class="badges-grid" id="badges-earned" style="margin-bottom:16px"></div>
-      <div class="section-title">Bloqueadas</div>
-      <div class="badges-grid" id="badges-locked"></div>
+      <div class="stl">Em andamento</div><div id="missions-active"></div>
+      <div class="stl" style="margin-top:14px">Concluídas</div><div id="missions-done"></div>
     </div>
 
     <!-- RANKING -->
     <div class="tab-panel" id="panel-ranking">
-      <div class="ranking-hero">
+      <div class="rkhero">
         <div style="font-size:13px;color:var(--muted);margin-bottom:4px">Sua posição</div>
         <div class="pos">#<span id="my-rank">–</span></div>
         <div style="font-size:12px;color:var(--muted)">ranking desta semana</div>
@@ -974,420 +448,656 @@
 
     <!-- RECORDES -->
     <div class="tab-panel" id="panel-prs">
-      <div style="background:linear-gradient(135deg,#1a1040,#0f0f2a);border:1px solid rgba(255,214,10,.25);border-radius:16px;padding:16px;text-align:center;margin-bottom:16px;box-shadow:0 0 30px rgba(255,214,10,.08)">
+      <div style="background:linear-gradient(135deg,#1a1040,#0f0f2a);border:1px solid rgba(255,214,10,.25);border-radius:16px;padding:16px;text-align:center;margin-bottom:16px">
         <div style="font-size:36px">⭐</div>
         <div style="font-size:20px;font-weight:900;color:var(--yellow)"><span id="pr-count">0</span> Recordes Pessoais</div>
-        <div style="font-size:12px;color:var(--muted);margin-top:4px">Continue quebrando barreiras!</div>
       </div>
       <div id="prs-list"></div>
-      <div class="log-card">
-        <p>Registre um novo treino ou PR</p>
-        <button class="btn-primary" onclick="logWorkout()">+ Novo Treino / PR</button>
-      </div>
+      <div class="lcard"><p>Registre um novo recorde</p><button class="btn-p" onclick="logPR()">+ Registrar PR</button></div>
     </div>
 
-  </div><!-- /app-content -->
-
-  <div class="bottom-nav">
-    <button class="nav-btn active" onclick="switchTab('home',this)"><span class="nav-icon">🏠</span><span class="nav-lbl">Início</span><div class="nav-dot"></div></button>
-    <button class="nav-btn" onclick="switchTab('missions',this)"><span class="nav-icon">🎯</span><span class="nav-lbl">Missões</span><div class="nav-dot"></div></button>
-    <button class="nav-btn" onclick="switchTab('badges',this)"><span class="nav-icon">🏆</span><span class="nav-lbl">Conquistas</span><div class="nav-dot"></div></button>
-    <button class="nav-btn" onclick="switchTab('ranking',this)"><span class="nav-icon">📊</span><span class="nav-lbl">Ranking</span><div class="nav-dot"></div></button>
-    <button class="nav-btn" onclick="switchTab('prs',this)"><span class="nav-icon">⭐</span><span class="nav-lbl">Recordes</span><div class="nav-dot"></div></button>
+  </div>
+  <div class="bnav">
+    <button class="nbtn active" onclick="switchTab('home',this)"><span class="nico">🏠</span><span class="nlbl">Início</span><div class="ndot"></div></button>
+    <button class="nbtn" onclick="switchTab('gym',this)"><span class="nico">🏋️</span><span class="nlbl">Musculação</span><div class="ndot"></div></button>
+    <button class="nbtn" onclick="switchTab('run',this)"><span class="nico">🏃</span><span class="nlbl">Corrida</span><div class="ndot"></div></button>
+    <button class="nbtn" onclick="switchTab('missions',this)"><span class="nico">🎯</span><span class="nlbl">Missões</span><div class="ndot"></div></button>
+    <button class="nbtn" onclick="switchTab('ranking',this)"><span class="nico">📊</span><span class="nlbl">Ranking</span><div class="ndot"></div></button>
+    <button class="nbtn" onclick="switchTab('prs',this)"><span class="nico">⭐</span><span class="nlbl">PRs</span><div class="ndot"></div></button>
   </div>
 </div>
 
 <script>
 // ── STORAGE ─────────────────────────────────────────────────────────────────
-const DB = {
-  get(k){ try { return JSON.parse(localStorage.getItem(k)); } catch{ return null; } },
-  set(k,v){ localStorage.setItem(k, JSON.stringify(v)); },
-  del(k){ localStorage.removeItem(k); }
+const DB={
+  get(k){try{return JSON.parse(localStorage.getItem(k));}catch{return null;}},
+  set(k,v){localStorage.setItem(k,JSON.stringify(v));},
+  del(k){localStorage.removeItem(k);}
 };
 
-// ── SHOW SCREEN ──────────────────────────────────────────────────────────────
+// ── TREINOS DE MUSCULAÇÃO (12 semanas, progressão automática) ────────────────
+const GYM_PROGRAM = {
+  "Semana 1":{ fase:"Adaptação", days:{
+    "Treino A":[
+      {name:"Supino Plano",muscle:"Peito",sets:3,reps:"12",load:"Moderada",obs:"Foco na execução. Descanso 60s."},
+      {name:"Remada Curvada",muscle:"Costas",sets:3,reps:"12",load:"Moderada",obs:"Costas retas, puxe até o abdômen."},
+      {name:"Desenvolvimento",muscle:"Ombro",sets:3,reps:"12",load:"Moderada",obs:"Cotovelos alinhados."},
+      {name:"Rosca Direta",muscle:"Bíceps",sets:3,reps:"12",load:"Leve",obs:"Sem balanço do tronco."},
+      {name:"Tríceps Testa",muscle:"Tríceps",sets:3,reps:"12",load:"Leve",obs:"Cotovelos fixos."},
+    ],
+    "Treino B":[
+      {name:"Agachamento Livre",muscle:"Quadríceps",sets:3,reps:"12",load:"Moderada",obs:"Desça até 90°. Descanso 90s."},
+      {name:"Leg Press 45°",muscle:"Quadríceps/Glúteo",sets:3,reps:"12",load:"Moderada",obs:"Pés na largura dos ombros."},
+      {name:"Cadeira Extensora",muscle:"Quadríceps",sets:3,reps:"15",load:"Leve",obs:"Contrai no topo."},
+      {name:"Mesa Flexora",muscle:"Posterior",sets:3,reps:"12",load:"Leve",obs:"Movimento controlado."},
+      {name:"Panturrilha em Pé",muscle:"Panturrilha",sets:4,reps:"15",load:"Leve",obs:"Amplitude total."},
+    ],
+  }},
+  "Semana 2":{ fase:"Adaptação", days:{
+    "Treino A":[
+      {name:"Supino Plano",muscle:"Peito",sets:3,reps:"12",load:"Moderada +2kg",obs:"Aumente 2kg se executou bem na semana 1."},
+      {name:"Remada Curvada",muscle:"Costas",sets:3,reps:"12",load:"Moderada +2kg",obs:"Mantenha costas retas."},
+      {name:"Desenvolvimento",muscle:"Ombro",sets:3,reps:"12",load:"Moderada",obs:"Amplitude completa."},
+      {name:"Rosca Direta",muscle:"Bíceps",sets:3,reps:"12",load:"Leve +2kg",obs:"Supinação no topo."},
+      {name:"Tríceps Pulley",muscle:"Tríceps",sets:3,reps:"12",load:"Leve",obs:"Cotovelos colados ao corpo."},
+    ],
+    "Treino B":[
+      {name:"Agachamento Livre",muscle:"Quadríceps",sets:3,reps:"12",load:"Moderada +5kg",obs:"Aumente se manteve boa postura."},
+      {name:"Leg Press 45°",muscle:"Quadríceps/Glúteo",sets:3,reps:"12",load:"Moderada +10kg",obs:"Não trave os joelhos."},
+      {name:"Cadeira Extensora",muscle:"Quadríceps",sets:3,reps:"15",load:"Moderada",obs:"Pausa de 1s no topo."},
+      {name:"Stiff",muscle:"Posterior/Glúteo",sets:3,reps:"12",load:"Moderada",obs:"Sinta o alongamento."},
+      {name:"Panturrilha em Pé",muscle:"Panturrilha",sets:4,reps:"15",load:"Moderada",obs:"Pausa no topo."},
+    ],
+  }},
+  "Semana 3":{ fase:"Hipertrofia I", days:{
+    "Treino A":[
+      {name:"Supino Plano",muscle:"Peito",sets:4,reps:"10",load:"Moderada/Pesada",obs:"Aumenta volume. Descanso 90s."},
+      {name:"Supino Inclinado",muscle:"Peito Superior",sets:3,reps:"10",load:"Moderada",obs:"Banco a 30°."},
+      {name:"Remada Curvada",muscle:"Costas",sets:4,reps:"10",load:"Pesada",obs:"Foco em contrair costas no topo."},
+      {name:"Puxada Alta",muscle:"Costas/Bíceps",sets:3,reps:"10",load:"Moderada",obs:"Puxe até o queixo."},
+      {name:"Elevação Lateral",muscle:"Ombro",sets:3,reps:"15",load:"Leve",obs:"Cotovelos levemente flexionados."},
+      {name:"Rosca Alternada",muscle:"Bíceps",sets:3,reps:"10",load:"Moderada",obs:"Supine no final."},
+      {name:"Tríceps Pulley",muscle:"Tríceps",sets:3,reps:"10",load:"Moderada",obs:"Travamento completo."},
+    ],
+    "Treino B":[
+      {name:"Agachamento Livre",muscle:"Quadríceps",sets:4,reps:"10",load:"Pesada",obs:"Aumenta volume e carga."},
+      {name:"Leg Press 45°",muscle:"Quadríceps/Glúteo",sets:4,reps:"10",load:"Pesada",obs:"Amplitude completa."},
+      {name:"Avanço",muscle:"Glúteo/Quadríceps",sets:3,reps:"10",load:"Moderada",obs:"Joelho traseiro quase toca o chão."},
+      {name:"Cadeira Extensora",muscle:"Quadríceps",sets:3,reps:"12",load:"Moderada",obs:"Pausa 1s."},
+      {name:"Stiff",muscle:"Posterior/Glúteo",sets:3,reps:"10",load:"Moderada",obs:"Sinta o alongamento nos posteriores."},
+      {name:"Panturrilha Sentado",muscle:"Panturrilha",sets:4,reps:"15",load:"Moderada",obs:"Amplitude máxima."},
+    ],
+  }},
+  "Semana 4":{ fase:"Hipertrofia I", days:{
+    "Treino A":[
+      {name:"Supino Plano",muscle:"Peito",sets:4,reps:"10",load:"Pesada",obs:"Tente superar carga da semana 3."},
+      {name:"Crucifixo",muscle:"Peito",sets:3,reps:"12",load:"Leve/Moderada",obs:"Amplitude controlada."},
+      {name:"Remada Curvada",muscle:"Costas",sets:4,reps:"10",load:"Pesada",obs:"Congele 1s no topo."},
+      {name:"Puxada Supinada",muscle:"Bíceps/Costas",sets:3,reps:"10",load:"Moderada",obs:"Puxe o cotovelo para baixo."},
+      {name:"Desenvolvimento Arnold",muscle:"Ombro",sets:3,reps:"10",load:"Moderada",obs:"Rotação completa."},
+      {name:"Rosca Scott",muscle:"Bíceps",sets:3,reps:"10",load:"Moderada",obs:"Amplitude total."},
+      {name:"Tríceps Francês",muscle:"Tríceps",sets:3,reps:"10",load:"Moderada",obs:"Cotovelos para cima."},
+    ],
+    "Treino B":[
+      {name:"Agachamento Livre",muscle:"Quadríceps",sets:4,reps:"8",load:"Pesada",obs:"Aumente carga. Foco na postura."},
+      {name:"Leg Press 45°",muscle:"Quadríceps/Glúteo",sets:4,reps:"10",load:"Pesada",obs:"Varie posição dos pés."},
+      {name:"Hack Squat",muscle:"Quadríceps",sets:3,reps:"10",load:"Moderada",obs:"Joelhos alinhados."},
+      {name:"Stiff",muscle:"Posterior/Glúteo",sets:4,reps:"10",load:"Moderada/Pesada",obs:"Boa amplitude de movimento."},
+      {name:"Cadeira Flexora",muscle:"Posterior",sets:3,reps:"12",load:"Moderada",obs:"Movimento controlado."},
+      {name:"Panturrilha em Pé",muscle:"Panturrilha",sets:4,reps:"12",load:"Pesada",obs:"Peso máximo com boa forma."},
+    ],
+  }},
+};
+// Semanas 5–12 com progressão automática
+for(let w=5;w<=12;w++){
+  const fase = w<=6?"Hipertrofia II": w<=8?"Força":"Definição/Volume";
+  const sets = w<=6?4: w<=8?5:4;
+  const reps = w<=6?"8": w<=8?"6":"12";
+  const load = w<=8?"Pesada":"Moderada/Alta";
+  GYM_PROGRAM[`Semana ${w}`]={ fase, days:{
+    "Treino A":[
+      {name:"Supino Plano",muscle:"Peito",sets,reps,load,obs:`S${w}: progrida ${w<=8?'carga':'volume'}.`},
+      {name:"Supino Inclinado",muscle:"Peito Superior",sets:sets-1,reps,load,obs:"Posição escápulas retraídas."},
+      {name:"Remada Curvada",muscle:"Costas",sets,reps,load,obs:"Puxa até o umbigo."},
+      {name:"Puxada Alta",muscle:"Costas/Bíceps",sets:sets-1,reps,load,obs:"Peito toca o guidão."},
+      {name:"Elevação Lateral",muscle:"Ombro",sets:3,reps:"15",load:"Moderada",obs:"Isométrico no topo."},
+      {name:"Rosca Alternada",muscle:"Bíceps",sets:3,reps,load,obs:"Supinação completa."},
+      {name:"Tríceps Pulley",muscle:"Tríceps",sets:3,reps,load,obs:"Sem compensar com tronco."},
+    ],
+    "Treino B":[
+      {name:"Agachamento Livre",muscle:"Quadríceps",sets,reps,load,obs:`S${w}: supere a carga anterior.`},
+      {name:"Leg Press 45°",muscle:"Quadríceps/Glúteo",sets,reps,load,obs:"Não trave os joelhos."},
+      {name:"Avanço com Halteres",muscle:"Glúteo/Quadríceps",sets:3,reps:"10",load:"Moderada",obs:"Alternado, passada longa."},
+      {name:"Stiff",muscle:"Posterior/Glúteo",sets,reps,load,obs:"Sinta o isquiotibial."},
+      {name:"Cadeira Flexora",muscle:"Posterior",sets:3,reps:"10",load:"Moderada",obs:"Pausa no pico."},
+      {name:"Panturrilha em Pé",muscle:"Panturrilha",sets:4,reps:"12",load:"Pesada",obs:"Amplitude máxima."},
+    ],
+  }};
+}
+
+// ── TREINOS DE CORRIDA (12 semanas) ─────────────────────────────────────────
+const RUN_PROGRAM = {
+  "Semana 1":{ meta:"Base aeróbica", sessions:[
+    {day:"Seg",type:"Corrida Leve",dist:"3 km",pace:"7:00–7:30 min/km",dur:"~22 min",tip:"Você deve conseguir conversar enquanto corre. Ritmo muito confortável."},
+    {day:"Qua",type:"Caminhada + Corrida",dist:"3 km",pace:"Alternado",dur:"~25 min",tip:"Corra 2 min, caminhe 1 min. Repita por 25 minutos."},
+    {day:"Sex",type:"Corrida Leve",dist:"3 km",pace:"7:00–7:30 min/km",dur:"~22 min",tip:"Mesma intensidade da segunda. Foco em ritmo consistente."},
+  ]},
+  "Semana 2":{ meta:"Aumentar volume", sessions:[
+    {day:"Seg",type:"Corrida Leve",dist:"3.5 km",pace:"6:45–7:15 min/km",dur:"~25 min",tip:"Suba levemente o ritmo em relação à semana 1."},
+    {day:"Qua",type:"Corrida Moderada",dist:"4 km",pace:"6:30–7:00 min/km",dur:"~28 min",tip:"Ritmo um pouco mais forte. Respire pelo nariz quando possível."},
+    {day:"Sex",type:"Long Run",dist:"5 km",pace:"7:00 min/km",dur:"~35 min",tip:"Primeira corrida longa! Não se preocupe com ritmo, termine os 5km."},
+  ]},
+  "Semana 3":{ meta:"Ritmo e resistência", sessions:[
+    {day:"Seg",type:"Intervalado",dist:"4 km",pace:"6:00 min/km (tiros) / 7:30 (recuperação)",dur:"~30 min",tip:"4x400m em ritmo forte com 400m de recuperação leve entre cada."},
+    {day:"Qua",type:"Corrida Moderada",dist:"5 km",pace:"6:30–7:00 min/km",dur:"~35 min",tip:"Ritmo confortavelmente difícil. Você deve conseguir falar poucas palavras."},
+    {day:"Sex",type:"Long Run",dist:"6 km",pace:"7:00–7:30 min/km",dur:"~43 min",tip:"Aumente 1km em relação à semana passada. Hidrate-se antes e durante."},
+  ]},
+  "Semana 4":{ meta:"Consolidação", sessions:[
+    {day:"Seg",type:"Corrida Leve",dist:"4 km",pace:"7:00 min/km",dur:"~28 min",tip:"Semana de recuperação. Volume menor, ritmo leve."},
+    {day:"Qua",type:"Corrida Moderada",dist:"5 km",pace:"6:45 min/km",dur:"~34 min",tip:"Ritmo médio. Foco na respiração e passada."},
+    {day:"Sex",type:"Long Run",dist:"7 km",pace:"7:00–7:30 min/km",dur:"~50 min",tip:"Primeira corrida de 7km! Divida em partes mentalmente: 3+4km."},
+  ]},
+  "Semana 5":{ meta:"Intensidade", sessions:[
+    {day:"Seg",type:"Intervalado",dist:"5 km",pace:"5:45 min/km (tiros)",dur:"~35 min",tip:"6x400m com recuperação de 90s. Corra os tiros com esforço real."},
+    {day:"Qua",type:"Corrida Moderada",dist:"6 km",pace:"6:20–6:45 min/km",dur:"~41 min",tip:"Ritmo controlado mas desafiador. Mantenha cadência alta."},
+    {day:"Sex",type:"Long Run",dist:"8 km",pace:"7:00 min/km",dur:"~56 min",tip:"Primeiros 8km! Leve gel ou isotônico se tiver. Não comece rápido."},
+  ]},
+  "Semana 6":{ meta:"Volume alto", sessions:[
+    {day:"Seg",type:"Corrida Fácil",dist:"5 km",pace:"7:00 min/km",dur:"~35 min",tip:"Recuperação ativa. Não force."},
+    {day:"Qua",type:"Tempo Run",dist:"6 km",pace:"6:00–6:20 min/km",dur:"~38 min",tip:"Ritmo de corrida de 10km. Mantenha uniforme do começo ao fim."},
+    {day:"Sex",type:"Long Run",dist:"9 km",pace:"7:00–7:15 min/km",dur:"~65 min",tip:"Aumente 1km. Beba água nos kms 3, 6 e 9 se possível."},
+  ]},
+  "Semana 7":{ meta:"Força + resistência", sessions:[
+    {day:"Seg",type:"Intervalado",dist:"5 km",pace:"5:30 min/km (tiros)",dur:"~35 min",tip:"8x400m. Intervalo de 75s. Exija de você nos últimos 4 tiros."},
+    {day:"Qua",type:"Corrida Moderada",dist:"7 km",pace:"6:20 min/km",dur:"~45 min",tip:"Ritmo médio constante. Não acelere no final."},
+    {day:"Sex",type:"Long Run",dist:"10 km",pace:"7:00 min/km",dur:"~70 min",tip:"Primeira vez nos 10km! Marco importante. Celebre ao terminar 🎉"},
+  ]},
+  "Semana 8":{ meta:"Recuperação", sessions:[
+    {day:"Seg",type:"Corrida Leve",dist:"4 km",pace:"7:30 min/km",dur:"~30 min",tip:"Semana de alívio. Recupere o corpo antes das semanas finais."},
+    {day:"Qua",type:"Corrida Leve",dist:"5 km",pace:"7:00 min/km",dur:"~35 min",tip:"Leve e tranquilo. Sem pressão."},
+    {day:"Sex",type:"Long Run",dist:"8 km",pace:"7:00 min/km",dur:"~56 min",tip:"Volume reduzido. Aproveite para trabalhar a cadência."},
+  ]},
+  "Semana 9":{ meta:"Pré-pico", sessions:[
+    {day:"Seg",type:"Intervalado",dist:"6 km",pace:"5:20 min/km (tiros)",dur:"~40 min",tip:"10x400m com 60s de intervalo. Máxima intensidade nos tiros."},
+    {day:"Qua",type:"Tempo Run",dist:"7 km",pace:"6:00 min/km",dur:"~42 min",tip:"Ritmo de prova. Finja que está competindo."},
+    {day:"Sex",type:"Long Run",dist:"12 km",pace:"7:00 min/km",dur:"~84 min",tip:"Seu maior treino! Divida: 4+4+4km. Gel/isotônico obrigatório."},
+  ]},
+  "Semana 10":{ meta:"Pico de volume", sessions:[
+    {day:"Seg",type:"Corrida Moderada",dist:"7 km",pace:"6:20 min/km",dur:"~45 min",tip:"Ritmo de conforto. Você já está condicionado agora."},
+    {day:"Qua",type:"Intervalado",dist:"6 km",pace:"5:15 min/km",dur:"~40 min",tip:"8x500m com 90s intervalo. Foco na técnica de passada."},
+    {day:"Sex",type:"Long Run",dist:"13 km",pace:"7:00 min/km",dur:"~91 min",tip:"Quase meia maratona de treino! Saiba seu pace por km."},
+  ]},
+  "Semana 11":{ meta:"Afunilamento", sessions:[
+    {day:"Seg",type:"Corrida Leve",dist:"5 km",pace:"7:00 min/km",dur:"~35 min",tip:"Reduza volume. Mantenha qualidade."},
+    {day:"Qua",type:"Tempo Run",dist:"6 km",pace:"5:50 min/km",dur:"~35 min",tip:"Ritmo de prova. Última sessão forte antes da semana de taper."},
+    {day:"Sex",type:"Long Run",dist:"10 km",pace:"7:00 min/km",dur:"~70 min",tip:"Volume reduzindo. Corpo absorvendo os treinos."},
+  ]},
+  "Semana 12":{ meta:"Semana de prova 🏁", sessions:[
+    {day:"Seg",type:"Corrida Leve",dist:"4 km",pace:"7:30 min/km",dur:"~30 min",tip:"Leve e curto. Mantenha as pernas soltas."},
+    {day:"Qua",type:"Strides",dist:"3 km",pace:"Maioria leve + 4x100m em ritmo de prova",dur:"~20 min",tip:"4 acelerações de 100m para ativar as pernas. Nada pesado."},
+    {day:"Sex",type:"Descanso ou 2km leve",dist:"2 km",pace:"Muito leve",dur:"~15 min",tip:"Última ativação antes da prova. Durma bem. Boa prova! 🏅"},
+  ]},
+};
+
+// ── AUTH ─────────────────────────────────────────────────────────────────────
 function show(id){
   document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
   document.getElementById(id).classList.add('active');
   window.scrollTo(0,0);
 }
-
-// ── AUTH ─────────────────────────────────────────────────────────────────────
-let authMode = 'login';
 function switchAuth(mode){
-  authMode = mode;
-  document.getElementById('form-login').style.display = mode==='login'?'block':'none';
-  document.getElementById('form-register').style.display = mode==='register'?'block':'none';
-  document.querySelectorAll('.auth-tab').forEach((t,i)=>{
-    t.classList.toggle('active', (i===0 && mode==='login')||(i===1 && mode==='register'));
-  });
+  document.getElementById('form-login').style.display=mode==='login'?'block':'none';
+  document.getElementById('form-register').style.display=mode==='register'?'block':'none';
+  document.querySelectorAll('.auth-tab').forEach((t,i)=>t.classList.toggle('active',(i===0&&mode==='login')||(i===1&&mode==='register')));
   document.getElementById('auth-error').style.display='none';
 }
-
-function showError(msg){
-  const el = document.getElementById('auth-error');
-  el.textContent = msg;
-  el.style.display = 'block';
-}
+function showErr(msg){const e=document.getElementById('auth-error');e.textContent=msg;e.style.display='block';}
 
 function doLogin(){
-  const email = document.getElementById('login-email').value.trim();
-  const pass  = document.getElementById('login-pass').value;
-  if(!email||!pass){ showError('Preencha e-mail e senha.'); return; }
-  const users = DB.get('fitquest_users') || {};
-  if(!users[email]){ showError('Conta não encontrada. Crie uma conta primeiro.'); return; }
-  if(users[email].pass !== btoa(pass)){ showError('Senha incorreta.'); return; }
-  DB.set('fitquest_current', email);
-  const userData = users[email];
-  if(!userData.anamneseDone){
-    initAnamnese();
-    show('screen-anamnese');
-  } else {
-    loadApp(email);
-    show('screen-app');
-  }
+  const email=document.getElementById('login-email').value.trim();
+  const pass=document.getElementById('login-pass').value;
+  if(!email||!pass){showErr('Preencha e-mail e senha.');return;}
+  const users=DB.get('fq_users')||{};
+  if(!users[email]){showErr('Conta não encontrada.');return;}
+  if(users[email].pass!==btoa(pass)){showErr('Senha incorreta.');return;}
+  DB.set('fq_cur',email);
+  if(!users[email].anamneseDone){initAnam();show('screen-anamnese');}
+  else{loadApp(email);show('screen-app');}
 }
-
 function doRegister(){
-  const name  = document.getElementById('reg-name').value.trim();
-  const email = document.getElementById('reg-email').value.trim();
-  const pass  = document.getElementById('reg-pass').value;
-  const pass2 = document.getElementById('reg-pass2').value;
-  if(!name||!email||!pass){ showError('Preencha todos os campos.'); return; }
-  if(pass.length < 6){ showError('Senha deve ter pelo menos 6 caracteres.'); return; }
-  if(pass !== pass2){ showError('As senhas não conferem.'); return; }
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  if(!emailRegex.test(email)){ showError('E-mail inválido.'); return; }
-  const users = DB.get('fitquest_users') || {};
-  if(users[email]){ showError('Este e-mail já está cadastrado.'); return; }
-  users[email] = {
-    name, email, pass: btoa(pass), anamneseDone: false,
-    createdAt: new Date().toISOString(),
-    xp: 0, level: 1, streak: 1, coins: 0,
-    stats: { treinos: 0, distancia: 0, prs: 0, semanas: 0 },
-    badges: [],
-    missions: [
-      { id:1, title:'Treinar 4x esta semana', xp:150, progress:0, total:4, type:'gym', done:false },
-      { id:2, title:'Correr 10km esta semana', xp:200, progress:0, total:10, type:'run', done:false },
-      { id:3, title:'Bater PR no supino', xp:300, progress:0, total:1, type:'pr', done:false },
+  const name=document.getElementById('reg-name').value.trim();
+  const email=document.getElementById('reg-email').value.trim();
+  const pass=document.getElementById('reg-pass').value;
+  const pass2=document.getElementById('reg-pass2').value;
+  if(!name||!email||!pass){showErr('Preencha todos os campos.');return;}
+  if(pass.length<6){showErr('Senha mínimo 6 caracteres.');return;}
+  if(pass!==pass2){showErr('Senhas não conferem.');return;}
+  if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){showErr('E-mail inválido.');return;}
+  const users=DB.get('fq_users')||{};
+  if(users[email]){showErr('E-mail já cadastrado.');return;}
+  users[email]={name,email,pass:btoa(pass),anamneseDone:false,createdAt:new Date().toISOString(),
+    xp:0,level:1,streak:1,coins:0,
+    stats:{treinos:0,distancia:0,semanas:0},
+    badges:[],missions:[
+      {id:1,title:'Treinar 4x esta semana',xp:150,progress:0,total:4,type:'gym',done:false},
+      {id:2,title:'Correr 10km esta semana',xp:200,progress:0,total:10,type:'run',done:false},
+      {id:3,title:'Completar Semana 1',xp:300,progress:0,total:1,type:'week',done:false},
     ],
-    prs: [],
-    ranking: { pos: null }
+    prs:[],
+    gymWeek:1, gymDone:{}, runWeek:1, runDone:{},
+    trainApproved:false
   };
-  DB.set('fitquest_users', users);
-  DB.set('fitquest_current', email);
-  initAnamnese();
-  show('screen-anamnese');
+  DB.set('fq_users',users);
+  DB.set('fq_cur',email);
+  initAnam();show('screen-anamnese');
 }
 
 // ── ANAMNESE ─────────────────────────────────────────────────────────────────
-let anamStep = 1;
-const ANAM_TOTAL = 5;
-
-function initAnamnese(){
-  anamStep = 1;
-  updateAnamUI();
-  // radio & checkbox interactivity
-  setupRadioGroups();
-  setupCheckboxGroups();
-}
-
-function setupRadioGroups(){
-  document.querySelectorAll('.radio-group').forEach(group=>{
-    group.querySelectorAll('.radio-option').forEach(opt=>{
-      opt.addEventListener('click',()=>{
-        group.querySelectorAll('.radio-option').forEach(o=>o.classList.remove('selected'));
-        opt.classList.add('selected');
-        opt.querySelector('input').checked = true;
-      });
-    });
+let anamStep=1;
+function initAnam(){
+  anamStep=1;updateAnam();
+  document.querySelectorAll('.rg').forEach(g=>{
+    g.querySelectorAll('.ro').forEach(o=>o.addEventListener('click',()=>{
+      g.querySelectorAll('.ro').forEach(x=>x.classList.remove('sel'));
+      o.classList.add('sel');o.querySelector('input').checked=true;
+    }));
+  });
+  document.querySelectorAll('.cg').forEach(g=>{
+    g.querySelectorAll('.co').forEach(o=>o.addEventListener('click',()=>{
+      o.classList.toggle('sel');const cb=o.querySelector('input');cb.checked=!cb.checked;
+      o.querySelector('.cb').textContent=cb.checked?'✓':'';
+    }));
   });
 }
-
-function setupCheckboxGroups(){
-  document.querySelectorAll('.checkbox-group').forEach(group=>{
-    group.querySelectorAll('.checkbox-option').forEach(opt=>{
-      opt.addEventListener('click',()=>{
-        opt.classList.toggle('selected');
-        const cb = opt.querySelector('input');
-        cb.checked = !cb.checked;
-        // check box visual
-        const box = opt.querySelector('.check-box');
-        box.textContent = cb.checked ? '✓' : '';
-      });
-    });
-  });
+function updateAnam(){
+  const pct=Math.round((anamStep/5)*100);
+  document.getElementById('anam-progress').style.width=pct+'%';
+  document.getElementById('step-label').textContent=`Etapa ${anamStep} de 5`;
+  document.getElementById('step-pct').textContent=pct+'%';
+  document.querySelectorAll('.anam-step').forEach((s,i)=>s.style.display=(i+1===anamStep)?'block':'none');
+  document.getElementById('btn-back').style.display=anamStep>1?'block':'none';
+  document.getElementById('btn-nxt').textContent=anamStep===5?'Enviar ficha ✅':'Próxima etapa →';
 }
-
-function updateAnamUI(){
-  const pct = Math.round((anamStep / ANAM_TOTAL) * 100);
-  document.getElementById('anam-progress').style.width = pct + '%';
-  document.getElementById('step-label').textContent = `Etapa ${anamStep} de ${ANAM_TOTAL}`;
-  document.getElementById('step-pct').textContent = pct + '%';
-  document.querySelectorAll('.anam-step').forEach((s,i)=>{
-    s.style.display = (i+1 === anamStep) ? 'block' : 'none';
-  });
-  document.getElementById('btn-back').style.display = anamStep > 1 ? 'block' : 'none';
-  document.getElementById('btn-next').textContent = anamStep === ANAM_TOTAL ? 'Enviar ficha ✅' : 'Próxima etapa →';
-}
-
-function anamNext(){
-  if(anamStep < ANAM_TOTAL){
-    anamStep++;
-    updateAnamUI();
-    window.scrollTo(0,0);
-  } else {
-    submitAnamnese();
-  }
-}
-
-function anamPrev(){
-  if(anamStep > 1){ anamStep--; updateAnamUI(); window.scrollTo(0,0); }
-}
-
-function submitAnamnese(){
-  const email = DB.get('fitquest_current');
-  const users = DB.get('fitquest_users') || {};
-  if(!users[email]) return;
-
-  // collect data
-  const getRadio = name => { const el = document.querySelector(`input[name="${name}"]:checked`); return el ? el.value : ''; };
-  const getChecks = groupId => Array.from(document.querySelectorAll(`#${groupId} input:checked`)).map(e=>e.value);
-
-  users[email].anamnese = {
-    nascimento: document.getElementById('a-nasc').value,
-    sexo: document.getElementById('a-sexo').value,
-    peso: document.getElementById('a-peso').value,
-    altura: document.getElementById('a-altura').value,
-    profissao: document.getElementById('a-prof').value,
-    fone: document.getElementById('a-fone').value,
-    tempoTreino: getRadio('tempo'),
-    modalidade: getRadio('modal'),
-    diasSemana: getRadio('dias'),
-    duracao: getRadio('dur'),
-    local: getRadio('local'),
-    objetivo: getRadio('obj'),
-    metaCorrida: getRadio('mc'),
-    prazo: document.getElementById('a-prazo').value,
-    motivacao: document.getElementById('a-motiv').value,
-    condicoesSaude: getChecks('cg-saude'),
-    lesoes: getChecks('cg-lesoes'),
-    medicamentos: getRadio('med'),
-    medicamentosDesc: document.getElementById('a-med-desc').value,
-    cirurgia: document.getElementById('a-cirurgia').value,
-    sono: getRadio('sono'),
-    stress: getRadio('stress'),
-    alimentacao: getRadio('alim'),
-    suplementacao: getChecks('cg-supl'),
-    obs: document.getElementById('a-obs').value,
-    submittedAt: new Date().toISOString()
+function anamNext(){if(anamStep<5){anamStep++;updateAnam();window.scrollTo(0,0);}else submitAnam();}
+function anamPrev(){if(anamStep>1){anamStep--;updateAnam();window.scrollTo(0,0);}}
+function submitAnam(){
+  const email=DB.get('fq_cur');
+  const users=DB.get('fq_users')||{};
+  if(!users[email])return;
+  const gr=n=>{const e=document.querySelector(`input[name="${n}"]:checked`);return e?e.value:'';};
+  const gc=id=>Array.from(document.querySelectorAll(`#${id} input:checked`)).map(e=>e.value);
+  users[email].anamnese={
+    nasc:document.getElementById('a-nasc').value,sexo:document.getElementById('a-sexo').value,
+    peso:document.getElementById('a-peso').value,altura:document.getElementById('a-altura').value,
+    prof:document.getElementById('a-prof').value,fone:document.getElementById('a-fone').value,
+    tempo:gr('tempo'),modal:gr('modal'),dias:gr('dias'),dur:gr('dur'),local:gr('local'),
+    obj:gr('obj'),mc:gr('mc'),prazo:document.getElementById('a-prazo').value,
+    motiv:document.getElementById('a-motiv').value,
+    saude:gc('cg-saude'),lesoes:gc('cg-lesoes'),
+    med:gr('med'),medDesc:document.getElementById('a-med').value,
+    cir:document.getElementById('a-cir').value,
+    sono:gr('sono'),stress:gr('stress'),alim:gr('alim'),supl:gc('cg-supl'),
+    obs:document.getElementById('a-obs').value,at:new Date().toISOString()
   };
-  users[email].anamneseDone = true;
-  users[email].xp = 100;
-  users[email].coins = 50;
-  DB.set('fitquest_users', users);
-  show('screen-success');
+  users[email].anamneseDone=true;users[email].xp=100;users[email].coins=50;
+  DB.set('fq_users',users);show('screen-success');
 }
+function goToApp(){const email=DB.get('fq_cur');loadApp(email);show('screen-app');}
 
-function goToApp(){
-  const email = DB.get('fitquest_current');
-  loadApp(email);
-  show('screen-app');
-}
-
-// ── APP ──────────────────────────────────────────────────────────────────────
-const BADGES_DEF = [
-  { id:'b1', icon:'🔥', name:'Streak 7 dias',    condition: u => u.streak >= 7 },
-  { id:'b2', icon:'🏃', name:'Primeira corrida', condition: u => u.stats.distancia > 0 },
-  { id:'b3', icon:'💎', name:'Primeiro PR',       condition: u => u.prs.length > 0 },
-  { id:'b4', icon:'⚡', name:'10 treinos',        condition: u => u.stats.treinos >= 10 },
-  { id:'b5', icon:'🏋️', name:'50 treinos',        condition: u => u.stats.treinos >= 50 },
-  { id:'b6', icon:'🌟', name:'Streak 30 dias',   condition: u => u.streak >= 30 },
-  { id:'b7', icon:'🚀', name:'42 km total',       condition: u => u.stats.distancia >= 42 },
-  { id:'b8', icon:'👑', name:'Top 3 ranking',    condition: u => u.ranking && u.ranking.pos <= 3 },
+// ── APP ───────────────────────────────────────────────────────────────────────
+const BADGES_DEF=[
+  {id:'b1',icon:'🔥',name:'Streak 7 dias',c:u=>u.streak>=7},
+  {id:'b2',icon:'🏃',name:'Primeira corrida',c:u=>u.stats.distancia>0},
+  {id:'b3',icon:'⚡',name:'10 treinos',c:u=>u.stats.treinos>=10},
+  {id:'b4',icon:'💎',name:'Semana 4 completa',c:u=>u.gymWeek>4},
+  {id:'b5',icon:'🏋️',name:'50 treinos',c:u=>u.stats.treinos>=50},
+  {id:'b6',icon:'🌟',name:'Streak 30 dias',c:u=>u.streak>=30},
+  {id:'b7',icon:'🚀',name:'10km de corrida',c:u=>u.stats.distancia>=10},
+  {id:'b8',icon:'👑',name:'12 semanas concluídas',c:u=>u.gymWeek>=12},
 ];
-
-const RANKING_MOCK = [
-  { name:'Marina Costa',  xp:5800, avatar:'🦁', level:9 },
-  { name:'Rafael Mendes', xp:5100, avatar:'⚡', level:8 },
-  { name:'Ana Rodrigues', xp:3200, avatar:'🌟', level:7 },
-  { name:'Carlos Lima',   xp:2900, avatar:'🔥', level:6 },
-  { name:'Bianca Torres', xp:2400, avatar:'🚀', level:6 },
+const RANKING_MOCK=[
+  {name:'Marina Costa',xp:5800,avatar:'🦁',level:9},
+  {name:'Rafael Mendes',xp:5100,avatar:'⚡',level:8},
+  {name:'Ana Rodrigues',xp:3200,avatar:'🌟',level:7},
+  {name:'Carlos Lima',xp:2900,avatar:'🔥',level:6},
 ];
 
 function loadApp(email){
-  const users = DB.get('fitquest_users') || {};
-  const u = users[email];
-  if(!u) return;
-
-  // update badges
-  BADGES_DEF.forEach(b => { if(b.condition(u) && !u.badges.includes(b.id)) u.badges.push(b.id); });
-
-  // ranking position
-  const allUsers = Object.values(users).filter(x=>x.anamneseDone).sort((a,b)=>b.xp-a.xp);
-  const myPos = allUsers.findIndex(x=>x.email===email) + 1;
-  u.ranking = { pos: myPos };
-  if(myPos <= 3){ if(!u.badges.includes('b8')) u.badges.push('b8'); }
-  DB.set('fitquest_users', users);
-
-  // header
-  document.getElementById('streak-val').textContent = u.streak;
-  document.getElementById('app-user-name').textContent = u.name;
-  document.getElementById('app-level').textContent = u.level;
-  document.getElementById('app-streak2').textContent = u.streak;
-  document.getElementById('app-coins').textContent = u.coins;
-
-  // xp
-  const xpNext = u.level * 1000;
-  const pct = Math.min((u.xp / xpNext)*100, 100);
-  document.getElementById('app-xp').textContent = u.xp.toLocaleString() + ' XP';
-  document.getElementById('app-xp-next').textContent = xpNext.toLocaleString() + ' XP';
-  document.getElementById('app-xp-bar').style.width = pct + '%';
-
-  // stats
-  document.getElementById('s-treinos').textContent  = u.stats.treinos;
-  document.getElementById('s-km').textContent       = u.stats.distancia;
-  document.getElementById('s-prs').textContent      = u.prs.length;
-  document.getElementById('s-semanas').textContent  = u.stats.semanas;
-
-  // missions
+  const users=DB.get('fq_users')||{};
+  const u=users[email];if(!u)return;
+  BADGES_DEF.forEach(b=>{if(b.c(u)&&!u.badges.includes(b.id))u.badges.push(b.id);});
+  DB.set('fq_users',users);
+  document.getElementById('streak-val').textContent=u.streak;
+  document.getElementById('app-user-name').textContent=u.name;
+  document.getElementById('app-level').textContent=u.level;
+  document.getElementById('app-streak2').textContent=u.streak;
+  document.getElementById('app-coins').textContent=u.coins;
+  const xpN=u.level*1000;
+  document.getElementById('app-xp').textContent=u.xp.toLocaleString()+' XP';
+  document.getElementById('app-xp-next').textContent=xpN.toLocaleString()+' XP';
+  document.getElementById('app-xp-bar').style.width=Math.min((u.xp/xpN)*100,100)+'%';
+  document.getElementById('s-treinos').textContent=u.stats.treinos;
+  document.getElementById('s-km').textContent=u.stats.distancia;
+  document.getElementById('s-semanas').textContent=u.stats.semanas;
+  document.getElementById('s-prs').textContent=u.prs?u.prs.length:0;
   renderMissions(u.missions);
-
-  // badges
-  renderBadges(u.badges);
-
-  // ranking
-  renderRanking(u, email, users);
-
-  // prs
-  renderPRs(u.prs);
+  renderGym(u);
+  renderRun(u);
+  renderRanking(u,email,users);
+  renderPRs(u.prs||[]);
 }
 
-function renderMissions(missions){
-  const typeColors = { gym:'var(--accent)', run:'var(--orange)', pr:'var(--yellow)', scale:'var(--green)' };
-  const typeIcons  = { gym:'🏋️', run:'🏃', pr:'⭐', scale:'⚖️' };
-  const html = (m) => {
-    const pct = Math.min((m.progress/m.total)*100,100);
-    const color = typeColors[m.type]||'var(--accent)';
-    return `<div class="mission-card ${m.done?'done':''}">
-      <div class="mission-top">
-        <div class="mission-left">
-          <span style="font-size:18px">${typeIcons[m.type]||'🎯'}</span>
-          <div>
-            <div class="mission-info-title">${m.title}</div>
-            <div class="mission-info-sub">${m.done?'✅ Concluída!':m.progress+' / '+m.total}</div>
-          </div>
-        </div>
-        <div class="mission-xp-chip" style="background:${color}22;border:1px solid ${color}55;color:${color}">+${m.xp} XP</div>
+// GYM
+function renderGym(u){
+  const weeks=Object.keys(GYM_PROGRAM);
+  const curWeek=`Semana ${u.gymWeek||1}`;
+  const prog=GYM_PROGRAM[curWeek];
+  if(!u.trainApproved){
+    document.getElementById('gym-content').innerHTML=`
+      <div class="pending-badge">⏳ Aguardando liberação do seu treino por Rennan Dias. Você será notificado assim que estiver disponível!</div>
+      <div style="background:var(--card);border:1px solid var(--border);border-radius:16px;padding:20px;text-align:center">
+        <div style="font-size:48px;margin-bottom:12px">💪</div>
+        <div style="font-size:16px;font-weight:800;margin-bottom:8px">Treino personalizado a caminho!</div>
+        <div style="font-size:13px;color:var(--muted);line-height:1.6">Rennan está analisando sua ficha de anamnese para montar o treino ideal para você. Isso garante máximos resultados com segurança.</div>
+      </div>`;
+    return;
+  }
+  const days=Object.keys(prog.days);
+  let html=`
+    <div style="background:linear-gradient(135deg,#1a1040,#0f0f2a);border:1px solid rgba(108,99,255,.25);border-radius:16px;padding:16px;margin-bottom:14px">
+      <div style="font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:4px">Progresso do programa</div>
+      <div style="font-size:20px;font-weight:900;color:var(--accent)">${curWeek} <span style="font-size:13px;color:var(--muted)">– ${prog.fase}</span></div>
+      <div style="background:var(--border);border-radius:99px;height:6px;margin-top:10px;overflow:hidden">
+        <div style="width:${Math.round((u.gymWeek/12)*100)}%;height:100%;border-radius:99px;background:linear-gradient(90deg,var(--accent),#a78bfa)"></div>
       </div>
-      ${!m.done?`<div class="mission-bar-bg"><div class="mission-bar-fill" style="width:${pct}%;background:${color}"></div></div>`:''}
+      <div style="font-size:11px;color:var(--muted);margin-top:6px">${u.gymWeek} de 12 semanas</div>
+    </div>
+    <div class="week-tabs" id="gym-week-tabs">`;
+  weeks.forEach(w=>{
+    const wn=parseInt(w.split(' ')[1]);
+    const locked=wn>u.gymWeek;
+    const done=wn<u.gymWeek;
+    html+=`<div class="wtab ${w===curWeek?'active':''} ${locked?'locked-tab':''}" onclick="selectGymWeek('${w}',this)" style="${locked?'opacity:.4;cursor:not-allowed':''}">${done?'✅ ':locked?'🔒 ':''} ${w}</div>`;
+  });
+  html+=`</div><div id="gym-week-content"></div>`;
+  document.getElementById('gym-content').innerHTML=html;
+  renderGymWeek(curWeek,u);
+}
+
+function selectGymWeek(week,el){
+  const u=getUser();if(!u)return;
+  const wn=parseInt(week.split(' ')[1]);
+  if(wn>u.gymWeek)return;
+  document.querySelectorAll('.wtab').forEach(t=>t.classList.remove('active'));
+  el.classList.add('active');
+  renderGymWeek(week,u);
+}
+
+function renderGymWeek(week,u){
+  const prog=GYM_PROGRAM[week];
+  const days=Object.keys(prog.days);
+  let html=`<div class="day-tabs">`;
+  days.forEach((d,i)=>{
+    const doneKey=`${week}_${d}`;
+    const isDone=u.gymDone&&u.gymDone[doneKey];
+    html+=`<div class="dtab ${i===0?'active':''} ${isDone?'done':''}" onclick="selectGymDay('${week}','${d}',this)">${isDone?'✅ ':''}${d}</div>`;
+  });
+  html+=`</div><div id="gym-day-content"></div>`;
+  document.getElementById('gym-week-content').innerHTML=html;
+  renderGymDay(week,days[0],u);
+}
+
+function selectGymDay(week,day,el){
+  const u=getUser();if(!u)return;
+  document.querySelectorAll('.dtab').forEach(t=>t.classList.remove('active'));
+  el.classList.add('active');
+  renderGymDay(week,day,u);
+}
+
+function renderGymDay(week,day,u){
+  const exercises=GYM_PROGRAM[week].days[day];
+  const doneKey=`${week}_${day}`;
+  const isDone=u.gymDone&&u.gymDone[doneKey];
+  let html='';
+  exercises.forEach((ex,i)=>{
+    html+=`<div class="excard">
+      <div class="exhead">
+        <div class="exnum">${i+1}</div>
+        <div><div class="exnm">${ex.name}</div><div class="exmu">${ex.muscle}</div></div>
+      </div>
+      <div class="sets-grid">
+        <div class="set-chip"><div class="set-lbl">Séries</div><div class="set-val" style="color:var(--accent)">${ex.sets}</div></div>
+        <div class="set-chip"><div class="set-lbl">Reps</div><div class="set-val" style="color:var(--orange)">${ex.reps}</div></div>
+        <div class="set-chip"><div class="set-lbl">Carga</div><div class="set-val" style="color:var(--yellow);font-size:11px">${ex.load}</div></div>
+      </div>
+      <div class="ex-obs">💡 ${ex.obs}</div>
+    </div>`;
+  });
+  html+=`<button class="btn-done ${isDone?'marked':''}" onclick="markGymDone('${week}','${day}')">${isDone?'✅ Treino concluído!':'Marcar treino como feito'}</button>`;
+  document.getElementById('gym-day-content').innerHTML=html;
+}
+
+function markGymDone(week,day){
+  const email=DB.get('fq_cur');
+  const users=DB.get('fq_users')||{};
+  const u=users[email];if(!u)return;
+  const doneKey=`${week}_${day}`;
+  if(!u.gymDone)u.gymDone={};
+  if(u.gymDone[doneKey])return;
+  u.gymDone[doneKey]=true;
+  u.stats.treinos++;
+  u.xp+=80;u.coins+=15;
+  // Verifica se completou todos os treinos da semana atual
+  const prog=GYM_PROGRAM[week];
+  const allDays=Object.keys(prog.days);
+  const allDone=allDays.every(d=>u.gymDone[`${week}_${d}`]);
+  if(allDone){
+    const wn=parseInt(week.split(' ')[1]);
+    if(wn===u.gymWeek&&u.gymWeek<12){u.gymWeek++;u.xp+=200;u.coins+=50;u.stats.semanas++;}
+  }
+  if(u.xp>=u.level*1000){u.level++;u.xp=0;setTimeout(()=>alert('🎉 Subiu para o Nível '+u.level+'!'),100);}
+  DB.set('fq_users',users);
+  loadApp(email);
+  switchTab('gym',document.querySelectorAll('.nbtn')[1]);
+}
+
+// RUN
+function renderRun(u){
+  const weeks=Object.keys(RUN_PROGRAM);
+  const curWeek=`Semana ${u.runWeek||1}`;
+  const prog=RUN_PROGRAM[curWeek];
+  if(!u.trainApproved){
+    document.getElementById('run-content').innerHTML=`
+      <div class="pending-badge">⏳ Aguardando liberação do seu treino de corrida por Rennan Dias.</div>
+      <div style="background:var(--card);border:1px solid var(--border);border-radius:16px;padding:20px;text-align:center">
+        <div style="font-size:48px;margin-bottom:12px">🏃</div>
+        <div style="font-size:16px;font-weight:800;margin-bottom:8px">Programa de corrida a caminho!</div>
+        <div style="font-size:13px;color:var(--muted);line-height:1.6">12 semanas de progressão do zero até 10km+ esperando por você.</div>
+      </div>`;
+    return;
+  }
+  let html=`
+    <div class="run-week">
+      <div class="run-week-title">🏃 ${curWeek} – ${prog.meta}</div>
+      <div class="run-week-sub">Programa 12 semanas · Você está na semana ${u.runWeek||1} de 12</div>
+      <div style="background:rgba(255,107,53,.2);border-radius:99px;height:6px;margin-top:10px;overflow:hidden">
+        <div style="width:${Math.round(((u.runWeek||1)/12)*100)}%;height:100%;border-radius:99px;background:var(--orange)"></div>
+      </div>
+    </div>
+    <div class="week-tabs" id="run-week-tabs">`;
+  weeks.forEach(w=>{
+    const wn=parseInt(w.split(' ')[1]);
+    const locked=wn>(u.runWeek||1);
+    const done=wn<(u.runWeek||1);
+    html+=`<div class="wtab ${w===curWeek?'active':''}" onclick="selectRunWeek('${w}',this)" style="${locked?'opacity:.4;cursor:not-allowed':''}">${done?'✅ ':locked?'🔒 ':''} ${w}</div>`;
+  });
+  html+=`</div><div id="run-sessions"></div>`;
+  document.getElementById('run-content').innerHTML=html;
+  renderRunWeek(curWeek,u);
+}
+
+function selectRunWeek(week,el){
+  const u=getUser();if(!u)return;
+  const wn=parseInt(week.split(' ')[1]);
+  if(wn>(u.runWeek||1))return;
+  document.querySelectorAll('#run-week-tabs .wtab').forEach(t=>t.classList.remove('active'));
+  el.classList.add('active');
+  renderRunWeek(week,u);
+}
+
+function renderRunWeek(week,u){
+  const prog=RUN_PROGRAM[week];
+  let html='';
+  prog.sessions.forEach((s,i)=>{
+    const doneKey=`run_${week}_${i}`;
+    const isDone=u.runDone&&u.runDone[doneKey];
+    html+=`<div class="run-session">
+      <div class="rs-head">
+        <div class="rs-ico">🏃</div>
+        <div><div class="rs-title">${s.day} – ${s.type}</div><div class="rs-sub">${isDone?'✅ Sessão concluída':'Pendente'}</div></div>
+      </div>
+      <div class="run-metrics">
+        <div class="rm"><div class="rm-lbl">Distância</div><div class="rm-val">${s.dist}</div></div>
+        <div class="rm"><div class="rm-lbl">Pace</div><div class="rm-val" style="font-size:11px">${s.pace}</div></div>
+        <div class="rm"><div class="rm-lbl">Duração</div><div class="rm-val">${s.dur}</div></div>
+      </div>
+      <div class="run-tip">💡 ${s.tip}</div>
+      <button class="btn-done ${isDone?'marked':''}" style="border-color:rgba(255,107,53,.3);color:var(--orange);background:rgba(255,107,53,.08)" onclick="markRunDone('${week}',${i})">${isDone?'✅ Sessão concluída!':'Marcar sessão como feita'}</button>
+    </div>`;
+  });
+  document.getElementById('run-sessions').innerHTML=html;
+}
+
+function markRunDone(week,idx){
+  const email=DB.get('fq_cur');
+  const users=DB.get('fq_users')||{};
+  const u=users[email];if(!u)return;
+  const doneKey=`run_${week}_${idx}`;
+  if(!u.runDone)u.runDone={};
+  if(u.runDone[doneKey])return;
+  u.runDone[doneKey]=true;
+  const s=RUN_PROGRAM[week].sessions[idx];
+  const km=parseFloat(s.dist);
+  if(!isNaN(km))u.stats.distancia=Math.round((u.stats.distancia+km)*10)/10;
+  u.xp+=60;u.coins+=10;
+  // Verifica se completou todas as sessões da semana
+  const total=RUN_PROGRAM[week].sessions.length;
+  const allDone=[...Array(total).keys()].every(i=>u.runDone[`run_${week}_${i}`]);
+  if(allDone){const wn=parseInt(week.split(' ')[1]);if(wn===u.runWeek&&u.runWeek<12){u.runWeek++;u.xp+=150;u.coins+=30;}}
+  if(u.xp>=u.level*1000){u.level++;u.xp=0;setTimeout(()=>alert('🎉 Subiu para o Nível '+u.level+'!'),100);}
+  DB.set('fq_users',users);
+  loadApp(email);
+  switchTab('run',document.querySelectorAll('.nbtn')[2]);
+}
+
+// MISSIONS
+function renderMissions(missions){
+  const tc={gym:'var(--accent)',run:'var(--orange)',pr:'var(--yellow)',week:'var(--green)',scale:'var(--green)'};
+  const ti={gym:'🏋️',run:'🏃',pr:'⭐',week:'📅',scale:'⚖️'};
+  const html=m=>{
+    const pct=Math.min((m.progress/m.total)*100,100);
+    const c=tc[m.type]||'var(--accent)';
+    return `<div class="mc ${m.done?'done':''}">
+      <div class="mt"><div class="ml"><span style="font-size:18px">${ti[m.type]||'🎯'}</span>
+        <div><div class="mit">${m.title}</div><div class="mis">${m.done?'✅ Concluída!':m.progress+' / '+m.total}</div></div>
+      </div>
+      <div class="mxc" style="background:${c}22;border:1px solid ${c}55;color:${c}">+${m.xp} XP</div></div>
+      ${!m.done?`<div class="mbb"><div class="mbf" style="width:${pct}%;background:${c}"></div></div>`:''}
     </div>`;
   };
-  const active = missions.filter(m=>!m.done);
-  const done   = missions.filter(m=>m.done);
-  document.getElementById('home-missions').innerHTML = active.slice(0,2).map(html).join('');
-  document.getElementById('missions-active').innerHTML = active.map(html).join('') || '<div style="color:var(--muted);font-size:13px;padding:10px">Nenhuma missão ativa 🎉</div>';
-  document.getElementById('missions-done').innerHTML   = done.map(html).join('')   || '<div style="color:var(--muted);font-size:13px;padding:10px">Nenhuma concluída ainda</div>';
-  document.getElementById('m-active-count').textContent = active.length;
-  document.getElementById('m-done-count').textContent   = done.length;
-  document.getElementById('m-xp-earned').textContent    = done.reduce((a,m)=>a+m.xp,0);
+  const active=missions.filter(m=>!m.done),done=missions.filter(m=>m.done);
+  document.getElementById('home-missions').innerHTML=active.slice(0,2).map(html).join('');
+  document.getElementById('missions-active').innerHTML=active.map(html).join('')||'<div style="color:var(--muted);font-size:13px;padding:10px">Nenhuma missão ativa 🎉</div>';
+  document.getElementById('missions-done').innerHTML=done.map(html).join('')||'<div style="color:var(--muted);font-size:13px;padding:10px">Nenhuma concluída ainda</div>';
+  document.getElementById('m-active').textContent=active.length;
+  document.getElementById('m-done').textContent=done.length;
+  document.getElementById('m-xp').textContent=done.reduce((a,m)=>a+m.xp,0);
 }
 
-function renderBadges(earned){
-  const earnedSet = new Set(earned);
-  const earnedDefs = BADGES_DEF.filter(b=>earnedSet.has(b.id));
-  const lockedDefs = BADGES_DEF.filter(b=>!earnedSet.has(b.id));
-  const card = (b, isEarned) =>
-    `<div class="badge-card ${isEarned?'earned':'locked'}">
-      <div class="badge-icon">${b.icon}</div>
-      <div class="badge-name">${b.name}</div>
-    </div>`;
-  document.getElementById('badges-earned').innerHTML = earnedDefs.map(b=>card(b,true)).join('') || '<div style="color:var(--muted);font-size:13px">Nenhuma ainda — comece a treinar!</div>';
-  document.getElementById('badges-locked').innerHTML = lockedDefs.map(b=>card(b,false)).join('');
-  document.getElementById('badges-count').textContent = `${earnedDefs.length}/${BADGES_DEF.length}`;
-  document.getElementById('badges-bar').style.width = (earnedDefs.length/BADGES_DEF.length*100)+'%';
-}
-
-function renderRanking(u, email, users){
-  const allReal = Object.values(users).filter(x=>x.anamneseDone).map(x=>({name:x.name,xp:x.xp,level:x.level,avatar:'💪',isMe:x.email===email}));
-  const combined = [...RANKING_MOCK, ...allReal].sort((a,b)=>b.xp-a.xp);
-  // deduplicate names
-  const seen = new Set();
-  const unique = combined.filter(r=>{ if(seen.has(r.name))return false; seen.add(r.name); return true; });
-  const medals = ['🥇','🥈','🥉'];
-  const myPos = unique.findIndex(r=>r.isMe)+1;
-  document.getElementById('my-rank').textContent = myPos || '–';
-  document.getElementById('ranking-list').innerHTML = unique.map((r,i)=>{
-    const pos = i+1;
-    return `<div class="ranking-row ${r.isMe?'me':''}">
-      <div class="rank-pos ${pos>3?'num':''}">${pos<=3?medals[pos-1]:'#'+pos}</div>
-      <div class="rank-av ${r.isMe?'me':''}">${r.avatar}</div>
-      <div class="rank-info">
-        <div class="rank-name ${r.isMe?'me':''}">${r.name}${r.isMe?' <span style="font-size:10px;color:var(--muted)">(você)</span>':''}</div>
-        <div class="rank-level">Nível ${r.level}</div>
-      </div>
-      <div>
-        <div class="rank-xp" style="color:${r.isMe?'var(--accent)':'var(--text)'}">${r.xp.toLocaleString()}</div>
-        <div style="font-size:10px;color:var(--muted);text-align:right">XP</div>
-      </div>
+function renderRanking(u,email,users){
+  const allReal=Object.values(users).filter(x=>x.anamneseDone).map(x=>({name:x.name,xp:x.xp,level:x.level,avatar:'💪',isMe:x.email===email}));
+  const combined=[...RANKING_MOCK,...allReal].sort((a,b)=>b.xp-a.xp);
+  const seen=new Set();
+  const unique=combined.filter(r=>{if(seen.has(r.name))return false;seen.add(r.name);return true;});
+  const medals=['🥇','🥈','🥉'];
+  const myPos=unique.findIndex(r=>r.isMe)+1;
+  document.getElementById('my-rank').textContent=myPos||'–';
+  document.getElementById('ranking-list').innerHTML=unique.map((r,i)=>{
+    const pos=i+1;
+    return `<div class="rkrow ${r.isMe?'me':''}">
+      <div class="rp ${pos>3?'num':''}">${pos<=3?medals[pos-1]:'#'+pos}</div>
+      <div class="rav ${r.isMe?'me':''}">${r.avatar}</div>
+      <div class="ri"><div class="rn ${r.isMe?'me':''}">${r.name}${r.isMe?' <span style="font-size:10px;color:var(--muted)">(você)</span>':''}</div><div class="rlv">Nível ${r.level}</div></div>
+      <div><div style="font-size:13px;font-weight:800;color:${r.isMe?'var(--accent)':'var(--text)'}">${r.xp.toLocaleString()}</div><div style="font-size:10px;color:var(--muted);text-align:right">XP</div></div>
     </div>`;
   }).join('');
 }
 
 function renderPRs(prs){
-  document.getElementById('pr-count').textContent = prs.length;
-  if(!prs.length){
-    document.getElementById('prs-list').innerHTML = '<div style="color:var(--muted);font-size:13px;padding:10px 0">Nenhum PR registrado ainda. Quebre o primeiro recorde!</div>';
-    return;
-  }
-  document.getElementById('prs-list').innerHTML = prs.map(pr=>`
-    <div class="pr-card">
-      <div class="pr-icon-wrap">${pr.icon||'⭐'}</div>
-      <div class="pr-info"><div class="pr-exercise">${pr.exercise}</div><div class="pr-date">${pr.date}</div></div>
-      <div class="pr-value">${pr.value}</div>
+  document.getElementById('pr-count').textContent=prs.length;
+  if(!prs.length){document.getElementById('prs-list').innerHTML='<div style="color:var(--muted);font-size:13px;padding:10px 0">Nenhum PR ainda. Quebre o primeiro recorde!</div>';return;}
+  document.getElementById('prs-list').innerHTML=prs.map(pr=>`
+    <div class="prc"><div class="priw">${pr.icon||'⭐'}</div>
+      <div class="pri"><div class="pre">${pr.exercise}</div><div class="prd">${pr.date}</div></div>
+      <div class="prv">${pr.value}</div>
     </div>`).join('');
 }
 
-function logWorkout(){
-  const email = DB.get('fitquest_current');
-  const users = DB.get('fitquest_users')||{};
-  const u = users[email]; if(!u) return;
-
-  const ex = prompt('Nome do exercício ou atividade (ex: Supino, Corrida 5km):');
-  if(!ex) return;
-  const val = prompt('Resultado (ex: 90kg, 24:30, 8km):');
-  if(!val) return;
-
-  u.prs.push({ exercise: ex, value: val, date: new Date().toLocaleDateString('pt-BR',{day:'2-digit',month:'2-digit'}), icon:'⭐' });
-  u.stats.treinos++;
-  u.xp += 50;
-  u.coins += 10;
-  if(u.xp >= u.level*1000){ u.level++; u.xp = 0; alert('🎉 Subiu para o Nível '+u.level+'!'); }
-
-  DB.set('fitquest_users', users);
-  loadApp(email);
-  switchTab('prs', document.querySelectorAll('.nav-btn')[4]);
+function logPR(){
+  const email=DB.get('fq_cur');const users=DB.get('fq_users')||{};const u=users[email];if(!u)return;
+  const ex=prompt('Exercício (ex: Supino, Corrida 5km):');if(!ex)return;
+  const val=prompt('Resultado (ex: 90kg, 24:30):');if(!val)return;
+  if(!u.prs)u.prs=[];
+  u.prs.push({exercise:ex,value:val,date:new Date().toLocaleDateString('pt-BR',{day:'2-digit',month:'2-digit'}),icon:'⭐'});
+  u.xp+=100;u.coins+=20;
+  DB.set('fq_users',users);loadApp(email);
 }
 
-// ── NAV ──────────────────────────────────────────────────────────────────────
-function switchTab(name, btn){
+function doLogout(){
+  if(!confirm('Deseja sair da sua conta?'))return;
+  DB.del('fq_cur');
+  // reset auth form
+  document.getElementById('login-email').value='';
+  document.getElementById('login-pass').value='';
+  document.getElementById('auth-error').style.display='none';
+  switchAuth('login');
+  show('screen-auth');
+}
+
+function switchTab(name,btn){
   document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));
-  document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
+  document.querySelectorAll('.nbtn').forEach(b=>b.classList.remove('active'));
   document.getElementById('panel-'+name).classList.add('active');
-  if(btn) btn.classList.add('active');
+  if(btn)btn.classList.add('active');
   window.scrollTo(0,0);
+}
+function getUser(){
+  const email=DB.get('fq_cur');if(!email)return null;
+  const users=DB.get('fq_users')||{};return users[email]||null;
 }
 
 // ── INIT ─────────────────────────────────────────────────────────────────────
+// PARA RENNAN: para liberar treino de um aluno, abra o console do navegador
+// e rode: approveTraining("email_do_aluno@email.com")
+window.approveTraining=function(email){
+  const users=DB.get('fq_users')||{};
+  if(!users[email]){console.log('Usuário não encontrado');return;}
+  users[email].trainApproved=true;
+  DB.set('fq_users',users);
+  console.log('✅ Treino liberado para '+users[email].name);
+};
+window.listUsers=function(){
+  const users=DB.get('fq_users')||{};
+  Object.values(users).forEach(u=>console.log(`${u.name} | ${u.email} | Aprovado: ${u.trainApproved}`));
+};
+
 (function init(){
-  const email = DB.get('fitquest_current');
-  if(!email){ show('screen-auth'); return; }
-  const users = DB.get('fitquest_users')||{};
-  const u = users[email];
-  if(!u){ DB.del('fitquest_current'); show('screen-auth'); return; }
-  if(!u.anamneseDone){ initAnamnese(); show('screen-anamnese'); return; }
-  loadApp(email);
-  show('screen-app');
+  const email=DB.get('fq_cur');
+  if(!email){show('screen-auth');return;}
+  const users=DB.get('fq_users')||{};const u=users[email];
+  if(!u){DB.del('fq_cur');show('screen-auth');return;}
+  if(!u.anamneseDone){initAnam();show('screen-anamnese');return;}
+  loadApp(email);show('screen-app');
 })();
 </script>
 </body>
