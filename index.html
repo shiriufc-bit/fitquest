@@ -178,6 +178,63 @@ textarea.fi{resize:vertical;min-height:80px;}
 .lcard{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:14px;text-align:center;margin-top:10px;}
 .lcard p{font-size:13px;color:var(--muted);margin-bottom:10px;}
 @media(max-width:380px){.fr{grid-template-columns:1fr;}}
+
+/* ADMIN */
+#screen-admin{display:none;flex-direction:column;min-height:100vh;}
+#screen-admin.active{display:flex;}
+.adm-hdr{background:linear-gradient(135deg,#1a0a2e,#0a0f1a);border-bottom:1px solid var(--border);padding:14px 20px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:10;}
+.adm-logo{font-size:17px;font-weight:900;}
+.adm-logo .ac{color:var(--orange);}
+.adm-content{flex:1;padding:16px 16px 90px;max-width:600px;width:100%;margin:0 auto;}
+.adm-nav{position:fixed;bottom:0;left:0;right:0;background:var(--surface);border-top:1px solid var(--border);display:flex;padding:8px 4px 18px;z-index:10;}
+.adm-panel{display:none;}.adm-panel.active{display:block;}
+.student-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:14px;margin-bottom:10px;}
+.student-card.approved{border-color:rgba(0,214,143,.3);}
+.student-card.pending{border-color:rgba(255,107,53,.3);}
+.sc-top{display:flex;align-items:center;gap:12px;margin-bottom:10px;}
+.sc-av{width:40px;height:40px;border-radius:10px;background:var(--accent);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;}
+.sc-info{flex:1;}
+.sc-name{font-size:14px;font-weight:800;}
+.sc-email{font-size:11px;color:var(--muted);margin-top:2px;}
+.sc-status{font-size:10px;font-weight:700;padding:3px 8px;border-radius:6px;}
+.sc-status.ok{background:rgba(0,214,143,.15);color:var(--green);border:1px solid rgba(0,214,143,.3);}
+.sc-status.pend{background:rgba(255,107,53,.15);color:var(--orange);border:1px solid rgba(255,107,53,.3);}
+.sc-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-bottom:10px;}
+.sc-stat{background:var(--surface);border-radius:8px;padding:6px;text-align:center;}
+.sc-stat-val{font-size:14px;font-weight:900;}
+.sc-stat-lbl{font-size:9px;color:var(--muted);}
+.sc-btns{display:flex;gap:6px;flex-wrap:wrap;}
+.btn-sm{padding:7px 12px;border-radius:8px;font-size:11px;font-weight:700;cursor:pointer;border:none;transition:all .2s;}
+.btn-approve{background:rgba(0,214,143,.15);color:var(--green);border:1px solid rgba(0,214,143,.3);}
+.btn-revoke{background:rgba(255,80,80,.12);color:#ff6b6b;border:1px solid rgba(255,80,80,.25);}
+.btn-edit{background:rgba(108,99,255,.15);color:var(--accent);border:1px solid rgba(108,99,255,.3);}
+.btn-view{background:rgba(255,214,10,.1);color:var(--yellow);border:1px solid rgba(255,214,10,.25);}
+.btn-delete{background:rgba(255,80,80,.08);color:#ff6b6b;border:1px solid rgba(255,80,80,.2);}
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.8);z-index:100;align-items:flex-end;justify-content:center;}
+.modal-overlay.open{display:flex;}
+.modal-box{background:var(--card);border:1px solid var(--border);border-radius:20px 20px 0 0;padding:20px;width:100%;max-width:600px;max-height:90vh;overflow-y:auto;}
+.modal-title{font-size:17px;font-weight:900;margin-bottom:16px;display:flex;justify-content:space-between;align-items:center;}
+.modal-close{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:6px 12px;color:var(--muted);font-size:13px;font-weight:700;cursor:pointer;}
+.edit-section{margin-bottom:20px;}
+.edit-section-title{font-size:12px;font-weight:800;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px;padding-bottom:6px;border-bottom:1px solid var(--border);}
+.week-select{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px;}
+.ws-btn{padding:6px 12px;background:var(--surface);border:1px solid var(--border);border-radius:8px;font-size:11px;font-weight:700;color:var(--muted);cursor:pointer;}
+.ws-btn.active{background:var(--accent);border-color:var(--accent);color:#fff;}
+.ex-edit-row{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:10px;margin-bottom:8px;}
+.ex-edit-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;}
+.ex-edit-name{font-size:13px;font-weight:700;}
+.ex-edit-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-bottom:6px;}
+.mini-input{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:6px 8px;color:var(--text);font-size:12px;width:100%;outline:none;}
+.mini-input:focus{border-color:var(--accent);}
+.mini-label{font-size:9px;color:var(--muted);margin-bottom:3px;}
+.btn-add-ex{width:100%;padding:10px;background:rgba(108,99,255,.1);border:1px dashed rgba(108,99,255,.4);border-radius:10px;color:var(--accent);font-size:12px;font-weight:700;cursor:pointer;margin-top:6px;}
+.btn-save-week{width:100%;padding:12px;background:linear-gradient(135deg,var(--accent),#a78bfa);border:none;border-radius:12px;color:#fff;font-size:14px;font-weight:800;cursor:pointer;margin-top:10px;}
+.run-edit-row{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:10px;margin-bottom:8px;}
+.anam-view{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:12px;margin-bottom:8px;}
+.anam-row{display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--border);font-size:12px;}
+.anam-row:last-child{border-bottom:none;}
+.anam-key{color:var(--muted);font-weight:600;}
+.anam-val{color:var(--text);font-weight:700;text-align:right;max-width:60%;}
 </style>
 </head>
 <body>
@@ -653,10 +710,16 @@ function switchAuth(mode){
 }
 function showErr(msg){const e=document.getElementById('auth-error');e.textContent=msg;e.style.display='block';}
 
+const ADMIN_EMAIL='rennan@rennandias.com.br';
+const ADMIN_PASS=btoa('RennanAdmin@2025');
+
 function doLogin(){
   const email=document.getElementById('login-email').value.trim();
   const pass=document.getElementById('login-pass').value;
   if(!email||!pass){showErr('Preencha e-mail e senha.');return;}
+  if(email===ADMIN_EMAIL&&btoa(pass)===ADMIN_PASS){
+    DB.set('fq_cur','__admin__');loadAdmin();show('screen-admin');return;
+  }
   const users=DB.get('fq_users')||{};
   if(!users[email]){showErr('Conta não encontrada.');return;}
   if(users[email].pass!==btoa(pass)){showErr('Senha incorreta.');return;}
@@ -720,13 +783,13 @@ function updateAnam(){
 }
 function anamNext(){if(anamStep<5){anamStep++;updateAnam();window.scrollTo(0,0);}else submitAnam();}
 function anamPrev(){if(anamStep>1){anamStep--;updateAnam();window.scrollTo(0,0);}}
-function submitAnam(){
+async function submitAnam(){
   const email=DB.get('fq_cur');
   const users=DB.get('fq_users')||{};
   if(!users[email])return;
   const gr=n=>{const e=document.querySelector(`input[name="${n}"]:checked`);return e?e.value:'';};
   const gc=id=>Array.from(document.querySelectorAll(`#${id} input:checked`)).map(e=>e.value);
-  users[email].anamnese={
+  const an={
     nasc:document.getElementById('a-nasc').value,sexo:document.getElementById('a-sexo').value,
     peso:document.getElementById('a-peso').value,altura:document.getElementById('a-altura').value,
     prof:document.getElementById('a-prof').value,fone:document.getElementById('a-fone').value,
@@ -739,9 +802,109 @@ function submitAnam(){
     sono:gr('sono'),stress:gr('stress'),alim:gr('alim'),supl:gc('cg-supl'),
     obs:document.getElementById('a-obs').value,at:new Date().toISOString()
   };
+  users[email].anamnese=an;
   users[email].anamneseDone=true;users[email].xp=100;users[email].coins=50;
-  DB.set('fq_users',users);show('screen-success');
+  users[email].trainApproved=false;
+  users[email].aiPlan=null;
+  DB.set('fq_users',users);
+
+  // Mostrar tela de geração
+  show('screen-success');
+  document.querySelector('.stit').textContent='🤖 Gerando seu treino...';
+  document.querySelector('.ssub').textContent='A IA está analisando sua ficha e montando um plano personalizado. Isso leva alguns segundos!';
+  document.querySelector('#screen-success .btn-p').style.display='none';
+
+  try {
+    await generateAIPlan(email, an);
+    document.querySelector('.sico').textContent='🎉';
+    document.querySelector('.stit').textContent='Treino pronto!';
+    document.querySelector('.ssub').textContent='Seu plano personalizado foi gerado pela IA com base na sua ficha. Bora treinar!';
+    document.querySelector('#screen-success .btn-p').style.display='block';
+  } catch(e) {
+    document.querySelector('.sico').textContent='⚠️';
+    document.querySelector('.stit').textContent='Treino padrão ativado';
+    document.querySelector('.ssub').textContent='Não foi possível conectar à IA agora, mas seu treino padrão já está disponível!';
+    document.querySelector('#screen-success .btn-p').style.display='block';
+    const u2=DB.get('fq_users')||{};
+    if(u2[email]){u2[email].trainApproved=true;DB.set('fq_users',u2);}
+  }
 }
+
+async function generateAIPlan(email, an){
+  const prompt=`Você é personal trainer e assessor de corrida especialista. Com base na ficha de anamnese abaixo, crie um plano de treino personalizado em JSON.
+
+FICHA:
+- Nível: ${an.tempo||'Iniciante'}
+- Modalidade: ${an.modal||'Ambos'}
+- Objetivo: ${an.obj||'Saúde'}
+- Dias/semana: ${an.dias||'3x'}
+- Duração: ${an.dur||'60 min'}
+- Local: ${an.local||'Academia'}
+- Lesões: ${(an.lesoes||[]).join(', ')||'Nenhuma'}
+- Condições de saúde: ${(an.saude||[]).join(', ')||'Nenhuma'}
+- Meta corrida: ${an.mc||'Não pratica'}
+- Peso: ${an.peso||'?'}kg, Altura: ${an.altura||'?'}cm
+
+Retorne APENAS um JSON válido (sem markdown, sem texto extra) com esta estrutura exata:
+{
+  "gym": {
+    "Semana 1": {
+      "fase": "Nome da fase",
+      "days": {
+        "Treino A": [
+          {"name":"Nome do exercício","muscle":"Músculo","sets":3,"reps":"12","load":"Moderada","obs":"Dica curta"}
+        ],
+        "Treino B": [...]
+      }
+    },
+    "Semana 2": { ... },
+    "Semana 3": { ... },
+    "Semana 4": { ... }
+  },
+  "run": {
+    "Semana 1": {
+      "meta": "Objetivo da semana",
+      "sessions": [
+        {"day":"Seg","type":"Tipo de treino","dist":"3 km","pace":"7:00 min/km","dur":"~20 min","tip":"Dica"}
+      ]
+    },
+    "Semana 2": { ... },
+    "Semana 3": { ... },
+    "Semana 4": { ... }
+  }
+}
+
+Regras:
+- Gere exatamente 4 semanas de musculação e 4 de corrida
+- Adapte os exercícios às lesões e limitações informadas
+- Se a modalidade for só musculação, deixe "run" com sessões leves de caminhada
+- Se for só corrida, deixe "gym" com exercícios funcionais leves
+- Progressão lógica entre semanas
+- Máximo 7 exercícios por treino
+- Máximo 3 sessões de corrida por semana`;
+
+  const res=await fetch('https://api.anthropic.com/v1/messages',{
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({
+      model:'claude-sonnet-4-6',
+      max_tokens:4000,
+      messages:[{role:'user',content:prompt}]
+    })
+  });
+  const data=await res.json();
+  const text=data.content.map(i=>i.text||'').join('').trim();
+  const clean=text.replace(/```json|```/g,'').trim();
+  const plan=JSON.parse(clean);
+
+  const users=DB.get('fq_users')||{};
+  if(users[email]){
+    users[email].aiPlan=plan;
+    users[email].trainApproved=true;
+    DB.set('fq_users',users);
+  }
+}
+
 function goToApp(){const email=DB.get('fq_cur');loadApp(email);show('screen-app');}
 
 // ── APP ───────────────────────────────────────────────────────────────────────
@@ -788,35 +951,45 @@ function loadApp(email){
 }
 
 // GYM
+function getGymProgram(u){
+  if(u.aiPlan&&u.aiPlan.gym)return u.aiPlan.gym;
+  return GYM_PROGRAM;
+}
+function getRunProgram(u){
+  if(u.aiPlan&&u.aiPlan.run)return u.aiPlan.run;
+  return RUN_PROGRAM;
+}
+
 function renderGym(u){
-  const weeks=Object.keys(GYM_PROGRAM);
+  const PROG=getGymProgram(u);
+  const weeks=Object.keys(PROG);
   const curWeek=`Semana ${u.gymWeek||1}`;
-  const prog=GYM_PROGRAM[curWeek];
+  const prog=PROG[curWeek]||PROG[weeks[0]];
   if(!u.trainApproved){
     document.getElementById('gym-content').innerHTML=`
-      <div class="pending-badge">⏳ Aguardando liberação do seu treino por Rennan Dias. Você será notificado assim que estiver disponível!</div>
-      <div style="background:var(--card);border:1px solid var(--border);border-radius:16px;padding:20px;text-align:center">
-        <div style="font-size:48px;margin-bottom:12px">💪</div>
-        <div style="font-size:16px;font-weight:800;margin-bottom:8px">Treino personalizado a caminho!</div>
-        <div style="font-size:13px;color:var(--muted);line-height:1.6">Rennan está analisando sua ficha de anamnese para montar o treino ideal para você. Isso garante máximos resultados com segurança.</div>
+      <div style="background:var(--card);border:1px solid var(--border);border-radius:16px;padding:24px;text-align:center">
+        <div style="font-size:48px;margin-bottom:12px">🤖</div>
+        <div style="font-size:16px;font-weight:800;margin-bottom:8px">Gerando seu treino com IA...</div>
+        <div style="font-size:13px;color:var(--muted);line-height:1.6">Aguarde enquanto a IA analisa sua ficha de anamnese e monta seu plano personalizado.</div>
+        <div style="margin-top:16px;background:var(--border);border-radius:99px;height:6px;overflow:hidden"><div style="width:60%;height:100%;background:linear-gradient(90deg,var(--accent),#a78bfa);animation:pulse 1.5s ease-in-out infinite"></div></div>
       </div>`;
     return;
   }
-  const days=Object.keys(prog.days);
+  const aiTag=u.aiPlan?'<span style="background:rgba(108,99,255,.2);border:1px solid rgba(108,99,255,.4);border-radius:6px;padding:2px 8px;font-size:10px;color:var(--accent);font-weight:700;margin-left:8px">🤖 IA</span>':'';
   let html=`
     <div style="background:linear-gradient(135deg,#1a1040,#0f0f2a);border:1px solid rgba(108,99,255,.25);border-radius:16px;padding:16px;margin-bottom:14px">
-      <div style="font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:4px">Progresso do programa</div>
-      <div style="font-size:20px;font-weight:900;color:var(--accent)">${curWeek} <span style="font-size:13px;color:var(--muted)">– ${prog.fase}</span></div>
+      <div style="font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:4px">Progresso do programa ${aiTag}</div>
+      <div style="font-size:20px;font-weight:900;color:var(--accent)">${curWeek} <span style="font-size:13px;color:var(--muted)">– ${prog.fase||prog.meta||''}</span></div>
       <div style="background:var(--border);border-radius:99px;height:6px;margin-top:10px;overflow:hidden">
-        <div style="width:${Math.round((u.gymWeek/12)*100)}%;height:100%;border-radius:99px;background:linear-gradient(90deg,var(--accent),#a78bfa)"></div>
+        <div style="width:${Math.round(((u.gymWeek||1)/weeks.length)*100)}%;height:100%;border-radius:99px;background:linear-gradient(90deg,var(--accent),#a78bfa)"></div>
       </div>
-      <div style="font-size:11px;color:var(--muted);margin-top:6px">${u.gymWeek} de 12 semanas</div>
+      <div style="font-size:11px;color:var(--muted);margin-top:6px">${u.gymWeek||1} de ${weeks.length} semanas</div>
     </div>
     <div class="week-tabs" id="gym-week-tabs">`;
   weeks.forEach(w=>{
     const wn=parseInt(w.split(' ')[1]);
-    const locked=wn>u.gymWeek;
-    const done=wn<u.gymWeek;
+    const locked=wn>(u.gymWeek||1);
+    const done=wn<(u.gymWeek||1);
     html+=`<div class="wtab ${w===curWeek?'active':''} ${locked?'locked-tab':''}" onclick="selectGymWeek('${w}',this)" style="${locked?'opacity:.4;cursor:not-allowed':''}">${done?'✅ ':locked?'🔒 ':''} ${w}</div>`;
   });
   html+=`</div><div id="gym-week-content"></div>`;
@@ -834,7 +1007,8 @@ function selectGymWeek(week,el){
 }
 
 function renderGymWeek(week,u){
-  const prog=GYM_PROGRAM[week];
+  const PROG=getGymProgram(u);
+  const prog=PROG[week];
   const days=Object.keys(prog.days);
   let html=`<div class="day-tabs">`;
   days.forEach((d,i)=>{
@@ -855,7 +1029,8 @@ function selectGymDay(week,day,el){
 }
 
 function renderGymDay(week,day,u){
-  const exercises=GYM_PROGRAM[week].days[day];
+  const PROG=getGymProgram(u);
+  const exercises=PROG[week].days[day];
   const doneKey=`${week}_${day}`;
   const isDone=u.gymDone&&u.gymDone[doneKey];
   let html='';
@@ -881,19 +1056,20 @@ function markGymDone(week,day){
   const email=DB.get('fq_cur');
   const users=DB.get('fq_users')||{};
   const u=users[email];if(!u)return;
+  const PROG=getGymProgram(u);
   const doneKey=`${week}_${day}`;
   if(!u.gymDone)u.gymDone={};
   if(u.gymDone[doneKey])return;
   u.gymDone[doneKey]=true;
   u.stats.treinos++;
   u.xp+=80;u.coins+=15;
-  // Verifica se completou todos os treinos da semana atual
-  const prog=GYM_PROGRAM[week];
+  const prog=PROG[week];
   const allDays=Object.keys(prog.days);
+  const totalWeeks=Object.keys(PROG).length;
   const allDone=allDays.every(d=>u.gymDone[`${week}_${d}`]);
   if(allDone){
     const wn=parseInt(week.split(' ')[1]);
-    if(wn===u.gymWeek&&u.gymWeek<12){u.gymWeek++;u.xp+=200;u.coins+=50;u.stats.semanas++;}
+    if(wn===(u.gymWeek||1)&&(u.gymWeek||1)<totalWeeks){u.gymWeek=(u.gymWeek||1)+1;u.xp+=200;u.coins+=50;u.stats.semanas++;}
   }
   if(u.xp>=u.level*1000){u.level++;u.xp=0;setTimeout(()=>alert('🎉 Subiu para o Nível '+u.level+'!'),100);}
   DB.set('fq_users',users);
@@ -904,28 +1080,30 @@ function markGymDone(week,day){
 // RUN
 function renderRun(u){
   const weeks=Object.keys(RUN_PROGRAM);
+  const RUN=getRunProgram(u);
   const curWeek=`Semana ${u.runWeek||1}`;
-  const prog=RUN_PROGRAM[curWeek];
+  const prog=RUN[curWeek]||RUN[Object.keys(RUN)[0]];
   if(!u.trainApproved){
     document.getElementById('run-content').innerHTML=`
-      <div class="pending-badge">⏳ Aguardando liberação do seu treino de corrida por Rennan Dias.</div>
-      <div style="background:var(--card);border:1px solid var(--border);border-radius:16px;padding:20px;text-align:center">
-        <div style="font-size:48px;margin-bottom:12px">🏃</div>
-        <div style="font-size:16px;font-weight:800;margin-bottom:8px">Programa de corrida a caminho!</div>
-        <div style="font-size:13px;color:var(--muted);line-height:1.6">12 semanas de progressão do zero até 10km+ esperando por você.</div>
+      <div style="background:var(--card);border:1px solid var(--border);border-radius:16px;padding:24px;text-align:center">
+        <div style="font-size:48px;margin-bottom:12px">🤖</div>
+        <div style="font-size:16px;font-weight:800;margin-bottom:8px">Gerando seu programa de corrida...</div>
+        <div style="font-size:13px;color:var(--muted);line-height:1.6">A IA está montando seu plano de corrida personalizado com base na sua ficha.</div>
       </div>`;
     return;
   }
+  const totalWeeks=Object.keys(RUN).length;
+  const aiTag=u.aiPlan?'🤖 ':'';
   let html=`
     <div class="run-week">
-      <div class="run-week-title">🏃 ${curWeek} – ${prog.meta}</div>
-      <div class="run-week-sub">Programa 12 semanas · Você está na semana ${u.runWeek||1} de 12</div>
+      <div class="run-week-title">🏃 ${aiTag}${curWeek} – ${prog.meta}</div>
+      <div class="run-week-sub">Programa ${totalWeeks} semanas · Semana ${u.runWeek||1} de ${totalWeeks}</div>
       <div style="background:rgba(255,107,53,.2);border-radius:99px;height:6px;margin-top:10px;overflow:hidden">
-        <div style="width:${Math.round(((u.runWeek||1)/12)*100)}%;height:100%;border-radius:99px;background:var(--orange)"></div>
+        <div style="width:${Math.round(((u.runWeek||1)/totalWeeks)*100)}%;height:100%;border-radius:99px;background:var(--orange)"></div>
       </div>
     </div>
     <div class="week-tabs" id="run-week-tabs">`;
-  weeks.forEach(w=>{
+  Object.keys(RUN).forEach(w=>{
     const wn=parseInt(w.split(' ')[1]);
     const locked=wn>(u.runWeek||1);
     const done=wn<(u.runWeek||1);
@@ -946,7 +1124,8 @@ function selectRunWeek(week,el){
 }
 
 function renderRunWeek(week,u){
-  const prog=RUN_PROGRAM[week];
+  const RUN=getRunProgram(u);
+  const prog=RUN[week];
   let html='';
   prog.sessions.forEach((s,i)=>{
     const doneKey=`run_${week}_${i}`;
@@ -972,18 +1151,19 @@ function markRunDone(week,idx){
   const email=DB.get('fq_cur');
   const users=DB.get('fq_users')||{};
   const u=users[email];if(!u)return;
+  const RUN=getRunProgram(u);
   const doneKey=`run_${week}_${idx}`;
   if(!u.runDone)u.runDone={};
   if(u.runDone[doneKey])return;
   u.runDone[doneKey]=true;
-  const s=RUN_PROGRAM[week].sessions[idx];
+  const s=RUN[week].sessions[idx];
   const km=parseFloat(s.dist);
   if(!isNaN(km))u.stats.distancia=Math.round((u.stats.distancia+km)*10)/10;
   u.xp+=60;u.coins+=10;
-  // Verifica se completou todas as sessões da semana
-  const total=RUN_PROGRAM[week].sessions.length;
+  const total=RUN[week].sessions.length;
+  const totalRunWeeks=Object.keys(RUN).length;
   const allDone=[...Array(total).keys()].every(i=>u.runDone[`run_${week}_${i}`]);
-  if(allDone){const wn=parseInt(week.split(' ')[1]);if(wn===u.runWeek&&u.runWeek<12){u.runWeek++;u.xp+=150;u.coins+=30;}}
+  if(allDone){const wn=parseInt(week.split(' ')[1]);if(wn===(u.runWeek||1)&&(u.runWeek||1)<totalRunWeeks){u.runWeek=(u.runWeek||1)+1;u.xp+=150;u.coins+=30;}}
   if(u.xp>=u.level*1000){u.level++;u.xp=0;setTimeout(()=>alert('🎉 Subiu para o Nível '+u.level+'!'),100);}
   DB.set('fq_users',users);
   loadApp(email);
@@ -1094,11 +1274,441 @@ window.listUsers=function(){
 (function init(){
   const email=DB.get('fq_cur');
   if(!email){show('screen-auth');return;}
+  if(email==='__admin__'){loadAdmin();show('screen-admin');return;}
   const users=DB.get('fq_users')||{};const u=users[email];
   if(!u){DB.del('fq_cur');show('screen-auth');return;}
   if(!u.anamneseDone){initAnam();show('screen-anamnese');return;}
   loadApp(email);show('screen-app');
 })();
+
+// ── ADMIN ─────────────────────────────────────────────────────────────────────
+function adminLogout(){DB.del('fq_cur');switchAuth('login');show('screen-auth');}
+
+function switchAdmTab(name,btn){
+  document.querySelectorAll('.adm-panel').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.adm-nav .nbtn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('adm-panel-'+name).classList.add('active');
+  if(btn)btn.classList.add('active');
+  window.scrollTo(0,0);
+  if(name==='default')loadDefaultEditor();
+}
+
+function closeModal(id){document.getElementById(id).classList.remove('open');}
+
+function loadAdmin(){
+  const users=DB.get('fq_users')||{};
+  const all=Object.values(users);
+  const approved=all.filter(u=>u.trainApproved).length;
+  const pending=all.filter(u=>!u.trainApproved).length;
+  // Stats row
+  document.getElementById('adm-stats-row').innerHTML=`
+    <div style="flex:1;background:rgba(108,99,255,.1);border:1px solid rgba(108,99,255,.3);border-radius:12px;padding:12px;text-align:center">
+      <div style="font-size:24px;font-weight:900;color:var(--accent)">${all.length}</div>
+      <div style="font-size:10px;color:var(--muted)">Total alunos</div>
+    </div>
+    <div style="flex:1;background:rgba(0,214,143,.1);border:1px solid rgba(0,214,143,.3);border-radius:12px;padding:12px;text-align:center">
+      <div style="font-size:24px;font-weight:900;color:var(--green)">${approved}</div>
+      <div style="font-size:10px;color:var(--muted)">Com acesso</div>
+    </div>
+    <div style="flex:1;background:rgba(255,107,53,.1);border:1px solid rgba(255,107,53,.3);border-radius:12px;padding:12px;text-align:center">
+      <div style="font-size:24px;font-weight:900;color:var(--orange)">${pending}</div>
+      <div style="font-size:10px;color:var(--muted)">Pendentes</div>
+    </div>`;
+
+  // Students list
+  if(!all.length){
+    document.getElementById('students-list').innerHTML='<div style="text-align:center;color:var(--muted);padding:40px">Nenhum aluno cadastrado ainda.</div>';
+    return;
+  }
+  const sorted=[...all].sort((a,b)=>new Date(b.createdAt||0)-new Date(a.createdAt||0));
+  document.getElementById('students-list').innerHTML=sorted.map(u=>`
+    <div class="student-card ${u.trainApproved?'approved':'pending'}">
+      <div class="sc-top">
+        <div class="sc-av">${u.name?u.name[0].toUpperCase():'?'}</div>
+        <div class="sc-info">
+          <div class="sc-name">${u.name||'Sem nome'}</div>
+          <div class="sc-email">${u.email}</div>
+        </div>
+        <div class="sc-status ${u.trainApproved?'ok':'pend'}">${u.trainApproved?'✅ Ativo':'⏳ Pendente'}</div>
+      </div>
+      <div class="sc-stats">
+        <div class="sc-stat"><div class="sc-stat-val" style="color:var(--accent)">${u.stats?.treinos||0}</div><div class="sc-stat-lbl">Treinos</div></div>
+        <div class="sc-stat"><div class="sc-stat-val" style="color:var(--orange)">${u.stats?.distancia||0}</div><div class="sc-stat-lbl">km</div></div>
+        <div class="sc-stat"><div class="sc-stat-val" style="color:var(--yellow)">${u.level||1}</div><div class="sc-stat-lbl">Nível</div></div>
+        <div class="sc-stat"><div class="sc-stat-val" style="color:var(--green)">${u.gymWeek||1}</div><div class="sc-stat-lbl">Semana</div></div>
+      </div>
+      <div class="sc-btns">
+        ${!u.trainApproved
+          ?`<button class="btn-sm btn-approve" onclick="adminApprove('${u.email}')">✅ Liberar acesso</button>`
+          :``}
+        ${u.trainApproved
+          ?`<button class="btn-sm btn-revoke" onclick="adminRevoke('${u.email}')">🚫 Revogar</button>`
+          :``}
+        <button class="btn-sm btn-edit" onclick="openEditStudent('${u.email}')">✏️ Editar treino</button>
+        <button class="btn-sm btn-view" onclick="openAnam('${u.email}')">📋 Anamnese</button>
+        <button class="btn-sm btn-delete" onclick="adminDelete('${u.email}')">🗑️ Excluir</button>
+      </div>
+    </div>`).join('');
+}
+
+function adminApprove(email){
+  const users=DB.get('fq_users')||{};
+  if(!users[email])return;
+  users[email].trainApproved=true;
+  DB.set('fq_users',users);
+  loadAdmin();
+}
+function adminRevoke(email){
+  if(!confirm('Revogar acesso de '+email+'?'))return;
+  const users=DB.get('fq_users')||{};
+  if(!users[email])return;
+  users[email].trainApproved=false;
+  DB.set('fq_users',users);
+  loadAdmin();
+}
+function adminDelete(email){
+  if(!confirm('Excluir aluno '+email+'? Esta ação não pode ser desfeita.'))return;
+  const users=DB.get('fq_users')||{};
+  delete users[email];
+  DB.set('fq_users',users);
+  loadAdmin();
+}
+
+// ── EDITAR TREINO DO ALUNO ────────────────────────────────────────────────────
+let editingEmail=null;
+let editingGymWeek='Semana 1';
+let editingRunWeek='Semana 1';
+
+function openEditStudent(email){
+  editingEmail=email;
+  const users=DB.get('fq_users')||{};
+  const u=users[email];
+  document.getElementById('modal-student-name').textContent='✏️ '+u.name;
+  document.getElementById('modal-student').classList.add('open');
+  renderEditModal(u);
+}
+
+function renderEditModal(u){
+  const PROG=u.aiPlan?.gym||GYM_PROGRAM;
+  const RUN=u.aiPlan?.run||RUN_PROGRAM;
+  const gymWeeks=Object.keys(PROG);
+  const runWeeks=Object.keys(RUN);
+
+  let html=`
+  <div class="edit-section">
+    <div class="edit-section-title">🏋️ Treinos de Musculação</div>
+    <div class="week-select" id="edit-gym-week-tabs">
+      ${gymWeeks.map(w=>`<div class="ws-btn ${w===editingGymWeek?'active':''}" onclick="selectEditGymWeek('${w}',this)">${w}</div>`).join('')}
+    </div>
+    <div id="edit-gym-week-content"></div>
+  </div>
+  <div class="edit-section">
+    <div class="edit-section-title">🏃 Sessões de Corrida</div>
+    <div class="week-select" id="edit-run-week-tabs">
+      ${runWeeks.map(w=>`<div class="ws-btn ${w===editingRunWeek?'active':''}" onclick="selectEditRunWeek('${w}',this)">${w}</div>`).join('')}
+    </div>
+    <div id="edit-run-week-content"></div>
+  </div>`;
+  document.getElementById('modal-student-content').innerHTML=html;
+  renderEditGymWeek(editingGymWeek, u);
+  renderEditRunWeek(editingRunWeek, u);
+}
+
+function selectEditGymWeek(week,el){
+  editingGymWeek=week;
+  document.querySelectorAll('#edit-gym-week-tabs .ws-btn').forEach(b=>b.classList.remove('active'));
+  el.classList.add('active');
+  const users=DB.get('fq_users')||{};
+  renderEditGymWeek(week,users[editingEmail]);
+}
+function selectEditRunWeek(week,el){
+  editingRunWeek=week;
+  document.querySelectorAll('#edit-run-week-tabs .ws-btn').forEach(b=>b.classList.remove('active'));
+  el.classList.add('active');
+  const users=DB.get('fq_users')||{};
+  renderEditRunWeek(week,users[editingEmail]);
+}
+
+function renderEditGymWeek(week,u){
+  if(!u.aiPlan){u.aiPlan={gym:{...JSON.parse(JSON.stringify(GYM_PROGRAM))},run:{...JSON.parse(JSON.stringify(RUN_PROGRAM))}};}
+  if(!u.aiPlan.gym)u.aiPlan.gym=JSON.parse(JSON.stringify(GYM_PROGRAM));
+  if(!u.aiPlan.gym[week]){u.aiPlan.gym[week]=JSON.parse(JSON.stringify(GYM_PROGRAM[week]||{fase:'Nova fase',days:{'Treino A':[]}}));}
+  const prog=u.aiPlan.gym[week];
+  const days=Object.keys(prog.days);
+  let html=`<div class="fg"><label class="fl">Fase / Nome da semana</label><input class="mini-input" style="font-size:13px;padding:8px 10px;width:100%" id="edit-fase" value="${prog.fase||''}" placeholder="Ex: Hipertrofia I"/></div>`;
+  days.forEach((day,di)=>{
+    html+=`<div style="font-size:12px;font-weight:800;color:var(--accent);margin:10px 0 6px">${day}</div>`;
+    prog.days[day].forEach((ex,ei)=>{
+      html+=`<div class="ex-edit-row">
+        <div class="ex-edit-top">
+          <div class="ex-edit-name">${ex.name}</div>
+          <button onclick="removeExercise('${week}','${day}',${ei})" style="background:rgba(255,80,80,.12);border:1px solid rgba(255,80,80,.25);border-radius:6px;padding:3px 8px;color:#ff6b6b;font-size:10px;font-weight:700;cursor:pointer;">Remover</button>
+        </div>
+        <div class="ex-edit-grid">
+          <div><div class="mini-label">Exercício</div><input class="mini-input" data-day="${day}" data-idx="${ei}" data-field="name" value="${ex.name}" placeholder="Nome"/></div>
+          <div><div class="mini-label">Músculo</div><input class="mini-input" data-day="${day}" data-idx="${ei}" data-field="muscle" value="${ex.muscle||''}" placeholder="Músculo"/></div>
+          <div><div class="mini-label">Séries</div><input class="mini-input" data-day="${day}" data-idx="${ei}" data-field="sets" value="${ex.sets}" type="number" min="1"/></div>
+        </div>
+        <div class="ex-edit-grid">
+          <div><div class="mini-label">Repetições</div><input class="mini-input" data-day="${day}" data-idx="${ei}" data-field="reps" value="${ex.reps}" placeholder="12"/></div>
+          <div><div class="mini-label">Carga</div><input class="mini-input" data-day="${day}" data-idx="${ei}" data-field="load" value="${ex.load||''}" placeholder="Moderada"/></div>
+          <div><div class="mini-label">Dica</div><input class="mini-input" data-day="${day}" data-idx="${ei}" data-field="obs" value="${ex.obs||''}" placeholder="Dica..."/></div>
+        </div>
+      </div>`;
+    });
+    html+=`<button class="btn-add-ex" onclick="addExercise('${week}','${day}')">+ Adicionar exercício em ${day}</button>`;
+  });
+  html+=`<button class="btn-save-week" onclick="saveGymWeek('${week}')">💾 Salvar semana ${week}</button>`;
+  document.getElementById('edit-gym-week-content').innerHTML=html;
+}
+
+function renderEditRunWeek(week,u){
+  if(!u.aiPlan){u.aiPlan={gym:JSON.parse(JSON.stringify(GYM_PROGRAM)),run:JSON.parse(JSON.stringify(RUN_PROGRAM))};}
+  if(!u.aiPlan.run)u.aiPlan.run=JSON.parse(JSON.stringify(RUN_PROGRAM));
+  if(!u.aiPlan.run[week]){u.aiPlan.run[week]=JSON.parse(JSON.stringify(RUN_PROGRAM[week]||{meta:'Nova semana',sessions:[]}));}
+  const prog=u.aiPlan.run[week];
+  let html=`<div class="fg"><label class="fl">Meta da semana</label><input class="mini-input" style="font-size:13px;padding:8px 10px;width:100%" id="edit-run-meta" value="${prog.meta||''}" placeholder="Ex: Base aeróbica"/></div>`;
+  prog.sessions.forEach((s,si)=>{
+    html+=`<div class="run-edit-row">
+      <div class="ex-edit-top">
+        <div class="ex-edit-name">${s.day} – ${s.type}</div>
+        <button onclick="removeRunSession('${week}',${si})" style="background:rgba(255,80,80,.12);border:1px solid rgba(255,80,80,.25);border-radius:6px;padding:3px 8px;color:#ff6b6b;font-size:10px;font-weight:700;cursor:pointer;">Remover</button>
+      </div>
+      <div class="ex-edit-grid">
+        <div><div class="mini-label">Dia</div><input class="mini-input" data-si="${si}" data-field="day" value="${s.day}" placeholder="Seg"/></div>
+        <div><div class="mini-label">Tipo</div><input class="mini-input" data-si="${si}" data-field="type" value="${s.type}" placeholder="Corrida Leve"/></div>
+        <div><div class="mini-label">Distância</div><input class="mini-input" data-si="${si}" data-field="dist" value="${s.dist}" placeholder="5 km"/></div>
+      </div>
+      <div class="ex-edit-grid">
+        <div><div class="mini-label">Pace</div><input class="mini-input" data-si="${si}" data-field="pace" value="${s.pace||''}" placeholder="6:00 min/km"/></div>
+        <div><div class="mini-label">Duração</div><input class="mini-input" data-si="${si}" data-field="dur" value="${s.dur||''}" placeholder="~30 min"/></div>
+        <div><div class="mini-label">Dica</div><input class="mini-input" data-si="${si}" data-field="tip" value="${s.tip||''}" placeholder="Dica..."/></div>
+      </div>
+    </div>`;
+  });
+  html+=`<button class="btn-add-ex" onclick="addRunSession('${week}')" style="border-color:rgba(255,107,53,.4);color:var(--orange)">+ Adicionar sessão de corrida</button>`;
+  html+=`<button class="btn-save-week" onclick="saveRunWeek('${week}')" style="margin-top:8px">💾 Salvar corrida ${week}</button>`;
+  document.getElementById('edit-run-week-content').innerHTML=html;
+}
+
+function saveGymWeek(week){
+  const users=DB.get('fq_users')||{};
+  const u=users[editingEmail];if(!u)return;
+  if(!u.aiPlan)u.aiPlan={gym:JSON.parse(JSON.stringify(GYM_PROGRAM)),run:JSON.parse(JSON.stringify(RUN_PROGRAM))};
+  // Save fase
+  const faseEl=document.getElementById('edit-fase');
+  if(faseEl)u.aiPlan.gym[week].fase=faseEl.value;
+  // Save exercises from inputs
+  document.querySelectorAll('#edit-gym-week-content .mini-input[data-field]').forEach(inp=>{
+    const day=inp.dataset.day;const idx=parseInt(inp.dataset.idx);const field=inp.dataset.field;
+    if(day&&!isNaN(idx)&&field){
+      if(!u.aiPlan.gym[week].days[day])return;
+      if(!u.aiPlan.gym[week].days[day][idx])return;
+      u.aiPlan.gym[week].days[day][idx][field]=field==='sets'?parseInt(inp.value)||1:inp.value;
+    }
+  });
+  u.trainApproved=true;
+  DB.set('fq_users',users);
+  alert('✅ Treino de musculação salvo!');
+}
+
+function saveRunWeek(week){
+  const users=DB.get('fq_users')||{};
+  const u=users[editingEmail];if(!u)return;
+  if(!u.aiPlan)u.aiPlan={gym:JSON.parse(JSON.stringify(GYM_PROGRAM)),run:JSON.parse(JSON.stringify(RUN_PROGRAM))};
+  const metaEl=document.getElementById('edit-run-meta');
+  if(metaEl)u.aiPlan.run[week].meta=metaEl.value;
+  document.querySelectorAll('#edit-run-week-content .mini-input[data-field]').forEach(inp=>{
+    const si=parseInt(inp.dataset.si);const field=inp.dataset.field;
+    if(!isNaN(si)&&field){
+      if(!u.aiPlan.run[week].sessions[si])return;
+      u.aiPlan.run[week].sessions[si][field]=inp.value;
+    }
+  });
+  u.trainApproved=true;
+  DB.set('fq_users',users);
+  alert('✅ Sessões de corrida salvas!');
+}
+
+function addExercise(week,day){
+  const users=DB.get('fq_users')||{};
+  const u=users[editingEmail];if(!u)return;
+  if(!u.aiPlan)u.aiPlan={gym:JSON.parse(JSON.stringify(GYM_PROGRAM)),run:JSON.parse(JSON.stringify(RUN_PROGRAM))};
+  u.aiPlan.gym[week].days[day].push({name:'Novo Exercício',muscle:'Músculo',sets:3,reps:'12',load:'Moderada',obs:'Dica aqui'});
+  DB.set('fq_users',users);
+  renderEditGymWeek(week,u);
+}
+function removeExercise(week,day,idx){
+  const users=DB.get('fq_users')||{};
+  const u=users[editingEmail];if(!u)return;
+  u.aiPlan.gym[week].days[day].splice(idx,1);
+  DB.set('fq_users',users);
+  renderEditGymWeek(week,u);
+}
+function addRunSession(week){
+  const users=DB.get('fq_users')||{};
+  const u=users[editingEmail];if(!u)return;
+  if(!u.aiPlan)u.aiPlan={gym:JSON.parse(JSON.stringify(GYM_PROGRAM)),run:JSON.parse(JSON.stringify(RUN_PROGRAM))};
+  u.aiPlan.run[week].sessions.push({day:'Seg',type:'Corrida Leve',dist:'5 km',pace:'7:00 min/km',dur:'~35 min',tip:'Ritmo confortável.'});
+  DB.set('fq_users',users);
+  renderEditRunWeek(week,u);
+}
+function removeRunSession(week,idx){
+  const users=DB.get('fq_users')||{};
+  const u=users[editingEmail];if(!u)return;
+  u.aiPlan.run[week].sessions.splice(idx,1);
+  DB.set('fq_users',users);
+  renderEditRunWeek(week,u);
+}
+
+// ── ANAMNESE VIEW ─────────────────────────────────────────────────────────────
+function openAnam(email){
+  const users=DB.get('fq_users')||{};
+  const u=users[email];if(!u)return;
+  const a=u.anamnese||{};
+  const row=(k,v)=>`<div class="anam-row"><span class="anam-key">${k}</span><span class="anam-val">${v||'—'}</span></div>`;
+  document.getElementById('modal-anam-content').innerHTML=`
+    <div class="anam-view">
+      ${row('Nome',u.name)}${row('E-mail',u.email)}
+      ${row('Nascimento',a.nasc)}${row('Sexo',a.sexo)}
+      ${row('Peso',a.peso?a.peso+'kg':'—')}${row('Altura',a.altura?a.altura+'cm':'—')}
+      ${row('Profissão',a.prof)}${row('WhatsApp',a.fone)}
+    </div>
+    <div class="anam-view">
+      ${row('Nível',a.tempo)}${row('Modalidade',a.modal)}
+      ${row('Dias/semana',a.dias)}${row('Duração',a.dur)}
+      ${row('Local',a.local)}${row('Objetivo',a.obj)}
+      ${row('Meta corrida',a.mc)}${row('Prazo',a.prazo)}
+      ${row('Motivação',a.motiv)}
+    </div>
+    <div class="anam-view">
+      ${row('Condições de saúde',(a.saude||[]).join(', '))}
+      ${row('Lesões',(a.lesoes||[]).join(', '))}
+      ${row('Medicamentos',a.med)}${row('Quais',a.medDesc)}
+      ${row('Cirurgias',a.cir)}
+    </div>
+    <div class="anam-view">
+      ${row('Sono',a.sono)}${row('Estresse',a.stress)}
+      ${row('Alimentação',a.alim)}
+      ${row('Suplementação',(a.supl||[]).join(', '))}
+      ${row('Observações',a.obs)}
+    </div>`;
+  document.getElementById('modal-anam').classList.add('open');
+}
+
+// ── EDITOR TREINO PADRÃO ──────────────────────────────────────────────────────
+let defaultGymWeek='Semana 1';
+function loadDefaultEditor(){
+  const weeks=Object.keys(GYM_PROGRAM);
+  document.getElementById('default-week-tabs').innerHTML=weeks.map(w=>
+    `<div class="ws-btn ${w===defaultGymWeek?'active':''}" onclick="selectDefaultWeek('${w}',this)">${w}</div>`).join('');
+  renderDefaultGymWeek(defaultGymWeek);
+}
+function selectDefaultWeek(week,el){
+  defaultGymWeek=week;
+  document.querySelectorAll('#default-week-tabs .ws-btn').forEach(b=>b.classList.remove('active'));
+  el.classList.add('active');
+  renderDefaultGymWeek(week);
+}
+function renderDefaultGymWeek(week){
+  const prog=GYM_PROGRAM[week];const days=Object.keys(prog.days);
+  let html=`<div class="fg"><label class="fl">Fase</label><input class="mini-input" style="font-size:13px;padding:8px 10px;width:100%" id="def-fase" value="${prog.fase||''}"/></div>`;
+  days.forEach(day=>{
+    html+=`<div style="font-size:12px;font-weight:800;color:var(--accent);margin:10px 0 6px">${day}</div>`;
+    prog.days[day].forEach((ex,ei)=>{
+      html+=`<div class="ex-edit-row">
+        <div class="ex-edit-top"><div class="ex-edit-name">${ex.name}</div>
+          <button onclick="removeDefaultEx('${week}','${day}',${ei})" style="background:rgba(255,80,80,.12);border:1px solid rgba(255,80,80,.25);border-radius:6px;padding:3px 8px;color:#ff6b6b;font-size:10px;font-weight:700;cursor:pointer;">Remover</button>
+        </div>
+        <div class="ex-edit-grid">
+          <div><div class="mini-label">Exercício</div><input class="mini-input" data-day="${day}" data-idx="${ei}" data-field="name" value="${ex.name}"/></div>
+          <div><div class="mini-label">Músculo</div><input class="mini-input" data-day="${day}" data-idx="${ei}" data-field="muscle" value="${ex.muscle||''}"/></div>
+          <div><div class="mini-label">Séries</div><input class="mini-input" type="number" data-day="${day}" data-idx="${ei}" data-field="sets" value="${ex.sets}"/></div>
+        </div>
+        <div class="ex-edit-grid">
+          <div><div class="mini-label">Reps</div><input class="mini-input" data-day="${day}" data-idx="${ei}" data-field="reps" value="${ex.reps}"/></div>
+          <div><div class="mini-label">Carga</div><input class="mini-input" data-day="${day}" data-idx="${ei}" data-field="load" value="${ex.load||''}"/></div>
+          <div><div class="mini-label">Dica</div><input class="mini-input" data-day="${day}" data-idx="${ei}" data-field="obs" value="${ex.obs||''}"/></div>
+        </div>
+      </div>`;
+    });
+    html+=`<button class="btn-add-ex" onclick="addDefaultEx('${week}','${day}')">+ Exercício em ${day}</button>`;
+  });
+  html+=`<button class="btn-save-week" onclick="saveDefaultWeek('${week}')">💾 Salvar treino padrão – ${week}</button>`;
+  document.getElementById('default-gym-editor').innerHTML=html;
+}
+function saveDefaultWeek(week){
+  const faseEl=document.getElementById('def-fase');
+  if(faseEl)GYM_PROGRAM[week].fase=faseEl.value;
+  document.querySelectorAll('#default-gym-editor .mini-input[data-field]').forEach(inp=>{
+    const day=inp.dataset.day;const idx=parseInt(inp.dataset.idx);const field=inp.dataset.field;
+    if(day&&!isNaN(idx)&&field&&GYM_PROGRAM[week].days[day]&&GYM_PROGRAM[week].days[day][idx]){
+      GYM_PROGRAM[week].days[day][idx][field]=field==='sets'?parseInt(inp.value)||1:inp.value;
+    }
+  });
+  alert('✅ Treino padrão salvo! (válido até recarregar a página — edite o código para permanente)');
+}
+function addDefaultEx(week,day){
+  GYM_PROGRAM[week].days[day].push({name:'Novo Exercício',muscle:'Músculo',sets:3,reps:'12',load:'Moderada',obs:'Dica'});
+  renderDefaultGymWeek(week);
+}
+function removeDefaultEx(week,day,idx){
+  GYM_PROGRAM[week].days[day].splice(idx,1);
+  renderDefaultGymWeek(week);
+}
+
 </script>
+
+<!-- ADMIN SCREEN -->
+<div id="screen-admin" class="screen">
+  <div class="adm-hdr">
+    <div class="adm-logo">⚙️ <span class="ac">ADMIN</span> FITQUEST</div>
+    <button onclick="adminLogout()" style="background:rgba(255,80,80,.12);border:1px solid rgba(255,80,80,.3);border-radius:8px;padding:6px 12px;color:#ff6b6b;font-size:12px;font-weight:700;cursor:pointer;">Sair</button>
+  </div>
+  <div class="adm-content">
+
+    <!-- ALUNOS -->
+    <div class="adm-panel active" id="adm-panel-students">
+      <div style="display:flex;gap:10px;margin-bottom:16px" id="adm-stats-row"></div>
+      <div style="font-size:11px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px">Todos os alunos</div>
+      <div id="students-list"></div>
+    </div>
+
+    <!-- TREINO PADRÃO -->
+    <div class="adm-panel" id="adm-panel-default">
+      <div style="font-size:13px;color:var(--muted);margin-bottom:16px;line-height:1.6">Edite o treino padrão aplicado a novos alunos quando a IA não estiver disponível.</div>
+      <div style="font-size:11px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px">Semana do treino padrão</div>
+      <div class="week-select" id="default-week-tabs"></div>
+      <div id="default-gym-editor"></div>
+    </div>
+
+  </div>
+  <div class="adm-nav">
+    <button class="nbtn active" onclick="switchAdmTab('students',this)"><span class="nico">👥</span><span class="nlbl">Alunos</span><div class="ndot"></div></button>
+    <button class="nbtn" onclick="switchAdmTab('default',this)"><span class="nico">🏋️</span><span class="nlbl">Treino Padrão</span><div class="ndot"></div></button>
+  </div>
+</div>
+
+<!-- MODAL EDIÇÃO DE ALUNO -->
+<div class="modal-overlay" id="modal-student">
+  <div class="modal-box">
+    <div class="modal-title">
+      <span id="modal-student-name">Aluno</span>
+      <button class="modal-close" onclick="closeModal('modal-student')">✕ Fechar</button>
+    </div>
+    <div id="modal-student-content"></div>
+  </div>
+</div>
+
+<!-- MODAL ANAMNESE -->
+<div class="modal-overlay" id="modal-anam">
+  <div class="modal-box">
+    <div class="modal-title">
+      <span>📋 Ficha de Anamnese</span>
+      <button class="modal-close" onclick="closeModal('modal-anam')">✕ Fechar</button>
+    </div>
+    <div id="modal-anam-content"></div>
+  </div>
+</div>
 </body>
 </html>
