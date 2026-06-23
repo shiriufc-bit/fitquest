@@ -408,7 +408,7 @@ textarea.fi{resize:vertical;min-height:80px;}
 <body>
 
 <!-- SPLASH -->
-<div id="screen-splash" class="screen active">
+<div id="screen-splash" class="screen">
   <div class="splash-img-placeholder"></div>
   <div class="splash-bg"></div>
   <div class="splash-content">
@@ -422,9 +422,12 @@ textarea.fi{resize:vertical;min-height:80px;}
 
 <!-- AUTH -->
 <div id="screen-auth" class="screen">
-  <div class="auth-logo"><span class="ac">FIT</span>QUEST</div>
-  <div class="auth-sub">Rennan Dias Assessoria</div>
-  <div class="auth-card">
+  <div class="auth-top">
+    <button class="auth-back" onclick="show('screen-splash')">←</button>
+  </div>
+  <div class="auth-body">
+    <div class="auth-logo"><span class="ac">FIT</span>QUEST</div>
+    <div class="auth-subtitle">Sua assessoria esportiva gamificada</div>
     <div class="auth-tabs">
       <button class="auth-tab active" onclick="switchAuth('login')">Entrar</button>
       <button class="auth-tab" onclick="switchAuth('register')">Criar conta</button>
@@ -442,7 +445,6 @@ textarea.fi{resize:vertical;min-height:80px;}
       <div class="fg"><label class="fl">Confirmar senha</label><input id="reg-pass2" class="fi" type="password" placeholder="Repita a senha"/></div>
       <button class="btn-p" onclick="doRegister()">Criar minha conta</button>
     </div>
-  </div>
   </div>
 </div>
 
@@ -948,7 +950,12 @@ const DEFAULT_RUN={
 // ══ SUPABASE ══
 const SUPABASE_URL='https://ctbmnvlsvdlrohkcalcm.supabase.co';
 const SUPABASE_KEY='sb_publishable_0jwz3vKIkAakkn8tgNrKKQ_EELiP41g';
-const sb=supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
+let sb=null;
+try{
+  if(typeof supabase !== 'undefined'){
+    sb=supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
+  }
+}catch(e){console.log('Supabase not available, using local storage only');}
 
 // ══ LOCAL CACHE ══
 const DB={get(k){try{return JSON.parse(localStorage.getItem(k));}catch{return null;}},set(k,v){localStorage.setItem(k,JSON.stringify(v));},del(k){localStorage.removeItem(k);}};
@@ -958,6 +965,7 @@ function closeModal(id){document.getElementById(id).classList.remove('open');}
 
 // Salva aluno no Supabase
 async function syncAluno(u){
+  if(!sb)return;
   try{
     await sb.from('alunos').upsert({
       id:u.id,nome:u.name,email:u.email,senha_hash:u.pass,
@@ -976,6 +984,7 @@ async function syncAluno(u){
 
 // Carrega aluno do Supabase
 async function loadAlunoFromDB(email){
+  if(!sb)return null;
   try{
     const {data}=await sb.from('alunos').select('*').eq('email',email).single();
     if(!data)return null;
@@ -1021,6 +1030,8 @@ function switchAuth(mode){
   document.getElementById('form-register').style.display=mode==='register'?'block':'none';
   document.querySelectorAll('.auth-tab').forEach((t,i)=>t.classList.toggle('active',(i===0&&mode==='login')||(i===1&&mode==='register')));
   document.getElementById('auth-error').style.display='none';
+  const sub=document.querySelector('.auth-subtitle');
+  if(sub)sub.textContent=mode==='login'?'Bem-vindo de volta!':'Crie sua conta gratuita';
 }
 function showErr(msg){const e=document.getElementById('auth-error');e.textContent=msg;e.style.display='block';}
 async function doLogin(){
@@ -1388,14 +1399,14 @@ async function adminApprove(e){
   users[e].plano=users[e].plano==='pendente'?'mensal':users[e].plano;
   DB.set('fq_users',users);
   // Update Supabase
-  await sb.from('alunos').update({treino_liberado:true,plano:users[e].plano}).eq('email',e);
+  if(sb)await sb.from('alunos').update({treino_liberado:true,plano:users[e].plano}).eq('email',e);
   loadAdmin();
 }
 async function adminRevoke(e){
   if(!confirm('Revogar acesso?'))return;
   const users=DB.get('fq_users')||{};if(!users[e])return;
   users[e].trainApproved=false;DB.set('fq_users',users);
-  await sb.from('alunos').update({treino_liberado:false}).eq('email',e);
+  if(sb)await sb.from('alunos').update({treino_liberado:false}).eq('email',e);
   loadAdmin();
 }
 function adminDelete(e){if(!confirm('Excluir aluno?'))return;const users=DB.get('fq_users')||{};delete users[e];DB.set('fq_users',users);loadAdmin();}
@@ -1517,9 +1528,9 @@ function switchTab(name,btn){document.querySelectorAll('.tab-panel').forEach(p=>
   if(email==='__admin__'){loadAdmin();show('screen-admin');return;}
   const users=DB.get('fq_users')||{};let u=users[email];
   // Try to refresh from Supabase
-  if(u){
-    const fresh=await loadAlunoFromDB(email);
-    if(fresh){u={...u,...fresh};users[email]=u;DB.set('fq_users',users);}
+  if(u&&sb){
+    try{const fresh=await loadAlunoFromDB(email);
+    if(fresh){u={...u,...fresh};users[email]=u;DB.set('fq_users',users);}}catch(e){}
   }
   if(!u){DB.del('fq_cur');show('screen-auth');return;}
   if(!u.anamneseDone){initAnam();show('screen-anamnese');return;}
@@ -1565,7 +1576,7 @@ async function iniciarPagamento(){
   const users=DB.get('fq_users')||{};
   const u=users[email];
   
-  try{
+  if(sb)try{
     await sb.from('pagamentos').insert({
       aluno_id:u?.id||null,
       aluno_email:email,
