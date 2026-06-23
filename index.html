@@ -2,8 +2,18 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>FitQuest – Rennan Dias Assessoria</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
+<title>FitQuest – Rennan Dias</title>
+<meta name="description" content="Sua assessoria de musculação e corrida gamificada. Treinos personalizados por IA."/>
+<meta name="theme-color" content="#ff4d00"/>
+<meta name="apple-mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+<meta name="apple-mobile-web-app-title" content="FitQuest"/>
+<meta name="mobile-web-app-capable" content="yes"/>
+<link rel="manifest" href="manifest.json"/>
+<!-- Apple Touch Icons -->
+<link rel="apple-touch-icon" href="icon-192.png"/>
+<link rel="icon" type="image/png" href="icon-192.png"/>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
 :root{
@@ -1181,6 +1191,59 @@ function switchTab(name,btn){document.querySelectorAll('.tab-panel').forEach(p=>
   if(!u.anamneseDone){initAnam();show('screen-anamnese');return;}
   loadApp(email);show('screen-app');
 })();
+</script>
+
+<!-- PWA Install Banner -->
+<div id="pwa-banner" style="display:none;position:fixed;bottom:80px;left:12px;right:12px;background:linear-gradient(135deg,rgba(255,77,0,.95),rgba(255,112,67,.95));border-radius:18px;padding:14px 16px;z-index:200;backdrop-filter:blur(20px);box-shadow:0 8px 32px rgba(255,77,0,.4);animation:slideUp .3s ease">
+  <div style="display:flex;align-items:center;gap:12px">
+    <div style="font-size:32px">📱</div>
+    <div style="flex:1">
+      <div style="font-size:13px;font-weight:900;color:#fff">Instalar FitQuest</div>
+      <div style="font-size:11px;color:rgba(255,255,255,.8);margin-top:2px">Adicione à tela inicial para acesso rápido!</div>
+    </div>
+    <button onclick="installPWA()" style="background:#fff;border:none;border-radius:10px;padding:8px 14px;color:#ff4d00;font-size:12px;font-weight:900;cursor:pointer;flex-shrink:0">Instalar</button>
+    <button onclick="dismissBanner()" style="background:rgba(255,255,255,.2);border:none;border-radius:8px;padding:8px;color:#fff;font-size:14px;cursor:pointer">✕</button>
+  </div>
+</div>
+
+<script>
+// ══ PWA SERVICE WORKER ══
+if('serviceWorker' in navigator){
+  window.addEventListener('load',()=>{
+    navigator.serviceWorker.register('sw.js').catch(()=>{});
+  });
+}
+
+// ══ INSTALL PROMPT ══
+let deferredPrompt=null;
+window.addEventListener('beforeinstallprompt',(e)=>{
+  e.preventDefault();
+  deferredPrompt=e;
+  // Show banner after 3 seconds if not installed
+  setTimeout(()=>{
+    const banner=document.getElementById('pwa-banner');
+    if(banner&&!localStorage.getItem('pwa-dismissed'))banner.style.display='block';
+  },3000);
+});
+function installPWA(){
+  if(deferredPrompt){
+    deferredPrompt.prompt();
+    deferredPrompt.userChoice.then(()=>{deferredPrompt=null;dismissBanner();});
+  } else {
+    // iOS instructions
+    alert('No iPhone:\n1. Toque no ícone de compartilhar (□↑)\n2. Role e toque em "Adicionar à Tela de Início"\n3. Toque em "Adicionar"');
+    dismissBanner();
+  }
+}
+function dismissBanner(){
+  const b=document.getElementById('pwa-banner');
+  if(b)b.style.display='none';
+  localStorage.setItem('pwa-dismissed','1');
+}
+window.addEventListener('appinstalled',()=>{
+  dismissBanner();
+  setTimeout(()=>alert('🎉 FitQuest instalado com sucesso!'),500);
+});
 </script>
 </body>
 </html>
