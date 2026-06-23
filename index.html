@@ -802,7 +802,7 @@ function renderGymDay(week,day,u){
         <span class="ex-chevron">▾</span>
       </div>
       <div class="ex-body">
-        ${ex.youtube?`<div class="ex-video-placeholder" id="vid-thumb-${i}" onclick="loadVideo(${i},'${ex.youtube}')"><div class="play-btn">▶</div><div style="font-size:11px;color:var(--muted);margin-top:4px">▶ Ver execução no YouTube</div></div><div class="ex-video-wrap" id="vid-frame-${i}"></div>`:''}
+        ${ex.youtube?`<div class="ex-video-placeholder" id="vid-thumb-${i}" onclick="loadVideo(${i},'${ex.youtube}')"><div class="play-btn">▶</div><div style="font-size:11px;color:var(--muted);margin-top:4px">▶ Abrir vídeo no YouTube</div></div><div class="ex-video-wrap" id="vid-frame-${i}"></div>`:''}
         <div class="ex-obs-box">💡 ${ex.obs}</div>
         <table class="sets-table">
           <tr><th>Série</th><th>Reps</th><th>Carga usada</th><th>✓</th></tr>
@@ -815,7 +815,12 @@ function renderGymDay(week,day,u){
   document.getElementById('gym-day-content').innerHTML=html;
 }
 function toggleEx(i){document.getElementById(`excard-${i}`).classList.toggle('expanded');}
-function loadVideo(i,url){document.getElementById(`vid-thumb-${i}`).style.display='none';const f=document.getElementById(`vid-frame-${i}`);f.style.display='block';f.innerHTML=`<iframe src="${url}?autoplay=1" allowfullscreen allow="autoplay"></iframe>`;}
+function loadVideo(i,url){
+  // Convert embed URL to watch URL and open in new tab (avoids embed restrictions)
+  const videoId = url.replace('https://www.youtube.com/embed/','').split('?')[0];
+  const watchUrl = 'https://www.youtube.com/watch?v=' + videoId;
+  window.open(watchUrl, '_blank');
+}
 function saveCarga(loadKey,exIdx,setIdx){
   const email=DB.get('fq_cur');const users=DB.get('fq_users')||{};const u=users[email];if(!u)return;
   const val=document.getElementById(`carga-${exIdx}-${setIdx}`)?.value||'';
