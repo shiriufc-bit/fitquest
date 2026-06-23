@@ -201,8 +201,7 @@ textarea.fi{resize:vertical;min-height:80px;}
 .ex-card.expanded .ex-chevron{transform:rotate(180deg);color:var(--accent);}
 .ex-body{display:none;padding:0 16px 16px;}
 .ex-card.expanded .ex-body{display:block;animation:fadeSlide .2s ease;}
-.ex-gif-wrap{border-radius:14px;overflow:hidden;margin-bottom:12px;background:rgba(0,0,0,.4);border:1px solid var(--border);aspect-ratio:16/9;display:flex;align-items:center;justify-content:center;position:relative;}
-.ex-gif-wrap img{width:100%;height:100%;object-fit:cover;}
+
 .ex-obs-box{background:rgba(255,77,0,.06);border:1px solid rgba(255,77,0,.15);border-radius:12px;padding:10px 14px;font-size:12px;color:var(--text2);line-height:1.6;margin-bottom:12px;}
 
 /* ── SETS TABLE ── */
@@ -728,7 +727,8 @@ textarea.fi{resize:vertical;min-height:80px;}
         🔒 Pagamento seguro · PIX ou cartão · Cancele quando quiser
       </div>
 
-      <button onclick="doLogout()" style="display:block;margin:16px auto 0;background:none;border:none;color:var(--muted);font-size:12px;cursor:pointer;text-decoration:underline">Sair da conta</button>
+      <button onclick="checkPaymentStatus(DB.get('fq_cur'))" style="display:block;margin:12px auto 0;background:rgba(0,230,118,.1);border:1px solid rgba(0,230,118,.25);border-radius:12px;color:var(--green);font-size:13px;font-weight:700;cursor:pointer;padding:10px 20px;width:100%;max-width:420px">✅ Já realizei o pagamento</button>
+      <button onclick="doLogout()" style="display:block;margin:8px auto 0;background:none;border:none;color:var(--muted);font-size:12px;cursor:pointer;text-decoration:underline">Sair da conta</button>
     </div>
   </div>
 </div>
@@ -794,36 +794,36 @@ textarea.fi{resize:vertical;min-height:80px;}
 <script>
 // ══ BANCO DE EXERCÍCIOS ══
 let EXERCISE_BANK=[
-  {id:'e001',name:'Supino Plano',muscle:'Peito',equipment:'Barra/Halteres',emoji:'🏋️',gif:'https://media.giphy.com/media/3oKIPwoeGErMmaI43S/giphy.gif',obs:'Escápulas retraídas, cotovelos a 45°. Desça até tocar o peito. Empurre explosivo na subida.'},
-  {id:'e002',name:'Supino Inclinado',muscle:'Peito Superior',equipment:'Barra/Halteres',emoji:'📐',gif:'https://media.giphy.com/media/l0HlBO7eyXzSZkJri/giphy.gif',obs:'Banco a 30–45°. Foco no peito superior. Não afaste demais os cotovelos.'},
-  {id:'e003',name:'Crucifixo',muscle:'Peito',equipment:'Halteres',emoji:'🦋',gif:'https://media.giphy.com/media/xT9IgG50Lg7rusyOGY/giphy.gif',obs:'Leve flexão nos cotovelos. Sinta o alongamento no peito. Movimento em arco.'},
-  {id:'e004',name:'Peck Deck',muscle:'Peito',equipment:'Máquina',emoji:'🤗',gif:'https://media.giphy.com/media/3oKIPwoeGErMmaI43S/giphy.gif',obs:'Contração no centro. Não bata os braços. Pausa de 1s na contração.'},
-  {id:'e005',name:'Remada Curvada',muscle:'Costas',equipment:'Barra',emoji:'🎣',gif:'https://media.giphy.com/media/26ufcYAkp8e6LHsUE/giphy.gif',obs:'Costas retas, puxe até o umbigo. Cotovelos próximos ao corpo. Não balance o tronco.'},
-  {id:'e006',name:'Puxada Alta',muscle:'Costas/Bíceps',equipment:'Máquina',emoji:'⬇️',gif:'https://media.giphy.com/media/26ufcYAkp8e6LHsUE/giphy.gif',obs:'Puxe até o queixo, cotovelos para baixo e para fora. Peito toca o guidão.'},
-  {id:'e007',name:'Remada Unilateral',muscle:'Costas',equipment:'Halteres',emoji:'💪',gif:'https://media.giphy.com/media/26ufcYAkp8e6LHsUE/giphy.gif',obs:'Apoio no banco. Puxe o cotovelo para o teto. Não gire o tronco.'},
-  {id:'e008',name:'Pullover',muscle:'Costas/Peito',equipment:'Halteres',emoji:'🌊',gif:'https://media.giphy.com/media/26ufcYAkp8e6LHsUE/giphy.gif',obs:'Cotovelos levemente flexionados. Amplitude máxima. Sinta o alongamento.'},
-  {id:'e009',name:'Desenvolvimento com Barra',muscle:'Ombro',equipment:'Barra',emoji:'🏆',gif:'https://media.giphy.com/media/l3vR9VGCxyBvhO7sQ/giphy.gif',obs:'Cotovelos alinhados com os ombros. Núcleo ativado. Não trave os joelhos.'},
-  {id:'e010',name:'Desenvolvimento com Halteres',muscle:'Ombro',equipment:'Halteres',emoji:'🎯',gif:'https://media.giphy.com/media/l3vR9VGCxyBvhO7sQ/giphy.gif',obs:'Palmas para frente. Amplitude completa. Controle na descida.'},
-  {id:'e011',name:'Elevação Lateral',muscle:'Ombro Lateral',equipment:'Halteres',emoji:'🦅',gif:'https://media.giphy.com/media/l3vR9VGCxyBvhO7sQ/giphy.gif',obs:'Cotovelos levemente flexionados. Isométrico de 1s no topo. Não balance.'},
-  {id:'e012',name:'Elevação Frontal',muscle:'Ombro Frontal',equipment:'Halteres/Barra',emoji:'⬆️',gif:'https://media.giphy.com/media/l3vR9VGCxyBvhO7sQ/giphy.gif',obs:'Não balance o tronco. Alternado ou simultâneo. Controle total.'},
-  {id:'e013',name:'Rosca Direta',muscle:'Bíceps',equipment:'Barra',emoji:'💪',gif:'https://media.giphy.com/media/xT9IgG50Lg7rusyOGY/giphy.gif',obs:'Cotovelos fixos. Supine no topo do movimento. Desça devagar.'},
-  {id:'e014',name:'Rosca Alternada',muscle:'Bíceps',equipment:'Halteres',emoji:'🔄',gif:'https://media.giphy.com/media/xT9IgG50Lg7rusyOGY/giphy.gif',obs:'Supinação completa. Foco na contração do bíceps. Cotovelo fixo.'},
-  {id:'e015',name:'Rosca Scott',muscle:'Bíceps',equipment:'Máquina/Barra',emoji:'📐',gif:'https://media.giphy.com/media/xT9IgG50Lg7rusyOGY/giphy.gif',obs:'Cotovelo apoiado. Amplitude total. Não solte no final.'},
-  {id:'e016',name:'Tríceps Pulley',muscle:'Tríceps',equipment:'Cabo',emoji:'🔽',gif:'https://media.giphy.com/media/3oKIPwoeGErMmaI43S/giphy.gif',obs:'Cotovelos colados ao corpo. Trave na extensão. Controle total.'},
-  {id:'e017',name:'Tríceps Testa',muscle:'Tríceps',equipment:'Barra/Halteres',emoji:'🎭',gif:'https://media.giphy.com/media/3oKIPwoeGErMmaI43S/giphy.gif',obs:'Cotovelos apontando para o teto. Não mova os ombros. Desça até a testa.'},
-  {id:'e018',name:'Tríceps Francês',muscle:'Tríceps',equipment:'Halteres',emoji:'🥐',gif:'https://media.giphy.com/media/3oKIPwoeGErMmaI43S/giphy.gif',obs:'Acima da cabeça. Amplitude máxima. Cotovelos não abrem.'},
-  {id:'e019',name:'Agachamento Livre',muscle:'Quadríceps/Glúteo',equipment:'Barra',emoji:'👑',gif:'https://media.giphy.com/media/l0HlBO7eyXzSZkJri/giphy.gif',obs:'Pés na largura dos ombros. Desça até 90°. Joelhos alinhados com os pés.'},
-  {id:'e020',name:'Leg Press 45°',muscle:'Quadríceps/Glúteo',equipment:'Máquina',emoji:'🦵',gif:'https://media.giphy.com/media/l0HlBO7eyXzSZkJri/giphy.gif',obs:'Não trave os joelhos. Amplitude completa. Pés na largura dos ombros.'},
-  {id:'e021',name:'Stiff',muscle:'Posterior/Glúteo',equipment:'Barra/Halteres',emoji:'🏹',gif:'https://media.giphy.com/media/l0HlBO7eyXzSZkJri/giphy.gif',obs:'Costas retas. Sinta o alongamento nos posteriores. Desça controlado.'},
-  {id:'e022',name:'Avanço',muscle:'Glúteo/Quadríceps',equipment:'Halteres/Livre',emoji:'🚶',gif:'https://media.giphy.com/media/l0HlBO7eyXzSZkJri/giphy.gif',obs:'Passada longa. Joelho traseiro quase toca o chão. Tronco ereto.'},
-  {id:'e023',name:'Cadeira Extensora',muscle:'Quadríceps',equipment:'Máquina',emoji:'🪑',gif:'https://media.giphy.com/media/l0HlBO7eyXzSZkJri/giphy.gif',obs:'Pausa de 1s no topo. Extensão completa. Desça controlado.'},
-  {id:'e024',name:'Mesa Flexora',muscle:'Posterior',equipment:'Máquina',emoji:'🛏️',gif:'https://media.giphy.com/media/l0HlBO7eyXzSZkJri/giphy.gif',obs:'Amplitude total. Pausa na contração máxima. Não solte rápido.'},
-  {id:'e025',name:'Panturrilha em Pé',muscle:'Panturrilha',equipment:'Máquina/Livre',emoji:'🦶',gif:'https://media.giphy.com/media/l0HlBO7eyXzSZkJri/giphy.gif',obs:'Amplitude máxima. Pausa de 2s no topo e no fundo. Peso total.'},
-  {id:'e026',name:'Hack Squat',muscle:'Quadríceps',equipment:'Máquina',emoji:'⚙️',gif:'https://media.giphy.com/media/l0HlBO7eyXzSZkJri/giphy.gif',obs:'Joelhos alinhados com os pés. Não trave. Amplitude completa.'},
-  {id:'e027',name:'Hip Thrust',muscle:'Glúteo',equipment:'Barra/Halteres',emoji:'🍑',gif:'https://media.giphy.com/media/l0HlBO7eyXzSZkJri/giphy.gif',obs:'Ombros no banco. Empurre o quadril até a extensão total. Pausa no topo.'},
-  {id:'e028',name:'Abdominal Crunch',muscle:'Abdômen',equipment:'Livre',emoji:'🎯',gif:'https://media.giphy.com/media/xT9IgG50Lg7rusyOGY/giphy.gif',obs:'Não puxe o pescoço. Foco na contração do core. Expire na subida.'},
-  {id:'e029',name:'Prancha',muscle:'Core/Abdômen',equipment:'Livre',emoji:'📏',gif:'https://media.giphy.com/media/xT9IgG50Lg7rusyOGY/giphy.gif',obs:'Corpo reto. Não deixe o quadril cair. Respire normalmente.'},
-  {id:'e030',name:'Remada Baixa',muscle:'Costas',equipment:'Cabo',emoji:'🎣',gif:'https://media.giphy.com/media/26ufcYAkp8e6LHsUE/giphy.gif',obs:'Costas retas, puxe até o abdômen, pausa de 1s. Cotovelos para trás.'},
+  {id:'e001',name:'Supino Plano',muscle:'Peito',equipment:'Barra/Halteres',emoji:'🏋️',obs:'Escápulas retraídas, cotovelos a 45°. Desça até tocar o peito. Empurre explosivo na subida.'},
+  {id:'e002',name:'Supino Inclinado',muscle:'Peito Superior',equipment:'Barra/Halteres',emoji:'📐',obs:'Banco a 30–45°. Foco no peito superior. Não afaste demais os cotovelos.'},
+  {id:'e003',name:'Crucifixo',muscle:'Peito',equipment:'Halteres',emoji:'🦋',obs:'Leve flexão nos cotovelos. Sinta o alongamento no peito. Movimento em arco.'},
+  {id:'e004',name:'Peck Deck',muscle:'Peito',equipment:'Máquina',emoji:'🤗',obs:'Contração no centro. Não bata os braços. Pausa de 1s na contração.'},
+  {id:'e005',name:'Remada Curvada',muscle:'Costas',equipment:'Barra',emoji:'🎣',obs:'Costas retas, puxe até o umbigo. Cotovelos próximos ao corpo. Não balance o tronco.'},
+  {id:'e006',name:'Puxada Alta',muscle:'Costas/Bíceps',equipment:'Máquina',emoji:'⬇️',obs:'Puxe até o queixo, cotovelos para baixo e para fora. Peito toca o guidão.'},
+  {id:'e007',name:'Remada Unilateral',muscle:'Costas',equipment:'Halteres',emoji:'💪',obs:'Apoio no banco. Puxe o cotovelo para o teto. Não gire o tronco.'},
+  {id:'e008',name:'Pullover',muscle:'Costas/Peito',equipment:'Halteres',emoji:'🌊',obs:'Cotovelos levemente flexionados. Amplitude máxima. Sinta o alongamento.'},
+  {id:'e009',name:'Desenvolvimento com Barra',muscle:'Ombro',equipment:'Barra',emoji:'🏆',obs:'Cotovelos alinhados com os ombros. Núcleo ativado. Não trave os joelhos.'},
+  {id:'e010',name:'Desenvolvimento com Halteres',muscle:'Ombro',equipment:'Halteres',emoji:'🎯',obs:'Palmas para frente. Amplitude completa. Controle na descida.'},
+  {id:'e011',name:'Elevação Lateral',muscle:'Ombro Lateral',equipment:'Halteres',emoji:'🦅',obs:'Cotovelos levemente flexionados. Isométrico de 1s no topo. Não balance.'},
+  {id:'e012',name:'Elevação Frontal',muscle:'Ombro Frontal',equipment:'Halteres/Barra',emoji:'⬆️',obs:'Não balance o tronco. Alternado ou simultâneo. Controle total.'},
+  {id:'e013',name:'Rosca Direta',muscle:'Bíceps',equipment:'Barra',emoji:'💪',obs:'Cotovelos fixos. Supine no topo do movimento. Desça devagar.'},
+  {id:'e014',name:'Rosca Alternada',muscle:'Bíceps',equipment:'Halteres',emoji:'🔄',obs:'Supinação completa. Foco na contração do bíceps. Cotovelo fixo.'},
+  {id:'e015',name:'Rosca Scott',muscle:'Bíceps',equipment:'Máquina/Barra',emoji:'📐',obs:'Cotovelo apoiado. Amplitude total. Não solte no final.'},
+  {id:'e016',name:'Tríceps Pulley',muscle:'Tríceps',equipment:'Cabo',emoji:'🔽',obs:'Cotovelos colados ao corpo. Trave na extensão. Controle total.'},
+  {id:'e017',name:'Tríceps Testa',muscle:'Tríceps',equipment:'Barra/Halteres',emoji:'🎭',obs:'Cotovelos apontando para o teto. Não mova os ombros. Desça até a testa.'},
+  {id:'e018',name:'Tríceps Francês',muscle:'Tríceps',equipment:'Halteres',emoji:'🥐',obs:'Acima da cabeça. Amplitude máxima. Cotovelos não abrem.'},
+  {id:'e019',name:'Agachamento Livre',muscle:'Quadríceps/Glúteo',equipment:'Barra',emoji:'👑',obs:'Pés na largura dos ombros. Desça até 90°. Joelhos alinhados com os pés.'},
+  {id:'e020',name:'Leg Press 45°',muscle:'Quadríceps/Glúteo',equipment:'Máquina',emoji:'🦵',obs:'Não trave os joelhos. Amplitude completa. Pés na largura dos ombros.'},
+  {id:'e021',name:'Stiff',muscle:'Posterior/Glúteo',equipment:'Barra/Halteres',emoji:'🏹',obs:'Costas retas. Sinta o alongamento nos posteriores. Desça controlado.'},
+  {id:'e022',name:'Avanço',muscle:'Glúteo/Quadríceps',equipment:'Halteres/Livre',emoji:'🚶',obs:'Passada longa. Joelho traseiro quase toca o chão. Tronco ereto.'},
+  {id:'e023',name:'Cadeira Extensora',muscle:'Quadríceps',equipment:'Máquina',emoji:'🪑',obs:'Pausa de 1s no topo. Extensão completa. Desça controlado.'},
+  {id:'e024',name:'Mesa Flexora',muscle:'Posterior',equipment:'Máquina',emoji:'🛏️',obs:'Amplitude total. Pausa na contração máxima. Não solte rápido.'},
+  {id:'e025',name:'Panturrilha em Pé',muscle:'Panturrilha',equipment:'Máquina/Livre',emoji:'🦶',obs:'Amplitude máxima. Pausa de 2s no topo e no fundo. Peso total.'},
+  {id:'e026',name:'Hack Squat',muscle:'Quadríceps',equipment:'Máquina',emoji:'⚙️',obs:'Joelhos alinhados com os pés. Não trave. Amplitude completa.'},
+  {id:'e027',name:'Hip Thrust',muscle:'Glúteo',equipment:'Barra/Halteres',emoji:'🍑',obs:'Ombros no banco. Empurre o quadril até a extensão total. Pausa no topo.'},
+  {id:'e028',name:'Abdominal Crunch',muscle:'Abdômen',equipment:'Livre',emoji:'🎯',obs:'Não puxe o pescoço. Foco na contração do core. Expire na subida.'},
+  {id:'e029',name:'Prancha',muscle:'Core/Abdômen',equipment:'Livre',emoji:'📏',obs:'Corpo reto. Não deixe o quadril cair. Respire normalmente.'},
+  {id:'e030',name:'Remada Baixa',muscle:'Costas',equipment:'Cabo',emoji:'🎣',obs:'Costas retas, puxe até o abdômen, pausa de 1s. Cotovelos para trás.'},
 ];
 
 // ══ PROGRAMAS PADRÃO ══
@@ -957,11 +957,8 @@ async function doLogin(){
   
   DB.set('fq_cur',email);
   if(!u.anamneseDone){initAnam();show('screen-anamnese');}
-  else{
-    // Check subscription
-    if(u.plano==='pendente'||!u.plano){show('screen-payment');return;}
-    loadApp(email);show('screen-app');
-  }
+  else if(!u.trainApproved){show('screen-payment');}
+  else{loadApp(email);show('screen-app');}
 }
 async function doRegister(){
   const name=document.getElementById('reg-name').value.trim();
@@ -1032,7 +1029,11 @@ async function submitAnam(){
   DB.set('fq_users',users);show('screen-success');
   document.querySelector('.sico').textContent='🤖';document.querySelector('.stit').textContent='Gerando seu treino com IA...';document.querySelector('.ssub').textContent='Aguarde enquanto a IA analisa sua ficha!';document.getElementById('btn-go-app').style.display='none';
   try{await generateAIPlan(email,an);}catch(e){const u2=DB.get('fq_users')||{};if(u2[email]){u2[email].trainApproved=true;DB.set('fq_users',u2);}}
-  document.querySelector('.sico').textContent='🎉';document.querySelector('.stit').textContent='Treino pronto!';document.querySelector('.ssub').textContent='Seu plano foi gerado! Hora de treinar 💪';document.getElementById('btn-go-app').style.display='block';
+  document.querySelector('.sico').textContent='🎉';
+  document.querySelector('.stit').textContent='Anamnese enviada!';
+  document.querySelector('.ssub').textContent='Agora escolha seu plano para liberar seu treino personalizado 💪';
+  document.getElementById('btn-go-app').style.display='block';
+  document.getElementById('btn-go-app').textContent='Escolher meu plano 🚀';
 }
 async function generateAIPlan(email,an){
   const exList=EXERCISE_BANK.map(e=>`${e.id}:${e.name}(${e.muscle})`).join(', ');
@@ -1049,7 +1050,18 @@ Regras: 4 semanas, progressão lógica, máx 7 exercícios/treino, use IDs do ba
   const users=DB.get('fq_users')||{};
   if(users[email]){users[email].aiPlan=plan;users[email].trainApproved=true;DB.set('fq_users',users);}
 }
-function goToApp(){const email=DB.get('fq_cur');loadApp(email);show('screen-app');}
+function goToApp(){
+  const email=DB.get('fq_cur');
+  const users=DB.get('fq_users')||{};
+  const u=users[email];
+  if(!u)return;
+  // New user goes to payment, approved goes to app
+  if(!u.trainApproved){
+    show('screen-payment');
+  } else {
+    loadApp(email);show('screen-app');
+  }
+}
 
 // ══ TIMER ══
 let timerInterval=null;let timerSeconds=0;
@@ -1145,7 +1157,7 @@ function renderGymDay(week,day,u){
         <span class="ex-chevron">▾</span>
       </div>
       <div class="ex-body">
-        ${ex.gif?`<div style="border-radius:12px;overflow:hidden;margin-bottom:12px;background:#000;text-align:center;border:1px solid var(--border)"><img src="${ex.gif}" alt="${ex.name}" style="width:100%;max-height:220px;object-fit:cover;border-radius:12px;" onerror="this.parentElement.style.display='none'"/></div>`:''}
+        ${`<div style="border-radius:14px;background:linear-gradient(135deg,rgba(255,77,0,.1),rgba(255,112,67,.04));border:1px solid rgba(255,77,0,.15);aspect-ratio:16/9;display:flex;flex-direction:column;align-items:center;justify-content:center;margin-bottom:12px;gap:8px"><div style="font-size:60px;line-height:1">${ex.emoji||'🏋️'}</div><div style="font-size:14px;font-weight:900">${ex.name}</div><div style="font-size:11px;color:var(--accent2);font-weight:700;background:rgba(255,77,0,.1);padding:3px 10px;border-radius:8px">${ex.muscle} · ${ex.equipment}</div></div>`
         <div class="ex-obs-box">💡 ${ex.obs}</div>
         <table class="sets-table">
           <tr><th>Série</th><th>Reps</th><th>Carga usada</th><th>✓</th></tr>
@@ -1303,7 +1315,7 @@ function filterBank(){bankFilter=document.getElementById('bank-search').value;re
 function openAddExercise(id=null){
   const ex=id?EXERCISE_BANK.find(e=>e.id===id):{id:'e'+String(EXERCISE_BANK.length+1).padStart(3,'0'),name:'',muscle:'',equipment:'',youtube:'',obs:''};
   document.getElementById('modal-add-ex-title').textContent=id?'✏️ Editar Exercício':'➕ Novo Exercício';
-  document.getElementById('modal-add-ex-content').innerHTML=`<div class="fg"><label class="fl">Nome</label><input class="fi" id="ex-name" value="${ex.name}" placeholder="Ex: Supino Plano"/></div><div class="fr"><div class="fg"><label class="fl">Músculo</label><input class="fi" id="ex-muscle" value="${ex.muscle}" placeholder="Ex: Peito"/></div><div class="fg"><label class="fl">Equipamento</label><input class="fi" id="ex-equip" value="${ex.equipment}" placeholder="Ex: Barra"/></div></div><div class="fg"><label class="fl">Link do GIF (musclewiki.com ou outro)</label><input class="fi" id="ex-yt" value="${ex.gif||''}" placeholder="https://musclewiki.com/media/uploads/...gif"/></div><div class="fg"><label class="fl">Dica de execução</label><textarea class="fi" id="ex-obs" placeholder="Descreva a execução...">${ex.obs}</textarea></div><button class="btn-p" onclick="saveExercise('${ex.id}')">💾 Salvar exercício</button>`;
+  document.getElementById('modal-add-ex-content').innerHTML=`<div class="fg"><label class="fl">Nome</label><input class="fi" id="ex-name" value="${ex.name}" placeholder="Ex: Supino Plano"/></div><div class="fr"><div class="fg"><label class="fl">Músculo</label><input class="fi" id="ex-muscle" value="${ex.muscle}" placeholder="Ex: Peito"/></div><div class="fg"><label class="fl">Equipamento</label><input class="fi" id="ex-equip" value="${ex.equipment}" placeholder="Ex: Barra"/></div></div><div class="fg"><label class="fl">Link do GIF ( ou outro)</label><input class="fi" id="ex-yt" value="${ex.gif||''}" placeholder="https:///media/uploads/...gif"/></div><div class="fg"><label class="fl">Dica de execução</label><textarea class="fi" id="ex-obs" placeholder="Descreva a execução...">${ex.obs}</textarea></div><button class="btn-p" onclick="saveExercise('${ex.id}')">💾 Salvar exercício</button>`;
   document.getElementById('modal-add-ex').classList.add('open');
 }
 function saveExercise(id){
@@ -1414,7 +1426,8 @@ function switchTab(name,btn){document.querySelectorAll('.tab-panel').forEach(p=>
   }
   if(!u){DB.del('fq_cur');show('screen-auth');return;}
   if(!u.anamneseDone){initAnam();show('screen-anamnese');return;}
-  if(!u.trainApproved&&(u.plano==='pendente'||!u.plano)){show('screen-payment');return;}
+  // ALWAYS check payment — only admin-approved users enter
+  if(!u.trainApproved){show('screen-payment');return;}
   loadApp(email);show('screen-app');
 })();
 </script>
