@@ -637,7 +637,7 @@ function getUser(){const e=DB.get('fq_cur');if(!e||e==='__admin__')return null;c
 
 // ══ AUTH ══
 const ADMIN_EMAIL='rennan@rennandias.com.br';
-const ADMIN_PASS=btoa('RennanAdmin@2025');
+const ADMIN_PASS='RennanAdmin@2025';
 function switchAuth(mode){
   document.getElementById('form-login').style.display=mode==='login'?'block':'none';
   document.getElementById('form-register').style.display=mode==='register'?'block':'none';
@@ -649,7 +649,7 @@ function doLogin(){
   const email=document.getElementById('login-email').value.trim();
   const pass=document.getElementById('login-pass').value;
   if(!email||!pass){showErr('Preencha e-mail e senha.');return;}
-  if(email===ADMIN_EMAIL&&btoa(pass)===ADMIN_PASS){DB.set('fq_cur','__admin__');loadAdmin();show('screen-admin');return;}
+  if(email===ADMIN_EMAIL&&pass===ADMIN_PASS){DB.set('fq_cur','__admin__');loadAdmin();show('screen-admin');return;}
   const users=DB.get('fq_users')||{};
   if(!users[email]){showErr('Conta não encontrada.');return;}
   if(users[email].pass!==btoa(pass)){showErr('Senha incorreta.');return;}
