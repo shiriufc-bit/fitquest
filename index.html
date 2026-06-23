@@ -11,6 +11,7 @@
 <meta name="apple-mobile-web-app-title" content="FitQuest"/>
 <meta name="mobile-web-app-capable" content="yes"/>
 <link rel="manifest" href="manifest.json"/>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <!-- Apple Touch Icons -->
 <link rel="apple-touch-icon" href="icon-192.png"/>
 <link rel="icon" type="image/png" href="icon-192.png"/>
@@ -355,6 +356,21 @@ textarea.fi{resize:vertical;min-height:80px;}
 
 @media(max-width:380px){.fr{grid-template-columns:1fr;}.sg{grid-template-columns:1fr 1fr;}}
 @keyframes pulse{0%,100%{opacity:.5;}50%{opacity:1;}}
+/* ── PAYMENT ── */
+.plan-card{background:var(--glass);border:1px solid var(--glass-border);border-radius:20px;padding:18px;margin-bottom:12px;cursor:pointer;transition:all .25s;position:relative;overflow:hidden;backdrop-filter:blur(12px);}
+.plan-card:hover{border-color:rgba(255,77,0,.3);transform:translateY(-2px);box-shadow:0 8px 32px rgba(255,77,0,.1);}
+.plan-card.selected{border-color:var(--accent);box-shadow:0 0 0 2px rgba(255,77,0,.2),0 8px 32px rgba(255,77,0,.15);}
+.plan-card.featured{border-color:rgba(255,77,0,.3);background:linear-gradient(135deg,rgba(255,77,0,.1),rgba(255,112,67,.04)),var(--glass);}
+.plan-badge{display:inline-block;background:rgba(255,77,0,.12);color:var(--accent);border:1px solid rgba(255,77,0,.25);border-radius:8px;padding:3px 10px;font-size:9px;font-weight:900;letter-spacing:1.5px;margin-bottom:10px;}
+.plan-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:12px;}
+.plan-name{font-size:15px;font-weight:900;letter-spacing:-.2px;}
+.plan-desc{font-size:11px;color:var(--text2);margin-top:3px;}
+.plan-price-wrap{text-align:right;}
+.plan-price{font-size:28px;font-weight:900;color:var(--accent);letter-spacing:-1px;line-height:1;}
+.plan-period{font-size:10px;color:var(--text2);font-weight:600;}
+.plan-features{display:flex;flex-direction:column;gap:5px;}
+.plan-feat{font-size:11px;color:var(--text2);font-weight:600;}
+.plan-card.selected .plan-feat{color:var(--text);}
 @keyframes shimmer{0%{background-position:-200% 0;}100%{background-position:200% 0;}}
 </style>
 </head>
@@ -634,6 +650,89 @@ textarea.fi{resize:vertical;min-height:80px;}
   </div>
 </div>
 
+<!-- PAYMENT SCREEN -->
+<div id="screen-payment" class="screen">
+  <div style="min-height:100vh;background:radial-gradient(ellipse at 50% 0%,rgba(255,77,0,.15),transparent 60%),var(--bg);padding:32px 20px;display:flex;flex-direction:column;align-items:center;">
+    <div style="width:100%;max-width:420px">
+      <!-- Header -->
+      <div style="text-align:center;margin-bottom:32px">
+        <div style="font-size:42px;font-weight:900;letter-spacing:-2px;margin-bottom:8px"><span style="background:linear-gradient(135deg,var(--accent),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent">FIT</span>QUEST</div>
+        <div style="font-size:16px;font-weight:700;color:var(--text2)">Escolha seu plano e comece agora</div>
+      </div>
+
+      <!-- Plano Mensal -->
+      <div class="plan-card" onclick="selectPlan('mensal',59.90)" id="plan-mensal">
+        <div class="plan-header">
+          <div>
+            <div class="plan-name">🔥 Plano Mensal</div>
+            <div class="plan-desc">Renovação automática todo mês</div>
+          </div>
+          <div class="plan-price-wrap">
+            <div class="plan-price">R$59<span style="font-size:16px">,90</span></div>
+            <div class="plan-period">/mês</div>
+          </div>
+        </div>
+        <div class="plan-features">
+          <span class="plan-feat">✅ Treino personalizado por IA</span>
+          <span class="plan-feat">✅ App gamificado</span>
+          <span class="plan-feat">✅ Suporte direto</span>
+        </div>
+      </div>
+
+      <!-- Plano Trimestral -->
+      <div class="plan-card featured" onclick="selectPlan('trimestral',149.90)" id="plan-trimestral">
+        <div class="plan-badge">MAIS POPULAR</div>
+        <div class="plan-header">
+          <div>
+            <div class="plan-name">⚡ Plano Trimestral</div>
+            <div class="plan-desc">3 meses · Economia de R$30</div>
+          </div>
+          <div class="plan-price-wrap">
+            <div class="plan-price">R$149<span style="font-size:16px">,90</span></div>
+            <div class="plan-period">/trimestre</div>
+          </div>
+        </div>
+        <div class="plan-features">
+          <span class="plan-feat">✅ Tudo do mensal</span>
+          <span class="plan-feat">✅ Revisão do treino mensal</span>
+          <span class="plan-feat">✅ Prioridade no suporte</span>
+        </div>
+      </div>
+
+      <!-- Plano Anual -->
+      <div class="plan-card" onclick="selectPlan('anual',539.90)" id="plan-anual">
+        <div class="plan-badge" style="background:rgba(255,214,0,.15);color:var(--yellow);border-color:rgba(255,214,0,.3)">MELHOR VALOR</div>
+        <div class="plan-header">
+          <div>
+            <div class="plan-name">👑 Plano Anual</div>
+            <div class="plan-desc">12 meses · Economia de R$178</div>
+          </div>
+          <div class="plan-price-wrap">
+            <div class="plan-price">R$539<span style="font-size:16px">,90</span></div>
+            <div class="plan-period">/ano</div>
+          </div>
+        </div>
+        <div class="plan-features">
+          <span class="plan-feat">✅ Tudo do trimestral</span>
+          <span class="plan-feat">✅ Consultoria mensal por vídeo</span>
+          <span class="plan-feat">✅ Acesso vitalício ao app</span>
+        </div>
+      </div>
+
+      <!-- Botão pagar -->
+      <button id="btn-pagar" class="btn-p" style="margin-top:16px;font-size:16px;padding:16px;display:none" onclick="iniciarPagamento()">
+        Assinar agora via Mercado Pago 🚀
+      </button>
+
+      <div style="text-align:center;margin-top:16px;font-size:11px;color:var(--muted)">
+        🔒 Pagamento seguro · PIX ou cartão · Cancele quando quiser
+      </div>
+
+      <button onclick="doLogout()" style="display:block;margin:16px auto 0;background:none;border:none;color:var(--muted);font-size:12px;cursor:pointer;text-decoration:underline">Sair da conta</button>
+    </div>
+  </div>
+</div>
+
 <!-- ADMIN -->
 <div id="screen-admin" class="screen">
   <div class="adm-hdr">
@@ -754,11 +853,73 @@ const DEFAULT_RUN={
 };
 
 // ══ DB / UTILS ══
+// ══ SUPABASE ══
+const SUPABASE_URL='https://ctbmnvlsvdlrohkcalcm.supabase.co';
+const SUPABASE_KEY='sb_publishable_0jwz3vKIkAakkn8tgNrKKQ_EELiP41g';
+const sb=supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
+
+// ══ LOCAL CACHE ══
 const DB={get(k){try{return JSON.parse(localStorage.getItem(k));}catch{return null;}},set(k,v){localStorage.setItem(k,JSON.stringify(v));},del(k){localStorage.removeItem(k);}};
 function getExById(id){return EXERCISE_BANK.find(e=>e.id===id)||null;}
 function show(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById(id).classList.add('active');window.scrollTo(0,0);}
 function closeModal(id){document.getElementById(id).classList.remove('open');}
-function getUser(){const e=DB.get('fq_cur');if(!e||e==='__admin__')return null;const u=DB.get('fq_users')||{};return u[e]||null;}
+
+// Salva aluno no Supabase
+async function syncAluno(u){
+  try{
+    await sb.from('alunos').upsert({
+      id:u.id,nome:u.name,email:u.email,senha_hash:u.pass,
+      plano:u.plano||'pendente',plano_expira_em:u.planoExpira||null,
+      treino_liberado:u.trainApproved||false,
+      ai_plan:u.aiPlan||null,anamnese:u.anamnese||null,
+      gym_week:u.gymWeek||1,run_week:u.runWeek||1,
+      gym_done:u.gymDone||{},run_done:u.runDone||{},
+      load_history:u.loadHistory||{},workout_history:u.workoutHistory||[],
+      xp:u.xp||0,level:u.level||1,streak:u.streak||1,coins:u.coins||0,
+      badges:u.badges||[],prs:u.prs||[],stats:u.stats||{treinos:0,distancia:0,semanas:0},
+      updated_at:new Date().toISOString()
+    },{onConflict:'email'});
+  }catch(e){console.log('Sync error:',e);}
+}
+
+// Carrega aluno do Supabase
+async function loadAlunoFromDB(email){
+  try{
+    const {data}=await sb.from('alunos').select('*').eq('email',email).single();
+    if(!data)return null;
+    return {
+      id:data.id,name:data.nome,email:data.email,pass:data.senha_hash,
+      plano:data.plano,planoExpira:data.plano_expira_em,
+      trainApproved:data.treino_liberado,
+      aiPlan:data.ai_plan,anamnese:data.anamnese,
+      anamneseDone:!!data.anamnese,
+      gymWeek:data.gym_week||1,runWeek:data.run_week||1,
+      gymDone:data.gym_done||{},runDone:data.run_done||{},
+      loadHistory:data.load_history||{},workoutHistory:data.workout_history||[],
+      xp:data.xp||0,level:data.level||1,streak:data.streak||1,coins:data.coins||0,
+      badges:data.badges||[],prs:data.prs||[],
+      stats:data.stats||{treinos:0,distancia:0,semanas:0},
+      missions:data.missions||[
+        {id:1,title:'Treinar 4x esta semana',xp:150,progress:0,total:4,type:'gym',done:false},
+        {id:2,title:'Correr 10km esta semana',xp:200,progress:0,total:10,type:'run',done:false},
+        {id:3,title:'Completar Semana 1',xp:300,progress:0,total:1,type:'week',done:false},
+      ],createdAt:data.criado_em
+    };
+  }catch(e){return null;}
+}
+
+function getUser(){
+  const email=DB.get('fq_cur');
+  if(!email||email==='__admin__')return null;
+  const users=DB.get('fq_users')||{};
+  return users[email]||null;
+}
+function saveUser(u){
+  const users=DB.get('fq_users')||{};
+  users[u.email]=u;
+  DB.set('fq_users',users);
+  syncAluno(u); // sync to Supabase async
+}
 
 // ══ AUTH ══
 const ADMIN_EMAIL='rennan@rennandias.com.br';
@@ -770,19 +931,39 @@ function switchAuth(mode){
   document.getElementById('auth-error').style.display='none';
 }
 function showErr(msg){const e=document.getElementById('auth-error');e.textContent=msg;e.style.display='block';}
-function doLogin(){
+async function doLogin(){
   const email=document.getElementById('login-email').value.trim();
   const pass=document.getElementById('login-pass').value;
   if(!email||!pass){showErr('Preencha e-mail e senha.');return;}
   if(email===ADMIN_EMAIL&&pass===ADMIN_PASS){DB.set('fq_cur','__admin__');loadAdmin();show('screen-admin');return;}
+  
+  const btn=document.querySelector('#form-login .btn-p');
+  btn.textContent='Entrando...';btn.disabled=true;
+  
+  // Try local first for speed
   const users=DB.get('fq_users')||{};
-  if(!users[email]){showErr('Conta não encontrada.');return;}
-  if(users[email].pass!==btoa(pass)){showErr('Senha incorreta.');return;}
+  let u=users[email];
+  
+  // If not local, try Supabase
+  if(!u){
+    u=await loadAlunoFromDB(email);
+    if(u){users[email]=u;DB.set('fq_users',users);}
+  }
+  
+  btn.textContent='Entrar no FitQuest';btn.disabled=false;
+  
+  if(!u){showErr('Conta não encontrada.');return;}
+  if(u.pass!==btoa(pass)){showErr('Senha incorreta.');return;}
+  
   DB.set('fq_cur',email);
-  if(!users[email].anamneseDone){initAnam();show('screen-anamnese');}
-  else{loadApp(email);show('screen-app');}
+  if(!u.anamneseDone){initAnam();show('screen-anamnese');}
+  else{
+    // Check subscription
+    if(u.plano==='pendente'||!u.plano){show('screen-payment');return;}
+    loadApp(email);show('screen-app');
+  }
 }
-function doRegister(){
+async function doRegister(){
   const name=document.getElementById('reg-name').value.trim();
   const email=document.getElementById('reg-email').value.trim();
   const pass=document.getElementById('reg-pass').value;
@@ -791,10 +972,35 @@ function doRegister(){
   if(pass.length<6){showErr('Senha mínimo 6 caracteres.');return;}
   if(pass!==pass2){showErr('Senhas não conferem.');return;}
   if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){showErr('E-mail inválido.');return;}
+  
+  const btn=document.querySelector('#form-register .btn-p');
+  btn.textContent='Criando conta...';btn.disabled=true;
+  
+  // Check if exists in Supabase
+  const existing=await loadAlunoFromDB(email);
+  if(existing){btn.textContent='Criar minha conta';btn.disabled=false;showErr('E-mail já cadastrado.');return;}
+  
   const users=DB.get('fq_users')||{};
-  if(users[email]){showErr('E-mail já cadastrado.');return;}
-  users[email]={name,email,pass:btoa(pass),anamneseDone:false,createdAt:new Date().toISOString(),xp:0,level:1,streak:1,coins:0,stats:{treinos:0,distancia:0,semanas:0},badges:[],missions:[{id:1,title:'Treinar 4x esta semana',xp:150,progress:0,total:4,type:'gym',done:false},{id:2,title:'Correr 10km esta semana',xp:200,progress:0,total:10,type:'run',done:false},{id:3,title:'Completar Semana 1',xp:300,progress:0,total:1,type:'week',done:false}],prs:[],gymWeek:1,gymDone:{},runWeek:1,runDone:{},trainApproved:false,aiPlan:null,workoutHistory:[],loadHistory:{}};
+  if(users[email]){btn.textContent='Criar minha conta';btn.disabled=false;showErr('E-mail já cadastrado.');return;}
+  
+  const newUser={
+    id:crypto.randomUUID(),name,email,pass:btoa(pass),
+    anamneseDone:false,createdAt:new Date().toISOString(),
+    plano:'pendente',trainApproved:false,
+    xp:0,level:1,streak:1,coins:0,
+    stats:{treinos:0,distancia:0,semanas:0},badges:[],
+    missions:[
+      {id:1,title:'Treinar 4x esta semana',xp:150,progress:0,total:4,type:'gym',done:false},
+      {id:2,title:'Correr 10km esta semana',xp:200,progress:0,total:10,type:'run',done:false},
+      {id:3,title:'Completar Semana 1',xp:300,progress:0,total:1,type:'week',done:false},
+    ],
+    prs:[],gymWeek:1,gymDone:{},runWeek:1,runDone:{},
+    trainApproved:false,aiPlan:null,workoutHistory:[],loadHistory:{}
+  };
+  users[email]=newUser;
   DB.set('fq_users',users);DB.set('fq_cur',email);
+  await syncAluno(newUser);
+  btn.textContent='Criar minha conta';btn.disabled=false;
   initAnam();show('screen-anamnese');
 }
 function doLogout(){if(!confirm('Deseja sair?'))return;DB.del('fq_cur');document.getElementById('login-email').value='';document.getElementById('login-pass').value='';switchAuth('login');show('screen-auth');}
@@ -1067,8 +1273,22 @@ function loadAdmin(){
   if(!all.length){document.getElementById('students-list').innerHTML='<div style="text-align:center;color:var(--muted);padding:40px;font-size:13px">Nenhum aluno cadastrado ainda.</div>';return;}
   document.getElementById('students-list').innerHTML=[...all].sort((a,b)=>new Date(b.createdAt||0)-new Date(a.createdAt||0)).map(u=>`<div class="student-card ${u.trainApproved?'approved':'pending'}"><div class="sc-top"><div class="sc-av">${u.name?u.name[0].toUpperCase():'?'}</div><div class="sc-info"><div class="sc-name">${u.name}</div><div class="sc-email">${u.email}</div></div><div class="sc-status ${u.trainApproved?'ok':'pend'}">${u.trainApproved?'✅ Ativo':'⏳ Pendente'}</div></div><div class="sc-stats"><div class="sc-stat"><div class="sc-stat-val" style="color:var(--accent)">${u.stats?.treinos||0}</div><div class="sc-stat-lbl">Treinos</div></div><div class="sc-stat"><div class="sc-stat-val" style="color:var(--orange)">${u.stats?.distancia||0}</div><div class="sc-stat-lbl">km</div></div><div class="sc-stat"><div class="sc-stat-val" style="color:var(--yellow)">${u.level||1}</div><div class="sc-stat-lbl">Nível</div></div><div class="sc-stat"><div class="sc-stat-val" style="color:var(--green)">${u.gymWeek||1}</div><div class="sc-stat-lbl">Semana</div></div></div><div class="sc-btns">${!u.trainApproved?`<button class="btn-sm btn-approve" onclick="adminApprove('${u.email}')">✅ Liberar</button>`:''} ${u.trainApproved?`<button class="btn-sm btn-revoke" onclick="adminRevoke('${u.email}')">🚫 Revogar</button>`:''} <button class="btn-sm btn-edit" onclick="openEditStudent('${u.email}')">✏️ Editar treino</button> <button class="btn-sm btn-view" onclick="openAnam('${u.email}')">📋 Anamnese</button> <button class="btn-sm btn-delete" onclick="adminDelete('${u.email}')">🗑️ Excluir</button></div></div>`).join('');
 }
-function adminApprove(e){const users=DB.get('fq_users')||{};if(!users[e])return;users[e].trainApproved=true;DB.set('fq_users',users);loadAdmin();}
-function adminRevoke(e){if(!confirm('Revogar?'))return;const users=DB.get('fq_users')||{};if(!users[e])return;users[e].trainApproved=false;DB.set('fq_users',users);loadAdmin();}
+async function adminApprove(e){
+  const users=DB.get('fq_users')||{};if(!users[e])return;
+  users[e].trainApproved=true;
+  users[e].plano=users[e].plano==='pendente'?'mensal':users[e].plano;
+  DB.set('fq_users',users);
+  // Update Supabase
+  await sb.from('alunos').update({treino_liberado:true,plano:users[e].plano}).eq('email',e);
+  loadAdmin();
+}
+async function adminRevoke(e){
+  if(!confirm('Revogar acesso?'))return;
+  const users=DB.get('fq_users')||{};if(!users[e])return;
+  users[e].trainApproved=false;DB.set('fq_users',users);
+  await sb.from('alunos').update({treino_liberado:false}).eq('email',e);
+  loadAdmin();
+}
 function adminDelete(e){if(!confirm('Excluir aluno?'))return;const users=DB.get('fq_users')||{};delete users[e];DB.set('fq_users',users);loadAdmin();}
 
 // ── BANCO DE EXERCÍCIOS ──
@@ -1182,13 +1402,19 @@ function openAnam(email){
 function switchTab(name,btn){document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));document.querySelectorAll('.bnav .nbtn').forEach(b=>b.classList.remove('active'));document.getElementById('panel-'+name).classList.add('active');if(btn)btn.classList.add('active');window.scrollTo(0,0);}
 
 // ══ INIT ══
-(function init(){
+(async function init(){
   const email=DB.get('fq_cur');
   if(!email){show('screen-auth');return;}
   if(email==='__admin__'){loadAdmin();show('screen-admin');return;}
-  const users=DB.get('fq_users')||{};const u=users[email];
+  const users=DB.get('fq_users')||{};let u=users[email];
+  // Try to refresh from Supabase
+  if(u){
+    const fresh=await loadAlunoFromDB(email);
+    if(fresh){u={...u,...fresh};users[email]=u;DB.set('fq_users',users);}
+  }
   if(!u){DB.del('fq_cur');show('screen-auth');return;}
   if(!u.anamneseDone){initAnam();show('screen-anamnese');return;}
+  if(!u.trainApproved&&(u.plano==='pendente'||!u.plano)){show('screen-payment');return;}
   loadApp(email);show('screen-app');
 })();
 </script>
@@ -1207,6 +1433,73 @@ function switchTab(name,btn){document.querySelectorAll('.tab-panel').forEach(p=>
 </div>
 
 <script>
+// ══ PAYMENT ══
+let selectedPlan=null;
+let selectedPrice=0;
+
+function selectPlan(plan,price){
+  selectedPlan=plan;selectedPrice=price;
+  document.querySelectorAll('.plan-card').forEach(c=>c.classList.remove('selected'));
+  document.getElementById('plan-'+plan).classList.add('selected');
+  document.getElementById('btn-pagar').style.display='block';
+  document.getElementById('btn-pagar').textContent=`Assinar ${plan} — R$${price.toFixed(2).replace('.',',')} 🚀`;
+}
+
+async function iniciarPagamento(){
+  const email=DB.get('fq_cur');
+  if(!email||!selectedPlan){return;}
+  const btn=document.getElementById('btn-pagar');
+  btn.textContent='Gerando link de pagamento...';btn.disabled=true;
+  
+  // Save pending payment in Supabase
+  const users=DB.get('fq_users')||{};
+  const u=users[email];
+  
+  try{
+    await sb.from('pagamentos').insert({
+      aluno_id:u?.id||null,
+      aluno_email:email,
+      plano:selectedPlan,
+      valor:selectedPrice,
+      status:'pendente',
+      mp_preference_id:null
+    });
+  }catch(e){console.log('Payment log error:',e);}
+  
+  // Redirect to Mercado Pago
+  // Links de pagamento do Mercado Pago — você cria em mpago.com.br/ferramentas/cobrancas
+  const links={
+    mensal:'https://mpago.li/1mYcngV',
+    trimestral:'https://mpago.li/1qj9bY9',
+    anual:'https://mpago.li/21vSJoW'
+  };
+  
+  const link=links[selectedPlan];
+
+  window.open(link+'?prefill_comments='+encodeURIComponent(email),'_blank');
+  btn.textContent=`Assinar ${selectedPlan} 🚀`;btn.disabled=false;
+  
+  // Show confirmation
+  setTimeout(()=>{
+    if(confirm('Já realizou o pagamento?\nClique OK para verificar o acesso.')){
+      checkPaymentStatus(email);
+    }
+  },3000);
+}
+
+async function checkPaymentStatus(email){
+  // Check if admin manually approved
+  const u=await loadAlunoFromDB(email);
+  if(u&&u.trainApproved){
+    const users=DB.get('fq_users')||{};
+    users[email]={...users[email],...u};
+    DB.set('fq_users',users);
+    loadApp(email);show('screen-app');
+  } else {
+    alert('⏳ Pagamento ainda não confirmado.\n\nAssim que o Rennan confirmar, você terá acesso!\nEntre em contato pelo WhatsApp se precisar de ajuda.');
+  }
+}
+
 // ══ PWA SERVICE WORKER ══
 if('serviceWorker' in navigator){
   window.addEventListener('load',()=>{
