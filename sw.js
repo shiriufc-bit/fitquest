@@ -1,4 +1,4 @@
-const CACHE_NAME = 'fitquest-v3';
+const CACHE_NAME = 'fitquest-v4';
 const ASSETS = [
   '/fitquest/',
   '/fitquest/index.html',
