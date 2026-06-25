@@ -396,17 +396,6 @@ textarea.fi{resize:vertical;min-height:80px;}
 
 /* ══ AVATAR SYSTEM ══ */
 #modal-avatar .modal-bx{border-radius:20px 20px 0 0;max-height:92vh;}
-.av-tabs{display:flex;background:rgba(255,255,255,.06);border-radius:8px;padding:3px;margin-bottom:16px;border:1px solid var(--b);}
-.av-tab{flex:1;padding:10px;border:none;background:transparent;color:var(--mu);font-size:12px;font-weight:700;border-radius:6px;cursor:pointer;transition:all .2s;}
-.av-tab.active{background:var(--r);color:#fff;}
-.av-panel{display:none;}.av-panel.active{display:block;}
-.av-section{margin-bottom:16px;}
-.av-section-title{font-size:10px;font-weight:800;color:var(--r);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:10px;}
-.av-options{display:flex;gap:8px;flex-wrap:wrap;}
-.av-opt{width:44px;height:44px;border-radius:50%;border:3px solid transparent;cursor:pointer;transition:all .2s;display:flex;align-items:center;justify-content:center;font-size:22px;}
-.av-opt.sel{border-color:#fff;box-shadow:0 0 0 2px var(--r);}
-.av-opt-sq{width:44px;height:44px;border-radius:10px;border:3px solid transparent;cursor:pointer;transition:all .2s;display:flex;align-items:center;justify-content:center;font-size:24px;}
-.av-opt-sq.sel{border-color:#fff;box-shadow:0 0 0 2px var(--r);}
 
 
 
@@ -2103,26 +2092,8 @@ function renderPerfil(u){
   const pxEl=document.getElementById('perfil-xp');if(pxEl)pxEl.textContent=(u.xp||0).toLocaleString()+' XP';
   const pxnEl=document.getElementById('perfil-xpn');if(pxnEl)pxnEl.textContent=xpN.toLocaleString()+' XP';
   const pxbEl=document.getElementById('perfil-xpbar');if(pxbEl)pxbEl.style.width=Math.min(((u.xp||0)/xpN)*100,100)+'%';
-  // Avatar no perfil
-  const pavEl=document.getElementById('perfil-av-main');
-  const paeEl=document.getElementById('perfil-av-emoji');
-  if(pavEl && u.avatar?.photoData){
-    pavEl.innerHTML=`<img src="${u.avatar.photoData}" style="width:100%;height:100%;object-fit:cover;border-radius:50%"/>`
-    pavEl.onclick=openAvatarModal;
-  } else if(paeEl){
-    const emoji=AVATAR_EMOJIS[u.avatar?.gender||'masc']?.[u.avatar?.style||'athlete']||'💪';
-    paeEl.textContent=emoji;
-  }
-  // Nav perfil icon
-  const navPic=document.getElementById('nav-perfil-ico');
-  if(navPic){
-    if(u.avatar?.photoData){
-      navPic.innerHTML=`<img src="${u.avatar.photoData}" style="width:22px;height:22px;border-radius:50%;object-fit:cover;"/>`;
-    } else {
-      const emoji=AVATAR_EMOJIS[u.avatar?.gender||'masc']?.[u.avatar?.style||'athlete']||'👤';
-      navPic.textContent=emoji;
-    }
-  }
+  // Avatar via updateAvatarDisplays
+  updateAvatarDisplays(u);
   // Badges row
   const br=document.getElementById('perfil-badges-row');
   if(br){
