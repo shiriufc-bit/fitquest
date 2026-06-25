@@ -10,6 +10,7 @@
 <meta name="apple-mobile-web-app-title" content="FitQuest"/>
 <link rel="manifest" href="manifest.json"/>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/build/three.min.js"></script>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
 :root{
@@ -1265,63 +1266,72 @@ textarea.fi{resize:vertical;min-height:80px;}
 
 <!-- AVATAR MODAL -->
 <div class="modal-ov" id="modal-avatar">
-  <div class="modal-bx">
+  <div class="modal-bx" style="border-radius:20px 20px 0 0;padding:16px">
     <div class="modal-t">
-      <span>🎭 Foto de Perfil</span>
+      <span>🎭 Personalizar Perfil</span>
       <button class="modal-cl" onclick="closeModal('modal-avatar')">✕</button>
     </div>
-    <!-- Preview -->
-    <div class="av-preview" id="av-preview-main">
-      <span class="av-preview-emoji" id="av-preview-emoji">🏋️</span>
-    </div>
+
     <!-- Tabs -->
     <div class="av-tabs">
-      <button class="av-tab active" id="av-tab-avatar" onclick="switchAvTab('avatar',this)">🎭 Avatar</button>
+      <button class="av-tab active" id="av-tab-avatar" onclick="switchAvTab('avatar',this)">🧍 Avatar 3D</button>
       <button class="av-tab" id="av-tab-photo" onclick="switchAvTab('photo',this)">📸 Foto</button>
     </div>
 
-    <!-- AVATAR PANEL -->
+    <!-- AVATAR 3D PANEL -->
     <div class="av-panel active" id="av-panel-avatar">
+      <!-- Canvas 3D -->
+      <div style="position:relative;width:100%;height:220px;border-radius:14px;overflow:hidden;background:linear-gradient(135deg,#1a0000,#0d0000);margin-bottom:14px;border:1px solid rgba(229,9,20,.2)">
+        <canvas id="avatar3d-canvas" style="width:100%;height:100%;display:block;touch-action:none"></canvas>
+        <div style="position:absolute;bottom:8px;left:0;right:0;text-align:center;font-size:10px;color:rgba(255,255,255,.4);pointer-events:none">← Arraste para girar →</div>
+      </div>
+
+      <!-- Gênero -->
       <div class="av-section">
-        <div class="av-section-title">Gênero do Avatar</div>
+        <div class="av-section-title">Gênero</div>
         <div class="av-options" id="av-gender">
-          <div class="av-opt-sq sel" data-val="masc" onclick="selAvOpt('gender',this)">👨</div>
-          <div class="av-opt-sq" data-val="fem" onclick="selAvOpt('gender',this)">👩</div>
+          <div class="av-opt-sq sel" data-val="masc" onclick="selAvOpt('gender',this)" style="font-size:28px;width:56px;height:56px">👨</div>
+          <div class="av-opt-sq" data-val="fem" onclick="selAvOpt('gender',this)" style="font-size:28px;width:56px;height:56px">👩</div>
         </div>
       </div>
+
+      <!-- Tom de pele -->
       <div class="av-section">
         <div class="av-section-title">Tom de pele</div>
         <div class="av-options" id="av-skin">
-          <div class="av-opt sel" data-val="light" onclick="selAvOpt('skin',this)" style="background:#FDDBB4;border-color:#FDDBB4"></div>
-          <div class="av-opt" data-val="medium-light" onclick="selAvOpt('skin',this)" style="background:#E8B88A;border-color:#E8B88A"></div>
-          <div class="av-opt" data-val="medium" onclick="selAvOpt('skin',this)" style="background:#C68642;border-color:#C68642"></div>
-          <div class="av-opt" data-val="medium-dark" onclick="selAvOpt('skin',this)" style="background:#8D5524;border-color:#8D5524"></div>
-          <div class="av-opt" data-val="dark" onclick="selAvOpt('skin',this)" style="background:#4A2912;border-color:#4A2912"></div>
+          <div class="av-opt sel" data-val="#FDDBB4" onclick="selAvOpt('skin',this)" style="background:#FDDBB4;width:40px;height:40px"></div>
+          <div class="av-opt" data-val="#E8B88A" onclick="selAvOpt('skin',this)" style="background:#E8B88A;width:40px;height:40px"></div>
+          <div class="av-opt" data-val="#C68642" onclick="selAvOpt('skin',this)" style="background:#C68642;width:40px;height:40px"></div>
+          <div class="av-opt" data-val="#8D5524" onclick="selAvOpt('skin',this)" style="background:#8D5524;width:40px;height:40px"></div>
+          <div class="av-opt" data-val="#4A2912" onclick="selAvOpt('skin',this)" style="background:#4A2912;width:40px;height:40px"></div>
         </div>
       </div>
+
+      <!-- Cor do cabelo -->
       <div class="av-section">
-        <div class="av-section-title">Cor do cabelo</div>
+        <div class="av-section-title">Cabelo</div>
         <div class="av-options" id="av-hair">
-          <div class="av-opt sel" data-val="black" onclick="selAvOpt('hair',this)" style="background:#1a1a1a;border-color:#1a1a1a"></div>
-          <div class="av-opt" data-val="brown" onclick="selAvOpt('hair',this)" style="background:#6B4226;border-color:#6B4226"></div>
-          <div class="av-opt" data-val="blonde" onclick="selAvOpt('hair',this)" style="background:#D4A017;border-color:#D4A017"></div>
-          <div class="av-opt" data-val="red" onclick="selAvOpt('hair',this)" style="background:#A52A2A;border-color:#A52A2A"></div>
-          <div class="av-opt" data-val="gray" onclick="selAvOpt('hair',this)" style="background:#888;border-color:#888"></div>
-          <div class="av-opt" data-val="white" onclick="selAvOpt('hair',this)" style="background:#f0f0f0;border-color:#ccc"></div>
-          <div class="av-opt" data-val="bald" onclick="selAvOpt('hair',this)" style="background:transparent;border:2px dashed #555;font-size:18px" title="Careca">🚫</div>
+          <div class="av-opt sel" data-val="#1a1a1a" onclick="selAvOpt('hair',this)" style="background:#1a1a1a;width:40px;height:40px"></div>
+          <div class="av-opt" data-val="#6B4226" onclick="selAvOpt('hair',this)" style="background:#6B4226;width:40px;height:40px"></div>
+          <div class="av-opt" data-val="#D4A017" onclick="selAvOpt('hair',this)" style="background:#D4A017;width:40px;height:40px"></div>
+          <div class="av-opt" data-val="#A52A2A" onclick="selAvOpt('hair',this)" style="background:#A52A2A;width:40px;height:40px"></div>
+          <div class="av-opt" data-val="#888888" onclick="selAvOpt('hair',this)" style="background:#888;width:40px;height:40px"></div>
+          <div class="av-opt" data-val="#f0f0f0" onclick="selAvOpt('hair',this)" style="background:#f0f0f0;border-color:#ccc;width:40px;height:40px"></div>
+          <div class="av-opt" data-val="bald" onclick="selAvOpt('hair',this)" style="background:transparent;border:2px dashed #555;width:40px;height:40px;display:flex;align-items:center;justify-content:center;font-size:16px">✗</div>
         </div>
       </div>
+
+      <!-- Cor da roupa -->
       <div class="av-section">
-        <div class="av-section-title">Estilo do Avatar</div>
-        <div class="av-options" id="av-style">
-          <div class="av-opt-sq sel" data-val="athlete" onclick="selAvOpt('style',this)">🏋️</div>
-          <div class="av-opt-sq" data-val="runner" onclick="selAvOpt('style',this)">🏃</div>
-          <div class="av-opt-sq" data-val="strong" onclick="selAvOpt('style',this)">💪</div>
-          <div class="av-opt-sq" data-val="yoga" onclick="selAvOpt('style',this)">🧘</div>
-          <div class="av-opt-sq" data-val="cyclist" onclick="selAvOpt('style',this)">🚴</div>
-          <div class="av-opt-sq" data-val="swimmer" onclick="selAvOpt('style',this)">🏊</div>
-          <div class="av-opt-sq" data-val="fighter" onclick="selAvOpt('style',this)">🥊</div>
-          <div class="av-opt-sq" data-val="trophy" onclick="selAvOpt('style',this)">🏆</div>
+        <div class="av-section-title">Roupa</div>
+        <div class="av-options" id="av-shirt">
+          <div class="av-opt sel" data-val="#e50914" onclick="selAvOpt('shirt',this)" style="background:#e50914;width:40px;height:40px"></div>
+          <div class="av-opt" data-val="#1a1a1a" onclick="selAvOpt('shirt',this)" style="background:#1a1a1a;width:40px;height:40px"></div>
+          <div class="av-opt" data-val="#1565C0" onclick="selAvOpt('shirt',this)" style="background:#1565C0;width:40px;height:40px"></div>
+          <div class="av-opt" data-val="#2E7D32" onclick="selAvOpt('shirt',this)" style="background:#2E7D32;width:40px;height:40px"></div>
+          <div class="av-opt" data-val="#F57F17" onclick="selAvOpt('shirt',this)" style="background:#F57F17;width:40px;height:40px"></div>
+          <div class="av-opt" data-val="#6A1B9A" onclick="selAvOpt('shirt',this)" style="background:#6A1B9A;width:40px;height:40px"></div>
+          <div class="av-opt" data-val="#ffffff" onclick="selAvOpt('shirt',this)" style="background:#fff;border-color:#ccc;width:40px;height:40px"></div>
         </div>
       </div>
     </div>
@@ -1330,12 +1340,12 @@ textarea.fi{resize:vertical;min-height:80px;}
     <div class="av-panel" id="av-panel-photo">
       <div class="photo-upload-area" onclick="document.getElementById('photo-input').click()">
         <input type="file" id="photo-input" accept="image/*" onchange="handlePhotoUpload(event)"/>
-        <div style="font-size:36px;margin-bottom:8px">📸</div>
+        <div style="font-size:40px;margin-bottom:8px">📸</div>
         <div style="font-size:14px;font-weight:700;margin-bottom:4px">Toque para escolher uma foto</div>
         <div style="font-size:11px;color:var(--mu)">Da galeria ou câmera do celular · JPG, PNG</div>
       </div>
-      <div class="photo-crop" id="photo-crop">
-        <div style="font-size:11px;color:var(--t2);margin-bottom:8px;text-align:center">Prévia da foto:</div>
+      <div class="photo-crop" id="photo-crop" style="display:none">
+        <div style="font-size:11px;color:var(--t2);margin-bottom:8px;text-align:center">Prévia:</div>
         <img id="photo-preview" src="" style="width:100%;border-radius:8px;max-height:200px;object-fit:cover;"/>
         <button class="btn-p" onclick="usePhoto()" style="margin-top:10px">✅ Usar esta foto</button>
       </div>
