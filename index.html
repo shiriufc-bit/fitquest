@@ -394,6 +394,44 @@ textarea.fi{resize:vertical;min-height:80px;}
 @media(max-width:380px){.fr{grid-template-columns:1fr;}.stats-row{grid-template-columns:1fr 1fr;}}
 @keyframes pulse{0%,100%{opacity:.5;}50%{opacity:1;}}
 
+/* ══ EVOLUÇÃO ══ */
+.evo-hero{background:linear-gradient(135deg,rgba(229,9,20,.15),rgba(180,7,16,.05)),var(--s);border-radius:0;padding:20px;border-bottom:1px solid var(--b);position:relative;overflow:hidden;}
+.evo-hero::before{content:"";position:absolute;top:-40px;right:-40px;width:150px;height:150px;border-radius:50%;background:radial-gradient(circle,rgba(229,9,20,.12),transparent 70%);}
+.eval-card{background:var(--s);border:1px solid var(--b);border-radius:16px;padding:16px;margin-bottom:12px;}
+.eval-card.active-eval{border-color:rgba(229,9,20,.3);background:rgba(229,9,20,.04);}
+.eval-row{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid var(--b);font-size:13px;}
+.eval-row:last-child{border-bottom:none;}
+.eval-key{color:var(--t2);font-weight:600;}
+.eval-val{font-weight:800;color:var(--t);}
+.eval-val.good{color:#2ecc71;}
+.eval-val.warn{color:#f39c12;}
+.eval-val.bad{color:var(--r);}
+.dobra-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px;}
+.dobra-field{background:rgba(255,255,255,.04);border:1px solid var(--b2);border-radius:10px;padding:10px;}
+.dobra-label{font-size:9px;color:var(--mu);font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-bottom:5px;}
+.dobra-input{width:100%;background:transparent;border:none;outline:none;color:var(--t);font-size:16px;font-weight:800;font-family:Inter,sans-serif;}
+.dobra-unit{font-size:10px;color:var(--mu);}
+.chart-wrap{background:var(--s);border:1px solid var(--b);border-radius:16px;padding:16px;margin-bottom:12px;overflow:hidden;}
+.chart-title{font-size:13px;font-weight:800;margin-bottom:14px;display:flex;justify-content:space-between;align-items:center;}
+.chart-svg{width:100%;overflow:visible;}
+.chart-bar{transition:all .4s ease;}
+.chart-line{fill:none;stroke:var(--r);stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round;}
+.chart-area{opacity:.15;}
+.chart-dot{fill:var(--r);stroke:#0a0a0a;stroke-width:2;}
+.chart-grid{stroke:rgba(255,255,255,.06);stroke-dasharray:4,4;}
+.result-box{border-radius:14px;padding:16px;margin-bottom:10px;border:1px solid;}
+.result-box.fat{background:rgba(229,9,20,.06);border-color:rgba(229,9,20,.2);}
+.result-box.lean{background:rgba(46,204,113,.06);border-color:rgba(46,204,113,.2);}
+.result-box.weight{background:rgba(52,152,219,.06);border-color:rgba(52,152,219,.2);}
+.result-num{font-size:32px;font-weight:900;letter-spacing:-1px;}
+.result-label{font-size:11px;color:var(--t2);margin-top:2px;}
+.result-class{font-size:10px;font-weight:800;padding:2px 8px;border-radius:6px;margin-top:4px;display:inline-block;}
+.method-tabs{display:flex;gap:6px;margin-bottom:16px;}
+.method-tab{flex:1;padding:10px;background:rgba(255,255,255,.05);border:1.5px solid var(--b2);border-radius:10px;font-size:12px;font-weight:700;color:var(--t2);cursor:pointer;text-align:center;transition:all .2s;}
+.method-tab.active{background:rgba(229,9,20,.12);border-color:var(--r);color:var(--r);}
+.hist-eval-row{background:var(--s);border:1px solid var(--b);border-radius:12px;padding:12px 14px;display:flex;align-items:center;gap:12px;margin-bottom:8px;cursor:pointer;transition:all .2s;}
+.hist-eval-row:hover{border-color:var(--b2);}
+
 /* ══ AVATAR SYSTEM ══ */
 #modal-avatar .modal-bx{border-radius:20px 20px 0 0;max-height:92vh;}
 
@@ -1106,6 +1144,55 @@ textarea.fi{resize:vertical;min-height:80px;}
     </div>
   </div>
 
+    <!-- EVOLUÇÃO -->
+    <div class="tp" id="tp-evo">
+      <div style="padding-top:56px">
+
+        <!-- Hero -->
+        <div class="evo-hero">
+          <div style="font-size:10px;color:var(--r);font-weight:800;text-transform:uppercase;letter-spacing:2px;margin-bottom:6px">📈 COMPOSIÇÃO CORPORAL</div>
+          <div style="font-size:22px;font-weight:900;margin-bottom:4px">Acompanhe sua evolução</div>
+          <div style="font-size:12px;color:var(--t2)">Pollock 7 dobras · Bioimpedância</div>
+        </div>
+
+        <!-- Gráfico de %Gordura -->
+        <div style="padding:16px 16px 0">
+          <div class="chart-wrap">
+            <div class="chart-title">
+              <span>% Gordura Corporal</span>
+              <span style="font-size:10px;color:var(--mu)" id="chart-fat-latest">—</span>
+            </div>
+            <svg class="chart-svg" height="120" id="chart-fat-svg" viewBox="0 0 300 120" preserveAspectRatio="none">
+              <text x="150" y="65" text-anchor="middle" fill="rgba(255,255,255,.15)" font-size="12" font-family="Inter">Adicione avaliações para ver o gráfico</text>
+            </svg>
+          </div>
+
+          <div class="chart-wrap">
+            <div class="chart-title">
+              <span>Massa Magra (kg)</span>
+              <span style="font-size:10px;color:var(--mu)" id="chart-lean-latest">—</span>
+            </div>
+            <svg class="chart-svg" height="100" id="chart-lean-svg" viewBox="0 0 300 100" preserveAspectRatio="none">
+              <text x="150" y="55" text-anchor="middle" fill="rgba(255,255,255,.15)" font-size="12" font-family="Inter">Adicione avaliações para ver o gráfico</text>
+            </svg>
+          </div>
+
+          <!-- Histórico de avaliações -->
+          <div style="margin-bottom:14px">
+            <div style="font-size:10px;font-weight:800;color:var(--mu);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:10px">Histórico de avaliações</div>
+            <div id="eval-history-list">
+              <div style="font-size:12px;color:var(--mu);text-align:center;padding:20px 0">Nenhuma avaliação registrada ainda</div>
+            </div>
+          </div>
+
+          <!-- Botão nova avaliação -->
+          <button class="btn-p" onclick="openEvalModal()" style="margin-bottom:80px">
+            + Nova avaliação
+          </button>
+        </div>
+      </div>
+    </div>
+
     <!-- PERFIL -->
     <div class="tp" id="tp-perfil">
       <!-- Navbar transparente nesta aba - foto começa DEPOIS da navbar -->
@@ -1206,6 +1293,7 @@ textarea.fi{resize:vertical;min-height:80px;}
     <button class="nbtn" onclick="switchTab('run',this)"><span class="nico">🏃</span><span class="nlbl">Corrida</span><div class="ndot"></div></button>
     <button class="nbtn" onclick="switchTab('rank',this)"><span class="nico">📊</span><span class="nlbl">Ranking</span><div class="ndot"></div></button>
     <button class="nbtn" onclick="switchTab('badges',this)"><span class="nico">🏆</span><span class="nlbl">Badges</span><div class="ndot"></div></button>
+    <button class="nbtn" onclick="switchTab('evo',this)"><span class="nico">📊</span><span class="nlbl">Evolução</span><div class="ndot"></div></button>
     <button class="nbtn" onclick="switchTab('perfil',this)"><span class="nico" id="nav-perfil-ico">👤</span><span class="nlbl">Perfil</span><div class="ndot"></div></button>
   </div>
 </div>
@@ -1299,6 +1387,155 @@ textarea.fi{resize:vertical;min-height:80px;}
     </div>
 
     <button class="btn-p" onclick="saveAvatar()">💾 Salvar</button>
+  </div>
+</div>
+
+<!-- AVALIAÇÃO MODAL -->
+<div class="modal-ov" id="modal-eval">
+  <div class="modal-bx" style="border-radius:20px 20px 0 0;max-height:92vh">
+    <div class="modal-t">
+      <span id="modal-eval-title">📋 Nova Avaliação</span>
+      <button class="modal-cl" onclick="closeModal('modal-eval')">✕</button>
+    </div>
+
+    <!-- Método -->
+    <div class="method-tabs">
+      <div class="method-tab active" id="mtab-pollock" onclick="selMethod('pollock',this)">🩺 Pollock 7 Dobras</div>
+      <div class="method-tab" id="mtab-bio" onclick="selMethod('bio',this)">⚡ Bioimpedância</div>
+    </div>
+
+    <!-- Data + Peso -->
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px">
+      <div class="fg">
+        <label class="fl">Data da avaliação</label>
+        <input class="fi" type="date" id="eval-date" style="font-size:14px"/>
+      </div>
+      <div class="fg">
+        <label class="fl">Peso corporal (kg)</label>
+        <input class="fi" type="number" id="eval-peso" placeholder="75.5" step="0.1" style="font-size:16px"/>
+      </div>
+    </div>
+
+    <!-- POLLOCK 7 DOBRAS -->
+    <div id="panel-pollock">
+      <div style="font-size:10px;font-weight:800;color:var(--r);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:10px">
+        7 Dobras Cutâneas (mm) — use adipômetro
+      </div>
+      <div class="dobra-grid">
+        <div class="dobra-field">
+          <div class="dobra-label">🫁 Peitoral</div>
+          <input class="dobra-input" type="number" id="d-peitoral" placeholder="0" step="0.1"/>
+          <div class="dobra-unit">mm</div>
+        </div>
+        <div class="dobra-field">
+          <div class="dobra-label">🦵 Axilar Média</div>
+          <input class="dobra-input" type="number" id="d-axilar" placeholder="0" step="0.1"/>
+          <div class="dobra-unit">mm</div>
+        </div>
+        <div class="dobra-field">
+          <div class="dobra-label">💪 Tríceps</div>
+          <input class="dobra-input" type="number" id="d-triceps" placeholder="0" step="0.1"/>
+          <div class="dobra-unit">mm</div>
+        </div>
+        <div class="dobra-field">
+          <div class="dobra-label">🫁 Subescapular</div>
+          <input class="dobra-input" type="number" id="d-subescapular" placeholder="0" step="0.1"/>
+          <div class="dobra-unit">mm</div>
+        </div>
+        <div class="dobra-field">
+          <div class="dobra-label">🎯 Abdominal</div>
+          <input class="dobra-input" type="number" id="d-abdominal" placeholder="0" step="0.1"/>
+          <div class="dobra-unit">mm</div>
+        </div>
+        <div class="dobra-field">
+          <div class="dobra-label">🦴 Supra-ilíaca</div>
+          <input class="dobra-input" type="number" id="d-suprailíaca" placeholder="0" step="0.1"/>
+          <div class="dobra-unit">mm</div>
+        </div>
+        <div class="dobra-field" style="grid-column:1/-1">
+          <div class="dobra-label">🦵 Coxa</div>
+          <input class="dobra-input" type="number" id="d-coxa" placeholder="0" step="0.1"/>
+          <div class="dobra-unit">mm</div>
+        </div>
+      </div>
+
+      <!-- Soma e resultado em tempo real -->
+      <div style="background:rgba(229,9,20,.06);border:1px solid rgba(229,9,20,.15);border-radius:12px;padding:12px;margin-bottom:14px">
+        <div style="font-size:10px;color:var(--mu);margin-bottom:8px;font-weight:700;text-transform:uppercase">Cálculo em tempo real — Jackson & Pollock + Siri</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;text-align:center">
+          <div>
+            <div style="font-size:20px;font-weight:900;color:var(--r)" id="rt-soma">0</div>
+            <div style="font-size:9px;color:var(--mu)">Soma (mm)</div>
+          </div>
+          <div>
+            <div style="font-size:20px;font-weight:900;color:#f39c12" id="rt-fat">—</div>
+            <div style="font-size:9px;color:var(--mu)">% Gordura</div>
+          </div>
+          <div>
+            <div style="font-size:20px;font-weight:900;color:#2ecc71" id="rt-lean">—</div>
+            <div style="font-size:9px;color:var(--mu)">Massa Magra</div>
+          </div>
+        </div>
+        <div style="text-align:center;margin-top:8px">
+          <span id="rt-class" style="font-size:10px;font-weight:800;padding:3px 12px;border-radius:6px;background:rgba(255,255,255,.08)">Preencha as dobras</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- BIOIMPEDÂNCIA -->
+    <div id="panel-bio" style="display:none">
+      <div style="font-size:10px;font-weight:800;color:var(--r);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:10px">
+        Dados da Bioimpedância
+      </div>
+      <div class="dobra-grid">
+        <div class="dobra-field">
+          <div class="dobra-label">🔴 % Gordura</div>
+          <input class="dobra-input" type="number" id="bio-fat" placeholder="20.0" step="0.1" oninput="calcBio()"/>
+          <div class="dobra-unit">%</div>
+        </div>
+        <div class="dobra-field">
+          <div class="dobra-label">💪 Massa Magra</div>
+          <input class="dobra-input" type="number" id="bio-lean" placeholder="60.0" step="0.1" oninput="calcBio()"/>
+          <div class="dobra-unit">kg</div>
+        </div>
+        <div class="dobra-field">
+          <div class="dobra-label">💧 Água Corporal</div>
+          <input class="dobra-input" type="number" id="bio-water" placeholder="55.0" step="0.1"/>
+          <div class="dobra-unit">%</div>
+        </div>
+        <div class="dobra-field">
+          <div class="dobra-label">🦴 Massa Óssea</div>
+          <input class="dobra-input" type="number" id="bio-bone" placeholder="3.2" step="0.1"/>
+          <div class="dobra-unit">kg</div>
+        </div>
+        <div class="dobra-field">
+          <div class="dobra-label">⚡ TMB</div>
+          <input class="dobra-input" type="number" id="bio-tmb" placeholder="1800" step="1"/>
+          <div class="dobra-unit">kcal</div>
+        </div>
+        <div class="dobra-field">
+          <div class="dobra-label">🎯 Idade Metabólica</div>
+          <input class="dobra-input" type="number" id="bio-idademet" placeholder="30" step="1"/>
+          <div class="dobra-unit">anos</div>
+        </div>
+      </div>
+      <!-- Bio preview -->
+      <div style="background:rgba(229,9,20,.06);border:1px solid rgba(229,9,20,.15);border-radius:12px;padding:12px;margin-bottom:14px">
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;text-align:center">
+          <div><div style="font-size:20px;font-weight:900;color:var(--r)" id="bio-rt-fat">—</div><div style="font-size:9px;color:var(--mu)">% Gordura</div></div>
+          <div><div style="font-size:20px;font-weight:900;color:#2ecc71" id="bio-rt-lean">—</div><div style="font-size:9px;color:var(--mu)">Massa Magra</div></div>
+          <div><div style="font-size:20px;font-weight:900;color:#3498db" id="bio-rt-gorda">—</div><div style="font-size:9px;color:var(--mu)">Massa Gorda</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Observações -->
+    <div class="fg" style="margin-bottom:16px">
+      <label class="fl">Observações do avaliador</label>
+      <textarea class="fi" id="eval-obs" placeholder="Ex: aluno bem hidratado, treino pesado ontem, boa evolução no abdômen..." rows="2"></textarea>
+    </div>
+
+    <button class="btn-p" onclick="saveEval()">💾 Salvar avaliação</button>
   </div>
 </div>
 
@@ -2049,6 +2286,7 @@ function loadApp(email){
   renderRankingFull(u,email,users);
   renderPRs(u.prs||[]);
   renderBadges(u.badges||[]);
+  renderEvo(u);
 }
 
 // ══ HISTORY ══
@@ -2543,6 +2781,387 @@ function updateAvatarDisplays(u){
 }
 
 function getAvatarEmoji(u){ return u?.name?u.name[0].toUpperCase():'?'; }
+
+// ══ EVOLUÇÃO / AVALIAÇÃO CORPORAL ══
+
+let evalMethod = 'pollock';
+
+// Classificação % gordura por sexo e idade
+function classifyFat(fat, sex, age){
+  // Tabelas baseadas em ACSM
+  const isMasc = (sex||'Masculino').toLowerCase().includes('masc');
+  let cls, color;
+  if(isMasc){
+    if(fat < 6)       { cls='Essencial'; color='#3498db'; }
+    else if(fat < 14) { cls='✅ Atlético'; color='#2ecc71'; }
+    else if(fat < 18) { cls='✅ Boa forma'; color='#2ecc71'; }
+    else if(fat < 25) { cls='⚠️ Aceitável'; color='#f39c12'; }
+    else if(fat < 30) { cls='⚠️ Sobrepeso'; color='#e67e22'; }
+    else              { cls='🔴 Obesidade'; color='#e50914'; }
+  } else {
+    if(fat < 14)      { cls='Essencial'; color='#3498db'; }
+    else if(fat < 21) { cls='✅ Atlético'; color='#2ecc71'; }
+    else if(fat < 25) { cls='✅ Boa forma'; color='#2ecc71'; }
+    else if(fat < 32) { cls='⚠️ Aceitável'; color='#f39c12'; }
+    else if(fat < 38) { cls='⚠️ Sobrepeso'; color='#e67e22'; }
+    else              { cls='🔴 Obesidade'; color='#e50914'; }
+  }
+  return {cls, color};
+}
+
+// Pollock 7 dobras — Jackson & Pollock + Siri
+function calcPollock7(dobras, idade, sexo, peso){
+  const soma = dobras.reduce((a,b)=>a+(parseFloat(b)||0), 0);
+  if(soma <= 0 || !idade || !peso) return null;
+  const isMasc = (sexo||'Masculino').toLowerCase().includes('masc');
+  let dc;
+  if(isMasc){
+    // Homens: Jackson & Pollock 1978
+    dc = 1.112 - (0.00043499*soma) + (0.00000055*soma*soma) - (0.00028826*idade);
+  } else {
+    // Mulheres: Jackson & Pollock 1980
+    dc = 1.097 - (0.00046971*soma) + (0.00000056*soma*soma) - (0.00012828*idade);
+  }
+  // Equação de Siri
+  const fatPct = ((4.95/dc) - 4.50) * 100;
+  const fatKg  = (fatPct/100) * peso;
+  const leanKg = peso - fatKg;
+  return { soma, dc:dc.toFixed(5), fatPct:fatPct.toFixed(1), fatKg:fatKg.toFixed(1), leanKg:leanKg.toFixed(1) };
+}
+
+// Calcula em tempo real conforme digita
+function calcRealtime(){
+  const email = DB.get('fq_cur');
+  const users = DB.get('fq_users')||{};
+  const u = users[email];
+  if(!u) return;
+
+  const dobras = [
+    document.getElementById('d-peitoral')?.value||0,
+    document.getElementById('d-axilar')?.value||0,
+    document.getElementById('d-triceps')?.value||0,
+    document.getElementById('d-subescapular')?.value||0,
+    document.getElementById('d-abdominal')?.value||0,
+    document.getElementById('d-suprailíaca')?.value||0,
+    document.getElementById('d-coxa')?.value||0,
+  ];
+  const peso  = parseFloat(document.getElementById('eval-peso')?.value||0);
+  const soma  = dobras.reduce((a,b)=>a+(parseFloat(b)||0),0);
+  const idade = u.anamnese?.nasc ? Math.floor((Date.now()-new Date(u.anamnese.nasc))/(365.25*24*3600*1000)) : 30;
+  const sexo  = u.anamnese?.sexo || 'Masculino';
+
+  document.getElementById('rt-soma').textContent = soma.toFixed(1);
+
+  if(soma > 0 && peso > 0){
+    const r = calcPollock7(dobras, idade, sexo, peso);
+    if(r){
+      document.getElementById('rt-fat').textContent = r.fatPct+'%';
+      document.getElementById('rt-lean').textContent = r.leanKg+'kg';
+      const {cls, color} = classifyFat(parseFloat(r.fatPct), sexo, idade);
+      const clsEl = document.getElementById('rt-class');
+      clsEl.textContent = cls;
+      clsEl.style.background = color+'22';
+      clsEl.style.color = color;
+    }
+  } else {
+    document.getElementById('rt-fat').textContent = '—';
+    document.getElementById('rt-lean').textContent = '—';
+  }
+}
+
+function calcBio(){
+  const fat  = parseFloat(document.getElementById('bio-fat')?.value||0);
+  const lean = parseFloat(document.getElementById('bio-lean')?.value||0);
+  const peso = parseFloat(document.getElementById('eval-peso')?.value||0);
+  if(fat>0){ document.getElementById('bio-rt-fat').textContent = fat.toFixed(1)+'%'; }
+  if(lean>0){ document.getElementById('bio-rt-lean').textContent = lean.toFixed(1)+'kg'; }
+  if(peso>0 && fat>0){ document.getElementById('bio-rt-gorda').textContent = ((fat/100)*peso).toFixed(1)+'kg'; }
+}
+
+// Attach realtime listeners
+function attachEvalListeners(){
+  const ids = ['d-peitoral','d-axilar','d-triceps','d-subescapular','d-abdominal','d-suprailíaca','d-coxa','eval-peso'];
+  ids.forEach(id=>{ const el=document.getElementById(id); if(el) el.addEventListener('input', calcRealtime); });
+  ['bio-fat','bio-lean'].forEach(id=>{ const el=document.getElementById(id); if(el) el.addEventListener('input', calcBio); });
+}
+
+function selMethod(method, el){
+  evalMethod = method;
+  document.querySelectorAll('.method-tab').forEach(b=>b.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('panel-pollock').style.display = method==='pollock'?'block':'none';
+  document.getElementById('panel-bio').style.display     = method==='bio'?'block':'none';
+}
+
+function openEvalModal(){
+  // Set today's date
+  const today = new Date().toISOString().split('T')[0];
+  const dateEl = document.getElementById('eval-date');
+  if(dateEl) dateEl.value = today;
+  // Reset fields
+  ['d-peitoral','d-axilar','d-triceps','d-subescapular','d-abdominal','d-suprailíaca','d-coxa',
+   'bio-fat','bio-lean','bio-water','bio-bone','bio-tmb','bio-idademet','eval-obs'].forEach(id=>{
+    const el=document.getElementById(id); if(el) el.value='';
+  });
+  // Reset peso from profile
+  const u = getU();
+  const pesoEl = document.getElementById('eval-peso');
+  if(pesoEl && u?.anamnese?.peso) pesoEl.value = u.anamnese.peso;
+  // Reset results
+  ['rt-soma','rt-fat','rt-lean','bio-rt-fat','bio-rt-lean','bio-rt-gorda'].forEach(id=>{
+    const el=document.getElementById(id); if(el) el.textContent='—';
+  });
+  document.getElementById('rt-soma').textContent='0';
+  const clsEl=document.getElementById('rt-class');
+  if(clsEl){clsEl.textContent='Preencha as dobras';clsEl.style.background='rgba(255,255,255,.08)';clsEl.style.color='';}
+  document.getElementById('modal-eval').classList.add('open');
+  setTimeout(attachEvalListeners, 100);
+}
+
+function saveEval(){
+  const email = DB.get('fq_cur');
+  const users = DB.get('fq_users')||{};
+  const u = users[email];
+  if(!u) return;
+
+  const date  = document.getElementById('eval-date')?.value;
+  const peso  = parseFloat(document.getElementById('eval-peso')?.value||0);
+  const obs   = document.getElementById('eval-obs')?.value||'';
+  if(!date||!peso){ alert('Preencha a data e o peso!'); return; }
+
+  const idade = u.anamnese?.nasc ? Math.floor((Date.now()-new Date(u.anamnese.nasc))/(365.25*24*3600*1000)) : 30;
+  const sexo  = u.anamnese?.sexo || 'Masculino';
+
+  let evalData = { id:Date.now(), date, peso, obs, method:evalMethod };
+
+  if(evalMethod === 'pollock'){
+    const dobras = [
+      parseFloat(document.getElementById('d-peitoral')?.value||0),
+      parseFloat(document.getElementById('d-axilar')?.value||0),
+      parseFloat(document.getElementById('d-triceps')?.value||0),
+      parseFloat(document.getElementById('d-subescapular')?.value||0),
+      parseFloat(document.getElementById('d-abdominal')?.value||0),
+      parseFloat(document.getElementById('d-suprailíaca')?.value||0),
+      parseFloat(document.getElementById('d-coxa')?.value||0),
+    ];
+    const soma = dobras.reduce((a,b)=>a+b,0);
+    if(soma <= 0){ alert('Preencha as dobras cutâneas!'); return; }
+    const r = calcPollock7(dobras, idade, sexo, peso);
+    if(!r){ alert('Verifique os dados inseridos!'); return; }
+    evalData = {...evalData, dobras, soma:r.soma, dc:r.dc, fatPct:parseFloat(r.fatPct), fatKg:parseFloat(r.fatKg), leanKg:parseFloat(r.leanKg)};
+  } else {
+    const fatPct = parseFloat(document.getElementById('bio-fat')?.value||0);
+    const leanKg = parseFloat(document.getElementById('bio-lean')?.value||0);
+    if(!fatPct){ alert('Preencha o % de gordura!'); return; }
+    const fatKg = (fatPct/100)*peso;
+    evalData = {
+      ...evalData,
+      fatPct, leanKg: leanKg||(peso-fatKg), fatKg,
+      water: parseFloat(document.getElementById('bio-water')?.value||0),
+      bone:  parseFloat(document.getElementById('bio-bone')?.value||0),
+      tmb:   parseFloat(document.getElementById('bio-tmb')?.value||0),
+      idademet: parseFloat(document.getElementById('bio-idademet')?.value||0),
+    };
+  }
+
+  if(!u.avaliacoes) u.avaliacoes = [];
+  u.avaliacoes.push(evalData);
+  u.avaliacoes.sort((a,b)=>new Date(a.date)-new Date(b.date));
+  DB.set('fq_users', users);
+  syncU(u);
+  closeModal('modal-eval');
+  renderEvo(u);
+  alert('✅ Avaliação salva com sucesso!');
+}
+
+function deleteEval(id){
+  if(!confirm('Excluir esta avaliação?')) return;
+  const email = DB.get('fq_cur');
+  const users = DB.get('fq_users')||{};
+  const u = users[email];
+  if(!u?.avaliacoes) return;
+  u.avaliacoes = u.avaliacoes.filter(e=>e.id!==id);
+  DB.set('fq_users', users);
+  syncU(u);
+  renderEvo(u);
+}
+
+// ── RENDER GRÁFICOS SVG ──
+function renderChart(svgId, data, color, unit, height, label){
+  const svg = document.getElementById(svgId);
+  if(!svg) return;
+  if(!data || data.length < 1){
+    svg.innerHTML=`<text x="150" y="${height/2+5}" text-anchor="middle" fill="rgba(255,255,255,.15)" font-size="12" font-family="Inter">Adicione avaliações para ver o gráfico</text>`;
+    return;
+  }
+  const W = 300, H = height, pad = {t:10,r:10,b:24,l:36};
+  const cW = W-pad.l-pad.r, cH = H-pad.t-pad.b;
+  const vals = data.map(d=>d.val);
+  const minV = Math.min(...vals)*0.97;
+  const maxV = Math.max(...vals)*1.03;
+  const range = maxV-minV || 1;
+
+  const toX = i => pad.l + (i/(data.length-1||1))*cW;
+  const toY = v => pad.t + cH - ((v-minV)/range)*cH;
+
+  let html = '';
+
+  // Grid lines
+  [0,.25,.5,.75,1].forEach(t=>{
+    const y = pad.t + cH*(1-t);
+    const v = minV + range*t;
+    html += `<line x1="${pad.l}" y1="${y}" x2="${W-pad.r}" y2="${y}" class="chart-grid"/>`;
+    html += `<text x="${pad.l-4}" y="${y+4}" text-anchor="end" fill="rgba(255,255,255,.3)" font-size="9" font-family="Inter">${v.toFixed(1)}</text>`;
+  });
+
+  // Area
+  if(data.length > 1){
+    let aPath = `M${toX(0)},${H-pad.b}`;
+    data.forEach((d,i) => aPath += ` L${toX(i)},${toY(d.val)}`);
+    aPath += ` L${toX(data.length-1)},${H-pad.b} Z`;
+    html += `<path d="${aPath}" fill="${color}" class="chart-area"/>`;
+    // Line
+    let lPath = `M${toX(0)},${toY(data[0].val)}`;
+    data.forEach((d,i) => { if(i>0) lPath += ` L${toX(i)},${toY(d.val)}`; });
+    html += `<path d="${lPath}" fill="none" stroke="${color}" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>`;
+  }
+
+  // Dots + labels
+  data.forEach((d,i)=>{
+    const x=toX(i), y=toY(d.val);
+    html += `<circle cx="${x}" cy="${y}" r="4" fill="${color}" stroke="#0a0a0a" stroke-width="2"/>`;
+    // Value label on dot
+    const above = y > pad.t+14;
+    html += `<text x="${x}" y="${above?y-8:y+16}" text-anchor="middle" fill="${color}" font-size="10" font-weight="700" font-family="Inter">${d.val.toFixed(1)}${unit}</text>`;
+    // Date label
+    const dateShort = d.date.split('-').slice(1).join('/');
+    html += `<text x="${x}" y="${H-4}" text-anchor="middle" fill="rgba(255,255,255,.3)" font-size="8" font-family="Inter">${dateShort}</text>`;
+  });
+
+  svg.innerHTML = html;
+}
+
+// ── RENDER EVOLUÇÃO TAB ──
+function renderEvo(u){
+  const avs = u?.avaliacoes||[];
+  const sexo = u?.anamnese?.sexo||'Masculino';
+  const idade = u?.anamnese?.nasc ? Math.floor((Date.now()-new Date(u.anamnese.nasc))/(365.25*24*3600*1000)) : 30;
+
+  // Charts
+  const fatData  = avs.filter(a=>a.fatPct).map(a=>({val:a.fatPct,  date:a.date}));
+  const leanData = avs.filter(a=>a.leanKg).map(a=>({val:a.leanKg, date:a.date}));
+  const pesoData = avs.filter(a=>a.peso).map(a=>({val:a.peso,      date:a.date}));
+
+  renderChart('chart-fat-svg',  fatData,  '#e50914', '%', 120, '% Gordura');
+  renderChart('chart-lean-svg', leanData, '#2ecc71', 'kg', 100, 'Massa Magra');
+
+  // Latest values
+  if(fatData.length){
+    const last = fatData[fatData.length-1];
+    const {cls,color} = classifyFat(last.val, sexo, idade);
+    const el = document.getElementById('chart-fat-latest');
+    if(el){ el.textContent=`${last.val}% — ${cls}`; el.style.color=color; }
+  }
+  if(leanData.length){
+    const last = leanData[leanData.length-1];
+    const el = document.getElementById('chart-lean-latest');
+    if(el){ el.textContent=`${last.val} kg`; el.style.color='#2ecc71'; }
+  }
+
+  // History list
+  const list = document.getElementById('eval-history-list');
+  if(!list) return;
+  if(!avs.length){
+    list.innerHTML='<div style="font-size:12px;color:var(--mu);text-align:center;padding:20px 0">Nenhuma avaliação registrada ainda</div>';
+    return;
+  }
+  list.innerHTML = [...avs].reverse().map(a=>{
+    const {cls,color} = classifyFat(a.fatPct||0, sexo, idade);
+    const dateF = new Date(a.date+'T12:00:00').toLocaleDateString('pt-BR',{day:'2-digit',month:'2-digit',year:'2-digit'});
+    const method = a.method==='bio'?'⚡ Bioimpedância':'🩺 Pollock 7';
+    return `<div class="hist-eval-row" onclick="showEvalDetail(${a.id})">
+      <div style="width:46px;height:46px;border-radius:12px;background:rgba(229,9,20,.1);border:1px solid rgba(229,9,20,.2);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0">📊</div>
+      <div style="flex:1">
+        <div style="font-size:13px;font-weight:800">${dateF} · ${method}</div>
+        <div style="font-size:11px;color:var(--t2);margin-top:2px">${a.peso}kg · <span style="color:${color};font-weight:700">${a.fatPct}% gordura</span> · ${a.leanKg}kg magra</div>
+        ${a.obs?`<div style="font-size:10px;color:var(--mu);margin-top:2px">${a.obs}</div>`:''}
+      </div>
+      <div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px">
+        <span style="font-size:10px;font-weight:800;padding:3px 8px;border-radius:6px;background:${color}22;color:${color}">${cls}</span>
+        <button onclick="event.stopPropagation();deleteEval(${a.id})" style="background:rgba(255,23,68,.08);border:1px solid rgba(255,23,68,.15);border-radius:6px;padding:3px 8px;color:#ff6b6b;font-size:10px;font-weight:700;cursor:pointer">🗑️</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function showEvalDetail(id){
+  const u = getU();
+  const a = u?.avaliacoes?.find(e=>e.id===id);
+  if(!a) return;
+  const sexo = u?.anamnese?.sexo||'Masculino';
+  const idade = u?.anamnese?.nasc ? Math.floor((Date.now()-new Date(u.anamnese.nasc))/(365.25*24*3600*1000)) : 30;
+  const {cls,color} = classifyFat(a.fatPct||0, sexo, idade);
+  const dateF = new Date(a.date+'T12:00:00').toLocaleDateString('pt-BR',{day:'2-digit',month:'long',year:'numeric'});
+  const method = a.method==='bio'?'⚡ Bioimpedância':'🩺 Pollock 7 Dobras';
+
+  const dobraNames = ['Peitoral','Axilar Média','Tríceps','Subescapular','Abdominal','Supra-ilíaca','Coxa'];
+  const dobrasHtml = a.dobras ? `
+    <div style="font-size:10px;font-weight:800;color:var(--mu);text-transform:uppercase;letter-spacing:1px;margin:12px 0 8px">Dobras cutâneas (mm)</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px">
+      ${a.dobras.map((v,i)=>`<div style="background:rgba(255,255,255,.04);border-radius:8px;padding:8px;display:flex;justify-content:space-between"><span style="font-size:11px;color:var(--t2)">${dobraNames[i]}</span><span style="font-size:12px;font-weight:800">${v} mm</span></div>`).join('')}
+    </div>
+    <div style="text-align:center;margin-top:8px;font-size:12px;color:var(--mu)">Soma total: <strong style="color:var(--t)">${a.soma} mm</strong></div>
+  ` : '';
+
+  const bioHtml = a.method==='bio' && a.water ? `
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:8px">
+      ${a.water?`<div style="background:rgba(52,152,219,.08);border-radius:8px;padding:8px"><div style="font-size:9px;color:var(--mu)">Água corporal</div><div style="font-size:14px;font-weight:800;color:#3498db">${a.water}%</div></div>`:''}
+      ${a.bone?`<div style="background:rgba(255,255,255,.04);border-radius:8px;padding:8px"><div style="font-size:9px;color:var(--mu)">Massa óssea</div><div style="font-size:14px;font-weight:800">${a.bone}kg</div></div>`:''}
+      ${a.tmb?`<div style="background:rgba(243,156,18,.08);border-radius:8px;padding:8px"><div style="font-size:9px;color:var(--mu)">TMB</div><div style="font-size:14px;font-weight:800;color:#f39c12">${a.tmb}kcal</div></div>`:''}
+      ${a.idademet?`<div style="background:rgba(229,9,20,.06);border-radius:8px;padding:8px"><div style="font-size:9px;color:var(--mu)">Idade metabólica</div><div style="font-size:14px;font-weight:800;color:var(--r)">${a.idademet} anos</div></div>`:''}
+    </div>
+  ` : '';
+
+  document.getElementById('modal-eval-title').textContent = `📊 ${dateF}`;
+  document.getElementById('modal-eval').classList.add('open');
+  // reuse modal body
+  const body = document.querySelector('#modal-eval .modal-bx');
+  body.innerHTML = `
+    <div class="modal-t">
+      <span>📊 Avaliação — ${dateF}</span>
+      <button class="modal-cl" onclick="closeModal('modal-eval')">✕</button>
+    </div>
+    <div style="font-size:11px;color:var(--mu);margin-bottom:14px">${method}</div>
+    <!-- Resultados principais -->
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:14px">
+      <div style="background:rgba(229,9,20,.08);border:1px solid rgba(229,9,20,.2);border-radius:12px;padding:12px;text-align:center">
+        <div style="font-size:26px;font-weight:900;color:var(--r)">${a.fatPct}%</div>
+        <div style="font-size:9px;color:var(--mu)">Gordura</div>
+        <div style="font-size:9px;font-weight:800;margin-top:4px;padding:2px 6px;border-radius:4px;background:${color}22;color:${color}">${cls}</div>
+      </div>
+      <div style="background:rgba(46,204,113,.08);border:1px solid rgba(46,204,113,.2);border-radius:12px;padding:12px;text-align:center">
+        <div style="font-size:26px;font-weight:900;color:#2ecc71">${a.leanKg}kg</div>
+        <div style="font-size:9px;color:var(--mu)">Massa Magra</div>
+      </div>
+      <div style="background:rgba(52,152,219,.08);border:1px solid rgba(52,152,219,.2);border-radius:12px;padding:12px;text-align:center">
+        <div style="font-size:26px;font-weight:900;color:#3498db">${a.peso}kg</div>
+        <div style="font-size:9px;color:var(--mu)">Peso Total</div>
+      </div>
+    </div>
+    <div style="background:rgba(255,255,255,.04);border-radius:10px;padding:10px 14px;margin-bottom:12px;display:flex;justify-content:space-between">
+      <span style="font-size:12px;color:var(--t2)">Massa gorda</span>
+      <span style="font-size:13px;font-weight:800;color:var(--r)">${a.fatKg}kg</span>
+    </div>
+    ${a.method!=='bio'?`<div style="background:rgba(255,255,255,.04);border-radius:10px;padding:10px 14px;margin-bottom:12px;display:flex;justify-content:space-between"><span style="font-size:12px;color:var(--t2)">Densidade corporal</span><span style="font-size:13px;font-weight:800">${a.dc}</span></div>`:''}
+    ${dobrasHtml}
+    ${bioHtml}
+    ${a.obs?`<div style="background:rgba(255,255,255,.04);border-radius:10px;padding:12px;margin-top:10px;font-size:12px;color:var(--t2)"><strong>Obs:</strong> ${a.obs}</div>`:''}
+    <div style="display:flex;gap:8px;margin-top:16px">
+      <button class="btn-p" onclick="closeModal('modal-eval')" style="flex:1">Fechar</button>
+      <button onclick="deleteEval(${a.id});closeModal('modal-eval')" style="flex:1;padding:14px;background:rgba(255,23,68,.08);border:1px solid rgba(255,23,68,.2);border-radius:14px;color:#ff6b6b;font-size:14px;font-weight:800;cursor:pointer">🗑️ Excluir</button>
+    </div>
+  `;
+}
 
 // ══ PWA ══
 if('serviceWorker' in navigator)window.addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}));
