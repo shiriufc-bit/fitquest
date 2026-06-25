@@ -37,13 +37,13 @@ input,button,select,textarea{font-family:"Inter",system-ui,sans-serif;}
 /* ══ SPLASH ══ */
 #sc-splash{min-height:100vh;display:none;flex-direction:column;position:relative;overflow:hidden;background:#000;}
 #sc-splash.active{display:flex;}
-.splash-bg{position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,.2) 0%,rgba(0,0,0,.5) 40%,rgba(10,10,10,.9) 70%,#0a0a0a 100%);}
-.splash-noise{position:absolute;inset:0;opacity:.03;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");}
+.splash-bg{position:absolute;inset:0;z-index:1;background:linear-gradient(180deg,rgba(0,0,0,.2) 0%,rgba(0,0,0,.5) 40%,rgba(10,10,10,.9) 70%,#0a0a0a 100%);}
+.splash-noise{position:absolute;inset:0;opacity:.03;z-index:1;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");}
 .splash-hero-bg{position:absolute;inset:0;background:linear-gradient(135deg,#1a0000 0%,#0d0000 30%,#000 60%);}
-.splash-glow{position:absolute;top:0;left:50%;transform:translateX(-50%);width:100%;height:60%;background:radial-gradient(ellipse at 50% 0%,rgba(229,9,20,.25) 0%,transparent 70%);}
+.splash-glow{position:absolute;z-index:1;top:0;left:50%;transform:translateX(-50%);width:100%;height:60%;background:radial-gradient(ellipse at 50% 0%,rgba(229,9,20,.25) 0%,transparent 70%);}
 .splash-athlete{position:absolute;top:0;right:0;bottom:0;width:70%;display:flex;align-items:center;justify-content:flex-end;overflow:hidden;}
 .splash-athlete-emoji{font-size:220px;opacity:.08;transform:scaleX(-1);line-height:1;margin-right:-20px;margin-top:40px;}
-.splash-content{position:relative;z-index:2;flex:1;display:flex;flex-direction:column;justify-content:flex-end;padding:40px 24px 52px;}
+.splash-content{position:relative;z-index:3;flex:1;display:flex;flex-direction:column;justify-content:flex-end;padding:40px 24px 52px;}
 .splash-logo{font-size:44px;font-weight:900;letter-spacing:-2px;margin-bottom:6px;}
 .splash-logo .r{color:var(--r);}
 .splash-tagline{font-size:13px;color:var(--t2);letter-spacing:3px;text-transform:uppercase;margin-bottom:28px;font-weight:500;}
@@ -534,7 +534,7 @@ textarea.fi{resize:vertical;min-height:80px;}
 
 <!-- SPLASH -->
 <div id="sc-splash" class="screen active">
-  <img src="https://images.unsplash.com/photo-1517836357463-d25dfeac3438?w=800&q=80" alt="Fitness" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center top;filter:brightness(.35)"/>
+  <img src="https://images.unsplash.com/photo-1517836357463-d25dfeac3438?w=800&q=80" alt="Fitness" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center top;filter:brightness(.35);z-index:0"/>
   <div class="splash-glow"></div>
   <div class="splash-noise"></div>
   <div class="splash-bg"></div>
@@ -1015,7 +1015,7 @@ textarea.fi{resize:vertical;min-height:80px;}
       </div>
       <!-- HERO BANNER -->
       <div class="hero-banner">
-        <img src="https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=800&q=80" alt="Treino" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center top;filter:brightness(.45)"/>
+        <img src="https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=800&q=80" alt="Treino" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center top;filter:brightness(.45);z-index:0"/>
         <div class="hero-banner-glow"></div>
         <div class="hero-banner-overlay"></div>
         <div class="hero-banner-content">
@@ -1134,7 +1134,7 @@ textarea.fi{resize:vertical;min-height:80px;}
     <div class="tp" id="tp-gym">
       <div class="wk-page">
         <div class="wk-hero" id="gym-hero">
-          <img src="https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=400&q=80" alt="Treino" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;filter:brightness(.4)"/>
+          <img src="https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=400&q=80" alt="Treino" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;filter:brightness(.4);z-index:0"/>
           <div class="wk-hero-glow"></div>
           <div class="wk-hero-overlay"></div>
           <div class="wk-hero-content">
