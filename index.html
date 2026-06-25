@@ -10,7 +10,6 @@
 <meta name="apple-mobile-web-app-title" content="FitQuest"/>
 <link rel="manifest" href="manifest.json"/>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/build/three.min.js"></script>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
 :root{
@@ -408,9 +407,9 @@ textarea.fi{resize:vertical;min-height:80px;}
 .av-opt.sel{border-color:#fff;box-shadow:0 0 0 2px var(--r);}
 .av-opt-sq{width:44px;height:44px;border-radius:10px;border:3px solid transparent;cursor:pointer;transition:all .2s;display:flex;align-items:center;justify-content:center;font-size:24px;}
 .av-opt-sq.sel{border-color:#fff;box-shadow:0 0 0 2px var(--r);}
-.av-preview{width:100px;height:100px;border-radius:50%;background:var(--s);border:3px solid var(--r);display:flex;align-items:center;justify-content:center;font-size:52px;margin:0 auto 16px;position:relative;overflow:hidden;box-shadow:0 0 0 4px rgba(229,9,20,.2);}
-.av-preview img{width:100%;height:100%;object-fit:cover;border-radius:50%;}
-.av-preview-emoji{font-size:52px;line-height:1;}
+
+
+
 .photo-upload-area{border:2px dashed rgba(229,9,20,.3);border-radius:12px;padding:24px;text-align:center;cursor:pointer;transition:all .2s;background:rgba(229,9,20,.04);}
 .photo-upload-area:hover{border-color:var(--r);background:rgba(229,9,20,.08);}
 .photo-upload-area input{display:none;}
@@ -1266,92 +1265,51 @@ textarea.fi{resize:vertical;min-height:80px;}
 
 <!-- AVATAR MODAL -->
 <div class="modal-ov" id="modal-avatar">
-  <div class="modal-bx" style="border-radius:20px 20px 0 0;padding:16px">
+  <div class="modal-bx" style="border-radius:20px 20px 0 0;padding:20px">
     <div class="modal-t">
-      <span>🎭 Personalizar Perfil</span>
+      <span>📸 Foto de Perfil</span>
       <button class="modal-cl" onclick="closeModal('modal-avatar')">✕</button>
     </div>
 
-    <!-- Tabs -->
-    <div class="av-tabs">
-      <button class="av-tab active" id="av-tab-avatar" onclick="switchAvTab('avatar',this)">🧍 Avatar 3D</button>
-      <button class="av-tab" id="av-tab-photo" onclick="switchAvTab('photo',this)">📸 Foto</button>
+    <!-- Preview -->
+    <div style="text-align:center;margin-bottom:20px">
+      <div id="av-preview" style="width:100px;height:100px;border-radius:50%;background:var(--r);border:3px solid var(--r);display:flex;align-items:center;justify-content:center;font-size:42px;font-weight:900;color:#fff;margin:0 auto 12px;overflow:hidden;box-shadow:0 0 0 4px rgba(229,9,20,.2)">
+        <span id="av-preview-ini">?</span>
+      </div>
+      <div style="font-size:12px;color:var(--mu)">Prévia do perfil</div>
     </div>
 
-    <!-- AVATAR 3D PANEL -->
-    <div class="av-panel active" id="av-panel-avatar">
-      <!-- Canvas 3D -->
-      <div style="position:relative;width:100%;height:220px;border-radius:14px;overflow:hidden;background:#0d0000;margin-bottom:14px;border:1px solid rgba(229,9,20,.3);box-shadow:0 0 20px rgba(229,9,20,.15)">
-        <canvas id="avatar3d-canvas" style="width:100%;height:100%;display:block;touch-action:none;border-radius:14px"></canvas>
-        <div style="position:absolute;bottom:8px;left:0;right:0;text-align:center;font-size:10px;color:rgba(255,255,255,.4);pointer-events:none">← Arraste para girar →</div>
-      </div>
-
-      <!-- Gênero -->
-      <div class="av-section">
-        <div class="av-section-title">Gênero</div>
-        <div class="av-options" id="av-gender">
-          <div class="av-opt-sq sel" data-val="masc" onclick="selAvOpt('gender',this)" style="font-size:28px;width:56px;height:56px">👨</div>
-          <div class="av-opt-sq" data-val="fem" onclick="selAvOpt('gender',this)" style="font-size:28px;width:56px;height:56px">👩</div>
-        </div>
-      </div>
-
-      <!-- Tom de pele -->
-      <div class="av-section">
-        <div class="av-section-title">Tom de pele</div>
-        <div class="av-options" id="av-skin">
-          <div class="av-opt sel" data-val="#FDDBB4" onclick="selAvOpt('skin',this)" style="background:#FDDBB4;width:40px;height:40px"></div>
-          <div class="av-opt" data-val="#E8B88A" onclick="selAvOpt('skin',this)" style="background:#E8B88A;width:40px;height:40px"></div>
-          <div class="av-opt" data-val="#C68642" onclick="selAvOpt('skin',this)" style="background:#C68642;width:40px;height:40px"></div>
-          <div class="av-opt" data-val="#8D5524" onclick="selAvOpt('skin',this)" style="background:#8D5524;width:40px;height:40px"></div>
-          <div class="av-opt" data-val="#4A2912" onclick="selAvOpt('skin',this)" style="background:#4A2912;width:40px;height:40px"></div>
-        </div>
-      </div>
-
-      <!-- Cor do cabelo -->
-      <div class="av-section">
-        <div class="av-section-title">Cabelo</div>
-        <div class="av-options" id="av-hair">
-          <div class="av-opt sel" data-val="#1a1a1a" onclick="selAvOpt('hair',this)" style="background:#1a1a1a;width:40px;height:40px"></div>
-          <div class="av-opt" data-val="#6B4226" onclick="selAvOpt('hair',this)" style="background:#6B4226;width:40px;height:40px"></div>
-          <div class="av-opt" data-val="#D4A017" onclick="selAvOpt('hair',this)" style="background:#D4A017;width:40px;height:40px"></div>
-          <div class="av-opt" data-val="#A52A2A" onclick="selAvOpt('hair',this)" style="background:#A52A2A;width:40px;height:40px"></div>
-          <div class="av-opt" data-val="#888888" onclick="selAvOpt('hair',this)" style="background:#888;width:40px;height:40px"></div>
-          <div class="av-opt" data-val="#f0f0f0" onclick="selAvOpt('hair',this)" style="background:#f0f0f0;border-color:#ccc;width:40px;height:40px"></div>
-          <div class="av-opt" data-val="bald" onclick="selAvOpt('hair',this)" style="background:transparent;border:2px dashed #555;width:40px;height:40px;display:flex;align-items:center;justify-content:center;font-size:16px">✗</div>
-        </div>
-      </div>
-
-      <!-- Cor da roupa -->
-      <div class="av-section">
-        <div class="av-section-title">Roupa</div>
-        <div class="av-options" id="av-shirt">
-          <div class="av-opt sel" data-val="#e50914" onclick="selAvOpt('shirt',this)" style="background:#e50914;width:40px;height:40px"></div>
-          <div class="av-opt" data-val="#1a1a1a" onclick="selAvOpt('shirt',this)" style="background:#1a1a1a;width:40px;height:40px"></div>
-          <div class="av-opt" data-val="#1565C0" onclick="selAvOpt('shirt',this)" style="background:#1565C0;width:40px;height:40px"></div>
-          <div class="av-opt" data-val="#2E7D32" onclick="selAvOpt('shirt',this)" style="background:#2E7D32;width:40px;height:40px"></div>
-          <div class="av-opt" data-val="#F57F17" onclick="selAvOpt('shirt',this)" style="background:#F57F17;width:40px;height:40px"></div>
-          <div class="av-opt" data-val="#6A1B9A" onclick="selAvOpt('shirt',this)" style="background:#6A1B9A;width:40px;height:40px"></div>
-          <div class="av-opt" data-val="#ffffff" onclick="selAvOpt('shirt',this)" style="background:#fff;border-color:#ccc;width:40px;height:40px"></div>
-        </div>
-      </div>
-    </div>
-
-    <!-- PHOTO PANEL -->
-    <div class="av-panel" id="av-panel-photo">
-      <div class="photo-upload-area" onclick="document.getElementById('photo-input').click()">
+    <!-- Opção 1: Foto -->
+    <div style="margin-bottom:14px">
+      <div style="font-size:10px;font-weight:800;color:var(--r);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:10px">📸 Enviar foto</div>
+      <div class="photo-upload-area" onclick="document.getElementById('photo-input').click()" id="photo-drop-area">
         <input type="file" id="photo-input" accept="image/*" onchange="handlePhotoUpload(event)"/>
-        <div style="font-size:40px;margin-bottom:8px">📸</div>
+        <div style="font-size:36px;margin-bottom:8px">📷</div>
         <div style="font-size:14px;font-weight:700;margin-bottom:4px">Toque para escolher uma foto</div>
-        <div style="font-size:11px;color:var(--mu)">Da galeria ou câmera do celular · JPG, PNG</div>
-      </div>
-      <div class="photo-crop" id="photo-crop" style="display:none">
-        <div style="font-size:11px;color:var(--t2);margin-bottom:8px;text-align:center">Prévia:</div>
-        <img id="photo-preview" src="" style="width:100%;border-radius:8px;max-height:200px;object-fit:cover;"/>
-        <button class="btn-p" onclick="usePhoto()" style="margin-top:10px">✅ Usar esta foto</button>
+        <div style="font-size:11px;color:var(--mu)">Galeria ou câmera · JPG ou PNG · máx. 5MB</div>
       </div>
     </div>
 
-    <button class="btn-p" onclick="saveAvatar()" style="margin-top:16px">💾 Salvar perfil</button>
+    <!-- Opção 2: Usar inicial -->
+    <div style="margin-bottom:20px">
+      <div style="font-size:10px;font-weight:800;color:var(--r);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:10px">🎨 Cor do avatar com inicial</div>
+      <div style="display:flex;gap:10px;flex-wrap:wrap">
+        <div class="av-color sel" data-color="#e50914" onclick="selColor(this)" style="width:44px;height:44px;border-radius:50%;background:#e50914;cursor:pointer;border:3px solid transparent;box-shadow:0 0 0 3px #e50914"></div>
+        <div class="av-color" data-color="#1565C0" onclick="selColor(this)" style="width:44px;height:44px;border-radius:50%;background:#1565C0;cursor:pointer;border:3px solid transparent"></div>
+        <div class="av-color" data-color="#2E7D32" onclick="selColor(this)" style="width:44px;height:44px;border-radius:50%;background:#2E7D32;cursor:pointer;border:3px solid transparent"></div>
+        <div class="av-color" data-color="#F57F17" onclick="selColor(this)" style="width:44px;height:44px;border-radius:50%;background:#F57F17;cursor:pointer;border:3px solid transparent"></div>
+        <div class="av-color" data-color="#6A1B9A" onclick="selColor(this)" style="width:44px;height:44px;border-radius:50%;background:#6A1B9A;cursor:pointer;border:3px solid transparent"></div>
+        <div class="av-color" data-color="#00838F" onclick="selColor(this)" style="width:44px;height:44px;border-radius:50%;background:#00838F;cursor:pointer;border:3px solid transparent"></div>
+        <div class="av-color" data-color="#333333" onclick="selColor(this)" style="width:44px;height:44px;border-radius:50%;background:#333333;cursor:pointer;border:3px solid transparent"></div>
+      </div>
+    </div>
+
+    <!-- Remover foto -->
+    <div id="btn-remove-photo" style="display:none;margin-bottom:14px">
+      <button onclick="removePhoto()" style="width:100%;padding:11px;background:rgba(255,23,68,.08);border:1px solid rgba(255,23,68,.2);border-radius:10px;color:#ff6b6b;font-size:13px;font-weight:700;cursor:pointer">🗑️ Remover foto — usar inicial</button>
+    </div>
+
+    <button class="btn-p" onclick="saveAvatar()">💾 Salvar</button>
   </div>
 </div>
 
@@ -2066,6 +2024,7 @@ function loadApp(email){
   // Home profile card
   const homeName=document.getElementById('home-name');if(homeName)homeName.textContent=u.name||'Atleta';
   updateAvatarDisplays(u);
+  renderPerfil(u);
   // XP
   const xpN=(u.level||1)*1000;
   const lvEl=document.getElementById('app-lv');if(lvEl)lvEl.textContent=u.level||1;
@@ -2488,332 +2447,131 @@ function openAnam(email){
   document.getElementById('modal-anam').classList.add('open');
 }
 
-// ══ AVATAR 3D SYSTEM ══
-let avState = {gender:'masc', skin:'#FDDBB4', hair:'#1a1a1a', shirt:'#e50914', photoData:null, snapshot:null};
-let avTabActive = 'avatar';
-let av3dRenderer = null;
-let av3dAnimId = null;
-
-function init3DAvatar(){
-  if(!window.THREE){console.warn('Three.js not loaded');return;}
-  const canvas = document.getElementById('avatar3d-canvas');
-  if(!canvas) return;
-  // Cleanup previous
-  if(av3dAnimId){cancelAnimationFrame(av3dAnimId);av3dAnimId=null;}
-  if(av3dRenderer){av3dRenderer.dispose();av3dRenderer=null;}
-
-  const W = canvas.parentElement.clientWidth || 300;
-  const H = 220;
-
-  const renderer = new THREE.WebGLRenderer({canvas:canvas, antialias:true});
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio,2));
-  renderer.setSize(W, H, false);
-  renderer.setClearColor(0x0d0000, 1);
-  renderer.shadowMap.enabled = true;
-  av3dRenderer = renderer;
-
-  const scene = new THREE.Scene();
-  scene.background = new THREE.Color(0x0d0000);
-
-  const camera = new THREE.PerspectiveCamera(40, W/H, 0.1, 100);
-  camera.position.set(0, 1.1, 2.8);
-  camera.lookAt(0, 0.7, 0);
-
-  // ── LIGHTS ──
-  scene.add(new THREE.AmbientLight(0xffffff, 1.4));
-  const dir = new THREE.DirectionalLight(0xffffff, 1.2);
-  dir.position.set(3, 5, 3);
-  dir.castShadow = true;
-  scene.add(dir);
-  const fill = new THREE.DirectionalLight(0xffffff, 0.6);
-  fill.position.set(-3, 2, 2);
-  scene.add(fill);
-  const red = new THREE.PointLight(0xe50914, 1.0, 8);
-  red.position.set(-2, 2, 1);
-  scene.add(red);
-  const back = new THREE.DirectionalLight(0x4488ff, 0.4);
-  back.position.set(0, 1, -3);
-  scene.add(back);
-
-  // ── COLORS ──
-  const skinCol  = new THREE.Color(avState.skin  || '#FDDBB4');
-  const hairCol  = avState.hair==='bald' ? skinCol : new THREE.Color(avState.hair || '#1a1a1a');
-  const shirtCol = new THREE.Color(avState.shirt || '#e50914');
-  const pantsCol = new THREE.Color(0x1a1a2e);
-  const shoeCol  = new THREE.Color(0x111111);
-  const isFem    = avState.gender === 'fem';
-
-  const group = new THREE.Group();
-  scene.add(group);
-
-  function M(geo, col){
-    return new THREE.Mesh(geo, new THREE.MeshLambertMaterial({color:col}));
-  }
-
-  // Floor shadow
-  const floorM = M(new THREE.CircleGeometry(1.4,32), new THREE.Color(0x110000));
-  floorM.rotation.x = -Math.PI/2;
-  floorM.position.y = -1.02;
-  scene.add(floorM);
-
-  // HEAD
-  const head = M(new THREE.SphereGeometry(isFem?0.185:0.20,20,16), skinCol);
-  head.position.set(0,1.55,0);
-  head.scale.set(1,1.08,0.94);
-  head.castShadow = true;
-  group.add(head);
-
-  // HAIR
-  if(avState.hair!=='bald'){
-    const hairTop = M(new THREE.SphereGeometry(isFem?0.20:0.205,16,10,0,Math.PI*2,0,Math.PI*0.52), hairCol);
-    hairTop.position.set(0, isFem?1.59:1.58, -0.01);
-    hairTop.scale.set(1,1.08,0.94);
-    group.add(hairTop);
-    if(isFem){
-      const longH = M(new THREE.CylinderGeometry(0.18,0.12,0.5,12), hairCol);
-      longH.position.set(0,1.27,-0.02);
-      group.add(longH);
-    }
-  }
-
-  // EYES
-  [-0.072, 0.072].forEach(x=>{
-    const eye = M(new THREE.SphereGeometry(0.026,8,8), new THREE.Color(0x111111));
-    eye.position.set(x,1.565,0.178);
-    group.add(eye);
-    const shine = M(new THREE.SphereGeometry(0.009,6,6), new THREE.Color(0xffffff));
-    shine.position.set(x+0.01,1.575,0.202);
-    group.add(shine);
-  });
-
-  // MOUTH
-  const mouth = M(new THREE.TorusGeometry(0.032,0.008,8,12,Math.PI), new THREE.Color(0xcc3333));
-  mouth.rotation.z = Math.PI;
-  mouth.position.set(0,1.48,0.182);
-  group.add(mouth);
-
-  // NOSE
-  const nose = M(new THREE.SphereGeometry(0.016,6,6), skinCol);
-  nose.position.set(0,1.52,0.195);
-  nose.scale.set(0.7,0.9,1);
-  group.add(nose);
-
-  // NECK
-  const neck = M(new THREE.CylinderGeometry(0.068,0.08,0.12,12), skinCol);
-  neck.position.set(0,1.38,0);
-  group.add(neck);
-
-  // TORSO
-  const tW = isFem ? 0.21 : 0.255;
-  const torso = M(new THREE.BoxGeometry(tW*2, 0.46, 0.2), shirtCol);
-  torso.position.set(0,0.96,0);
-  torso.castShadow = true;
-  group.add(torso);
-
-  // Fem bust
-  if(isFem){
-    [-0.09,0.09].forEach(x=>{
-      const bust = M(new THREE.SphereGeometry(0.085,10,8), shirtCol);
-      bust.position.set(x,1.01,0.09);
-      bust.scale.set(1,0.82,0.65);
-      group.add(bust);
-    });
-  }
-
-  // SHOULDERS + ARMS
-  const aR = isFem ? 0.052 : 0.068;
-  [-1,1].forEach(s=>{
-    const aX = s*(tW+aR+0.005);
-    // Shoulder
-    const shl = M(new THREE.SphereGeometry(aR*1.18,10,8), shirtCol);
-    shl.position.set(aX,1.17,0);
-    group.add(shl);
-    // Upper arm (shirt)
-    const ua = M(new THREE.CylinderGeometry(aR,aR*0.88,0.22,10), shirtCol);
-    ua.position.set(aX+s*0.01,0.98,0);
-    ua.rotation.z = s*0.14;
-    group.add(ua);
-    // Forearm (skin)
-    const fa = M(new THREE.CylinderGeometry(aR*0.78,aR*0.68,0.19,10), skinCol);
-    fa.position.set(aX+s*0.04,0.72,0);
-    fa.rotation.z = s*0.17;
-    group.add(fa);
-    // Hand
-    const hand = M(new THREE.SphereGeometry(aR*0.7,8,8), skinCol);
-    hand.position.set(aX+s*0.07,0.54,0);
-    hand.scale.set(0.9,1.1,0.7);
-    group.add(hand);
-  });
-
-  // WAIST
-  const waist = M(new THREE.CylinderGeometry(tW*0.80,tW*0.90,0.09,12), new THREE.Color(0x222233));
-  waist.position.set(0,0.71,0);
-  group.add(waist);
-
-  // LEGS
-  const lR = isFem ? 0.082 : 0.092;
-  [-0.105, 0.105].forEach(x=>{
-    // Upper leg
-    const ul = M(new THREE.CylinderGeometry(lR,lR*0.86,0.50,12), pantsCol);
-    ul.position.set(x,0.38,0);
-    ul.castShadow = true;
-    group.add(ul);
-    // Lower leg
-    const ll = M(new THREE.CylinderGeometry(lR*0.78,lR*0.68,0.44,12), pantsCol);
-    ll.position.set(x,-0.07,0);
-    group.add(ll);
-    // Shoe
-    const shoe = M(new THREE.BoxGeometry(lR*1.9,lR*0.72,lR*3.0), shoeCol);
-    shoe.position.set(x,-0.46,0.06);
-    group.add(shoe);
-    // Sole
-    const sole = M(new THREE.BoxGeometry(lR*2.0,lR*0.25,lR*3.2), new THREE.Color(0x333333));
-    sole.position.set(x,-0.51,0.06);
-    group.add(sole);
-  });
-
-  // ── DRAG ROTATION ──
-  let drag=false, lastX=0, rotY=0, targetY=0;
-  const onDown = e=>{drag=true; lastX=e.touches?e.touches[0].clientX:e.clientX;};
-  const onMove = e=>{if(!drag)return; const cx=e.touches?e.touches[0].clientX:e.clientX; targetY+=(cx-lastX)*0.012; lastX=cx;};
-  const onUp   = ()=>drag=false;
-  canvas.addEventListener('mousedown',onDown);
-  canvas.addEventListener('mousemove',onMove);
-  canvas.addEventListener('mouseup',onUp);
-  canvas.addEventListener('touchstart',onDown,{passive:true});
-  canvas.addEventListener('touchmove',onMove,{passive:true});
-  canvas.addEventListener('touchend',onUp);
-
-  // ── RENDER LOOP ──
-  let t=0;
-  function loop(){
-    av3dAnimId = requestAnimationFrame(loop);
-    t += 0.018;
-    if(!drag) targetY += 0.007;
-    rotY += (targetY-rotY)*0.07;
-    group.rotation.y = rotY;
-    group.position.y = Math.sin(t*0.7)*0.012;
-    renderer.render(scene,camera);
-  }
-  loop();
-}
-
-function getSnapshot3D(){
-  const canvas = document.getElementById('avatar3d-canvas');
-  if(!canvas) return null;
-  try{ return canvas.toDataURL('image/png'); }catch(e){ return null; }
-}
-
-function cleanup3D(){
-  if(av3dAnimId){cancelAnimationFrame(av3dAnimId);av3dAnimId=null;}
-  if(av3dRenderer){av3dRenderer.dispose();av3dRenderer=null;}
-}
+// ══ AVATAR SYSTEM ══
+let avState = {photoData:null, color:'#e50914'};
 
 function openAvatarModal(){
-  const u=getU();
+  const u = getU();
   if(u?.avatar){
-    const a=u.avatar;
-    avState.gender = a.gender||'masc';
-    avState.skin   = (a.skin&&a.skin.startsWith('#'))?a.skin:'#FDDBB4';
-    avState.hair   = (a.hair&&(a.hair.startsWith('#')||a.hair==='bald'))?a.hair:'#1a1a1a';
-    avState.shirt  = (a.shirt&&a.shirt.startsWith('#'))?a.shirt:'#e50914';
-    avState.photoData = a.photoData||null;
-    avState.snapshot  = a.snapshot||null;
+    avState.photoData = u.avatar.photoData||null;
+    avState.color     = u.avatar.color||'#e50914';
   }
+  // Set preview
+  updateAvPreview(u?.name||'?');
+  // Restore color selection
+  document.querySelectorAll('.av-color').forEach(el=>{
+    const sel = el.dataset.color===avState.color;
+    el.style.boxShadow = sel ? `0 0 0 3px ${avState.color}` : 'none';
+    el.style.border    = sel ? '3px solid #fff' : '3px solid transparent';
+  });
+  // Show/hide remove button
+  document.getElementById('btn-remove-photo').style.display = avState.photoData ? 'block' : 'none';
   document.getElementById('modal-avatar').classList.add('open');
-  loadAvSelections();
-  setTimeout(()=>init3DAvatar(), 150);
 }
 
-function loadAvSelections(){
-  document.querySelectorAll('#av-gender .av-opt-sq').forEach(o=>o.classList.toggle('sel',o.dataset.val===avState.gender));
-  document.querySelectorAll('#av-skin .av-opt').forEach(o=>o.classList.toggle('sel',o.dataset.val===avState.skin));
-  document.querySelectorAll('#av-hair .av-opt').forEach(o=>o.classList.toggle('sel',o.dataset.val===avState.hair));
-  document.querySelectorAll('#av-shirt .av-opt').forEach(o=>o.classList.toggle('sel',o.dataset.val===avState.shirt));
+function updateAvPreview(name){
+  const prev = document.getElementById('av-preview');
+  const ini  = document.getElementById('av-preview-ini');
+  if(!prev) return;
+  const letter = name ? name[0].toUpperCase() : '?';
+  if(avState.photoData){
+    prev.innerHTML = `<img src="${avState.photoData}" style="width:100%;height:100%;object-fit:cover;border-radius:50%"/>`;
+    prev.style.background = '#000';
+    document.getElementById('btn-remove-photo').style.display='block';
+  } else {
+    prev.innerHTML = `<span id="av-preview-ini" style="font-size:42px;font-weight:900;color:#fff">${letter}</span>`;
+    prev.style.background = avState.color;
+    document.getElementById('btn-remove-photo').style.display='none';
+  }
 }
 
-function selAvOpt(type,el){
-  const g={gender:'#av-gender .av-opt-sq',skin:'#av-skin .av-opt',hair:'#av-hair .av-opt',shirt:'#av-shirt .av-opt'};
-  document.querySelectorAll(g[type]).forEach(o=>o.classList.remove('sel'));
-  el.classList.add('sel');
-  avState[type]=el.dataset.val;
-  avState.photoData=null;
-  avState.snapshot=null;
-  cleanup3D();
-  setTimeout(()=>init3DAvatar(),50);
-}
-
-function switchAvTab(tab,btn){
-  avTabActive=tab;
-  document.querySelectorAll('.av-tab').forEach(b=>b.classList.remove('active'));
-  document.querySelectorAll('.av-panel').forEach(p=>p.classList.remove('active'));
-  btn.classList.add('active');
-  document.getElementById('av-panel-'+tab).classList.add('active');
-  if(tab==='avatar') setTimeout(()=>init3DAvatar(),100);
-  else cleanup3D();
+function selColor(el){
+  document.querySelectorAll('.av-color').forEach(o=>{
+    o.style.boxShadow='none';
+    o.style.border='3px solid transparent';
+  });
+  el.style.boxShadow = `0 0 0 3px ${el.dataset.color}`;
+  el.style.border = '3px solid #fff';
+  avState.color = el.dataset.color;
+  avState.photoData = null;
+  const u = getU();
+  updateAvPreview(u?.name||'?');
 }
 
 function handlePhotoUpload(e){
-  const file=e.target.files[0];
+  const file = e.target.files[0];
   if(!file) return;
-  if(file.size>5*1024*1024){alert('Foto muito grande! Máximo 5MB.');return;}
-  const reader=new FileReader();
-  reader.onload=ev=>{
-    avState.photoData=ev.target.result;
-    avState.snapshot=null;
-    document.getElementById('photo-preview').src=avState.photoData;
-    document.getElementById('photo-crop').style.display='block';
+  if(file.size > 5*1024*1024){ alert('Foto muito grande! Máximo 5MB.'); return; }
+  const reader = new FileReader();
+  reader.onload = ev=>{
+    avState.photoData = ev.target.result;
+    const u = getU();
+    updateAvPreview(u?.name||'?');
   };
   reader.readAsDataURL(file);
 }
 
-function usePhoto(){alert('✅ Foto selecionada! Clique em Salvar para confirmar.');}
+function removePhoto(){
+  avState.photoData = null;
+  const u = getU();
+  updateAvPreview(u?.name||'?');
+}
 
 function saveAvatar(){
-  const email=DB.get('fq_cur');
-  const users=DB.get('fq_users')||{};
+  const email = DB.get('fq_cur');
+  const users = DB.get('fq_users')||{};
   if(!users[email]) return;
-  if(!avState.photoData){
-    avState.snapshot = getSnapshot3D();
-  }
-  users[email].avatar={...avState};
-  DB.set('fq_users',users);
+  users[email].avatar = {...avState};
+  DB.set('fq_users', users);
   syncU(users[email]);
-  cleanup3D();
   updateAvatarDisplays(users[email]);
   renderPerfil(users[email]);
   closeModal('modal-avatar');
 }
 
 function updateAvatarDisplays(u){
-  const av=u.avatar||{};
-  const img=av.photoData||av.snapshot||null;
-  const ini=u.name?u.name[0].toUpperCase():'?';
-  // Home profile av
-  const homeAv=document.getElementById('home-profile-av');
+  const av    = u.avatar||{};
+  const photo = av.photoData||null;
+  const color = av.color||'#e50914';
+  const letter= u.name?u.name[0].toUpperCase():'?';
+
+  const inner = photo
+    ? `<img src="${photo}" style="width:100%;height:100%;object-fit:cover;border-radius:50%"/>`
+    : `<span style="font-size:inherit;font-weight:900;color:#fff">${letter}</span>`;
+
+  // Home card
+  const homeAv = document.getElementById('home-profile-av');
   if(homeAv){
-    homeAv.innerHTML=img
-      ?`<img src="${img}" style="width:100%;height:100%;object-fit:cover;border-radius:50%"/><div class="profile-av-badge">✏️</div>`
-      :`<span style="font-size:32px">${ini}</span><div class="profile-av-badge">✏️</div>`;
-    homeAv.onclick=openAvatarModal;
+    homeAv.innerHTML = inner + '<div class="profile-av-badge">✏️</div>';
+    homeAv.style.background = photo ? '#000' : color;
+    homeAv.onclick = openAvatarModal;
   }
-  // Nav av
-  const navAv=document.getElementById('nav-av');
-  if(navAv) navAv.innerHTML=img?`<img src="${img}" style="width:32px;height:32px;border-radius:4px;object-fit:cover"/>`:ini;
+  // Nav avatar
+  const navAv = document.getElementById('nav-av');
+  if(navAv){
+    if(photo){ navAv.innerHTML=`<img src="${photo}" style="width:32px;height:32px;border-radius:4px;object-fit:cover"/>`; navAv.style.background='#000'; }
+    else{ navAv.textContent=letter; navAv.style.background=color; }
+  }
   // Nav perfil icon
-  const navPic=document.getElementById('nav-perfil-ico');
-  if(navPic) navPic.innerHTML=img?`<img src="${img}" style="width:22px;height:22px;border-radius:50%;object-fit:cover"/>`:ini;
-  // Perfil av main
-  const pavEl=document.getElementById('perfil-av-main');
+  const navPic = document.getElementById('nav-perfil-ico');
+  if(navPic){
+    navPic.innerHTML = photo
+      ? `<img src="${photo}" style="width:22px;height:22px;border-radius:50%;object-fit:cover"/>`
+      : letter;
+  }
+  // Perfil tab main avatar
+  const pavEl = document.getElementById('perfil-av-main');
   if(pavEl){
-    pavEl.innerHTML=img
-      ?`<img src="${img}" style="width:100%;height:100%;object-fit:cover;border-radius:50%"/><div style="position:absolute;bottom:4px;right:4px;width:28px;height:28px;background:var(--r);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;border:2px solid #0a0a0a">✏️</div>`
-      :`<span id="perfil-av-emoji">${ini}</span><div style="position:absolute;bottom:4px;right:4px;width:28px;height:28px;background:var(--r);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;border:2px solid #0a0a0a">✏️</div>`;
-    pavEl.onclick=openAvatarModal;
+    pavEl.innerHTML = (photo
+      ? `<img src="${photo}" style="width:100%;height:100%;object-fit:cover;border-radius:50%"/>`
+      : `<span style="font-size:46px;font-weight:900;color:#fff">${letter}</span>`)
+      + `<div style="position:absolute;bottom:4px;right:4px;width:28px;height:28px;background:var(--r);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;border:2px solid #0a0a0a">✏️</div>`;
+    pavEl.style.background = photo ? '#000' : color;
+    pavEl.onclick = openAvatarModal;
   }
 }
 
-function getAvatarEmoji(u){return u?.name?u.name[0].toUpperCase():'?';}
+function getAvatarEmoji(u){ return u?.name?u.name[0].toUpperCase():'?'; }
 
 // ══ PWA ══
 if('serviceWorker' in navigator)window.addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}));
