@@ -2217,6 +2217,19 @@ function switchTab(name,btn){
   if(btn)btn.classList.add('active');
   window.scrollTo(0,0);
   document.getElementById('nav-menu').classList.remove('open');
+  // Na aba de perfil a navbar fica transparente para não tampar a foto
+  const nav = document.getElementById('app-nav');
+  if(nav){
+    if(name==='perfil'){
+      nav.style.background='transparent';
+      nav.style.borderBottom='none';
+      nav.style.backdropFilter='none';
+    } else {
+      nav.style.background='';
+      nav.style.borderBottom='';
+      nav.style.backdropFilter='';
+    }
+  }
 }
 
 // ══ ADMIN ══
