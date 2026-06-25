@@ -395,6 +395,21 @@ textarea.fi{resize:vertical;min-height:80px;}
 @keyframes pulse{0%,100%{opacity:.5;}50%{opacity:1;}}
 @keyframes shimmer{0%{background-position:-200% 0}100%{background-position:200% 0}}
 
+/* ══ POSTER CARD (Home) ══ */
+.poster-card{flex-shrink:0;width:130px;border-radius:10px;overflow:hidden;cursor:pointer;position:relative;transition:transform .25s;background:#111;box-shadow:0 4px 20px rgba(0,0,0,.5)}
+.poster-card:active{transform:scale(.97)}
+.poster-card-img{width:130px;height:195px;object-fit:cover;display:block;filter:brightness(.85)}
+.poster-card-bg{width:130px;height:195px;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden}
+.poster-card-gradient{position:absolute;inset:0;opacity:.85}
+.poster-card-emoji{position:relative;z-index:1;font-size:52px;filter:drop-shadow(0 4px 12px rgba(0,0,0,.8))}
+.poster-card-footer{position:absolute;bottom:0;left:0;right:0;padding:8px 10px 10px;background:linear-gradient(transparent,rgba(0,0,0,.95))}
+.poster-card-tag{font-size:8px;font-weight:900;letter-spacing:1px;margin-bottom:3px;text-transform:uppercase}
+.poster-card-title{font-size:11px;font-weight:900;line-height:1.2;color:#fff;text-shadow:0 1px 4px rgba(0,0,0,.8)}
+.poster-card-sub{font-size:9px;color:rgba(255,255,255,.55);margin-top:2px}
+.poster-card-lock{position:absolute;top:8px;right:8px;background:rgba(0,0,0,.7);border-radius:5px;padding:3px 7px;font-size:9px;font-weight:800;color:#fff;backdrop-filter:blur(4px)}
+.poster-card-owned{position:absolute;top:8px;left:8px;background:rgba(46,204,113,.85);border-radius:5px;padding:3px 7px;font-size:9px;font-weight:900;color:#fff}
+.poster-card-new{position:absolute;top:8px;left:8px;background:rgba(229,9,20,.9);border-radius:5px;padding:3px 7px;font-size:9px;font-weight:900;color:#fff}
+
 /* ══ PROGRAM INTAKE ══ */
 .intake-step{display:none;}.intake-step.active{display:block;}
 .intake-progress{background:rgba(255,255,255,.08);border-radius:99px;height:3px;margin-bottom:20px;overflow:hidden;}
@@ -1094,6 +1109,25 @@ textarea.fi{resize:vertical;min-height:80px;}
         <div class="section-hdr"><div class="section-title">Histórico recente</div></div>
         <div class="carousel" id="history-carousel"></div>
       </div>
+
+      <!-- PROGRAMAS EM DESTAQUE (estilo Netflix) -->
+      <div class="section">
+        <div class="section-hdr">
+          <div class="section-title">🎬 Programas em Destaque</div>
+          <div class="section-link" onclick="switchTab('store',document.querySelectorAll('.nbtn')[2])">Ver todos</div>
+        </div>
+        <div class="carousel" id="home-programs-carousel"></div>
+      </div>
+
+      <!-- NOVIDADES -->
+      <div class="section" style="padding-bottom:20px">
+        <div class="section-hdr">
+          <div class="section-title">🔥 Mais Populares</div>
+          <div class="section-link" onclick="switchTab('store',document.querySelectorAll('.nbtn')[2])">Ver loja</div>
+        </div>
+        <div class="carousel" id="home-popular-carousel"></div>
+      </div>
+
     </div>
 
     <!-- GYM -->
@@ -2476,6 +2510,7 @@ function loadApp(email){
   renderBadges(u.badges||[]);
   renderEvo(u);
   renderStore(u);
+  renderHomePrograms(u);
 }
 
 // ══ HISTORY ══
@@ -4135,6 +4170,56 @@ Para emagrecimento: a distribuição calórica ao longo do dia importa mais que 
     ]
   },
 ];
+
+// ── RENDER HOME PROGRAMS (poster cards) ──
+const PROGRAM_IMAGES = {
+  hypertrophy: 'https://images.unsplash.com/photo-1534367610401-9f5ed68180aa?w=300&q=80',
+  elderly:     'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=300&q=80',
+  pregnancy:   'https://images.unsplash.com/photo-1518611012118-696072aa579a?w=300&q=80',
+  disabled:    'https://images.unsplash.com/photo-1593079831268-3381b0db4a77?w=300&q=80',
+  fatburn:     'https://images.unsplash.com/photo-1476480862126-209bfaa8edc8?w=300&q=80',
+  running10k:  'https://images.unsplash.com/photo-1551698618-1dfe5d97d256?w=300&q=80',
+  posture:     'https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?w=300&q=80',
+  stress:      'https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?w=300&q=80',
+  technique:   'https://images.unsplash.com/photo-1583454110551-21f2fa2afe61?w=300&q=80',
+  nutrition:   'https://images.unsplash.com/photo-1490645935967-10de6ba17061?w=300&q=80',
+};
+
+function posterCard(p, u){
+  const owned = (u?.purchases||[]).includes(p.id);
+  const img = PROGRAM_IMAGES[p.id] || p.img;
+  const badge = owned
+    ? `<div class="poster-card-owned">✅ Seu</div>`
+    : `<div class="poster-card-new">${p.tag}</div>`;
+  const lock = owned ? '' : `<div class="poster-card-lock">🔒 ${p.priceLabel}</div>`;
+
+  return `<div class="poster-card" onclick="openMovie('${p.id}')">
+    <img src="${img}" class="poster-card-img" alt="${p.title}"
+         onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"/>
+    <div class="poster-card-bg" style="display:none;background:linear-gradient(135deg,${p.color}55,#000)">
+      <div class="poster-card-emoji">${p.emoji}</div>
+    </div>
+    ${badge}
+    ${lock}
+    <div class="poster-card-footer">
+      <div class="poster-card-tag" style="color:${p.tagColor}">${p.tag}</div>
+      <div class="poster-card-title">${p.title}</div>
+      <div class="poster-card-sub">${p.subtitle}</div>
+    </div>
+  </div>`;
+}
+
+function renderHomePrograms(u){
+  // Featured: specialized programs
+  const featured = CATALOG.filter(p=>['hypertrophy','elderly','pregnancy','disabled'].includes(p.id));
+  const featEl = document.getElementById('home-programs-carousel');
+  if(featEl) featEl.innerHTML = featured.map(p=>posterCard(p,u)).join('');
+
+  // Popular: top sellers
+  const popular = [...CATALOG].sort((a,b)=>b.students-a.students).slice(0,6);
+  const popEl = document.getElementById('home-popular-carousel');
+  if(popEl) popEl.innerHTML = popular.map(p=>posterCard(p,u)).join('');
+}
 
 // ── RENDER STORE ──
 function renderStore(u){
