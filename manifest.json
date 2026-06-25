@@ -1,14 +1,15 @@
 {
-  "name": "FitQuest – Rennan Dias",
+  "name": "FitQuest — Rennan Dias",
   "short_name": "FitQuest",
-  "description": "Sua assessoria de musculação e corrida gamificada",
+  "description": "Treinos personalizados e acompanhamento profissional com Rennan Dias",
   "start_url": "/fitquest/",
   "scope": "/fitquest/",
   "display": "standalone",
-  "orientation": "portrait",
-  "theme_color": "#ff4d00",
-  "background_color": "#080810",
+  "orientation": "portrait-primary",
+  "theme_color": "#e50914",
+  "background_color": "#0a0a0a",
   "categories": ["fitness", "health", "sports"],
+  "lang": "pt-BR",
   "icons": [
     {
       "src": "icon-192.png",
@@ -23,14 +24,14 @@
       "purpose": "any maskable"
     }
   ],
-  "screenshots": [],
   "shortcuts": [
     {
       "name": "Meu Treino",
       "short_name": "Treino",
-      "description": "Ir direto para o treino de hoje",
+      "description": "Acessar treino de hoje",
       "url": "/fitquest/",
       "icons": [{ "src": "icon-192.png", "sizes": "192x192" }]
     }
-  ]
+  ],
+  "screenshots": []
 }

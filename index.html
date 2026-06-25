@@ -393,6 +393,35 @@ textarea.fi{resize:vertical;min-height:80px;}
 .bcard.earned .bnm{color:var(--t);}
 @media(max-width:380px){.fr{grid-template-columns:1fr;}.stats-row{grid-template-columns:1fr 1fr;}}
 @keyframes pulse{0%,100%{opacity:.5;}50%{opacity:1;}}
+
+/* ══ AVATAR SYSTEM ══ */
+#modal-avatar .modal-bx{border-radius:20px 20px 0 0;max-height:92vh;}
+.av-tabs{display:flex;background:rgba(255,255,255,.06);border-radius:8px;padding:3px;margin-bottom:16px;border:1px solid var(--b);}
+.av-tab{flex:1;padding:10px;border:none;background:transparent;color:var(--mu);font-size:12px;font-weight:700;border-radius:6px;cursor:pointer;transition:all .2s;}
+.av-tab.active{background:var(--r);color:#fff;}
+.av-panel{display:none;}.av-panel.active{display:block;}
+.av-section{margin-bottom:16px;}
+.av-section-title{font-size:10px;font-weight:800;color:var(--r);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:10px;}
+.av-options{display:flex;gap:8px;flex-wrap:wrap;}
+.av-opt{width:44px;height:44px;border-radius:50%;border:3px solid transparent;cursor:pointer;transition:all .2s;display:flex;align-items:center;justify-content:center;font-size:22px;}
+.av-opt.sel{border-color:#fff;box-shadow:0 0 0 2px var(--r);}
+.av-opt-sq{width:44px;height:44px;border-radius:10px;border:3px solid transparent;cursor:pointer;transition:all .2s;display:flex;align-items:center;justify-content:center;font-size:24px;}
+.av-opt-sq.sel{border-color:#fff;box-shadow:0 0 0 2px var(--r);}
+.av-preview{width:100px;height:100px;border-radius:50%;background:var(--s);border:3px solid var(--r);display:flex;align-items:center;justify-content:center;font-size:52px;margin:0 auto 16px;position:relative;overflow:hidden;box-shadow:0 0 0 4px rgba(229,9,20,.2);}
+.av-preview img{width:100%;height:100%;object-fit:cover;border-radius:50%;}
+.av-preview-emoji{font-size:52px;line-height:1;}
+.photo-upload-area{border:2px dashed rgba(229,9,20,.3);border-radius:12px;padding:24px;text-align:center;cursor:pointer;transition:all .2s;background:rgba(229,9,20,.04);}
+.photo-upload-area:hover{border-color:var(--r);background:rgba(229,9,20,.08);}
+.photo-upload-area input{display:none;}
+.photo-crop{display:none;margin-top:12px;}
+.photo-crop img{width:100%;border-radius:8px;max-height:200px;object-fit:cover;}
+
+/* Profile in app header */
+.nav-av-img{width:32px;height:32px;border-radius:4px;object-fit:cover;}
+.profile-card{background:linear-gradient(135deg,rgba(229,9,20,.15),rgba(180,7,16,.05)),var(--s);border:1px solid rgba(229,9,20,.2);border-radius:16px;padding:16px;margin-bottom:16px;display:flex;align-items:center;gap:14px;}
+.profile-av{width:64px;height:64px;border-radius:50%;background:var(--s2);border:3px solid var(--r);display:flex;align-items:center;justify-content:center;font-size:32px;flex-shrink:0;overflow:hidden;cursor:pointer;position:relative;}
+.profile-av img{width:100%;height:100%;object-fit:cover;}
+.profile-av-badge{position:absolute;bottom:0;right:0;width:20px;height:20px;background:var(--r);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;border:2px solid var(--bg);}
 @keyframes fu{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:translateY(0);}}
 </style>
 </head>
@@ -536,16 +565,18 @@ textarea.fi{resize:vertical;min-height:80px;}
   <!-- ETAPA 3: OBJETIVOS -->
   <div id="anam-step-3" class="anam-step" style="display:none">
     <div class="an-sec"><div class="an-stt">🎯 Objetivos e Metas</div>
-      <div class="fg"><label class="fl">Objetivo principal</label>
-        <div class="rg" id="rg-obj">
-          <label class="ro"><input type="radio" name="obj" value="Hipertrofia (ganho de massa muscular)">💪 Hipertrofia</label>
-          <label class="ro"><input type="radio" name="obj" value="Emagrecimento (perda de gordura)">🔥 Emagrecer</label>
-          <label class="ro"><input type="radio" name="obj" value="Condicionamento físico geral">❤️ Condicionamento</label>
-          <label class="ro"><input type="radio" name="obj" value="Força e potência">⚡ Força/Potência</label>
-          <label class="ro"><input type="radio" name="obj" value="Resistência e endurance">🏃 Resistência</label>
-          <label class="ro"><input type="radio" name="obj" value="Saúde e qualidade de vida">🌿 Saúde geral</label>
-          <label class="ro"><input type="radio" name="obj" value="Reabilitação e fortalecimento">🩺 Reabilitação</label>
-          <label class="ro"><input type="radio" name="obj" value="Preparo para competição">🏆 Competição</label>
+      <div class="fg"><label class="fl">Objetivos <span style="font-weight:400;color:var(--mu)">(selecione todos que se aplicam)</span></label>
+        <div class="cg" id="cg-obj">
+          <label class="co"><input type="checkbox" value="Hipertrofia (ganho de massa muscular)"><span class="cb"></span>💪 Hipertrofia — ganho de massa muscular</label>
+          <label class="co"><input type="checkbox" value="Emagrecimento (perda de gordura)"><span class="cb"></span>🔥 Emagrecimento — perda de gordura</label>
+          <label class="co"><input type="checkbox" value="Condicionamento físico geral"><span class="cb"></span>❤️ Condicionamento físico geral</label>
+          <label class="co"><input type="checkbox" value="Força e potência"><span class="cb"></span>⚡ Força e potência</label>
+          <label class="co"><input type="checkbox" value="Resistência e endurance"><span class="cb"></span>🏃 Resistência e endurance</label>
+          <label class="co"><input type="checkbox" value="Saúde e qualidade de vida"><span class="cb"></span>🌿 Saúde e qualidade de vida</label>
+          <label class="co"><input type="checkbox" value="Reabilitação e fortalecimento"><span class="cb"></span>🩺 Reabilitação e fortalecimento</label>
+          <label class="co"><input type="checkbox" value="Preparo para competição"><span class="cb"></span>🏆 Preparo para competição</label>
+          <label class="co"><input type="checkbox" value="Melhorar postura"><span class="cb"></span>🧍 Melhorar postura</label>
+          <label class="co"><input type="checkbox" value="Reduzir estresse e ansiedade"><span class="cb"></span>🧠 Reduzir estresse e ansiedade</label>
         </div>
       </div>
       <div class="fg"><label class="fl">Objetivo secundário</label>
@@ -560,14 +591,15 @@ textarea.fi{resize:vertical;min-height:80px;}
           <option>Preparar para evento específico</option>
         </select>
       </div>
-      <div class="fg"><label class="fl">Meta de corrida</label>
-        <div class="rg" id="rg-mc">
-          <label class="ro"><input type="radio" name="mc" value="Não pratico corrida">Não pratico</label>
-          <label class="ro"><input type="radio" name="mc" value="Completar 5km">5 km</label>
-          <label class="ro"><input type="radio" name="mc" value="Completar 10km">10 km</label>
-          <label class="ro"><input type="radio" name="mc" value="Meia maratona (21km)">Meia (21km)</label>
-          <label class="ro"><input type="radio" name="mc" value="Maratona (42km)">Maratona</label>
-          <label class="ro"><input type="radio" name="mc" value="Melhorar pace/velocidade">Melhorar pace</label>
+      <div class="fg"><label class="fl">Meta de corrida <span style="font-weight:400;color:var(--mu)">(pode marcar mais de uma)</span></label>
+        <div class="cg" id="cg-mc">
+          <label class="co"><input type="checkbox" value="Não pratico corrida"><span class="cb"></span>🚫 Não pratico corrida</label>
+          <label class="co"><input type="checkbox" value="Completar 5km"><span class="cb"></span>🏃 Completar 5 km</label>
+          <label class="co"><input type="checkbox" value="Completar 10km"><span class="cb"></span>🏃 Completar 10 km</label>
+          <label class="co"><input type="checkbox" value="Meia maratona (21km)"><span class="cb"></span>🏅 Meia maratona (21 km)</label>
+          <label class="co"><input type="checkbox" value="Maratona (42km)"><span class="cb"></span>🏆 Maratona (42 km)</label>
+          <label class="co"><input type="checkbox" value="Melhorar pace/velocidade"><span class="cb"></span>⚡ Melhorar pace / velocidade</label>
+          <label class="co"><input type="checkbox" value="Correr sem dor ou lesão"><span class="cb"></span>🩺 Correr sem dor ou lesão</label>
         </div>
       </div>
       <div class="fg"><label class="fl">Prazo desejado para atingir o objetivo</label>
@@ -858,6 +890,25 @@ textarea.fi{resize:vertical;min-height:80px;}
   <div class="app-body">
     <!-- HOME -->
     <div class="tp active" id="tp-home">
+      <!-- PROFILE CARD -->
+      <div class="profile-card" style="margin:8px 0 0;border-radius:0;border-left:none;border-right:none;border-top:none;" id="profile-card-home">
+        <div class="profile-av" onclick="openAvatarModal()" id="home-profile-av">
+          <span id="home-profile-emoji">💪</span>
+          <div class="profile-av-badge">✏️</div>
+        </div>
+        <div style="flex:1">
+          <div style="font-size:11px;color:var(--t2);text-transform:uppercase;letter-spacing:1px;margin-bottom:2px">Bem-vindo de volta</div>
+          <div style="font-size:18px;font-weight:900;letter-spacing:-.3px" id="home-name">Atleta</div>
+          <div style="display:flex;gap:8px;margin-top:4px">
+            <span style="font-size:10px;font-weight:700;background:rgba(229,9,20,.15);padding:3px 9px;border-radius:99px;color:var(--r)">⚡ Nível <span id="app-lv">1</span></span>
+            <span style="font-size:10px;font-weight:700;background:rgba(255,255,255,.07);padding:3px 9px;border-radius:99px">🔥 <span id="app-st">1</span> dias</span>
+          </div>
+        </div>
+        <div style="text-align:right">
+          <div style="font-size:18px;font-weight:900;color:#f39c12">🪙<span id="app-co">0</span></div>
+          <div style="font-size:9px;color:var(--mu)">moedas</div>
+        </div>
+      </div>
       <!-- HERO BANNER -->
       <div class="hero-banner">
         <div class="hero-banner-bg"></div>
@@ -867,7 +918,7 @@ textarea.fi{resize:vertical;min-height:80px;}
         <div class="hero-banner-content">
           <div class="hero-tag">EM DESTAQUE</div>
           <div class="hero-title" id="hero-title">Seu treino<br>de hoje</div>
-          <div class="hero-sub" id="hero-sub">Montado por Rennan Dias com base no seu perfil</div>
+          <div class="hero-sub" id="hero-sub">Montado especialmente para o seu perfil por Rennan Dias</div>
           <div class="hero-btns">
             <button class="btn-hero-play" onclick="switchTab('gym',document.querySelectorAll('.nbtn')[1])">▶ Iniciar treino</button>
             <button class="btn-hero-info" onclick="switchTab('home',document.querySelectorAll('.nbtn')[0])">ℹ Mais info</button>
@@ -1087,6 +1138,88 @@ textarea.fi{resize:vertical;min-height:80px;}
       <button onclick="addTime(15)" style="flex:1;padding:13px;background:rgba(229,9,20,.1);border:1px solid rgba(229,9,20,.2);border-radius:6px;color:var(--r);font-size:12px;font-weight:800;cursor:pointer;">+15s</button>
       <button onclick="skipTimer()" style="flex:2;padding:13px;background:var(--r);border:none;border-radius:6px;color:#fff;font-size:13px;font-weight:900;cursor:pointer;">Pular ⚡</button>
     </div>
+  </div>
+</div>
+
+<!-- AVATAR MODAL -->
+<div class="modal-ov" id="modal-avatar">
+  <div class="modal-bx">
+    <div class="modal-t">
+      <span>🎭 Foto de Perfil</span>
+      <button class="modal-cl" onclick="closeModal('modal-avatar')">✕</button>
+    </div>
+    <!-- Preview -->
+    <div class="av-preview" id="av-preview-main">
+      <span class="av-preview-emoji" id="av-preview-emoji">🏋️</span>
+    </div>
+    <!-- Tabs -->
+    <div class="av-tabs">
+      <button class="av-tab active" id="av-tab-avatar" onclick="switchAvTab('avatar',this)">🎭 Avatar</button>
+      <button class="av-tab" id="av-tab-photo" onclick="switchAvTab('photo',this)">📸 Foto</button>
+    </div>
+
+    <!-- AVATAR PANEL -->
+    <div class="av-panel active" id="av-panel-avatar">
+      <div class="av-section">
+        <div class="av-section-title">Gênero do Avatar</div>
+        <div class="av-options" id="av-gender">
+          <div class="av-opt-sq sel" data-val="masc" onclick="selAvOpt('gender',this)">👨</div>
+          <div class="av-opt-sq" data-val="fem" onclick="selAvOpt('gender',this)">👩</div>
+        </div>
+      </div>
+      <div class="av-section">
+        <div class="av-section-title">Tom de pele</div>
+        <div class="av-options" id="av-skin">
+          <div class="av-opt sel" data-val="light" onclick="selAvOpt('skin',this)" style="background:#FDDBB4;border-color:#FDDBB4"></div>
+          <div class="av-opt" data-val="medium-light" onclick="selAvOpt('skin',this)" style="background:#E8B88A;border-color:#E8B88A"></div>
+          <div class="av-opt" data-val="medium" onclick="selAvOpt('skin',this)" style="background:#C68642;border-color:#C68642"></div>
+          <div class="av-opt" data-val="medium-dark" onclick="selAvOpt('skin',this)" style="background:#8D5524;border-color:#8D5524"></div>
+          <div class="av-opt" data-val="dark" onclick="selAvOpt('skin',this)" style="background:#4A2912;border-color:#4A2912"></div>
+        </div>
+      </div>
+      <div class="av-section">
+        <div class="av-section-title">Cor do cabelo</div>
+        <div class="av-options" id="av-hair">
+          <div class="av-opt sel" data-val="black" onclick="selAvOpt('hair',this)" style="background:#1a1a1a;border-color:#1a1a1a"></div>
+          <div class="av-opt" data-val="brown" onclick="selAvOpt('hair',this)" style="background:#6B4226;border-color:#6B4226"></div>
+          <div class="av-opt" data-val="blonde" onclick="selAvOpt('hair',this)" style="background:#D4A017;border-color:#D4A017"></div>
+          <div class="av-opt" data-val="red" onclick="selAvOpt('hair',this)" style="background:#A52A2A;border-color:#A52A2A"></div>
+          <div class="av-opt" data-val="gray" onclick="selAvOpt('hair',this)" style="background:#888;border-color:#888"></div>
+          <div class="av-opt" data-val="white" onclick="selAvOpt('hair',this)" style="background:#f0f0f0;border-color:#ccc"></div>
+          <div class="av-opt" data-val="bald" onclick="selAvOpt('hair',this)" style="background:transparent;border:2px dashed #555;font-size:18px" title="Careca">🚫</div>
+        </div>
+      </div>
+      <div class="av-section">
+        <div class="av-section-title">Estilo do Avatar</div>
+        <div class="av-options" id="av-style">
+          <div class="av-opt-sq sel" data-val="athlete" onclick="selAvOpt('style',this)">🏋️</div>
+          <div class="av-opt-sq" data-val="runner" onclick="selAvOpt('style',this)">🏃</div>
+          <div class="av-opt-sq" data-val="strong" onclick="selAvOpt('style',this)">💪</div>
+          <div class="av-opt-sq" data-val="yoga" onclick="selAvOpt('style',this)">🧘</div>
+          <div class="av-opt-sq" data-val="cyclist" onclick="selAvOpt('style',this)">🚴</div>
+          <div class="av-opt-sq" data-val="swimmer" onclick="selAvOpt('style',this)">🏊</div>
+          <div class="av-opt-sq" data-val="fighter" onclick="selAvOpt('style',this)">🥊</div>
+          <div class="av-opt-sq" data-val="trophy" onclick="selAvOpt('style',this)">🏆</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PHOTO PANEL -->
+    <div class="av-panel" id="av-panel-photo">
+      <div class="photo-upload-area" onclick="document.getElementById('photo-input').click()">
+        <input type="file" id="photo-input" accept="image/*" onchange="handlePhotoUpload(event)"/>
+        <div style="font-size:36px;margin-bottom:8px">📸</div>
+        <div style="font-size:14px;font-weight:700;margin-bottom:4px">Toque para escolher uma foto</div>
+        <div style="font-size:11px;color:var(--mu)">Da galeria ou câmera do celular · JPG, PNG</div>
+      </div>
+      <div class="photo-crop" id="photo-crop">
+        <div style="font-size:11px;color:var(--t2);margin-bottom:8px;text-align:center">Prévia da foto:</div>
+        <img id="photo-preview" src="" style="width:100%;border-radius:8px;max-height:200px;object-fit:cover;"/>
+        <button class="btn-p" onclick="usePhoto()" style="margin-top:10px">✅ Usar esta foto</button>
+      </div>
+    </div>
+
+    <button class="btn-p" onclick="saveAvatar()" style="margin-top:16px">💾 Salvar perfil</button>
   </div>
 </div>
 
@@ -1590,7 +1723,7 @@ async function submitAnam(){
     tempo:gr('tempo'),modal:gr('modal'),dias:gr('dias'),dur:gr('dur'),
     local:gr('local'),periodo:gr('periodo'),
     // Etapa 3 - Objetivos
-    obj:gr('obj'),obj2:gv('a-obj2'),mc:gr('mc'),prazo:gr('prazo'),motiv:gv('a-motiv'),
+    obj:gc('cg-obj'),obj2:gv('a-obj2'),mc:gc('cg-mc'),prazo:gr('prazo'),motiv:gv('a-motiv'),
     // Etapa 4 - Saúde
     saude:gc('cg-saude'),med:gr('med'),medDesc:gv('a-med'),cir:gv('a-cir'),ativo:gr('ativo'),
     // Etapa 5 - Lesões (CRÍTICO para adaptação de treino)
@@ -1639,8 +1772,8 @@ ESTRUTURA DE TREINO:
 - Local: ${an.local||'Academia'} | Período: ${an.periodo||'Indiferente'}
 
 OBJETIVOS:
-- Principal: ${an.obj||'Saúde geral'} | Secundário: ${an.obj2||'Nenhum'}
-- Meta de corrida: ${an.mc||'Não pratica'} | Prazo: ${an.prazo||'Sem prazo'}
+- Objetivos: ${(an.obj||[]).join(', ')||'Saúde geral'} | Secundário: ${an.obj2||'Nenhum'}
+- Meta de corrida: ${(an.mc||[]).join(', ')||'Não pratica'} | Prazo: ${an.prazo||'Sem prazo'}
 - Motivação: ${an.motiv||'Não informado'}
 
 SAÚDE:
@@ -1798,15 +1931,18 @@ function loadApp(email){
   DB.set('fq_users',users);
   // Nav
   document.getElementById('streak-val').textContent=u.streak||1;
-  const av=document.getElementById('nav-av');if(av)av.textContent=u.name?u.name[0].toUpperCase():'?';
+  // Home profile card
+  const homeName=document.getElementById('home-name');if(homeName)homeName.textContent=u.name||'Atleta';
+  updateAvatarDisplays(u);
   // XP
   const xpN=(u.level||1)*1000;
-  document.getElementById('app-lv').textContent=u.level||1;
-  document.getElementById('app-xp').textContent=(u.xp||0).toLocaleString()+' XP';
-  document.getElementById('app-xpn').textContent=xpN.toLocaleString()+' XP';
-  document.getElementById('app-xpb').style.width=Math.min(((u.xp||0)/xpN)*100,100)+'%';
-  document.getElementById('app-co').textContent=u.coins||0;
-  document.getElementById('app-nm-small').textContent=u.name||'Atleta';
+  const lvEl=document.getElementById('app-lv');if(lvEl)lvEl.textContent=u.level||1;
+  const stEl=document.getElementById('app-st');if(stEl)stEl.textContent=u.streak||1;
+  const coEl=document.getElementById('app-co');if(coEl)coEl.textContent=u.coins||0;
+  const xpEl=document.getElementById('app-xp');if(xpEl)xpEl.textContent=(u.xp||0).toLocaleString()+' XP';
+  const xpnEl=document.getElementById('app-xpn');if(xpnEl)xpnEl.textContent=xpN.toLocaleString()+' XP';
+  const xpbEl=document.getElementById('app-xpb');if(xpbEl)xpbEl.style.width=Math.min(((u.xp||0)/xpN)*100,100)+'%';
+  const nmEl=document.getElementById('app-nm-small');if(nmEl)nmEl.textContent=u.name||'Atleta';
   // Stats
   document.getElementById('s-tr').textContent=u.stats?.treinos||0;
   document.getElementById('s-km').textContent=u.stats?.distancia||0;
@@ -2133,13 +2269,149 @@ function openAnam(email){
     Dor: ${a.dorInt||'Sem dor'} | ${a.lesaoDet||'Sem detalhes'}
   </div>
   <div class="an-vw">${row('Nome',u.name)}${row('E-mail',u.email)}${row('Nascimento',a.nasc)}${row('Sexo',a.sexo)}${row('Peso',a.peso?a.peso+'kg':'—')}${row('Altura',a.altura?a.altura+'cm':'—')}${row('Profissão',a.prof)}${row('Ativ. Trabalho',a.atvTrab)}</div>
-  <div class="an-vw">${row('Nível',a.tempo)}${row('Modalidade',a.modal)}${row('Dias/sem',a.dias)}${row('Duração',a.dur)}${row('Local',a.local)}${row('Período',a.periodo)}${row('Objetivo',a.obj)}${row('Obj. Secundário',a.obj2)}${row('Meta corrida',a.mc)}${row('Prazo',a.prazo)}</div>
+  <div class="an-vw">${row('Nível',a.tempo)}${row('Modalidade',a.modal)}${row('Dias/sem',a.dias)}${row('Duração',a.dur)}${row('Local',a.local)}${row('Período',a.periodo)}${row('Objetivos',(a.obj||[]).join(', '))}${row('Obj. Secundário',a.obj2)}${row('Meta corrida',(a.mc||[]).join(', '))}${row('Prazo',a.prazo)}</div>
   <div class="an-vw">${row('Lesões',(a.lesoes||[]).join(', '))}${row('Intensidade dor',a.dorInt)}${row('Tempo de dor',a.dorTempo)}${row('Fisioterapia',a.fisio)}${row('Detalhes',a.lesaoDet)}</div>
   <div class="an-vw">${row('Condições',(a.saude||[]).join(', '))}${row('Medicamentos',a.medDesc)}${row('Cirurgias',a.cir)}${row('Histórico ativo',a.ativo)}</div>
   <div class="an-vw">${row('Biótipo',a.biotipo)}${row('Gordura',a.gordura)}${row('Foco',( a.foco||[]).join(', '))}${row('Suplementação',(a.supl||[]).join(', '))}</div>
   <div class="an-vw">${row('Sono',a.sono)}${row('Qualidade sono',a.qualSono)}${row('Estresse',a.stress)}${row('Alimentação',a.alim)}${row('Hidratação',a.agua)}${row('Hábitos',(a.habitos||[]).join(', '))}${row('Obs',a.obs)}</div>
 `;
   document.getElementById('modal-anam').classList.add('open');
+}
+
+// ══ AVATAR SYSTEM ══
+const AVATAR_EMOJIS = {
+  masc:{athlete:'🏋️',runner:'🏃',strong:'💪',yoga:'🧘',cyclist:'🚴',swimmer:'🏊',fighter:'🥊',trophy:'🏆'},
+  fem:{athlete:'🏋️‍♀️',runner:'🏃‍♀️',strong:'💪',yoga:'🧘‍♀️',cyclist:'🚴‍♀️',swimmer:'🏊‍♀️',fighter:'🥊',trophy:'🏆'}
+};
+
+let avState = {gender:'masc', skin:'light', hair:'black', style:'athlete', photoData:null};
+let avTabActive = 'avatar';
+
+function openAvatarModal(){
+  const u = getU();
+  if(u && u.avatar){
+    avState = {...avState, ...u.avatar};
+  }
+  loadAvState();
+  document.getElementById('modal-avatar').classList.add('open');
+}
+
+function loadAvState(){
+  // Update preview
+  updateAvPreview();
+  // Update selections
+  document.querySelectorAll('#av-gender .av-opt-sq').forEach(o=>{
+    o.classList.toggle('sel', o.dataset.val===avState.gender);
+  });
+  document.querySelectorAll('#av-skin .av-opt').forEach(o=>{
+    o.classList.toggle('sel', o.dataset.val===avState.skin);
+  });
+  document.querySelectorAll('#av-hair .av-opt').forEach(o=>{
+    o.classList.toggle('sel', o.dataset.val===avState.hair);
+  });
+  document.querySelectorAll('#av-style .av-opt-sq').forEach(o=>{
+    o.classList.toggle('sel', o.dataset.val===avState.style);
+  });
+}
+
+function selAvOpt(type, el){
+  const group = {
+    gender:'#av-gender .av-opt-sq',
+    skin:'#av-skin .av-opt',
+    hair:'#av-hair .av-opt',
+    style:'#av-style .av-opt-sq'
+  };
+  document.querySelectorAll(group[type]).forEach(o=>o.classList.remove('sel'));
+  el.classList.add('sel');
+  avState[type] = el.dataset.val;
+  avState.photoData = null; // clear photo if avatar selected
+  updateAvPreview();
+}
+
+function updateAvPreview(){
+  const prev = document.getElementById('av-preview-main');
+  const emojiEl = document.getElementById('av-preview-emoji');
+  if(!prev || !emojiEl) return;
+  if(avState.photoData){
+    prev.innerHTML = `<img src="${avState.photoData}" style="width:100%;height:100%;object-fit:cover;border-radius:50%"/>`;
+  } else {
+    const emoji = AVATAR_EMOJIS[avState.gender]?.[avState.style] || '💪';
+    prev.innerHTML = `<span style="font-size:52px;line-height:1">${emoji}</span>`;
+  }
+}
+
+function switchAvTab(tab, btn){
+  avTabActive = tab;
+  document.querySelectorAll('.av-tab').forEach(b=>b.classList.remove('active'));
+  document.querySelectorAll('.av-panel').forEach(p=>p.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('av-panel-'+tab).classList.add('active');
+}
+
+function handlePhotoUpload(e){
+  const file = e.target.files[0];
+  if(!file) return;
+  if(file.size > 5 * 1024 * 1024){
+    alert('Foto muito grande! Use uma imagem menor que 5MB.');
+    return;
+  }
+  const reader = new FileReader();
+  reader.onload = function(ev){
+    const data = ev.target.result;
+    document.getElementById('photo-preview').src = data;
+    document.getElementById('photo-crop').style.display = 'block';
+    avState.photoData = data;
+    updateAvPreview();
+  };
+  reader.readAsDataURL(file);
+}
+
+function usePhoto(){
+  updateAvPreview();
+  alert('✅ Foto selecionada! Clique em Salvar para confirmar.');
+}
+
+function saveAvatar(){
+  const email = DB.get('fq_cur');
+  const users = DB.get('fq_users')||{};
+  if(!users[email]) return;
+  users[email].avatar = {...avState};
+  DB.set('fq_users', users);
+  syncU(users[email]);
+  // Update all avatar displays
+  updateAvatarDisplays(users[email]);
+  closeModal('modal-avatar');
+}
+
+function updateAvatarDisplays(u){
+  const emoji = u.avatar?.photoData ? null : (AVATAR_EMOJIS[u.avatar?.gender||'masc']?.[u.avatar?.style||'athlete'] || '💪');
+  const photoData = u.avatar?.photoData;
+
+  // Home profile card
+  const homeAv = document.getElementById('home-profile-av');
+  if(homeAv){
+    if(photoData){
+      homeAv.innerHTML = `<img src="${photoData}" style="width:100%;height:100%;object-fit:cover;border-radius:50%"/><div class="profile-av-badge">✏️</div>`;
+    } else {
+      homeAv.innerHTML = `<span style="font-size:32px">${emoji}</span><div class="profile-av-badge">✏️</div>`;
+    }
+    homeAv.onclick = openAvatarModal;
+  }
+
+  // Nav avatar
+  const navAv = document.getElementById('nav-av');
+  if(navAv){
+    if(photoData){
+      navAv.innerHTML = `<img src="${photoData}" class="nav-av-img"/>`;
+    } else {
+      navAv.textContent = u.name?u.name[0].toUpperCase():'?';
+    }
+  }
+}
+
+function getAvatarEmoji(u){
+  if(u?.avatar?.photoData) return null;
+  return AVATAR_EMOJIS[u?.avatar?.gender||'masc']?.[u?.avatar?.style||'athlete'] || '💪';
 }
 
 // ══ PWA ══
