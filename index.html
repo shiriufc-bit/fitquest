@@ -429,10 +429,9 @@ textarea.fi{resize:vertical;min-height:80px;}
 
 <!-- SPLASH -->
 <div id="sc-splash" class="screen active">
-  <div class="splash-hero-bg"></div>
+  <img src="https://images.unsplash.com/photo-1517836357463-d25dfeac3438?w=800&q=80" alt="Fitness" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center top;filter:brightness(.35)"/>
   <div class="splash-glow"></div>
   <div class="splash-noise"></div>
-  <div class="splash-athlete"><div class="splash-athlete-emoji">🏋️</div></div>
   <div class="splash-bg"></div>
   <div class="splash-content">
     <div class="splash-logo"><span class="r">FIT</span>QUEST</div>
@@ -911,9 +910,8 @@ textarea.fi{resize:vertical;min-height:80px;}
       </div>
       <!-- HERO BANNER -->
       <div class="hero-banner">
-        <div class="hero-banner-bg"></div>
+        <img src="https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=800&q=80" alt="Treino" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center top;filter:brightness(.45)"/>
         <div class="hero-banner-glow"></div>
-        <div class="hero-banner-athlete"><div class="hero-banner-emoji">🏋️</div></div>
         <div class="hero-banner-overlay"></div>
         <div class="hero-banner-content">
           <div class="hero-tag">EM DESTAQUE</div>
@@ -931,8 +929,8 @@ textarea.fi{resize:vertical;min-height:80px;}
         <div class="section-hdr"><div class="section-title">Continue treinando</div></div>
         <div class="carousel" id="continue-carousel">
           <div class="cw-card" onclick="switchTab('gym',document.querySelectorAll('.nbtn')[1])">
-            <div class="cw-thumb" style="background:linear-gradient(135deg,#1a0000,#0d0000)">
-              <span style="font-size:52px">🏋️</span>
+            <div class="cw-thumb" style="background:#000;padding:0;overflow:hidden">
+              <img src="https://images.unsplash.com/photo-1534367610401-9f5ed68180aa?w=600&q=80" alt="Musculação" style="width:100%;height:100%;object-fit:cover;filter:brightness(.7)"/>
               <div class="cw-bar" id="cw-bar-gym" style="width:0%"></div>
             </div>
             <div class="cw-body">
@@ -945,8 +943,8 @@ textarea.fi{resize:vertical;min-height:80px;}
             </div>
           </div>
           <div class="cw-card" onclick="switchTab('run',document.querySelectorAll('.nbtn')[2])">
-            <div class="cw-thumb" style="background:linear-gradient(135deg,#001a05,#000d02)">
-              <span style="font-size:52px">🏃</span>
+            <div class="cw-thumb" style="background:#000;padding:0;overflow:hidden">
+              <img src="https://images.unsplash.com/photo-1476480862126-209bfaa8edc8?w=600&q=80" alt="Corrida" style="width:100%;height:100%;object-fit:cover;filter:brightness(.7)"/>
               <div class="cw-bar" id="cw-bar-run" style="width:0%"></div>
             </div>
             <div class="cw-body">
@@ -1012,7 +1010,7 @@ textarea.fi{resize:vertical;min-height:80px;}
     <div class="tp" id="tp-gym">
       <div class="wk-page">
         <div class="wk-hero" id="gym-hero">
-          <div class="wk-hero-bg">🏋️</div>
+          <img src="https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=400&q=80" alt="Treino" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;filter:brightness(.4)"/>
           <div class="wk-hero-glow"></div>
           <div class="wk-hero-overlay"></div>
           <div class="wk-hero-content">
@@ -1034,12 +1032,15 @@ textarea.fi{resize:vertical;min-height:80px;}
     <!-- RUN -->
     <div class="tp" id="tp-run">
       <div style="padding-top:60px">
-        <div class="run-hero">
+        <div class="run-hero" style="position:relative;overflow:hidden">
+      <img src="https://images.unsplash.com/photo-1476480862126-209bfaa8edc8?w=600&q=80" alt="Corrida" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;filter:brightness(.25);border-radius:10px"/>
+      <div style="position:relative;z-index:1">
           <div style="font-size:10px;color:var(--r);font-weight:800;text-transform:uppercase;letter-spacing:2px;margin-bottom:6px" id="run-tag">CORRIDA</div>
           <div style="font-size:22px;font-weight:900;margin-bottom:4px" id="run-title">Programa de Corrida</div>
           <div style="font-size:12px;color:var(--t2);margin-bottom:12px" id="run-sub">Carregando...</div>
           <div style="background:rgba(255,255,255,.1);border-radius:99px;height:3px;overflow:hidden"><div id="run-prog" style="height:100%;border-radius:99px;background:var(--r);width:0%"></div></div>
         </div>
+      </div>
         <div style="padding:0 20px;margin-bottom:14px">
           <div class="wk-weeks" id="run-wtabs"></div>
         </div>
@@ -1050,8 +1051,17 @@ textarea.fi{resize:vertical;min-height:80px;}
     <!-- RANKING -->
     <div class="tp" id="tp-rank">
       <div style="padding-top:70px">
-        <div style="padding:0 20px;margin-bottom:20px">
-          <div style="font-size:28px;font-weight:900;margin-bottom:4px">📊 Ranking</div>
+        <!-- Ranking hero image -->
+        <div style="height:160px;position:relative;overflow:hidden;margin-bottom:0">
+          <img src="https://images.unsplash.com/photo-1567698187872-6f7cf312b548?w=800&q=80" alt="Ranking" style="width:100%;height:100%;object-fit:cover;filter:brightness(.35)"/>
+          <div style="position:absolute;inset:0;background:linear-gradient(transparent,var(--bg));display:flex;align-items:flex-end;padding:16px 20px">
+            <div>
+              <div style="font-size:28px;font-weight:900;margin-bottom:2px">📊 Ranking</div>
+              <div style="font-size:12px;color:var(--t2)">Sua posição: <span style="color:var(--r);font-weight:800">#<span id="my-rank">–</span></span></div>
+            </div>
+          </div>
+        </div>
+        <div style="padding:0 20px;margin-bottom:20px;margin-top:12px">
           <div style="font-size:13px;color:var(--t2)">Sua posição: <span style="color:var(--r);font-weight:800">#<span id="my-rank">–</span></span></div>
         </div>
         <div id="ranking-full"></div>
@@ -1061,9 +1071,16 @@ textarea.fi{resize:vertical;min-height:80px;}
     <!-- PRs -->
     <div class="tp" id="tp-prs">
       <div style="padding-top:70px">
-        <div style="padding:0 20px;margin-bottom:20px">
-          <div style="font-size:28px;font-weight:900;margin-bottom:4px">⭐ Recordes</div>
-          <div style="font-size:13px;color:var(--t2)"><span id="pr-count">0</span> recordes pessoais</div>
+        <div style="height:140px;position:relative;overflow:hidden">
+          <img src="https://images.unsplash.com/photo-1549576490-b0b4831ef60a?w=800&q=80" alt="Recordes" style="width:100%;height:100%;object-fit:cover;filter:brightness(.3)"/>
+          <div style="position:absolute;inset:0;background:linear-gradient(transparent,var(--bg));display:flex;align-items:flex-end;padding:16px 20px">
+            <div>
+              <div style="font-size:28px;font-weight:900;margin-bottom:2px">⭐ Recordes Pessoais</div>
+              <div style="font-size:13px;color:var(--t2)"><span id="pr-count">0</span> recordes</div>
+            </div>
+          </div>
+        </div>
+        <div style="padding:0 20px;margin-bottom:20px;margin-top:12px">
         </div>
         <div style="padding:0 20px" id="prs-list"></div>
         <div style="padding:12px 20px">
@@ -1074,9 +1091,20 @@ textarea.fi{resize:vertical;min-height:80px;}
 
     <!-- BADGES -->
     <div class="tp" id="tp-badges">
-      <div style="padding-top:70px;padding:70px 20px 20px">
+      <div>
+        <div style="padding-top:70px"></div>
+        <div style="height:140px;position:relative;overflow:hidden">
+          <img src="https://images.unsplash.com/photo-1546519638-68e109498ffc?w=800&q=80" alt="Conquistas" style="width:100%;height:100%;object-fit:cover;filter:brightness(.3)"/>
+          <div style="position:absolute;inset:0;background:linear-gradient(transparent,var(--bg));display:flex;align-items:flex-end;padding:16px 20px">
+            <div>
+              <div style="font-size:28px;font-weight:900;margin-bottom:2px">🏆 Conquistas</div>
+              <div style="font-size:13px;color:var(--t2)"><span id="badges-count">0/8</span> desbloqueadas</div>
+            </div>
+          </div>
+        </div>
+        <div style="padding:16px 20px 20px">
         <div style="margin-bottom:20px">
-          <div style="font-size:28px;font-weight:900;margin-bottom:4px">🏆 Conquistas</div>
+          <div style="font-size:28px;font-weight:900;margin-bottom:4px;display:none">🏆 Conquistas</div>
           <div style="font-size:13px;color:var(--t2)"><span id="badges-count">0/8</span> desbloqueadas</div>
           <div class="pbb" style="margin-top:10px"><div class="pbf" id="badges-bar" style="width:0%"></div></div>
         </div>
@@ -1084,6 +1112,7 @@ textarea.fi{resize:vertical;min-height:80px;}
         <div class="bgrid" id="badges-earned" style="margin-bottom:20px"></div>
         <div class="stl">Bloqueadas</div>
         <div class="bgrid" id="badges-locked"></div>
+      </div>
       </div>
     </div>
   </div>
@@ -2070,7 +2099,9 @@ function renderHistory(u){
   const el=document.getElementById('history-carousel');
   if(!hist.length){el.innerHTML='<div style="padding:0 20px;font-size:12px;color:var(--mu)">Nenhum treino ainda. Bora começar! 🎬</div>';return;}
   el.innerHTML=hist.map(h=>`<div class="cw-card" style="width:200px">
-    <div class="cw-thumb" style="height:100px;background:linear-gradient(135deg,#1a0000,#0d0000);font-size:40px">${h.exercises?.[0]?'🏋️':'🏃'}</div>
+    <div class="cw-thumb" style="height:100px;background:#000;padding:0;overflow:hidden">
+    <img src="${h.exercises?.[0]?'https://images.unsplash.com/photo-1583454110551-21f2fa2afe61?w=400&q=80':'https://images.unsplash.com/photo-1476480862126-209bfaa8edc8?w=600&q=80'}" alt="Treino" style="width:100%;height:100%;object-fit:cover;filter:brightness(.6)"/>
+  </div>
     <div class="cw-body">
       <div class="cw-title">${h.day}</div>
       <div class="cw-sub">${h.date} · ${h.week}</div>
@@ -2133,6 +2164,22 @@ function renderPerfil(u){
       br.innerHTML='<div style="font-size:12px;color:var(--mu)">Nenhuma conquista ainda. Continue treinando! 💪</div>';
     }
   }
+}
+
+// ══ EXERCISE IMAGES BY MUSCLE GROUP ══
+function getExImg(muscle){
+  const m = (muscle||'').toLowerCase();
+  if(m.includes('peito'))         return 'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=400&q=80';
+  if(m.includes('costas'))        return 'https://images.unsplash.com/photo-1530822847156-5df684ec5933?w=400&q=80';
+  if(m.includes('ombro'))         return 'https://images.unsplash.com/photo-1581009146145-b5ef050c2e1e?w=400&q=80';
+  if(m.includes('bíceps')||m.includes('biceps')) return 'https://images.unsplash.com/photo-1583454110551-21f2fa2afe61?w=400&q=80';
+  if(m.includes('tríceps')||m.includes('triceps')) return 'https://images.unsplash.com/photo-1599058918144-1ffabb6ab9a0?w=400&q=80';
+  if(m.includes('quadr')||m.includes('perna')||m.includes('glút')||m.includes('posterior')) return 'https://images.unsplash.com/photo-1574680178050-55c6a6a96e0a?w=400&q=80';
+  if(m.includes('panturrilha'))   return 'https://images.unsplash.com/photo-1434682881908-b43d0467b798?w=400&q=80';
+  if(m.includes('abdôm')||m.includes('core')) return 'https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?w=400&q=80';
+  if(m.includes('corrid')||m.includes('run')) return 'https://images.unsplash.com/photo-1476480862126-209bfaa8edc8?w=400&q=80';
+  // default
+  return 'https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=400&q=80';
 }
 
 // ══ RANKING CAROUSEL ══
@@ -2208,10 +2255,13 @@ function renderGymDay(w,d,u){
         <span class="ep-chv">▾</span>
       </div>
       <div class="ep-body">
-        <div class="ep-thumb">
-          <div style="font-size:56px;line-height:1">${ex.emoji||'🏋️'}</div>
-          <div style="font-size:13px;font-weight:800">${ex.name}</div>
-          <div style="font-size:10px;color:var(--r);font-weight:700;background:rgba(229,9,20,.1);padding:3px 10px;border-radius:4px">${ex.muscle}</div>
+        <div class="ep-thumb" style="position:relative;overflow:hidden">
+          <img src="${getExImg(ex.muscle)}" alt="${ex.name}" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;filter:brightness(.4)"/>
+          <div style="position:relative;z-index:1;display:flex;flex-direction:column;align-items:center;gap:6px">
+            <div style="font-size:44px;line-height:1;filter:drop-shadow(0 2px 8px rgba(0,0,0,.8))">${ex.emoji||'🏋️'}</div>
+            <div style="font-size:13px;font-weight:800;text-shadow:0 2px 8px rgba(0,0,0,.8)">${ex.name}</div>
+            <div style="font-size:10px;color:var(--r);font-weight:700;background:rgba(229,9,20,.15);padding:3px 10px;border-radius:4px;border:1px solid rgba(229,9,20,.3)">${ex.muscle}</div>
+          </div>
         </div>
         <div class="ep-obs">💡 ${ex.obs}</div>
         <table class="sets-tbl">
