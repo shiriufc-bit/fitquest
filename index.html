@@ -1088,6 +1088,99 @@ textarea.fi{resize:vertical;min-height:80px;}
     </div>
   </div>
 
+    <!-- PERFIL -->
+    <div class="tp" id="tp-perfil">
+      <!-- Navbar transparente nesta aba - foto começa DEPOIS da navbar -->
+      <div style="height:56px"></div><!-- espaço exato da navbar -->
+
+      <!-- Hero do perfil -->
+      <div style="background:linear-gradient(180deg,rgba(229,9,20,.2) 0%,transparent 100%);padding-bottom:20px;text-align:center;padding-top:24px">
+        <!-- Foto/Avatar centralizado, abaixo da navbar -->
+        <div onclick="openAvatarModal()" style="position:relative;width:120px;height:120px;border-radius:50%;background:#222;border:4px solid var(--r);display:flex;align-items:center;justify-content:center;font-size:56px;margin:0 auto 14px;overflow:hidden;cursor:pointer;box-shadow:0 0 0 6px rgba(229,9,20,.2),0 8px 32px rgba(0,0,0,.5)" id="perfil-av-main">
+          <span id="perfil-av-emoji">💪</span>
+          <div style="position:absolute;bottom:4px;right:4px;width:28px;height:28px;background:var(--r);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;border:2px solid #0a0a0a">✏️</div>
+        </div>
+        <div style="font-size:22px;font-weight:900;margin-bottom:4px" id="perfil-name">Atleta</div>
+        <div style="font-size:12px;color:var(--t2);margin-bottom:18px" id="perfil-email-disp"></div>
+        <button onclick="openAvatarModal()" style="background:var(--r);border:none;border-radius:8px;padding:11px 28px;color:#fff;font-size:13px;font-weight:800;cursor:pointer;box-shadow:0 4px 16px var(--rg)">
+          📸 Alterar foto / avatar
+        </button>
+      </div>
+
+      <!-- Stats -->
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;padding:16px 20px">
+        <div style="background:var(--s);border:1px solid var(--b);border-radius:12px;padding:14px;text-align:center">
+          <div style="font-size:22px;font-weight:900;color:var(--r)" id="perfil-treinos">0</div>
+          <div style="font-size:10px;color:var(--t2);margin-top:2px">Treinos</div>
+        </div>
+        <div style="background:var(--s);border:1px solid var(--b);border-radius:12px;padding:14px;text-align:center">
+          <div style="font-size:22px;font-weight:900;color:#3498db" id="perfil-km">0</div>
+          <div style="font-size:10px;color:var(--t2);margin-top:2px">km rodados</div>
+        </div>
+        <div style="background:var(--s);border:1px solid var(--b);border-radius:12px;padding:14px;text-align:center">
+          <div style="font-size:22px;font-weight:900;color:#f39c12" id="perfil-streak">0</div>
+          <div style="font-size:10px;color:var(--t2);margin-top:2px">Dias seguidos</div>
+        </div>
+      </div>
+
+      <!-- XP/Nível -->
+      <div style="margin:0 20px 14px;background:var(--s);border:1px solid var(--b);border-radius:14px;padding:16px">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+          <div>
+            <div style="font-size:11px;color:var(--t2)">Nível atual</div>
+            <div style="font-size:20px;font-weight:900;color:var(--r)">⚡ Nível <span id="perfil-lv">1</span></div>
+          </div>
+          <div style="text-align:right">
+            <div style="font-size:11px;color:var(--t2)">Moedas</div>
+            <div style="font-size:20px;font-weight:900;color:#f39c12">🪙 <span id="perfil-coins">0</span></div>
+          </div>
+        </div>
+        <div style="background:rgba(255,255,255,.08);border-radius:99px;height:6px;overflow:hidden">
+          <div id="perfil-xpbar" style="height:100%;border-radius:99px;background:var(--r);width:0%;transition:width 1s;box-shadow:0 0 8px var(--rg)"></div>
+        </div>
+        <div style="display:flex;justify-content:space-between;font-size:10px;color:var(--mu);margin-top:5px">
+          <span id="perfil-xp">0 XP</span><span id="perfil-xpn">1000 XP</span>
+        </div>
+      </div>
+
+      <!-- Badges conquistadas -->
+      <div style="padding:0 20px;margin-bottom:14px">
+        <div style="font-size:10px;font-weight:800;color:var(--mu);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:10px">Conquistas</div>
+        <div style="display:flex;gap:8px;overflow-x:auto;padding-bottom:4px;scrollbar-width:none" id="perfil-badges-row"></div>
+      </div>
+
+      <!-- Menu de configurações -->
+      <div style="padding:0 20px;margin-bottom:100px">
+        <div style="font-size:10px;font-weight:800;color:var(--mu);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:10px">Configurações</div>
+        <div style="background:var(--s);border:1px solid var(--b);border-radius:14px;overflow:hidden">
+          <div onclick="openAvatarModal()" style="padding:14px 16px;border-bottom:1px solid var(--b);display:flex;align-items:center;gap:12px;cursor:pointer">
+            <span style="font-size:20px">🎭</span>
+            <div style="flex:1">
+              <div style="font-size:13px;font-weight:700">Foto e Avatar</div>
+              <div style="font-size:10px;color:var(--mu)">Personalize como aparece no app</div>
+            </div>
+            <span style="color:var(--mu);font-size:18px">›</span>
+          </div>
+          <div onclick="switchTab('badges',document.querySelectorAll('.nbtn')[4])" style="padding:14px 16px;border-bottom:1px solid var(--b);display:flex;align-items:center;gap:12px;cursor:pointer">
+            <span style="font-size:20px">🏆</span>
+            <div style="flex:1">
+              <div style="font-size:13px;font-weight:700">Minhas Conquistas</div>
+              <div style="font-size:10px;color:var(--mu)">Ver todos os badges desbloqueados</div>
+            </div>
+            <span style="color:var(--mu);font-size:18px">›</span>
+          </div>
+          <div onclick="doLogout()" style="padding:14px 16px;display:flex;align-items:center;gap:12px;cursor:pointer">
+            <span style="font-size:20px">🚪</span>
+            <div style="flex:1">
+              <div style="font-size:13px;font-weight:700;color:#ff6b6b">Sair da conta</div>
+              <div style="font-size:10px;color:var(--mu)">Fazer logout do FitQuest</div>
+            </div>
+            <span style="color:var(--mu);font-size:18px">›</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
   <!-- BOTTOM NAV -->
   <div class="bnav">
     <button class="nbtn active" onclick="switchTab('home',this)"><span class="nico">🏠</span><span class="nlbl">Início</span><div class="ndot"></div></button>
@@ -2217,17 +2310,13 @@ function switchTab(name,btn){
   if(btn)btn.classList.add('active');
   window.scrollTo(0,0);
   document.getElementById('nav-menu').classList.remove('open');
-  // Na aba de perfil a navbar fica transparente para não tampar a foto
-  const nav = document.getElementById('app-nav');
+  // Na aba perfil: navbar transparente para não tampar a foto
+  const nav=document.getElementById('app-nav');
   if(nav){
     if(name==='perfil'){
-      nav.style.background='transparent';
-      nav.style.borderBottom='none';
-      nav.style.backdropFilter='none';
+      nav.style.cssText='background:transparent!important;border-bottom:none!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important;';
     } else {
-      nav.style.background='';
-      nav.style.borderBottom='';
-      nav.style.backdropFilter='';
+      nav.style.cssText='';
     }
   }
 }
