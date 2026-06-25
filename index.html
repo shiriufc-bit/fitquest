@@ -1093,9 +1093,9 @@ textarea.fi{resize:vertical;min-height:80px;}
     <button class="nbtn active" onclick="switchTab('home',this)"><span class="nico">🏠</span><span class="nlbl">Início</span><div class="ndot"></div></button>
     <button class="nbtn" onclick="switchTab('gym',this)"><span class="nico">🏋️</span><span class="nlbl">Treino</span><div class="ndot"></div></button>
     <button class="nbtn" onclick="switchTab('run',this)"><span class="nico">🏃</span><span class="nlbl">Corrida</span><div class="ndot"></div></button>
-    <button class="nbtn" onclick="switchTab('prs',this)"><span class="nico">⭐</span><span class="nlbl">PRs</span><div class="ndot"></div></button>
     <button class="nbtn" onclick="switchTab('rank',this)"><span class="nico">📊</span><span class="nlbl">Ranking</span><div class="ndot"></div></button>
     <button class="nbtn" onclick="switchTab('badges',this)"><span class="nico">🏆</span><span class="nlbl">Badges</span><div class="ndot"></div></button>
+    <button class="nbtn" onclick="switchTab('perfil',this)"><span class="nico" id="nav-perfil-ico">👤</span><span class="nlbl">Perfil</span><div class="ndot"></div></button>
   </div>
 </div>
 
@@ -1994,6 +1994,54 @@ function renderMissions(ms){
   document.getElementById('home-missions').innerHTML=ms.filter(m=>!m.done).slice(0,2).map(h).join('')||'<div style="font-size:12px;color:var(--mu)">Nenhuma missão ativa 🎉</div>';
 }
 
+// ══ PERFIL ══
+function renderPerfil(u){
+  // Basic info
+  const pnEl=document.getElementById('perfil-name');if(pnEl)pnEl.textContent=u.name||'Atleta';
+  const peEl=document.getElementById('perfil-email-disp');if(peEl)peEl.textContent=u.email||'';
+  // Stats
+  const ptEl=document.getElementById('perfil-treinos');if(ptEl)ptEl.textContent=u.stats?.treinos||0;
+  const pkEl=document.getElementById('perfil-km');if(pkEl)pkEl.textContent=u.stats?.distancia||0;
+  const psEl=document.getElementById('perfil-streak');if(psEl)psEl.textContent=u.streak||1;
+  // Level/XP
+  const plEl=document.getElementById('perfil-lv');if(plEl)plEl.textContent=u.level||1;
+  const pcEl=document.getElementById('perfil-coins');if(pcEl)pcEl.textContent=u.coins||0;
+  const xpN=(u.level||1)*1000;
+  const pxEl=document.getElementById('perfil-xp');if(pxEl)pxEl.textContent=(u.xp||0).toLocaleString()+' XP';
+  const pxnEl=document.getElementById('perfil-xpn');if(pxnEl)pxnEl.textContent=xpN.toLocaleString()+' XP';
+  const pxbEl=document.getElementById('perfil-xpbar');if(pxbEl)pxbEl.style.width=Math.min(((u.xp||0)/xpN)*100,100)+'%';
+  // Avatar no perfil
+  const pavEl=document.getElementById('perfil-av-main');
+  const paeEl=document.getElementById('perfil-av-emoji');
+  if(pavEl && u.avatar?.photoData){
+    pavEl.innerHTML=`<img src="${u.avatar.photoData}" style="width:100%;height:100%;object-fit:cover;border-radius:50%"/>`
+    pavEl.onclick=openAvatarModal;
+  } else if(paeEl){
+    const emoji=AVATAR_EMOJIS[u.avatar?.gender||'masc']?.[u.avatar?.style||'athlete']||'💪';
+    paeEl.textContent=emoji;
+  }
+  // Nav perfil icon
+  const navPic=document.getElementById('nav-perfil-ico');
+  if(navPic){
+    if(u.avatar?.photoData){
+      navPic.innerHTML=`<img src="${u.avatar.photoData}" style="width:22px;height:22px;border-radius:50%;object-fit:cover;"/>`;
+    } else {
+      const emoji=AVATAR_EMOJIS[u.avatar?.gender||'masc']?.[u.avatar?.style||'athlete']||'👤';
+      navPic.textContent=emoji;
+    }
+  }
+  // Badges row
+  const br=document.getElementById('perfil-badges-row');
+  if(br){
+    const earned=BADGES.filter(b=>(u.badges||[]).includes(b.id));
+    if(earned.length){
+      br.innerHTML=earned.map(b=>`<div style="background:rgba(243,156,18,.08);border:1px solid rgba(243,156,18,.15);border-radius:10px;padding:10px 12px;text-align:center;flex-shrink:0"><div style="font-size:24px">${b.icon}</div><div style="font-size:9px;font-weight:700;color:var(--t2);margin-top:3px;white-space:nowrap">${b.name}</div></div>`).join('');
+    } else {
+      br.innerHTML='<div style="font-size:12px;color:var(--mu)">Nenhuma conquista ainda. Continue treinando! 💪</div>';
+    }
+  }
+}
+
 // ══ RANKING CAROUSEL ══
 function renderRankingCarousel(u,email,users){
   const allR=Object.values(users).filter(x=>x.anamneseDone).map(x=>({name:x.name,xp:x.xp||0,level:x.level||1,isMe:x.email===email}));
@@ -2378,8 +2426,8 @@ function saveAvatar(){
   users[email].avatar = {...avState};
   DB.set('fq_users', users);
   syncU(users[email]);
-  // Update all avatar displays
   updateAvatarDisplays(users[email]);
+  renderPerfil(users[email]);
   closeModal('modal-avatar');
 }
 
