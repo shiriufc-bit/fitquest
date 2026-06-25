@@ -393,6 +393,69 @@ textarea.fi{resize:vertical;min-height:80px;}
 .bcard.earned .bnm{color:var(--t);}
 @media(max-width:380px){.fr{grid-template-columns:1fr;}.stats-row{grid-template-columns:1fr 1fr;}}
 @keyframes pulse{0%,100%{opacity:.5;}50%{opacity:1;}}
+@keyframes shimmer{0%{background-position:-200% 0}100%{background-position:200% 0}}
+
+/* ══ PROGRAM INTAKE ══ */
+.intake-step{display:none;}.intake-step.active{display:block;}
+.intake-progress{background:rgba(255,255,255,.08);border-radius:99px;height:3px;margin-bottom:20px;overflow:hidden;}
+.intake-progress-fill{height:100%;border-radius:99px;background:var(--r);transition:width .4s ease;}
+.intake-q{font-size:16px;font-weight:800;margin-bottom:6px;line-height:1.3;}
+.intake-hint{font-size:12px;color:var(--mu);margin-bottom:16px;line-height:1.5;}
+.intake-opts{display:flex;flex-direction:column;gap:8px;margin-bottom:16px;}
+.intake-opt{padding:14px 16px;background:rgba(255,255,255,.05);border:1.5px solid rgba(255,255,255,.1);border-radius:12px;font-size:14px;font-weight:600;color:var(--t2);cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:10px;text-align:left;}
+.intake-opt.sel{background:rgba(229,9,20,.1);border-color:var(--r);color:#fff;}
+.intake-opt-icon{font-size:20px;flex-shrink:0;width:28px;text-align:center;}
+.intake-multi-opts{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px;}
+.intake-multi-opt{padding:10px 14px;background:rgba(255,255,255,.05);border:1.5px solid rgba(255,255,255,.1);border-radius:8px;font-size:13px;font-weight:600;color:var(--t2);cursor:pointer;transition:all .2s;}
+.intake-multi-opt.sel{background:rgba(229,9,20,.1);border-color:var(--r);color:#fff;}
+.intake-ai-box{background:rgba(229,9,20,.06);border:1px solid rgba(229,9,20,.15);border-radius:14px;padding:16px;margin-bottom:16px;}
+.intake-ai-loading{text-align:center;padding:20px;}
+.intake-ai-dots span{display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--r);margin:0 3px;animation:pulse .8s infinite;}
+.intake-ai-dots span:nth-child(2){animation-delay:.2s;}
+.intake-ai-dots span:nth-child(3){animation-delay:.4s;}
+.intake-result-card{background:var(--s);border:1px solid rgba(229,9,20,.2);border-radius:14px;padding:16px;margin-bottom:10px;}
+
+/* ══ STORE ══ */
+.store-hero{position:relative;height:260px;overflow:hidden;background:#000;margin-bottom:0}
+.store-hero-img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;filter:brightness(.35)}
+.store-hero-glow{position:absolute;inset:0;background:linear-gradient(135deg,rgba(229,9,20,.25),transparent 60%)}
+.store-hero-overlay{position:absolute;bottom:0;left:0;right:0;height:70%;background:linear-gradient(transparent,#0a0a0a)}
+.store-hero-content{position:absolute;bottom:20px;left:20px;right:20px}
+.store-badge-free{display:inline-block;background:rgba(46,204,113,.9);color:#fff;border-radius:4px;padding:2px 10px;font-size:9px;font-weight:900;letter-spacing:1.5px;margin-bottom:8px}
+.store-badge-pro{display:inline-block;background:linear-gradient(135deg,#f39c12,#e67e22);color:#fff;border-radius:4px;padding:2px 10px;font-size:9px;font-weight:900;letter-spacing:1.5px;margin-bottom:8px}
+.store-badge-new{display:inline-block;background:var(--r);color:#fff;border-radius:4px;padding:2px 10px;font-size:9px;font-weight:900;letter-spacing:1.5px;margin-bottom:8px}
+
+/* MOVIE CARD */
+.movie-card{flex-shrink:0;width:140px;border-radius:10px;overflow:hidden;cursor:pointer;position:relative;transition:transform .2s;background:#111}
+.movie-card:hover{transform:scale(1.04)}
+.movie-card-poster{width:140px;height:200px;object-fit:cover;display:block}
+.movie-card-poster-bg{width:140px;height:200px;display:flex;align-items:center;justify-content:center;font-size:64px;position:relative}
+.movie-card-locked{position:absolute;top:8px;right:8px;background:rgba(0,0,0,.75);border-radius:6px;padding:3px 7px;font-size:10px}
+.movie-card-badge{position:absolute;top:8px;left:8px;border-radius:4px;padding:2px 7px;font-size:9px;font-weight:900}
+.movie-card-info{padding:8px 10px 10px}
+.movie-card-title{font-size:12px;font-weight:800;margin-bottom:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.movie-card-sub{font-size:10px;color:var(--mu)}
+.movie-card-price{font-size:12px;font-weight:900;color:var(--r);margin-top:4px}
+
+/* MOVIE MODAL */
+#modal-movie .modal-bx{border-radius:0;padding:0;max-height:100vh;border-radius:16px 16px 0 0}
+.movie-modal-hero{position:relative;height:220px;overflow:hidden}
+.movie-modal-hero-img{width:100%;height:100%;object-fit:cover;filter:brightness(.4)}
+.movie-modal-overlay{position:absolute;bottom:0;left:0;right:0;height:70%;background:linear-gradient(transparent,#181818)}
+.movie-modal-content{padding:16px 20px 24px}
+.movie-tag{display:inline-block;border-radius:4px;padding:2px 9px;font-size:9px;font-weight:900;letter-spacing:1px;margin-bottom:10px}
+.episode-row{display:flex;gap:12px;align-items:center;padding:12px 0;border-bottom:1px solid var(--b);cursor:pointer}
+.episode-row:last-child{border-bottom:none}
+.episode-num{width:32px;height:32px;border-radius:6px;background:rgba(255,255,255,.06);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:900;color:var(--mu);flex-shrink:0}
+.episode-num.done{background:rgba(46,204,113,.1);color:#2ecc71}
+.episode-locked{width:32px;height:32px;border-radius:6px;background:rgba(229,9,20,.08);display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0}
+
+/* PRO BANNER */
+.pro-banner{background:linear-gradient(135deg,#1a0a00,#0d0500);border:1px solid rgba(243,156,18,.3);border-radius:14px;padding:20px;margin:0 16px 16px;position:relative;overflow:hidden}
+.pro-banner::before{content:"👑";position:absolute;right:-10px;top:-10px;font-size:100px;opacity:.06}
+.pro-banner-title{font-size:20px;font-weight:900;margin-bottom:6px}
+.pro-banner-sub{font-size:12px;color:var(--t2);margin-bottom:16px;line-height:1.6}
+.btn-pro{background:linear-gradient(135deg,#f39c12,#e67e22);border:none;border-radius:8px;padding:13px 24px;color:#fff;font-size:14px;font-weight:900;cursor:pointer;width:100%;box-shadow:0 4px 20px rgba(243,156,18,.3)}
 
 /* ══ EVOLUÇÃO ══ */
 .evo-hero{background:linear-gradient(135deg,rgba(229,9,20,.15),rgba(180,7,16,.05)),var(--s);border-radius:0;padding:20px;border-bottom:1px solid var(--b);position:relative;overflow:hidden;}
@@ -1144,6 +1207,67 @@ textarea.fi{resize:vertical;min-height:80px;}
     </div>
   </div>
 
+    <!-- STORE -->
+    <div class="tp" id="tp-store">
+      <div style="padding-top:56px">
+
+        <!-- Store Hero -->
+        <div class="store-hero">
+          <img src="https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=800&q=80" class="store-hero-img" alt="FitQuest Store"/>
+          <div class="store-hero-glow"></div>
+          <div class="store-hero-overlay"></div>
+          <div class="store-hero-content">
+            <div class="store-badge-new">🎬 NOVO</div>
+            <div style="font-size:26px;font-weight:900;line-height:1.1;margin-bottom:6px">Hipertrofia<br>Máxima 12 Semanas</div>
+            <div style="font-size:12px;color:rgba(255,255,255,.7);margin-bottom:14px">Programa avançado · Periodização científica · +500 alunos</div>
+            <div style="display:flex;gap:8px">
+              <button onclick="openMovie('hypertrophy')" style="background:#fff;border:none;border-radius:6px;padding:10px 20px;color:#000;font-size:13px;font-weight:900;cursor:pointer;display:flex;align-items:center;gap:6px">▶ Ver programa</button>
+              <button onclick="openMovie('hypertrophy')" style="background:rgba(255,255,255,.2);border:none;border-radius:6px;padding:10px 20px;color:#fff;font-size:13px;font-weight:700;cursor:pointer;backdrop-filter:blur(10px)">+ Info</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- PRO Banner -->
+        <div style="padding:16px 16px 0">
+          <div class="pro-banner">
+            <div style="font-size:10px;color:#f39c12;font-weight:800;letter-spacing:2px;margin-bottom:6px">👑 FITQUEST PRO</div>
+            <div class="pro-banner-title">Acesso ilimitado a<br>todos os programas</div>
+            <div class="pro-banner-sub">Todos os programas especializados + treino personalizado + suporte direto com Rennan Dias</div>
+            <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px">
+              <div><div style="font-size:28px;font-weight:900;color:#f39c12">R$59<span style="font-size:16px">,90</span></div><div style="font-size:10px;color:var(--mu)">/mês · cancele quando quiser</div></div>
+              <div style="font-size:11px;color:var(--t2);flex:1">ou R$149,90/trimestre<br>ou R$539,90/ano</div>
+            </div>
+            <button class="btn-pro" onclick="iniciarPagamento('mensal')">👑 Assinar FitQuest Pro</button>
+          </div>
+        </div>
+
+        <!-- Seção: Programas Especializados -->
+        <div class="section" style="margin-top:8px">
+          <div class="section-hdr"><div class="section-title">🎯 Programas Especializados</div></div>
+          <div class="carousel" id="store-specialized"></div>
+        </div>
+
+        <!-- Seção: Perda de Peso -->
+        <div class="section">
+          <div class="section-hdr"><div class="section-title">🔥 Emagrecimento</div></div>
+          <div class="carousel" id="store-weight"></div>
+        </div>
+
+        <!-- Seção: Para todos -->
+        <div class="section">
+          <div class="section-hdr"><div class="section-title">❤️ Saúde e Bem-estar</div></div>
+          <div class="carousel" id="store-health"></div>
+        </div>
+
+        <!-- Seção: Conteúdo Educacional -->
+        <div class="section" style="padding-bottom:100px">
+          <div class="section-hdr"><div class="section-title">🎥 Vídeo-aulas</div></div>
+          <div class="carousel" id="store-videos"></div>
+        </div>
+
+      </div>
+    </div>
+
     <!-- EVOLUÇÃO -->
     <div class="tp" id="tp-evo">
       <div style="padding-top:56px">
@@ -1155,11 +1279,42 @@ textarea.fi{resize:vertical;min-height:80px;}
           <div style="font-size:12px;color:var(--t2)">Pollock 7 dobras · Bioimpedância</div>
         </div>
 
-        <!-- Gráfico de %Gordura -->
+        <!-- Gráficos Pizza 3D -->
         <div style="padding:16px 16px 0">
+
+          <!-- Row de 2 pizzas -->
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px">
+
+            <!-- Pizza %Gordura -->
+            <div class="chart-wrap" style="padding:12px;text-align:center">
+              <div style="font-size:11px;font-weight:800;margin-bottom:8px;color:var(--t2)">% Gordura</div>
+              <canvas id="pizza-fat" width="160" height="140" style="width:100%;max-width:160px"></canvas>
+              <div style="margin-top:6px">
+                <div style="font-size:22px;font-weight:900;color:var(--r)" id="pizza-fat-val">—</div>
+                <div style="font-size:10px;font-weight:800;margin-top:3px" id="pizza-fat-cls"></div>
+              </div>
+            </div>
+
+            <!-- Pizza Composição -->
+            <div class="chart-wrap" style="padding:12px;text-align:center">
+              <div style="font-size:11px;font-weight:800;margin-bottom:8px;color:var(--t2)">Composição</div>
+              <canvas id="pizza-comp" width="160" height="140" style="width:100%;max-width:160px"></canvas>
+              <div style="margin-top:6px">
+                <div style="font-size:22px;font-weight:900;color:#2ecc71" id="pizza-lean-val">—</div>
+                <div style="font-size:10px;color:var(--mu)">massa magra</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Legenda -->
+          <div id="pizza-legend" style="display:none;background:var(--s);border:1px solid var(--b);border-radius:12px;padding:12px;margin-bottom:12px">
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px" id="pizza-legend-content"></div>
+          </div>
+
+          <!-- Evolução linha (histórico) -->
           <div class="chart-wrap">
             <div class="chart-title">
-              <span>% Gordura Corporal</span>
+              <span>📈 Evolução do % Gordura</span>
               <span style="font-size:10px;color:var(--mu)" id="chart-fat-latest">—</span>
             </div>
             <svg class="chart-svg" height="120" id="chart-fat-svg" viewBox="0 0 300 120" preserveAspectRatio="none">
@@ -1169,7 +1324,7 @@ textarea.fi{resize:vertical;min-height:80px;}
 
           <div class="chart-wrap">
             <div class="chart-title">
-              <span>Massa Magra (kg)</span>
+              <span>📈 Evolução Massa Magra</span>
               <span style="font-size:10px;color:var(--mu)" id="chart-lean-latest">—</span>
             </div>
             <svg class="chart-svg" height="100" id="chart-lean-svg" viewBox="0 0 300 100" preserveAspectRatio="none">
@@ -1290,10 +1445,8 @@ textarea.fi{resize:vertical;min-height:80px;}
   <div class="bnav">
     <button class="nbtn active" onclick="switchTab('home',this)"><span class="nico">🏠</span><span class="nlbl">Início</span><div class="ndot"></div></button>
     <button class="nbtn" onclick="switchTab('gym',this)"><span class="nico">🏋️</span><span class="nlbl">Treino</span><div class="ndot"></div></button>
-    <button class="nbtn" onclick="switchTab('run',this)"><span class="nico">🏃</span><span class="nlbl">Corrida</span><div class="ndot"></div></button>
-    <button class="nbtn" onclick="switchTab('rank',this)"><span class="nico">📊</span><span class="nlbl">Ranking</span><div class="ndot"></div></button>
-    <button class="nbtn" onclick="switchTab('badges',this)"><span class="nico">🏆</span><span class="nlbl">Badges</span><div class="ndot"></div></button>
-    <button class="nbtn" onclick="switchTab('evo',this)"><span class="nico">📊</span><span class="nlbl">Evolução</span><div class="ndot"></div></button>
+    <button class="nbtn" onclick="switchTab('store',this)"><span class="nico">🎬</span><span class="nlbl">Loja</span><div class="ndot"></div></button>
+    <button class="nbtn" onclick="switchTab('evo',this)"><span class="nico">📈</span><span class="nlbl">Evolução</span><div class="ndot"></div></button>
     <button class="nbtn" onclick="switchTab('perfil',this)"><span class="nico" id="nav-perfil-ico">👤</span><span class="nlbl">Perfil</span><div class="ndot"></div></button>
   </div>
 </div>
@@ -1536,6 +1689,40 @@ textarea.fi{resize:vertical;min-height:80px;}
     </div>
 
     <button class="btn-p" onclick="saveEval()">💾 Salvar avaliação</button>
+  </div>
+</div>
+
+<!-- PROGRAM INTAKE MODAL -->
+<div class="modal-ov" id="modal-intake">
+  <div class="modal-bx" style="border-radius:20px 20px 0 0;max-height:92vh">
+    <div class="modal-t">
+      <div>
+        <div style="font-size:11px;color:var(--r);font-weight:800;letter-spacing:1px" id="intake-program-name">PROGRAMA</div>
+        <div style="font-size:15px;font-weight:900" id="intake-step-label">Personalizando seu programa</div>
+      </div>
+      <button class="modal-cl" onclick="closeModal('modal-intake')">✕</button>
+    </div>
+    <!-- Progress bar -->
+    <div class="intake-progress"><div class="intake-progress-fill" id="intake-prog" style="width:0%"></div></div>
+    <!-- Steps container -->
+    <div id="intake-steps-container"></div>
+    <!-- Nav buttons -->
+    <div style="display:flex;gap:10px;margin-top:4px" id="intake-nav">
+      <button id="intake-btn-back" onclick="intakePrev()" style="flex:1;padding:13px;background:rgba(255,255,255,.06);border:1px solid var(--b);border-radius:10px;color:var(--t2);font-size:14px;font-weight:700;cursor:pointer;display:none">← Voltar</button>
+      <button id="intake-btn-next" onclick="intakeNext()" style="flex:2;padding:13px;background:var(--r);border:none;border-radius:10px;color:#fff;font-size:14px;font-weight:800;cursor:pointer;box-shadow:0 4px 16px var(--rg)">Próximo →</button>
+    </div>
+  </div>
+</div>
+
+<!-- MOVIE MODAL -->
+<div class="modal-ov" id="modal-movie">
+  <div class="modal-bx" style="border-radius:16px 16px 0 0;padding:0;max-height:92vh">
+    <div class="movie-modal-hero" id="movie-hero">
+      <img id="movie-hero-img" src="" alt="" class="movie-modal-hero-img"/>
+      <div class="movie-modal-overlay"></div>
+      <button onclick="closeModal('modal-movie')" style="position:absolute;top:14px;right:14px;background:rgba(0,0,0,.6);border:none;border-radius:50%;width:32px;height:32px;color:#fff;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center">✕</button>
+    </div>
+    <div class="movie-modal-content" id="movie-modal-body"></div>
   </div>
 </div>
 
@@ -2215,7 +2402,8 @@ function selPlan(plan,price,el){
   btn.style.display='block';
   btn.textContent=`▶ Assinar ${plan} — R$${price.toFixed(2).replace('.',',')}`;
 }
-async function iniciarPagamento(){
+async function iniciarPagamento(plan){
+  if(plan) selPlanName=plan;
   if(!selPlanName)return;
   const email=DB.get('fq_cur');
   const links={mensal:'https://mpago.li/1mYcngV',trimestral:'https://mpago.li/1qj9bY9',anual:'https://mpago.li/21vSJoW'};
@@ -2287,6 +2475,7 @@ function loadApp(email){
   renderPRs(u.prs||[]);
   renderBadges(u.badges||[]);
   renderEvo(u);
+  renderStore(u);
 }
 
 // ══ HISTORY ══
@@ -2971,6 +3160,7 @@ function saveEval(){
   syncU(u);
   closeModal('modal-eval');
   renderEvo(u);
+  setTimeout(()=>renderPizzaCharts(u), 100);
   alert('✅ Avaliação salva com sucesso!');
 }
 
@@ -3041,13 +3231,198 @@ function renderChart(svgId, data, color, unit, height, label){
   svg.innerHTML = html;
 }
 
+// ── 3D PIZZA CHART ──
+function draw3DPizza(canvasId, slices, opts={}){
+  const canvas = document.getElementById(canvasId);
+  if(!canvas) return;
+  const ctx = canvas.getContext('2d');
+  const W = canvas.width, H = canvas.height;
+  ctx.clearRect(0,0,W,H);
+
+  const cx = W/2, cy = H*0.44;
+  const rx = W*0.38, ry = rx*0.38; // ellipse radii for 3D
+  const depth = H*0.18;            // 3D depth
+  const total = slices.reduce((a,b)=>a+b.val, 0);
+  if(total <= 0) return;
+
+  let startAngle = -Math.PI/2;
+  const angles = slices.map(s=>({ ...s, start:0, end:0 }));
+
+  // Pre-calc angles
+  slices.forEach((s,i)=>{
+    const sweep = (s.val/total)*Math.PI*2;
+    angles[i].start = startAngle;
+    angles[i].end   = startAngle + sweep;
+    startAngle += sweep;
+  });
+
+  // ── Draw 3D SIDES (bottom layer — drawn back-to-front) ──
+  // Draw sides only for slices in the bottom half (angle between 0 and PI)
+  [...angles].reverse().forEach(s=>{
+    const midA = (s.start+s.end)/2;
+    // Only draw side if slice faces "forward" (bottom half of circle)
+    if(Math.sin(midA) > -0.1){
+      ctx.beginPath();
+      ctx.moveTo(cx + rx*Math.cos(s.start), cy + ry*Math.sin(s.start));
+      ctx.lineTo(cx + rx*Math.cos(s.start), cy + ry*Math.sin(s.start)+depth);
+      ctx.lineTo(cx + rx*Math.cos(s.end),   cy + ry*Math.sin(s.end)+depth);
+      ctx.lineTo(cx + rx*Math.cos(s.end),   cy + ry*Math.sin(s.end));
+      // Side: darker shade of slice color
+      const c = hexToRgb(s.color);
+      ctx.fillStyle = `rgba(${Math.round(c.r*0.55)},${Math.round(c.g*0.55)},${Math.round(c.b*0.55)},1)`;
+      ctx.fill();
+      ctx.strokeStyle='rgba(0,0,0,.3)';ctx.lineWidth=0.5;ctx.stroke();
+    }
+  });
+
+  // ── Draw 3D TOPS (ellipse slices) ──
+  angles.forEach(s=>{
+    ctx.beginPath();
+    ctx.moveTo(cx, cy);
+    ctx.ellipse(cx, cy, rx, ry, 0, s.start, s.end);
+    ctx.closePath();
+
+    // Gradient for each slice
+    const midA = (s.start+s.end)/2;
+    const gx = cx + rx*0.5*Math.cos(midA);
+    const gy = cy + ry*0.5*Math.sin(midA);
+    const grad = ctx.createRadialGradient(gx, gy, 0, cx, cy, rx);
+    const c = hexToRgb(s.color);
+    grad.addColorStop(0, `rgba(${Math.min(c.r+60,255)},${Math.min(c.g+60,255)},${Math.min(c.b+60,255)},1)`);
+    grad.addColorStop(1, `rgba(${c.r},${c.g},${c.b},1)`);
+    ctx.fillStyle = grad;
+    ctx.fill();
+    ctx.strokeStyle='rgba(10,10,10,.6)';ctx.lineWidth=1.5;ctx.stroke();
+  });
+
+  // ── Labels on slices ──
+  angles.forEach(s=>{
+    const pct = (s.val/total*100).toFixed(1);
+    if(s.val/total < 0.05) return; // skip tiny slices
+    const midA = (s.start+s.end)/2;
+    const lx = cx + rx*0.62*Math.cos(midA);
+    const ly = cy + ry*0.62*Math.sin(midA);
+    ctx.font='bold 11px Inter,sans-serif';
+    ctx.textAlign='center';
+    ctx.textBaseline='middle';
+    ctx.fillStyle='rgba(0,0,0,.7)';
+    ctx.fillText(pct+'%', lx+0.5, ly+0.5);
+    ctx.fillStyle='#fff';
+    ctx.fillText(pct+'%', lx, ly);
+  });
+}
+
+function hexToRgb(hex){
+  const r=parseInt(hex.slice(1,3),16);
+  const g=parseInt(hex.slice(3,5),16);
+  const b=parseInt(hex.slice(5,7),16);
+  return {r,g,b};
+}
+
+function renderPizzaCharts(u){
+  const avs = u?.avaliacoes||[];
+  if(!avs.length){
+    // Draw empty placeholder
+    drawEmptyPizza('pizza-fat');
+    drawEmptyPizza('pizza-comp');
+    return;
+  }
+
+  // Get latest evaluation
+  const latest = avs[avs.length-1];
+  const fatPct  = parseFloat(latest.fatPct||0);
+  const leanPct = 100 - fatPct;
+  const peso    = parseFloat(latest.peso||0);
+  const leanKg  = parseFloat(latest.leanKg||0);
+  const fatKg   = parseFloat(latest.fatKg||0);
+  const sexo    = u?.anamnese?.sexo||'Masculino';
+  const idade   = u?.anamnese?.nasc ? Math.floor((Date.now()-new Date(u.anamnese.nasc))/(365.25*24*3600*1000)) : 30;
+  const {cls,color} = classifyFat(fatPct, sexo, idade);
+
+  // Pizza 1: % Gordura vs Massa Magra
+  draw3DPizza('pizza-fat', [
+    {val: fatPct,  color:'#e50914', label:'Gordura'},
+    {val: leanPct, color:'#2ecc71', label:'Magra'},
+  ]);
+
+  // Pizza 2: Composição em kg (gordura + magra + eventual osso/água)
+  const water = latest.water ? (latest.water/100)*peso : null;
+  const bone  = latest.bone  || null;
+  const restKg = peso - leanKg - fatKg;
+
+  let compSlices = [
+    {val: fatKg,  color:'#e50914', label:`Gordura ${fatKg}kg`},
+    {val: leanKg, color:'#2ecc71', label:`Magra ${leanKg}kg`},
+  ];
+  if(restKg > 0.5) compSlices.push({val:restKg, color:'#3498db', label:`Outros ${restKg.toFixed(1)}kg`});
+
+  draw3DPizza('pizza-comp', compSlices);
+
+  // Update labels
+  const fatValEl = document.getElementById('pizza-fat-val');
+  if(fatValEl) fatValEl.textContent = fatPct.toFixed(1)+'%';
+  const fatClsEl = document.getElementById('pizza-fat-cls');
+  if(fatClsEl){ fatClsEl.textContent=cls; fatClsEl.style.color=color; }
+  const leanValEl = document.getElementById('pizza-lean-val');
+  if(leanValEl) leanValEl.textContent = leanKg+'kg';
+
+  // Legend
+  const lgd = document.getElementById('pizza-legend');
+  const lgdContent = document.getElementById('pizza-legend-content');
+  if(lgd && lgdContent){
+    lgd.style.display='block';
+    const rows = [
+      {color:'#e50914', label:'Gordura', val:fatKg+'kg / '+fatPct.toFixed(1)+'%'},
+      {color:'#2ecc71', label:'Massa magra', val:leanKg+'kg / '+leanPct.toFixed(1)+'%'},
+      {color:'#3498db', label:'Peso total', val:peso+'kg'},
+    ];
+    if(latest.water) rows.push({color:'#00bcd4',label:'Água corporal',val:latest.water+'%'});
+    if(latest.bone)  rows.push({color:'#9c27b0',label:'Massa óssea',val:latest.bone+'kg'});
+    if(latest.tmb)   rows.push({color:'#f39c12',label:'TMB',val:latest.tmb+' kcal'});
+    lgdContent.innerHTML = rows.map(r=>`
+      <div style="display:flex;align-items:center;gap:8px">
+        <div style="width:12px;height:12px;border-radius:3px;background:${r.color};flex-shrink:0"></div>
+        <div style="flex:1">
+          <div style="font-size:10px;color:var(--mu)">${r.label}</div>
+          <div style="font-size:12px;font-weight:800">${r.val}</div>
+        </div>
+      </div>`).join('');
+  }
+}
+
+function drawEmptyPizza(id){
+  const canvas = document.getElementById(id);
+  if(!canvas) return;
+  const ctx = canvas.getContext('2d');
+  const W=canvas.width, H=canvas.height;
+  ctx.clearRect(0,0,W,H);
+  const cx=W/2, cy=H*0.44, rx=W*0.38, ry=rx*0.38, depth=H*0.18;
+  // Side
+  ctx.beginPath();
+  ctx.ellipse(cx,cy+depth,rx,ry,0,0,Math.PI*2);
+  ctx.fillStyle='rgba(255,255,255,.04)';ctx.fill();
+  // Top
+  ctx.beginPath();
+  ctx.ellipse(cx,cy,rx,ry,0,0,Math.PI*2);
+  ctx.fillStyle='rgba(255,255,255,.07)';ctx.fill();
+  ctx.strokeStyle='rgba(255,255,255,.1)';ctx.lineWidth=1;ctx.stroke();
+  // Text
+  ctx.font='10px Inter,sans-serif';
+  ctx.textAlign='center';ctx.textBaseline='middle';
+  ctx.fillStyle='rgba(255,255,255,.2)';
+  ctx.fillText('sem dados', cx, cy);
+}
+
 // ── RENDER EVOLUÇÃO TAB ──
 function renderEvo(u){
   const avs = u?.avaliacoes||[];
   const sexo = u?.anamnese?.sexo||'Masculino';
   const idade = u?.anamnese?.nasc ? Math.floor((Date.now()-new Date(u.anamnese.nasc))/(365.25*24*3600*1000)) : 30;
 
-  // Charts
+  // 3D Pizza charts
+  renderPizzaCharts(u);
+
+  // Line Charts
   const fatData  = avs.filter(a=>a.fatPct).map(a=>({val:a.fatPct,  date:a.date}));
   const leanData = avs.filter(a=>a.leanKg).map(a=>({val:a.leanKg, date:a.date}));
   const pesoData = avs.filter(a=>a.peso).map(a=>({val:a.peso,      date:a.date}));
@@ -3161,6 +3536,1423 @@ function showEvalDetail(id){
       <button onclick="deleteEval(${a.id});closeModal('modal-eval')" style="flex:1;padding:14px;background:rgba(255,23,68,.08);border:1px solid rgba(255,23,68,.2);border-radius:14px;color:#ff6b6b;font-size:14px;font-weight:800;cursor:pointer">🗑️ Excluir</button>
     </div>
   `;
+}
+
+// ══ STORE / LOJA DE PROGRAMAS ══
+
+const CATALOG = [
+  {
+    id:'hypertrophy',
+    title:'Hipertrofia Máxima',
+    subtitle:'12 semanas · Nível avançado',
+    category:'specialized',
+    tag:'MAIS VENDIDO',tagColor:'#f39c12',
+    price:47.90, priceLabel:'R$47,90',
+    img:'https://images.unsplash.com/photo-1534367610401-9f5ed68180aa?w=400&q=80',
+    emoji:'💪', color:'#c0392b',
+    desc:'O programa mais completo para quem quer ganhar massa muscular de verdade. 12 semanas periodizadas com técnicas avançadas baseadas nas evidências mais recentes da ciência do exercício.',
+    highlights:['12 semanas periodizadas','Divisão ABCDE','Volume 16-20 séries/músculo','Técnicas avançadas'],
+    episodes:[
+      {n:1,title:'Semana 1–2: Adaptação Neural',dur:'5 dias/semana'},
+      {n:2,title:'Semana 3–4: Volume Base',dur:'5 dias/semana'},
+      {n:3,title:'Semana 5–8: Hipertrofia',dur:'5 dias/semana'},
+      {n:4,title:'Semana 9–10: Intensificação',dur:'5 dias/semana'},
+      {n:5,title:'Semana 11–12: Pico + Deload',dur:'5 dias/semana'},
+    ],
+    mpLink:'https://mpago.li/1mYcngV', students:523, rating:4.9,
+    content:[
+      {
+        icon:'🔬',
+        title:'A ciência por trás do volume ideal',
+        text:'Uma meta-análise publicada no Journal of Sports Science (Schoenfeld et al., 2017) analisou 15 estudos e concluiu que existe uma clara relação dose-resposta entre volume semanal e hipertrofia. Mais séries, mais crescimento — até um limite.
+
+Uma meta-regressão mais recente (PubMed, 2024), analisando 67 estudos com 2.058 participantes, quantificou esse efeito com precisão: cada série adicional por semana gera em média 0,24% a mais de hipertrofia (IC 95%: 0,15–0,33). O volume ótimo estimado ficou em torno de 12 séries por grupo muscular por semana — com retornos decrescentes acima disso.
+
+Na prática: este programa opera na faixa de 14 a 20 séries semanais por músculo nas semanas de pico, garantindo o máximo estímulo sem ultrapassar a capacidade de recuperação.'
+      },
+      {
+        icon:'⚡',
+        title:'Frequência: 2x por semana é o ponto ideal',
+        text:'Uma revisão sistemática publicada no Sports Medicine (Grgic, Schoenfeld & Latella, 2018), analisando estudos que compararam diferentes frequências de treino, concluiu que treinar cada grupo muscular duas vezes por semana produz ganhos de hipertrofia superiores a treinar apenas uma vez — quando o volume semanal é controlado.
+
+O mecanismo explicativo: a síntese proteica muscular após um treino de força dura entre 24 e 48 horas. Ao treinar cada músculo 2x por semana, você mantém a síntese proteica elevada por mais tempo ao longo da semana, criando um ambiente anabólico mais consistente.
+
+Por isso a divisão deste programa é ABCDE com cada grupo muscular aparecendo duas vezes na semana, e não o tradicional "um músculo por dia".'
+      },
+      {
+        icon:'📈',
+        title:'Sobrecarga progressiva: a única lei do treino',
+        text:'Uma meta-análise publicada no British Journal of Sports Medicine (Currier et al., 2023), revisando 178 estudos com mais de 5.000 participantes, identificou a sobrecarga progressiva como a variável mais consistentemente associada a ganhos de força e hipertrofia.
+
+O corpo se adapta ao estímulo em 2 a 4 semanas. Quando isso acontece, o crescimento para. A sobrecarga progressiva resolve isso: você sistematicamente aumenta carga, volume ou dificuldade para forçar novas adaptações.
+
+Este programa utiliza periodização ondulatória: a intensidade e o volume variam semana a semana de forma planejada, evitando estagnação e garantindo que o corpo nunca se adapte completamente ao estímulo.'
+      },
+      {
+        icon:'😴',
+        title:'O músculo cresce no descanso — não no treino',
+        text:'O treino é apenas o estímulo. O crescimento acontece durante a recuperação, especialmente no sono profundo (fase N3), quando o GH (hormônio do crescimento) é secretado em pico.
+
+Estudos de privação de sono mostram que dormir menos de 6 horas reduz a síntese proteica muscular em até 18% e eleva o cortisol (hormônio catabólico) cronicamente — sabotando os ganhos mesmo com treino e nutrição perfeitos.
+
+É por isso que as semanas de deload (semanas 4 e 8) são obrigatórias neste programa. Não é fraqueza — é estratégia comprovada. A ciência chama de "supercompensação": o corpo se adapta além do nível anterior durante o descanso.'
+      },
+      {
+        icon:'🍗',
+        title:'Proteína: quanto você realmente precisa',
+        text:'A International Society of Sports Nutrition (ISSN, posição oficial 2022) recomenda 1,6 a 2,2g de proteína por kg de peso corporal por dia para maximizar a hipertrofia muscular. Para um atleta de 80kg, isso significa 128 a 176g de proteína diária.
+
+Um detalhe crítico: a proteína deve ser distribuída em 4 a 6 refeições de 30 a 40g cada, pois a síntese proteica muscular tem um teto por refeição — consumir 100g de proteína de uma vez não é mais eficiente que 30g.
+
+Sobre suplementos: a creatina monohidratada tem o maior corpo de evidências de qualquer suplemento — mais de 500 estudos publicados confirmam ganhos de força de 5 a 15% e hipertrofia adicional. Dose: 3 a 5g/dia, sem fase de carga necessária.'
+      }
+    ]
+  },
+  {
+    id:'elderly',
+    title:'Treino 60+',
+    subtitle:'8 semanas · Todos os níveis',
+    category:'specialized',
+    tag:'EXCLUSIVO',tagColor:'#9b59b6',
+    price:47.90, priceLabel:'R$47,90',
+    img:'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=400&q=80',
+    emoji:'🧓', color:'#8e44ad',
+    desc:'Programa baseado em evidências para pessoas acima de 60 anos. Foco em mobilidade, equilíbrio, sarcopenia e qualidade de vida — com total segurança.',
+    highlights:['Baixo impacto articular','Mobilidade e equilíbrio','Fortalecimento funcional','Adaptado para cada limitação'],
+    episodes:[
+      {n:1,title:'Semana 1–2: Mobilidade e Ativação',dur:'3 dias/semana'},
+      {n:2,title:'Semana 3–4: Força Funcional',dur:'3 dias/semana'},
+      {n:3,title:'Semana 5–6: Equilíbrio e Coordenação',dur:'3 dias/semana'},
+      {n:4,title:'Semana 7–8: Manutenção Ativa',dur:'3 dias/semana'},
+    ],
+    mpLink:'https://mpago.li/1mYcngV', students:187, rating:5.0,
+    content:[
+      {
+        icon:'⚠️',
+        title:'Sarcopenia: a ameaça silenciosa da longevidade',
+        text:'Uma revisão sistemática publicada no Journal of Clinical Medicine (2024), analisando 11 ensaios clínicos randomizados com 792 participantes (média de 75 anos), confirmou que intervenções de exercício físico melhoram significativamente força de preensão, velocidade de marcha, massa muscular e controle postural em idosos com e sem sarcopenia.
+
+A sarcopenia afeta entre 10% e 40% das pessoas acima de 60 anos, e sua consequência mais grave não é a fraqueza em si — é a cascata de dependência que desencadeia. Idosos sarcopênicos têm 3 vezes mais risco de quedas, internações e mortalidade precoce.
+
+A boa notícia, comprovada pela ciência: o músculo esquelético mantém plasticidade ao longo de toda a vida. Pessoas de 80, 85 e até 90 anos respondem ao treinamento resistido com ganhos mensuráveis de força e massa muscular.'
+      },
+      {
+        icon:'🦵',
+        title:'Quedas: números que chocam e o que a ciência faz',
+        text:'Uma revisão abrangente publicada na NIH/PMC (2024), analisando 155 estudos publicados entre 2004 e 2024, confirmou que exercícios de equilíbrio e força melhoram controle postural, estabilidade da marcha e coordenação neuromuscular — os três fatores biomecânicos que determinam o risco de queda.
+
+Os resultados são impressionantes: programas multicomponentes (força + equilíbrio + coordenação) reduzem o risco de quedas em até 40% em idosos de alto risco. O Tai Chi, especificamente, demonstrou os melhores resultados para controle postural e resposta neuromuscular.
+
+Este programa integra exercícios de força funcional + equilíbrio estático e dinâmico + treinamento de reação, exatamente o modelo que a ciência identifica como mais eficaz para prevenção de quedas.'
+      },
+      {
+        icon:'💊',
+        title:'Proteína: a dupla força-nutrição que muda tudo',
+        text:'Uma meta-análise publicada no Epidemiology & Health (2024), revisando múltiplos ensaios clínicos com idosos sarcopênicos, demonstrou que a combinação de treinamento resistido + suplementação proteica é significativamente mais eficaz do que o exercício isolado para aumentar massa e força muscular.
+
+O problema específico dos idosos: o que os cientistas chamam de "resistência anabólica" — os músculos de pessoas mais velhas respondem menos eficientemente à proteína alimentar. Para compensar, a necessidade proteica sobe para 1,2 a 1,6g/kg/dia (acima dos 0,8g/kg recomendados para adultos sedentários).
+
+Fontes ideais: whey protein (rápida absorção), frango, peixe, ovos e laticínios — distribuídos em 3 a 4 refeições ao dia para maximizar a síntese proteica.'
+      },
+      {
+        icon:'🧠',
+        title:'Exercício e cognição: o cérebro também se fortalece',
+        text:'Revisões sistemáticas recentes confirmam que o exercício físico regular em idosos melhora memória de trabalho, função executiva e velocidade de processamento cognitivo. O mecanismo: o exercício aumenta os níveis de BDNF (fator neurotrófico derivado do cérebro), uma proteína que estimula a criação de novos neurônios e fortalece sinapses existentes.
+
+Um estudo publicado no Frontiers in Aging (2024) avaliou diferentes modalidades de exercício e seus efeitos sobre sarcopenia e cognição simultaneamente, concluindo que programas combinados de força e aeróbico produzem benefícios cognitivos superiores a modalidades isoladas.
+
+Além disso, revisões sobre qualidade de vida em idosos com sarcopenia (MDPI, 2025) mostraram que apenas 6 a 16 semanas de treino resistido intensivo melhoraram significativamente autonomia, bem-estar psicológico e percepção de saúde — dimensões subjetivas que nenhum medicamento consegue abordar.'
+      }
+    ]
+  },
+  {
+    id:'pregnancy',
+    title:'Gravidez Ativa',
+    subtitle:'Por trimestre · Gestantes',
+    category:'specialized',
+    tag:'EXCLUSIVO',tagColor:'#e91e8c',
+    price:67.90, priceLabel:'R$67,90',
+    img:'https://images.unsplash.com/photo-1518611012118-696072aa579a?w=400&q=80',
+    emoji:'🤰', color:'#e91e8c',
+    desc:'O programa mais seguro e completo para gestantes. Desenvolvido com base nas diretrizes oficiais do ACOG (American College of Obstetricians and Gynecologists). Exercícios adaptados para cada trimestre.',
+    highlights:['Adaptado por trimestre','Baseado nas diretrizes ACOG','Exercícios seguros e supervisionados','Pós-parto incluído'],
+    episodes:[
+      {n:1,title:'1º Trimestre: Adaptação',dur:'3 dias/semana'},
+      {n:2,title:'2º Trimestre: Fortalecimento',dur:'3 dias/semana'},
+      {n:3,title:'3º Trimestre: Manutenção',dur:'3 dias/semana'},
+      {n:4,title:'Pós-parto: Recuperação',dur:'2 dias/semana'},
+    ],
+    mpLink:'https://mpago.li/1mYcngV', students:94, rating:5.0,
+    content:[
+      {
+        icon:'✅',
+        title:'O que o ACOG (2024) realmente recomenda',
+        text:'O American College of Obstetricians and Gynecologists (ACOG), em suas diretrizes atualizadas mais recentemente em setembro de 2024, é explícito: mulheres com gravidez sem complicações devem praticar pelo menos 150 minutos de exercício aeróbico moderado por semana, distribuídos ao longo dos dias.
+
+A organização afirma categoricamente que exercícios aeróbicos e de força devem ser encorajados antes, durante e após a gravidez. Mulheres que já treinavam intensamente antes de engravidar podem continuar suas atividades — com monitoramento.
+
+A hesitação histórica de médicos sobre exercício na gravidez não tem base nas evidências atuais. Para uma gravidez saudável sem complicações, os riscos são mínimos e os benefícios são extensos e bem documentados.'
+      },
+      {
+        icon:'📊',
+        title:'Benefícios comprovados para mãe e bebê',
+        text:'Uma revisão publicada no PMC/NIH (2024), analisando novos ensaios clínicos randomizados e revisões sistemáticas, confirmou que exercício durante a gravidez reduz significativamente o risco de diabetes gestacional, hipertensão e ganho de peso excessivo — as três complicações mais prevalentes.
+
+O ACOG (2020, posição ainda vigente) acrescenta: mulheres que se exercitam durante a gravidez têm taxas menores de parto cesáreo, menor tempo de recuperação pós-parto, e menor risco de transtornos depressivos no pós-parto.
+
+Para o bebê: estudos observacionais mostram que os filhos de mães ativas durante a gravidez nascem com peso mais adequado, frequência cardíaca em repouso mais baixa e melhor tolerância ao estresse do parto.'
+      },
+      {
+        icon:'📅',
+        title:'O que muda em cada trimestre',
+        text:'1º Trimestre (até 13ª semana): fadiga e náusea são os principais desafios. O volume hormonal (especialmente progesterona e hCG) causa cansaço profundo. O foco é manter atividade leve a moderada — qualquer movimento é melhor que nenhum. Evitar superaquecimento é prioritário.
+
+2º Trimestre (14ª a 27ª semana): geralmente o melhor período. Os hormônios se estabilizam, a energia volta e o útero ainda não é grande o suficiente para interferir no movimento. Ideal para fortalecimento de core, glúteos e assoalho pélvico.
+
+3º Trimestre (28ª semana em diante): o centro de gravidade muda. Exercícios em posição supina devem ser evitados (podem comprimir a veia cava inferior). Foco em equilíbrio, respiração e preparação para o trabalho de parto.'
+      },
+      {
+        icon:'💪',
+        title:'O assoalho pélvico: o músculo mais negligenciado',
+        text:'O assoalho pélvico é um conjunto de músculos e ligamentos que sustenta útero, bexiga e intestino. Durante a gravidez, ele suporta um peso progressivo de até 6kg de bebê + placenta + líquido amniótico — durante meses.
+
+Multiplos estudos mostram que mulheres que fortalecem o assoalho pélvico durante a gravidez têm trabalho de parto mais curto, menos risco de incontinência urinária (que afeta 50% das mulheres no pós-parto), e recuperação pós-cesárea ou pós-parto vaginal significativamente mais rápida.
+
+Todos os módulos deste programa incluem exercícios de Kegel progressivos, pontes pélvicas adaptadas e respiração diafragmática — protocolo baseado nas recomendações da Sociedade Brasileira de Fisioterapia em Saúde da Mulher.'
+      }
+    ]
+  },
+  {
+    id:'disabled',
+    title:'Movimento Livre',
+    subtitle:'Pessoas com deficiência',
+    category:'specialized',
+    tag:'INCLUSIVO',tagColor:'#00acc1',
+    price:47.90, priceLabel:'R$47,90',
+    img:'https://images.unsplash.com/photo-1593079831268-3381b0db4a77?w=400&q=80',
+    emoji:'♿', color:'#00acc1',
+    desc:'Programa inclusivo adaptado para pessoas com deficiência física. Cada exercício possui variações com embasamento científico e adaptações específicas por tipo de limitação.',
+    highlights:['Adaptações para cada deficiência','Cadeirante, amputado e outros','Foco em autonomia e força','100% acessível'],
+    episodes:[
+      {n:1,title:'Semana 1–2: Avaliação e Base',dur:'3 dias/semana'},
+      {n:2,title:'Semana 3–4: Fortalecimento',dur:'3 dias/semana'},
+      {n:3,title:'Semana 5–6: Resistência',dur:'3 dias/semana'},
+      {n:4,title:'Semana 7–8: Performance',dur:'3 dias/semana'},
+    ],
+    mpLink:'https://mpago.li/1mYcngV', students:62, rating:4.8,
+    content:[
+      {
+        icon:'💡',
+        title:'Exercício adaptado: o que a ciência prova',
+        text:'As diretrizes internacionais de atividade física para pessoas com deficiência (WHO, 2020; ACSM, 2022) são claras: pessoas com deficiência física têm as mesmas capacidades de adaptação ao exercício que pessoas sem deficiência — o que muda é a forma de aplicação.
+
+Estudos com atletas paralímpicos demonstram que o treinamento resistido adaptado produz ganhos de força, hipertrofia e composição corporal comparáveis aos de atletas olímpicos convencionais. O músculo não sabe se a pessoa é cadeirante ou não — ele responde ao estímulo mecânico da mesma forma.
+
+A barreira não é biológica — é de acesso a programas bem estruturados e profissionais capacitados. Este programa preenche exatamente essa lacuna.'
+      },
+      {
+        icon:'🦾',
+        title:'Benefícios específicos para cada tipo de deficiência',
+        text:'Para cadeirantes: o treinamento de membros superiores é especialmente crítico. Usuários de cadeira de rodas realizam em média 1.000 a 3.000 propulsões por dia — sem força e resistência muscular adequadas, o resultado é síndrome do manguito rotador, tendinite e dor crônica em ombros. Este programa fortalece preventivamente toda a cintura escapular.
+
+Para amputados: a assimetria muscular causada pela ausência de um membro cria compensações que sobrecarregam articulações do lado oposto. O fortalecimento do membro residual e do contralateral corrige esse desequilíbrio, melhora o uso de próteses e reduz dores compensatórias.
+
+Para condições neuromusculares: o exercício regular melhora a eficiência neuromuscular (o cérebro aprende a recrutar melhor as fibras disponíveis), reduz espasticidade em casos de paralisia parcial e melhora qualidade de vida objetivamente mensurável.'
+      },
+      {
+        icon:'❤️',
+        title:'Saúde cardiovascular: risco aumentado, solução comprovada',
+        text:'Pessoas com deficiência física têm risco cardiovascular significativamente maior que a população geral — resultado de menor mobilidade, maior tendência ao sedentarismo e, em muitos casos, medicamentos que afetam o metabolismo.
+
+A American Heart Association (AHA) inclui o exercício adaptado como intervenção de primeira linha para redução de risco cardiovascular em PcD. Revisões mostram que programas de 8 a 12 semanas de exercício aeróbico adaptado reduzem pressão arterial, melhora perfil lipídico e aumentam VO₂ máximo em populações com diversas deficiências.
+
+Além disso, uma revisão sistemática recente confirmou que programas de exercício adaptado reduzem sintomas de depressão e ansiedade em PcD em até 40% — benefício de saúde mental que nenhuma medicação consegue reproduzir com os mesmos efeitos colaterais positivos.'
+      },
+      {
+        icon:'🎯',
+        title:'Como as adaptações são estruturadas neste programa',
+        text:'Cada exercício deste programa vem com 3 variações de adaptação, baseadas no modelo de classificação funcional utilizado em esportes paralímpicos:
+
+🟢 Nível 1 — Adaptação máxima: exercícios modificados para quem tem limitação severa ou está iniciando. Foco em ativação e controle motor.
+
+🟡 Nível 2 — Adaptação moderada: progressão com resistência leve a moderada. Inclui uso de equipamentos adaptados como faixas elásticas e anilhas.
+
+🔴 Nível 3 — Alta performance: versão de máximo desafio para cada condição. Permite que você alcance resultados de performance comparáveis à população geral.
+
+A progressão é guiada pela percepção subjetiva de esforço (Escala de Borg), não por peso absoluto — tornando o programa seguro e eficaz independentemente do nível inicial.'
+      }
+    ]
+  },
+  {
+    id:'fatburn',
+    title:'Emagrecimento Total',
+    subtitle:'12 semanas · Iniciante/Intermediário',
+    category:'weight',
+    tag:'TOP 1',tagColor:'#e50914',
+    price:47.90, priceLabel:'R$47,90',
+    img:'https://images.unsplash.com/photo-1476480862126-209bfaa8edc8?w=400&q=80',
+    emoji:'🔥', color:'#e50914',
+    desc:'O programa definitivo para perda de gordura. Combinação de musculação metabólica + HIIT baseada nas evidências científicas mais recentes para máximo gasto calórico e preservação da massa magra.',
+    highlights:['Musculação + HIIT + Corrida','Déficit calórico otimizado','Preserva massa magra','Resultado em 4 semanas'],
+    episodes:[
+      {n:1,title:'Semana 1–3: Ativação Metabólica',dur:'4 dias/semana'},
+      {n:2,title:'Semana 4–6: HIIT Progressivo',dur:'4 dias/semana'},
+      {n:3,title:'Semana 7–9: Aceleração',dur:'5 dias/semana'},
+      {n:4,title:'Semana 10–12: Definição Final',dur:'5 dias/semana'},
+    ],
+    mpLink:'https://mpago.li/1mYcngV', students:841, rating:4.9,
+    content:[
+      {
+        icon:'🔬',
+        title:'HIIT vs. cardio contínuo: o veredito da ciência',
+        text:'Um estudo publicado no Scientific Reports (Nature, abril de 2024) comparou diretamente HIIT e treinamento contínuo de intensidade moderada (MICT) com o mesmo gasto calórico em homens com obesidade. Resultado: o EPOC (consumo excessivo de oxigênio pós-exercício) foi significativamente maior após HIIT (66,2 kcal) versus MICT (53,9 kcal), especialmente nos primeiros 10 minutos pós-treino.
+
+Mais importante: a taxa de oxidação lipídica (queima de gordura) durante o período de EPOC foi 33% maior no grupo HIIT. Isso significa que o corpo queima proporcionalmente mais gordura nas horas após um treino HIIT — não apenas mais calorias totais.
+
+Outro estudo publicado no PMC (2025), comparando HIIT, HICT e cardio moderado com o mesmo gasto calórico, confirmou: o EPOC foi quase o dobro nos protocolos de alta intensidade (319 mL vs. 168 mL no grupo moderado), com elevação de VO₂ e metabolismo sustentada por 30 a 60 minutos pós-exercício.'
+      },
+      {
+        icon:'⚖️',
+        title:'A matemática do déficit calórico inteligente',
+        text:'O princípio termodinâmico é inescapável: para perder gordura, o gasto calórico precisa superar a ingestão. Mas a magnitude e a distribuição do déficit importam muito.
+
+Um déficit excessivo (acima de 1.000 kcal/dia) acelera a perda de massa magra, reduz o metabolismo basal e compromete a performance nos treinos. O déficit ideal para preservar músculo enquanto perde gordura é de 300 a 500 kcal/dia — suficiente para perder 0,3 a 0,5kg de gordura por semana.
+
+O exercício contribui diretamente para esse déficit. Um treino de musculação metabólica queima 300 a 500 kcal/hora. Um HIIT de 25 minutos, 400 a 600 kcal. Combinados, 4 treinos por semana criam um déficit semanal de 1.600 a 2.400 kcal — sem precisar passar fome.'
+      },
+      {
+        icon:'💪',
+        title:'Musculação durante o emagrecimento: por que é essencial',
+        text:'A estratégia clássica de "fazer cardio para emagrecer" tem um problema fatal: ela perde músculo junto com gordura. Isso desacelera o metabolismo basal (que é determinado principalmente pela massa muscular) — criando o efeito sanfona.
+
+Um kg de músculo queima 13 a 15 kcal em repouso por dia. Um kg de gordura, apenas 4 kcal. Quanto mais músculo você mantém durante o emagrecimento, mais calorias você queima 24 horas por dia — mesmo dormindo.
+
+A musculação envia um sinal claro ao organismo: "precisamos desses músculos". Com proteína adequada (1,6g/kg/dia) e treino resistido 3 a 4 vezes por semana, é possível perder gordura sem perder músculo — ou até ganhar músculo enquanto emagrece (recomposição corporal), especialmente em iniciantes.'
+      },
+      {
+        icon:'🍎',
+        title:'Nutrição: o que realmente funciona para emagrecer',
+        text:'A pesquisa atual é clara: não existe dieta "mágica". Low carb, jejum intermitente, dieta mediterrânea — todas funcionam quando criam o mesmo déficit calórico. A diferença está na aderência.
+
+O que a ciência aponta como fatores de sucesso a longo prazo: alta ingestão proteica (sacia mais e preserva músculo), alimentos com alta saciedade por caloria (vegetais, frutas, leguminosas), e flexibilidade na dieta (dietas muito restritivas têm altas taxas de abandono).
+
+Um detalhe frequentemente ignorado: a hidratação. Estudos mostram que beber 500ml de água 30 minutos antes das refeições reduz a ingestão calórica em média 13%. Desidratação leve (2% do peso corporal) reduz a performance no treino em 10 a 20% — sabotando o gasto calórico que você trabalhou para criar.'
+      }
+    ]
+  },
+  {
+    id:'running10k',
+    title:'Do Zero ao 10km',
+    subtitle:'8 semanas · Iniciantes',
+    category:'weight',
+    tag:'POPULAR',tagColor:'#2ecc71',
+    price:37.90, priceLabel:'R$37,90',
+    img:'https://images.unsplash.com/photo-1551698618-1dfe5d97d256?w=400&q=80',
+    emoji:'🏃', color:'#27ae60',
+    desc:'Saia do zero e complete seu primeiro 10km em 8 semanas. Programa periodizado com Fartlek, Intervalados e Long Run — baseado em princípios científicos de treinamento aeróbico.',
+    highlights:['Zero a 10km em 8 semanas','Fartlek + Intervalados + Long Run','Guia de nutrição incluso','Para absolutamente iniciantes'],
+    episodes:[
+      {n:1,title:'Semana 1–2: Base Aeróbica',dur:'3 dias/semana'},
+      {n:2,title:'Semana 3–4: Volume',dur:'3 dias/semana'},
+      {n:3,title:'Semana 5–6: Velocidade',dur:'3 dias/semana'},
+      {n:4,title:'Semana 7–8: Prova Simulada',dur:'3 dias/semana'},
+    ],
+    mpLink:'https://mpago.li/1qj9bY9', students:312, rating:4.8,
+    content:[
+      {
+        icon:'❤️',
+        title:'O que acontece com seu coração quando você começa a correr',
+        text:'O coração é um músculo — e responde ao treinamento como qualquer outro. Com a corrida regular, o ventrículo esquerdo aumenta seu volume interno (dilatação excêntrica), permitindo bombear mais sangue a cada batida. Isso é o que os fisiologistas chamam de "coração atlético".
+
+O resultado prático é mensurável em 4 a 8 semanas: frequência cardíaca em repouso cai (corredores experientes chegam a 40-50 bpm vs. 70-80 de sedentários), VO₂ máximo — principal marcador de saúde cardiovascular — aumenta entre 15 e 25% em iniciantes após 8 semanas de treinamento progressivo.
+
+O American Heart Association aponta que 150 minutos de exercício aeróbico moderado por semana — exatamente o que este programa oferece — reduzem o risco de doença cardiovascular em 35%, acidente vascular cerebral em 25%, e mortalidade por todas as causas em 30%.'
+      },
+      {
+        icon:'🏃',
+        title:'O método Run/Walk: por que funciona para iniciantes',
+        text:'O método Run/Walk, validado científicamente pelo Dr. Jeff Galloway e amplamente adotado pela medicina esportiva, é baseado em um princípio fisiológico simples: intercalar corrida com caminhada permite que o sistema cardiovascular e o sistema musculoesquelético se adaptem sem acúmulo de fadiga excessiva.
+
+Estudos com corredores iniciantes mostram que o Run/Walk reduz em até 60% o risco de lesões por sobrecarga comparado ao treino contínuo — porque dá ao tecido conjuntivo (tendões e ligamentos, que se recuperam mais lentamente que o músculo) tempo suficiente para se adaptar entre os estímulos.
+
+Nas primeiras semanas deste programa, o método é aplicado progressivamente: começamos com 1 minuto correndo / 2 minutos caminhando e chegamos à corrida contínua de 10km ao final da 8ª semana.'
+      },
+      {
+        icon:'🦵',
+        title:'Prevenção de lesões: o que você precisa saber antes de começar',
+        text:'Estudos epidemiológicos em corredores mostram que 65 a 80% das lesões são por overtraining — não por falta de preparo físico. O tecido conjuntivo (tendões, ligamentos, cartilagens) se adapta ao impacto da corrida muito mais lentamente que o músculo: enquanto o músculo responde em dias, o tendão leva semanas a meses.
+
+As lesões mais comuns em iniciantes, todas preveníveis: canelite (síndrome do estresse tibial medial) — causada por aumento brusco de volume; fascite plantar — causada por calçado inadequado e fraqueza do arco plantar; joelho do corredor (síndrome patelofemoral) — causada por fraqueza do glúteo médio.
+
+Este programa inclui exercícios de fortalecimento preventivo em cada sessão: tibial anterior, glúteo médio e musculatura intrínseca do pé — exatamente as regiões identificadas pela pesquisa como protetoras contra as lesões mais comuns.'
+      },
+      {
+        icon:'⛽',
+        title:'Combustível para correr: o guia nutricional do corredor',
+        text:'A corrida é um esporte altamente dependente de glicogênio muscular (carboidrato estocado no músculo). Corredores que restringem carboidratos ficam lentos, cansados e com risco aumentado de lesão — especialmente nas sessões mais longas.
+
+Pré-treino (1 a 2 horas antes): 30 a 60g de carboidrato de fácil digestão. Exemplos: banana + pasta de amendoim, aveia com frutas, torrada com geleia. Evitar gordura e fibra em excesso antes de correr (digestão lenta).
+
+Hidratação: perda de apenas 2% do peso corporal em água reduz a performance aeróbica em 10 a 20%. Para treinos acima de 45 minutos, repor 150 a 200ml a cada 15 a 20 minutos. Para corridas acima de 75 minutos, incluir eletrólitos (sódio, potássio) para prevenir hiponatremia.'
+      }
+    ]
+  },
+  {
+    id:'posture',
+    title:'Postura e Mobilidade',
+    subtitle:'6 semanas · Todos os níveis',
+    category:'health',
+    tag:'NOVO',tagColor:'#3498db',
+    price:37.90, priceLabel:'R$37,90',
+    img:'https://images.unsplash.com/photo-1518611012118-696072aa579a?w=400&q=80',
+    emoji:'🧘', color:'#2980b9',
+    desc:'Corrija sua postura, elimine dores crônicas e ganhe mobilidade com exercícios de fisioterapia preventiva baseados em evidências científicas.',
+    highlights:['Correção postural','Elimina dor crônica','Mobilidade articular','Exercícios de fisioterapia'],
+    episodes:[
+      {n:1,title:'Semana 1–2: Diagnóstico Postural',dur:'4 dias/semana'},
+      {n:2,title:'Semana 3–4: Correção Ativa',dur:'4 dias/semana'},
+      {n:3,title:'Semana 5–6: Manutenção',dur:'4 dias/semana'},
+    ],
+    mpLink:'https://mpago.li/1qj9bY9', students:198, rating:4.7,
+    content:[
+      {
+        icon:'😰',
+        title:'A epidemia das dores posturais: números que impressionam',
+        text:'Segundo a Organização Mundial da Saúde, a dor lombar é a principal causa de incapacidade no mundo — afetando 619 milhões de pessoas em 2020, com projeção de 843 milhões até 2050. No Brasil, é a segunda maior causa de afastamento do trabalho.
+
+Mas o que causa dor nas costas em 2025? Ironicamente, não é o esforço excessivo — é a inatividade. Estudos mostram que o sedentarismo e a postura estática prolongada (8 a 10 horas sentado) enfraquecem a musculatura estabilizadora da coluna, encurtam os flexores do quadril e criam desequilíbrios musculares que sobrecarregam as articulações intervertebrais.
+
+A boa notícia: revisões sistemáticas publicadas em periódicos de reabilitação mostram que exercícios de fortalecimento e mobilidade reduzem a intensidade da dor lombar crônica em 50 a 60% após 6 a 8 semanas de prática regular.'
+      },
+      {
+        icon:'🏗️',
+        title:'Síndrome do cruzamento: o desequilíbrio do século XXI',
+        text:'O fisioterapeuta Vladimir Janda descreveu a "Síndrome do Cruzamento Superior" — um padrão de desequilíbrio muscular extremamente prevalente em pessoas que trabalham sentadas: músculos do peito e pescoço anterior ficam encurtados e hiperativos, enquanto músculos das costas superiores e profundos do pescoço ficam alongados e inibidos.
+
+O resultado visual e funcional: ombros arredondados para frente, pescoço projetado para frente (postura de "tartaruga"), cifose torácica exagerada e perda de mobilidade do ombro.
+
+Este padrão não causa apenas dor — estudos mostram que reduz a capacidade pulmonar em até 30% (o diafragma trabalha comprimido), causa dores de cabeça tensionais por compressão dos nervos cervicais, e está associado a maior risco de lesão no ombro durante exercícios.'
+      },
+      {
+        icon:'🎯',
+        title:'Mobilidade funcional: o que realmente protege suas articulações',
+        text:'A distinção entre mobilidade e flexibilidade é fundamental e frequentemente ignorada. Flexibilidade é amplitude passiva — você consegue ser levado até certa posição por uma força externa. Mobilidade é amplitude ativa — você consegue alcançar e controlar essa posição com seus próprios músculos.
+
+A mobilidade é o que protege articulações. Uma pessoa muito flexível mas sem mobilidade (controle ativo da amplitude) tem articulações instáveis e vulneráveis à lesão.
+
+Este programa desenvolve as 4 regiões com maior impacto na saúde articular e funcional: quadril (restrição de mobilidade do quadril é a causa número 1 de dor lombar compensatória), torácica (restrição da coluna torácica sobrecarrega cervical e lombar), ombro (mobilidade de ombro previne síndrome do impacto) e tornozelo (restrição de tornozelo compromete o agachamento e aumenta risco de joelho).'
+      },
+      {
+        icon:'💆',
+        title:'Exercícios posturais durante o trabalho: protocolo de emergência',
+        text:'Pesquisas de saúde ocupacional mostram que micro-pausas de exercício durante o trabalho (2 a 5 minutos a cada hora) reduzem dor cervical e lombar em trabalhadores sedentários em até 45% após 4 semanas.
+
+Três exercícios com mais evidência para dor postural aguda:
+
+1️⃣ Chin Tuck (retração cervical): empurre o queixo levemente para trás, como criando um duplo queixo. Ativa os flexores profundos do pescoço e descomprime as vértebras cervicais. 10 repetições, 5 segundos cada.
+
+2️⃣ Hip Hinge (dobradiça do quadril): em pé, incline o tronco para frente mantendo coluna neutra e quadril como eixo. Reativa os glúteos e isquiotibiais e ensina o padrão motor que protege a lombar.
+
+3️⃣ Rotação torácica: sentado, cruze os braços no peito e gire o tronco para cada lado. Recupera a mobilidade da coluna torácica e alivia tensão acumulada no trapézio.'
+      }
+    ]
+  },
+  {
+    id:'stress',
+    title:'Treino Anti-Estresse',
+    subtitle:'4 semanas · Todos os níveis',
+    category:'health',
+    tag:'NOVO',tagColor:'#9b59b6',
+    price:27.90, priceLabel:'R$27,90',
+    img:'https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?w=400&q=80',
+    emoji:'🌿', color:'#8e44ad',
+    desc:'Combine exercício físico, respiração e mindfulness para reduzir cortisol e ansiedade. Programa baseado em meta-análises recentes sobre exercício e saúde mental.',
+    highlights:['Reduz cortisol','30 minutos por dia','Respiração e mindfulness','Melhora qualidade do sono'],
+    episodes:[
+      {n:1,title:'Semana 1: Respiração e Movimento',dur:'5 dias/semana'},
+      {n:2,title:'Semana 2: Yoga Funcional',dur:'5 dias/semana'},
+      {n:3,title:'Semana 3: Cardio Leve',dur:'5 dias/semana'},
+      {n:4,title:'Semana 4: Integração',dur:'5 dias/semana'},
+    ],
+    mpLink:'https://mpago.li/1qj9bY9', students:145, rating:4.9,
+    content:[
+      {
+        icon:'⚗️',
+        title:'O que a ciência diz sobre exercício e cortisol em 2025',
+        text:'Uma meta-análise e revisão sistemática publicada no Sports (MDPI, novembro de 2025), analisando 44 ensaios clínicos randomizados sobre exercício e modulação do cortisol em pessoas com sofrimento psicológico, encontrou resultados expressivos: o exercício físico gerou reduções moderadas de cortisol (SMD geral) com efeitos mais fortes sobre estresse (SMD = 0,90), seguido de ansiedade (SMD = 0,74) e depressão (SMD = 0,54).
+
+O estudo identificou também a modalidade mais eficaz: yoga demonstrou o maior efeito sobre o cortisol (SMD = -0,59), seguido por qigong e exercícios multicomponentes. O HIIT, curiosamente, tendeu a aumentar cortisol — coerente com sua natureza de alta intensidade.
+
+A conclusão prática para este programa: a combinação de yoga funcional + cardio leve + respiração — não o exercício intenso — é o protocolo mais eficaz para redução de estresse crônico.'
+      },
+      {
+        icon:'📉',
+        title:'30-40 minutos, 3 a 5 vezes por semana: a dose exata',
+        text:'Uma meta-análise publicada no PMC (2023), avaliando 12 estudos com 1.351 participantes sobre exercício e saúde mental, identificou a dose ótima com precisão: sessões de 30 a 40 minutos tiveram o efeito mais pronunciado na redução de ansiedade (SMD = -1,29) e depressão (SMD = -1,76) — superando sessões mais curtas e mais longas.
+
+A frequência ideal ficou entre 3 e 5 vezes por semana. Praticar todos os dias não mostrou benefício adicional — e pode aumentar o cortisol cronicamente.
+
+Por que isso importa: muitas pessoas acreditam que "precisam treinar muito para ter benefícios mentais". A ciência mostra que 30 minutos, 4 vezes por semana, produzem efeitos mensuráveis sobre ansiedade, humor e qualidade do sono em apenas 2 a 4 semanas.'
+      },
+      {
+        icon:'🌬️',
+        title:'A fisiologia da respiração como medicina',
+        text:'O nervo vago — o "freio" do sistema nervoso simpático — pode ser ativado voluntariamente através da respiração. Especificamente, a fase expiratória longa ativa o nervo vago e induz o estado parassimpático ("rest and digest"), reduzindo frequência cardíaca e pressão arterial em segundos.
+
+A técnica 4-7-8 (inspirar em 4s, suspender em 7s, expirar em 8s) e a respiração coerente (5 segundos para inspirar, 5 para expirar, ciclo de 6 respirações por minuto) têm o maior corpo de evidências para ativação vagal e redução aguda de ansiedade.
+
+Estudos de biofeedback mostram que 5 minutos de respiração coerente reduzem a variabilidade da frequência cardíaca de forma mensurável — um marcador objetivo de ativação do sistema nervoso parassimpático. Este programa ensina e pratica essa técnica em todas as sessões.'
+      },
+      {
+        icon:'😴',
+        title:'O elo entre exercício, estresse e sono',
+        text:'O estresse crônico eleva o cortisol à noite — o momento em que deveria estar no nível mais baixo. Isso atrasa o início do sono, reduz o sono profundo (fase N3, onde acontece a recuperação) e cria um ciclo vicioso: privação de sono → mais cortisol → mais estresse → menos sono.
+
+O exercício moderado é a intervenção mais eficaz para quebrar esse ciclo. Uma meta-análise do Journal of Sleep Research mostrou que exercício regular melhora eficiência do sono em 65%, reduz o tempo para adormecer em 13 minutos e aumenta o sono profundo.
+
+Um detalhe importante: o horário do treino importa. Exercícios intensos dentro de 3 horas antes de dormir aumentam temperatura corporal central e adrenalina — podendo atrasar o sono. Este programa tem versões adaptadas para quem treina à noite, com intensidade reduzida e trabalho de respiração e alongamento no final da sessão.'
+      }
+    ]
+  },
+  {
+    id:'technique',
+    title:'Técnica Perfeita',
+    subtitle:'20 vídeo-aulas · Todos os níveis',
+    category:'videos',
+    tag:'VÍDEO-AULAS',tagColor:'#f39c12',
+    price:27.90, priceLabel:'R$27,90',
+    img:'https://images.unsplash.com/photo-1583454110551-21f2fa2afe61?w=400&q=80',
+    emoji:'🎥', color:'#d35400',
+    desc:'20 vídeo-aulas detalhadas cobrindo a execução perfeita dos principais exercícios, baseadas nas recomendações do NSCA e nas pesquisas mais recentes de biomecânica.',
+    highlights:['20 vídeo-aulas HD','Os 20 exercícios mais importantes','Erros comuns corrigidos','Dicas de Rennan Dias'],
+    episodes:[
+      {n:1,title:'Módulo 1: Membros Inferiores',dur:'5 vídeos'},
+      {n:2,title:'Módulo 2: Membros Superiores',dur:'8 vídeos'},
+      {n:3,title:'Módulo 3: Core e Funcional',dur:'4 vídeos'},
+      {n:4,title:'Módulo 4: Erros Comuns',dur:'3 vídeos'},
+    ],
+    mpLink:'https://mpago.li/1qj9bY9', students:267, rating:5.0,
+    content:[
+      {
+        icon:'⚠️',
+        title:'Técnica de execução: a variável mais subestimada',
+        text:'Um estudo de 2024 publicado no Sports Medicine (Androulakis-Korakakis et al.) analisou as variáveis que mais impactam a hipertrofia muscular em treinos de força. Entre elas: amplitude de movimento completa produziu ganhos significativamente maiores de hipertrofia comparada à amplitude parcial — especialmente na posição de estiramento máximo do músculo.
+
+Outra descoberta importante: a fase excêntrica (descida do movimento) demonstrou ser tão ou mais importante para hipertrofia quanto a fase concêntrica (subida). Isso contradiz o hábito de "largar" o peso na descida que a maioria dos praticantes tem.
+
+Na prática: uma repetição com técnica correta — amplitude completa, controle excêntrico, ativação do músculo-alvo — é mais eficaz para hipertrofia do que 3 repetições com técnica descuidada.'
+      },
+      {
+        icon:'🦵',
+        title:'Agachamento: a biomecânica que protege os joelhos',
+        text:'O agachamento livre é frequentemente demonizado como "prejudicial aos joelhos". A evidência científica diz o contrário: quando bem executado, o agachamento profundo (abaixo de 90°) fortalece cartilagem, ligamentos e tendões do joelho — desde que a mecânica seja correta.
+
+Os estudos de eletromiografia mostram que o valgo dinâmico (joelhos caindo para dentro durante o agachamento) é a principal causa de lesão patelofemoral e do ligamento cruzado anterior em agachadores. Isso não é fraqueza de joelho — é fraqueza do glúteo médio, que não consegue manter o alinhamento do fêmur.
+
+Correção evidence-based: fortalecer glúteo médio (abdução de quadril, monster walks com elástico) antes de progredir carga no agachamento. Trabalhamos exatamente isso no módulo 1.'
+      },
+      {
+        icon:'💪',
+        title:'Supino: como maximizar a ativação do peitoral',
+        text:'Estudos de EMG (eletromiografia) mostram que a ativação do peitoral no supino varia enormemente conforme a técnica. Os fatores com maior impacto: ângulo dos cotovelos em relação ao tronco (45-75° maximiza peitoral; 90° recruta mais deltóide anterior), retração escapular (escápulas retraídas e deprimidas aumentam a base de apoio e o pré-estiramento do peitoral), e amplitude de movimento (descer até tocar o peito dobra a ativação comparado a amplitude parcial).
+
+Um erro técnico que poucos percebem: deixar os cotovelos "afundarem" durante a descida (rotação interna do ombro) coloca o manguito rotador em posição de alta tensão — causa frequente de tendinite em levantadores.
+
+As correções específicas que ensinamos: posicionamento das mãos, ângulo do banco, arco da coluna seguro, path da barra, e o "corkscrew" de ativação dos ombros antes de descer.'
+      },
+      {
+        icon:'📐',
+        title:'Padrões de movimento fundamentais: a chave para treinar com segurança e eficácia',
+        text:'O NSCA (National Strength and Conditioning Association) classifica os movimentos fundamentais do treinamento em 7 padrões: empurrar horizontal, empurrar vertical, puxar horizontal, puxar vertical, agachar, dobradiça de quadril e carregar. Dominar esses padrões com qualidade de movimento é a base para treinar com segurança em qualquer nível.
+
+Por que isso importa: a maioria das lesões na academia não acontece nos exercícios avançados — acontece nos exercícios básicos feitos com padrão de movimento inadequado. Um agachamento com má mecânica de tornozelo, ou uma remada com rotação excessiva da lombar, acumula microtraumas ao longo de meses antes de virar uma lesão séria.
+
+Este curso cobre todos os 7 padrões, com análise dos erros mais comuns em cada um e as correções específicas baseadas em avaliação funcional do movimento (FMS - Functional Movement Screen).'
+      }
+    ]
+  },
+  {
+    id:'nutrition',
+    title:'Nutrição para Performance',
+    subtitle:'Guia completo · E-book + Vídeos',
+    category:'videos',
+    tag:'E-BOOK',tagColor:'#2ecc71',
+    price:27.90, priceLabel:'R$27,90',
+    img:'https://images.unsplash.com/photo-1490645935967-10de6ba17061?w=400&q=80',
+    emoji:'🥗', color:'#27ae60',
+    desc:'Tudo que você precisa saber sobre nutrição esportiva baseada em evidências: macronutrientes, timing, suplementação com provas científicas e cardápios práticos.',
+    highlights:['E-book 80 páginas','10 vídeos explicativos','Cardápio semanal','Guia de suplementação'],
+    episodes:[
+      {n:1,title:'Parte 1: Macronutrientes',dur:'3 vídeos'},
+      {n:2,title:'Parte 2: Timing Nutricional',dur:'3 vídeos'},
+      {n:3,title:'Parte 3: Suplementação',dur:'2 vídeos'},
+      {n:4,title:'Parte 4: Cardápios Práticos',dur:'2 vídeos'},
+    ],
+    mpLink:'https://mpago.li/21vSJoW', students:389, rating:4.8,
+    content:[
+      {
+        icon:'🔬',
+        title:'Proteína: a ciência por trás da recomendação',
+        text:'A posição oficial da International Society of Sports Nutrition (ISSN, 2022) — a principal organização científica de nutrição esportiva — recomenda 1,6 a 2,2g de proteína por kg de peso corporal para maximizar a hipertrofia muscular. Para objetivos de emagrecimento com preservação de músculo, a recomendação sobe para 2,0 a 2,4g/kg.
+
+Um dado crítico que a maioria ignora: existe um teto de síntese proteica por refeição. Metanálises mostram que doses acima de 40g de proteína em uma única refeição não produzem síntese proteica adicional no músculo — o excesso é oxidado. Distribuir a proteína em 4 a 5 refeições de 30 a 40g cada é 30% mais eficiente que consumir a mesma quantidade em 1 a 2 refeições.
+
+Fontes com maior escore de aminoácidos essenciais (DIAAS — o marcador mais preciso de qualidade proteica): whey protein (1,25), ovos (1,13), leite (1,22), frango (1,08) — superiores a fontes vegetais na maioria dos casos.'
+      },
+      {
+        icon:'⚡',
+        title:'Carboidratos: o combustível que você não deve cortar',
+        text:'A dieta low carb ganhou popularidade para emagrecimento — mas tem um custo no desempenho atlético que a ciência documenta claramente. O glicogênio muscular é o principal combustível para exercícios acima de 65% do VO₂ máximo (praticamente qualquer treino de academia ou corrida).
+
+Estudos de depleção de glicogênio mostram que quando os estoques caem abaixo de 50%, a performance de força reduz em 15 a 20%, o tempo até a exaustão em exercício aeróbico cai em 25 a 35%, e o risco de lesão aumenta (fadiga muscular compromete a propriocepção e o controle motor).
+
+Para quem treina 4 a 5 vezes por semana, a recomendação atual da ACSM é de 3 a 5g de carboidrato por kg/dia. Cortar carboidrato enquanto treina intensamente é como tentar dirigir uma Ferrari com o tanque vazio — o carro está lá, mas não vai a lugar nenhum.'
+      },
+      {
+        icon:'💊',
+        title:'Suplementação: o que funciona, o que não funciona',
+        text:'O mercado de suplementos movimenta bilhões — com evidências inversamente proporcionais ao preço. Um resumo honesto baseado no nível de evidência científica:
+
+✅ COMPROVADO — Creatina monohidratada: mais de 500 estudos. Aumenta força em 5-15%, hipertrofia em 5-10%, melhora recuperação. 3-5g/dia. Não precisa de fase de carga. R$30-60/mês.
+
+✅ COMPROVADO — Cafeína: melhora performance aeróbica e de força em 3-11%. 200-400mg, 30-60 min antes. R$0,50/treino (café).
+
+✅ COMPROVADO — Proteína em pó (whey, caseína, vegana): conveniência proteica. Funciona como qualquer proteína alimentar. Nenhum poder "mágico".
+
+❌ EVIDÊNCIA FRACA — BCAAs: inúteis se a ingestão proteica total é adequada. A proteína completa contém mais BCAAs que qualquer suplemento de BCAA.
+
+❌ EVIDÊNCIA FRACA — Termogênicos: efeito de 50-100 kcal/dia no máximo, com potencial risco cardiovascular. Não justificam o custo.'
+      },
+      {
+        icon:'🍽️',
+        title:'Timing nutricional: quando comer importa (e quando não importa)',
+        text:'A "janela anabólica" pós-treino — a ideia de que você precisa comer proteína dentro de 30 minutos após treinar ou "perderá os ganhos" — foi amplamente exagerada. Pesquisas de Schoenfeld e Aragon (2013, revisado 2018) mostram que a janela é muito mais longa: de 2 a 5 horas pós-treino.
+
+O que realmente importa no timing: o pré-treino. Treinar em jejum ou com glicogênio baixo compromete a performance — e menos intensidade no treino significa menos estímulo para adaptação. Uma refeição completa 2 a 3 horas antes do treino (proteína + carboidrato + gordura moderada) ou um snack leve 30 a 60 minutos antes (banana + whey, por exemplo) otimiza a performance.
+
+Para emagrecimento: a distribuição calórica ao longo do dia importa mais que o timing específico. Comer a maioria das calorias à noite não é inerentemente problemático — o que importa é o total do dia.'
+      }
+    ]
+  },
+];
+
+// ── RENDER STORE ──
+function renderStore(u){
+  const cats = {
+    specialized:'store-specialized',
+    weight:'store-weight',
+    health:'store-health',
+    videos:'store-videos'
+  };
+  Object.entries(cats).forEach(([cat, elId])=>{
+    const el = document.getElementById(elId);
+    if(!el) return;
+    const items = CATALOG.filter(p=>p.category===cat);
+    el.innerHTML = items.map(p=>movieCard(p,u)).join('');
+  });
+}
+
+function movieCard(p, u){
+  const owned = (u?.purchases||[]).includes(p.id) || (u?.trainApproved && p.id==='free');
+  const lock = owned ? '' : `<div class="movie-card-locked">🔒 ${p.priceLabel}</div>`;
+  const badge = `<div class="movie-card-badge" style="background:${p.tagColor}">${p.tag}</div>`;
+  return `<div class="movie-card" onclick="openMovie('${p.id}')">
+    <div class="movie-card-poster-bg" style="background:linear-gradient(135deg,${p.color}33,#000)">
+      <img src="${p.img}" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;filter:brightness(.5)"/>
+      <div style="position:relative;z-index:1;text-align:center">
+        <div style="font-size:48px;margin-bottom:6px">${p.emoji}</div>
+        <div style="font-size:11px;font-weight:900;color:#fff;padding:0 8px;text-align:center;line-height:1.2">${p.title}</div>
+      </div>
+      ${badge}${lock}
+    </div>
+    <div class="movie-card-info">
+      <div class="movie-card-title">${p.title}</div>
+      <div class="movie-card-sub">${p.subtitle}</div>
+      <div class="movie-card-price">${owned?'✅ Disponível':p.priceLabel}</div>
+    </div>
+  </div>`;
+}
+
+function openMovie(id){
+  const p = CATALOG.find(c=>c.id===id);
+  if(!p) return;
+  const u = getU();
+  const owned = (u?.purchases||[]).includes(p.id);
+
+  document.getElementById('movie-hero-img').src = p.img;
+  const body = document.getElementById('movie-modal-body');
+
+  const starsHtml = '⭐'.repeat(Math.round(p.rating));
+  const highlightsHtml = p.highlights.map(h=>`
+    <div style="display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid var(--b)">
+      <span style="color:var(--r);font-size:14px">✓</span>
+      <span style="font-size:13px">${h}</span>
+    </div>`).join('');
+
+  // ── Content articles ──
+  const contentHtml = (p.content||[]).map(c=>`
+    <div style="background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.07);border-radius:14px;padding:16px;margin-bottom:10px">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
+        <div style="width:36px;height:36px;border-radius:10px;background:rgba(229,9,20,.1);border:1px solid rgba(229,9,20,.15);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0">${c.icon}</div>
+        <div style="font-size:14px;font-weight:800">${c.title}</div>
+      </div>
+      <div style="font-size:13px;color:var(--t2);line-height:1.75;white-space:pre-line">${c.text}</div>
+    </div>
+  `).join('');
+
+  const episodesHtml = p.episodes.map((e,i)=>`
+    <div class="episode-row">
+      <div class="${owned?'episode-num':'episode-locked'}">${owned?(i+1):'🔒'}</div>
+      <div style="flex:1">
+        <div style="font-size:13px;font-weight:700;${!owned?'color:var(--mu)':''}">${e.title}</div>
+        <div style="font-size:10px;color:var(--mu);margin-top:2px">${e.dur}</div>
+      </div>
+      ${owned?`<span style="font-size:16px;color:var(--mu)">›</span>`:''}
+    </div>`).join('');
+
+  body.innerHTML = `
+    <div style="display:inline-block;border-radius:4px;padding:2px 9px;font-size:9px;font-weight:900;letter-spacing:1px;margin-bottom:8px;background:${p.tagColor}">${p.tag}</div>
+    <div style="font-size:24px;font-weight:900;margin-bottom:4px;line-height:1.1">${p.title}</div>
+    <div style="font-size:12px;color:var(--t2);margin-bottom:12px">${p.subtitle}</div>
+
+    <!-- Rating + students -->
+    <div style="display:flex;gap:12px;align-items:center;margin-bottom:14px">
+      <span style="font-size:12px;color:#f39c12">${starsHtml} ${p.rating}</span>
+      <span style="font-size:11px;color:var(--mu)">👥 ${p.students.toLocaleString()} alunos</span>
+      ${owned?'<span style="background:rgba(46,204,113,.1);border:1px solid rgba(46,204,113,.2);border-radius:6px;padding:2px 10px;font-size:10px;font-weight:800;color:#2ecc71">✅ Você tem acesso</span>':''}
+    </div>
+
+    <!-- Descrição -->
+    <p style="font-size:13px;color:var(--t2);line-height:1.7;margin-bottom:16px">${p.desc}</p>
+
+    <!-- O que você aprende -->
+    <div style="font-size:10px;font-weight:800;color:var(--mu);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:8px">O que está incluído</div>
+    <div style="margin-bottom:16px">${highlightsHtml}</div>
+
+    <!-- Episódios/Módulos -->
+    <div style="font-size:10px;font-weight:800;color:var(--mu);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:4px">
+      ${p.category==='videos'?'Módulos':'Etapas do programa'}
+    </div>
+    <div style="margin-bottom:20px">${episodesHtml}</div>
+
+    <!-- Conteúdo educacional -->
+    ${contentHtml ? `<div style="font-size:10px;font-weight:800;color:var(--mu);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:10px">📚 Conteúdo do programa</div>${contentHtml}` : ''}
+
+    <!-- CTA -->
+    ${owned
+      ? `<button class="btn-p" onclick="alert('Em breve: acesso ao conteúdo premium!')">▶ Acessar programa</button>`
+      : `<div style="background:rgba(229,9,20,.06);border:1px solid rgba(229,9,20,.15);border-radius:12px;padding:14px;margin-bottom:12px;text-align:center">
+          <div style="font-size:28px;font-weight:900;color:var(--r);margin-bottom:2px">${p.priceLabel}</div>
+          <div style="font-size:11px;color:var(--mu)">Pagamento único · Acesso vitalício</div>
+        </div>
+        <button class="btn-p" onclick="openIntake('${p.id}')">🛒 Comprar agora — ${p.priceLabel}</button>
+        <button onclick="closeModal('modal-movie')" style="width:100%;padding:12px;background:transparent;border:1px solid var(--b);border-radius:12px;color:var(--t2);font-size:13px;font-weight:700;cursor:pointer;margin-top:8px">Continuar navegando</button>`
+    }
+    <div style="height:8px"></div>
+  `;
+  document.getElementById('modal-movie').classList.add('open');
+}
+
+function buyProgram(id, link){
+  const email = DB.get('fq_cur');
+  const users = DB.get('fq_users')||{};
+  if(users[email]){
+    if(!users[email].pendingPurchases) users[email].pendingPurchases=[];
+    if(!users[email].pendingPurchases.includes(id)) users[email].pendingPurchases.push(id);
+    DB.set('fq_users', users);
+  }
+  window.open(link,'_blank');
+  setTimeout(()=>{
+    if(confirm('✅ Pagamento realizado?
+Clique OK para verificar o acesso.')){
+      checkPurchase(id);
+    }
+  }, 3000);
+}
+
+function checkPurchase(id){
+  // In production, this would check Supabase for payment confirmation
+  // For now, admin grants access manually
+  alert('⏳ Aguarde a confirmação do pagamento.
+Rennan irá liberar seu acesso em breve!');
+}
+
+// Admin: grant program access
+function admGrantProgram(email, programId){
+  const users = DB.get('fq_users')||{};
+  if(!users[email]) return;
+  if(!users[email].purchases) users[email].purchases=[];
+  if(!users[email].purchases.includes(programId)){
+    users[email].purchases.push(programId);
+    DB.set('fq_users',users);
+    if(window.sb) sb.from('alunos').update({purchases:users[email].purchases}).eq('email',email);
+  }
+}
+
+// ══ PROGRAM INTAKE — PERSONALIZAÇÃO COM IA ══
+
+const INTAKE_QUESTIONS = {
+  hypertrophy:[
+    {
+      id:'nivel', type:'single',
+      q:'Qual é seu nível atual de treino?',
+      hint:'Seja honesto — isso garante que o programa seja ideal para você.',
+      opts:[
+        {icon:'🌱',label:'Intermediário',sub:'6 meses a 2 anos de musculação'},
+        {icon:'💪',label:'Avançado',sub:'Mais de 2 anos, treino consistente'},
+        {icon:'🏆',label:'Muito avançado',sub:'3+ anos, já usei técnicas avançadas'},
+      ]
+    },
+    {
+      id:'foco', type:'multi',
+      q:'Quais grupos musculares você quer priorizar?',
+      hint:'Selecione até 2 — a periodização vai dar ênfase neles.',
+      opts:['💪 Peito','🦅 Costas','🦵 Pernas','🔴 Ombros','💉 Braços','🎯 Core/Abdômen']
+    },
+    {
+      id:'fraqueza', type:'single',
+      q:'Qual é seu maior desafio atual?',
+      hint:'Isso vai guiar a IA na escolha dos exercícios.',
+      opts:[
+        {icon:'📉',label:'Platô — parei de evoluir',sub:'Mesma carga há mais de 1 mês'},
+        {icon:'⚡',label:'Falta de intensidade',sub:'Termino os treinos sem estar cansado'},
+        {icon:'😴',label:'Recuperação lenta',sub:'Dores musculares que demoram muito'},
+        {icon:'🎯',label:'Técnica imperfeita',sub:'Não sinto o músculo certo no exercício'},
+      ]
+    },
+    {
+      id:'tempo', type:'single',
+      q:'Quanto tempo você tem por sessão?',
+      hint:'O volume e número de exercícios serão adaptados.',
+      opts:[
+        {icon:'⚡',label:'Até 60 minutos',sub:'Treinos compactos e eficientes'},
+        {icon:'💪',label:'60 a 90 minutos',sub:'Volume moderado-alto'},
+        {icon:'🏆',label:'Mais de 90 minutos',sub:'Volume máximo, técnicas avançadas'},
+      ]
+    },
+    {
+      id:'obs', type:'text',
+      q:'Alguma observação importante?',
+      hint:'Lesões, restrições, objetivos específicos — qualquer detalhe ajuda.',
+      placeholder:'Ex: tenho dor no ombro direito, quero foco em pernas, treino às 6h da manhã...'
+    }
+  ],
+
+  elderly:[
+    {
+      id:'idade', type:'single',
+      q:'Qual é a sua faixa etária?',
+      hint:'A intensidade e os exercícios serão ajustados para a sua faixa.',
+      opts:[
+        {icon:'🌟',label:'60 a 65 anos',sub:'Ativo e com boa mobilidade'},
+        {icon:'💪',label:'66 a 72 anos',sub:'Alguma limitação natural'},
+        {icon:'❤️',label:'73 a 80 anos',sub:'Foco em funcionalidade e segurança'},
+        {icon:'🌿',label:'Acima de 80 anos',sub:'Exercícios adaptados e supervisionados'},
+      ]
+    },
+    {
+      id:'atividade', type:'single',
+      q:'Como está sua atividade física atual?',
+      hint:'Isso define nosso ponto de partida.',
+      opts:[
+        {icon:'🪑',label:'Sedentário',sub:'Pouca ou nenhuma atividade física'},
+        {icon:'🚶',label:'Caminhadas leves',sub:'Caminho alguns dias por semana'},
+        {icon:'🏊',label:'Ativo ocasional',sub:'Faço alguma atividade às vezes'},
+        {icon:'💪',label:'Já treino regularmente',sub:'Academia ou exercícios em casa'},
+      ]
+    },
+    {
+      id:'dores', type:'multi',
+      q:'Tem dor ou limitação em alguma região?',
+      hint:'Todos os exercícios dessas regiões serão adaptados ou substituídos.',
+      opts:['🦵 Joelho','🔵 Lombar / Coluna','💪 Ombro','🦴 Quadril','🦶 Tornozelo','❤️ Problema cardíaco','Nenhuma limitação']
+    },
+    {
+      id:'objetivo', type:'single',
+      q:'Qual é o seu principal objetivo?',
+      hint:'Vamos direcionar o programa para o que mais importa para você.',
+      opts:[
+        {icon:'🦵',label:'Força e equilíbrio',sub:'Prevenir quedas e ganhar independência'},
+        {icon:'❤️',label:'Saúde cardiovascular',sub:'Melhorar disposição e resistência'},
+        {icon:'🏃',label:'Mobilidade',sub:'Mexer com mais facilidade no dia a dia'},
+        {icon:'😊',label:'Bem-estar geral',sub:'Me sentir melhor e ter mais energia'},
+      ]
+    },
+    {
+      id:'obs', type:'text',
+      q:'Medicamentos ou condições de saúde que devo saber?',
+      hint:'Nenhuma informação é compartilhada com terceiros — é apenas para personalizar seu treino.',
+      placeholder:'Ex: tomo losartana, tenho diabetes tipo 2, fiz cirurgia no joelho em 2022...'
+    }
+  ],
+
+  pregnancy:[
+    {
+      id:'trimestre', type:'single',
+      q:'Em que fase da gravidez você está?',
+      hint:'O programa é completamente diferente em cada trimestre.',
+      opts:[
+        {icon:'🌱',label:'1º Trimestre',sub:'Até a 13ª semana'},
+        {icon:'💪',label:'2º Trimestre',sub:'14ª a 27ª semana — melhor fase para treinar'},
+        {icon:'🌸',label:'3º Trimestre',sub:'28ª semana em diante'},
+        {icon:'💫',label:'Pós-parto',sub:'Recuperação após o nascimento'},
+      ]
+    },
+    {
+      id:'experiencia', type:'single',
+      q:'Você praticava exercícios antes da gravidez?',
+      hint:'Isso determina a intensidade inicial do seu programa.',
+      opts:[
+        {icon:'🌱',label:'Não praticava',sub:'Sou iniciante em exercícios'},
+        {icon:'🚶',label:'Atividade leve',sub:'Caminhadas e atividades leves'},
+        {icon:'💪',label:'Treinava regularmente',sub:'Academia ou esporte 3+ vezes/semana'},
+        {icon:'🏆',label:'Atleta',sub:'Treino intenso e competitivo'},
+      ]
+    },
+    {
+      id:'liberacao', type:'single',
+      q:'Você tem liberação médica para se exercitar?',
+      hint:'Importante: sempre consulte seu obstetra antes de iniciar.',
+      opts:[
+        {icon:'✅',label:'Sim, médico liberou',sub:'Tenho autorização do meu obstetra'},
+        {icon:'⏳',label:'Ainda não consultei',sub:'Vou consultar antes de começar'},
+        {icon:'⚠️',label:'Tenho restrições',sub:'Médico orientou sobre limitações'},
+      ]
+    },
+    {
+      id:'sintomas', type:'multi',
+      q:'Tem algum desses sintomas ou condições?',
+      hint:'Exercícios específicos serão adaptados ou removidos.',
+      opts:['🤢 Náusea frequente','😴 Fadiga intensa','💧 Inchaço nos pés','🩺 Pressão alta','🩸 Anemia','Nenhum dos anteriores']
+    },
+    {
+      id:'obs', type:'text',
+      q:'Algo mais que devo saber sobre sua gravidez?',
+      hint:'Qualquer detalhe que ajude a tornar o programa mais seguro e eficaz para você.',
+      placeholder:'Ex: gestação gemelar, cesárea anterior, diastase abdominal, enjoos matinais...'
+    }
+  ],
+
+  disabled:[
+    {
+      id:'tipo', type:'single',
+      q:'Qual é o tipo de deficiência ou limitação?',
+      hint:'O programa terá adaptações específicas para sua condição.',
+      opts:[
+        {icon:'♿',label:'Cadeirante',sub:'Uso cadeira de rodas permanentemente'},
+        {icon:'🦿',label:'Amputação',sub:'Membro amputado'},
+        {icon:'🦯',label:'Deficiência visual',sub:'Baixa visão ou cegueira'},
+        {icon:'🩺',label:'Limitação motora',sub:'Paralisia parcial, hemiplegia, etc.'},
+        {icon:'🤝',label:'Outra condição',sub:'Doença neuromuscular ou outra limitação'},
+      ]
+    },
+    {
+      id:'nivel', type:'single',
+      q:'Como você descreveria sua capacidade física atual?',
+      hint:'Sem julgamentos — isso apenas define nosso ponto de partida.',
+      opts:[
+        {icon:'🌱',label:'Muito limitado',sub:'Poucos movimentos independentes'},
+        {icon:'💪',label:'Parcialmente independente',sub:'Consigo fazer muitas coisas com adaptação'},
+        {icon:'🏆',label:'Bastante independente',sub:'Limitação específica mas alta autonomia'},
+      ]
+    },
+    {
+      id:'objetivo', type:'multi',
+      q:'O que você quer conquistar com este programa?',
+      hint:'Pode marcar mais de um — o programa vai equilibrar as prioridades.',
+      opts:['💪 Ganhar força','🏃 Mais resistência','🎯 Independência no dia a dia','😊 Bem-estar e humor','⚖️ Controle do peso','🦴 Saúde cardiovascular']
+    },
+    {
+      id:'equipamento', type:'single',
+      q:'Quais equipamentos você tem acesso?',
+      hint:'Os exercícios serão adaptados para o que você tem disponível.',
+      opts:[
+        {icon:'🏢',label:'Academia adaptada',sub:'Equipamentos e profissional disponíveis'},
+        {icon:'🏠',label:'Casa com halteres/elásticos',sub:'Equipamentos básicos em casa'},
+        {icon:'🪑',label:'Apenas corpo/cadeira',sub:'Sem equipamentos adicionais'},
+      ]
+    },
+    {
+      id:'obs', type:'text',
+      q:'Detalhes sobre sua condição que ajudarão a personalizar o treino:',
+      hint:'Quanto mais detalhes, mais personalizado e seguro será seu programa.',
+      placeholder:'Ex: amputação transtibial direita com prótese, boa mobilidade no membro residual, treino há 2 anos...'
+    }
+  ],
+
+  fatburn:[
+    {
+      id:'historico', type:'single',
+      q:'Você já tentou emagrecer antes?',
+      hint:'Seu histórico nos diz muito sobre o que vai funcionar para você.',
+      opts:[
+        {icon:'🌱',label:'É minha primeira tentativa séria',sub:'Quero fazer certo desta vez'},
+        {icon:'🔄',label:'Já tentei, mas abandonei',sub:'Tive dificuldade de manter a consistência'},
+        {icon:'📉',label:'Emagreci mas voltou o peso',sub:'Efeito sanfona — quero resultado duradouro'},
+        {icon:'💪',label:'Perdi algum peso mas travei',sub:'Platô — preciso de novo estímulo'},
+      ]
+    },
+    {
+      id:'obstaculo', type:'single',
+      q:'Qual é seu maior obstáculo para emagrecer?',
+      hint:'A IA vai criar estratégias específicas para seu desafio.',
+      opts:[
+        {icon:'🍕',label:'Alimentação',sub:'Dificuldade de manter a dieta'},
+        {icon:'⏰',label:'Falta de tempo',sub:'Rotina corrida e imprevisível'},
+        {icon:'😴',label:'Cansaço e estresse',sub:'Sem energia para treinar'},
+        {icon:'🎯',label:'Falta de consistência',sub:'Começo bem mas não mantenho'},
+      ]
+    },
+    {
+      id:'disponibilidade', type:'single',
+      q:'Quantos dias por semana você consegue treinar?',
+      hint:'Seja realista — consistência é melhor que perfeição.',
+      opts:[
+        {icon:'3️⃣',label:'3 dias por semana',sub:'Mínimo eficaz para emagrecimento'},
+        {icon:'4️⃣',label:'4 dias por semana',sub:'Ótimo equilíbrio'},
+        {icon:'5️⃣',label:'5 dias por semana',sub:'Alta frequência para resultados rápidos'},
+      ]
+    },
+    {
+      id:'restricoes', type:'multi',
+      q:'Tem alguma restrição alimentar ou de saúde?',
+      hint:'O programa nutricional será adaptado para você.',
+      opts:['🌿 Vegetariano/vegano','🌾 Intolerância ao glúten','🥛 Intolerância à lactose','💊 Diabetes','❤️ Problema cardíaco','Nenhuma restrição']
+    },
+    {
+      id:'obs', type:'text',
+      q:'Qual é a sua meta de emagrecimento?',
+      hint:'Metas específicas ajudam a IA a calibrar a progressão.',
+      placeholder:'Ex: quero perder 10kg em 3 meses, preciso caber no vestido do casamento, quero reduzir a barriga...'
+    }
+  ],
+
+  running10k:[
+    {
+      id:'nivel', type:'single',
+      q:'Como está sua corrida hoje?',
+      hint:'Vamos do seu ponto atual até os 10km.',
+      opts:[
+        {icon:'🚶',label:'Não consigo correr 1 minuto seguido',sub:'Zero — começo do absoluto zero'},
+        {icon:'🏃',label:'Consigo correr 5 a 10 minutos',sub:'Base aeróbica inicial'},
+        {icon:'💪',label:'Já corro 2 a 3km sem parar',sub:'Preciso aumentar a distância'},
+        {icon:'🎯',label:'Já corro 5km mas quero 10km',sub:'Preciso dobrar a distância'},
+      ]
+    },
+    {
+      id:'lesao', type:'multi',
+      q:'Já teve alguma lesão relacionada à corrida?',
+      hint:'Exercícios preventivos serão priorizados.',
+      opts:['🦵 Dor no joelho','🦶 Canelite','🦷 Fascite plantar','🏃 Banda iliotibial','😊 Nunca tive lesão']
+    },
+    {
+      id:'objetivo', type:'single',
+      q:'Qual é seu objetivo com a corrida?',
+      hint:'Isso define o ritmo e a intensidade do programa.',
+      opts:[
+        {icon:'🏅',label:'Completar um 10km',sub:'Só quero cruzar a linha de chegada'},
+        {icon:'⏱️',label:'Completar em menos de 1 hora',sub:'Meta de tempo — pace de 6 min/km'},
+        {icon:'❤️',label:'Saúde e condicionamento',sub:'Quero me sentir melhor, não competir'},
+        {icon:'🏆',label:'Preparar para uma prova',sub:'Tenho uma corrida marcada'},
+      ]
+    },
+    {
+      id:'obs', type:'text',
+      q:'Algum detalhe importante para seu programa?',
+      hint:'Quanto mais soubermos, melhor será seu treino.',
+      placeholder:'Ex: treino às manhãs, tenho uma prova em Setembro, moro em apartamento sem pista...'
+    }
+  ],
+
+  posture:[
+    {
+      id:'dor', type:'multi',
+      q:'Onde você sente dor ou desconforto?',
+      hint:'O programa vai priorizar as regiões mais afetadas.',
+      opts:['🔵 Lombar (costas baixas)','🔵 Cervical (pescoço)','💪 Ombros','🏠 Entre as escápulas','🦵 Quadril','😊 Não sinto dor — quero prevenir']
+    },
+    {
+      id:'causa', type:'single',
+      q:'Qual é sua rotina principal?',
+      hint:'O programa será adaptado para compensar os padrões do seu dia a dia.',
+      opts:[
+        {icon:'💻',label:'Trabalho sentado o dia todo',sub:'Home office ou escritório'},
+        {icon:'📱',label:'Muito tempo no celular',sub:'Pescoço sempre inclinado'},
+        {icon:'🏗️',label:'Trabalho físico / em pé',sub:'Esforço repetitivo ou postura estática'},
+        {icon:'🔄',label:'Combinação de tudo',sub:'Muito variado'},
+      ]
+    },
+    {
+      id:'historico', type:'single',
+      q:'Já fez fisioterapia ou tratamento postural?',
+      hint:'Isso nos ajuda a calibrar a dificuldade inicial.',
+      opts:[
+        {icon:'❌',label:'Nunca fiz',sub:'Primeira abordagem sistemática'},
+        {icon:'✅',label:'Fiz e melhorei bastante',sub:'Quero manutenção e progressão'},
+        {icon:'🔄',label:'Fiz mas a dor voltou',sub:'Preciso de rotina consistente'},
+      ]
+    },
+    {
+      id:'obs', type:'text',
+      q:'Detalhes adicionais sobre sua postura ou dores:',
+      hint:'Diagnósticos, exames ou observações do médico/fisioterapeuta são muito úteis.',
+      placeholder:'Ex: diagnóstico de hiperlordose, escoliose leve, hérnia de disco L4-L5, dor ao sentar por mais de 1 hora...'
+    }
+  ],
+
+  stress:[
+    {
+      id:'nivel', type:'single',
+      q:'Como você descreveria seu nível de estresse?',
+      hint:'Sem julgamentos — isso calibra a intensidade dos treinos.',
+      opts:[
+        {icon:'😐',label:'Estresse moderado',sub:'Tenso às vezes, mas consigo descansar'},
+        {icon:'😰',label:'Estresse alto',sub:'Tenso quase sempre, sono ruim'},
+        {icon:'😤',label:'Estresse muito alto',sub:'Exaustão constante, possível burnout'},
+      ]
+    },
+    {
+      id:'sono', type:'single',
+      q:'Como está a qualidade do seu sono?',
+      hint:'O sono é parte fundamental do programa anti-estresse.',
+      opts:[
+        {icon:'😴',label:'Durmo bem',sub:'7 a 8 horas com qualidade'},
+        {icon:'⚡',label:'Durmo pouco',sub:'Menos de 6 horas por noite'},
+        {icon:'🌀',label:'Durmo mas não descanso',sub:'Acordo cansado, sono superficial'},
+        {icon:'🌙',label:'Insônia frequente',sub:'Dificuldade de dormir ou manter o sono'},
+      ]
+    },
+    {
+      id:'preferencia', type:'single',
+      q:'O que mais te atrai neste programa?',
+      hint:'Vamos enfatizar o que você mais precisa.',
+      opts:[
+        {icon:'🌬️',label:'Técnicas de respiração',sub:'Controle imediato da ansiedade'},
+        {icon:'🧘',label:'Yoga e mobilidade',sub:'Corpo e mente em equilíbrio'},
+        {icon:'🏃',label:'Cardio leve e meditativo',sub:'Movimento que acalma'},
+        {icon:'💆',label:'Tudo equilibrado',sub:'Quero uma abordagem completa'},
+      ]
+    },
+    {
+      id:'obs', type:'text',
+      q:'O que está causando mais estresse na sua vida agora?',
+      hint:'Isso é confidencial e nos ajuda a personalizar as práticas de mindfulness.',
+      placeholder:'Ex: trabalho muito exigente, problemas familiares, ansiedade generalizada, prazo apertado...'
+    }
+  ],
+
+  technique:[
+    {
+      id:'foco', type:'multi',
+      q:'Quais exercícios você mais quer aprender/corrigir?',
+      hint:'As aulas desses exercícios serão priorizadas no seu plano.',
+      opts:['🦵 Agachamento','🏋️ Supino','💪 Levantamento terra','🎣 Remada','⬇️ Puxada','🔽 Desenvolvimento','Quero aprender todos']
+    },
+    {
+      id:'problema', type:'single',
+      q:'Qual é o seu maior problema técnico atualmente?',
+      hint:'A IA vai focar nas correções mais relevantes para você.',
+      opts:[
+        {icon:'😶',label:'Não sinto o músculo certo',sub:'Executo o movimento mas não sinto ativação'},
+        {icon:'⚠️',label:'Tenho dor ao fazer certos exercícios',sub:'A técnica errada está causando dor'},
+        {icon:'🌱',label:'Sou iniciante',sub:'Quero aprender do zero, do jeito certo'},
+        {icon:'📈',label:'Quero aumentar a carga',sub:'Técnica atual não suporta mais peso'},
+      ]
+    },
+    {
+      id:'obs', type:'text',
+      q:'Exercícios específicos que geram dúvida ou desconforto:',
+      hint:'Detalhe o movimento e onde sente o problema.',
+      placeholder:'Ex: no agachamento meus joelhos caem para dentro, no supino sinto mais no ombro que no peito...'
+    }
+  ],
+
+  nutrition:[
+    {
+      id:'objetivo', type:'single',
+      q:'Qual é seu objetivo nutricional principal?',
+      hint:'O guia e os cardápios serão direcionados para sua meta.',
+      opts:[
+        {icon:'🔥',label:'Emagrecer',sub:'Perda de gordura com preservação muscular'},
+        {icon:'💪',label:'Ganhar massa muscular',sub:'Superávit calórico e proteína otimizados'},
+        {icon:'⚖️',label:'Recomposição corporal',sub:'Perder gordura e ganhar músculo ao mesmo tempo'},
+        {icon:'❤️',label:'Saúde e energia',sub:'Melhorar disposição e qualidade de vida'},
+      ]
+    },
+    {
+      id:'dificuldade', type:'single',
+      q:'Qual é sua maior dificuldade com a alimentação?',
+      hint:'A IA vai oferecer estratégias específicas para seu desafio.',
+      opts:[
+        {icon:'🍕',label:'Como mal nos fins de semana',sub:'Semana boa, fim de semana péssimo'},
+        {icon:'⏰',label:'Não tenho tempo para cozinhar',sub:'Dependência de delivery e fast food'},
+        {icon:'🎯',label:'Não sei calcular minha dieta',sub:'Não sei quanto e o que comer'},
+        {icon:'😤',label:'Ansiedade e compulsão alimentar',sub:'Como por emoção, não por fome'},
+      ]
+    },
+    {
+      id:'restricoes', type:'multi',
+      q:'Tem restrições ou preferências alimentares?',
+      hint:'Os cardápios serão completamente adaptados.',
+      opts:['🌿 Vegetariano','🌱 Vegano','🌾 Sem glúten','🥛 Sem lactose','🐟 Não como carne vermelha','Sem restrições']
+    },
+    {
+      id:'obs', type:'text',
+      q:'Seus dados para cálculo personalizado:',
+      hint:'Quanto mais preciso, mais exato será seu plano nutricional.',
+      placeholder:'Ex: 80kg, 1,75m, 32 anos, treino 4x/semana, trabalho sentado, quero perder 10kg...'
+    }
+  ],
+};
+
+// ── INTAKE STATE ──
+let intakeState = {
+  programId: null,
+  currentStep: 0,
+  answers: {},
+};
+
+function openIntake(programId){
+  const p = CATALOG.find(c=>c.id===programId);
+  if(!p) return;
+  const questions = INTAKE_QUESTIONS[programId]||[];
+  if(!questions.length){ buyProgram(programId, p.mpLink); return; }
+
+  intakeState = {programId, currentStep:0, answers:{}};
+
+  document.getElementById('intake-program-name').textContent = p.title.toUpperCase();
+  document.getElementById('intake-step-label').textContent = 'Personalizando seu programa';
+  renderIntakeStep(questions);
+  document.getElementById('modal-intake').classList.add('open');
+  document.getElementById('modal-movie').classList.remove('open');
+}
+
+function renderIntakeStep(questions){
+  const step = intakeState.currentStep;
+  const q = questions[step];
+  const total = questions.length;
+  const pct = Math.round((step/total)*100);
+
+  document.getElementById('intake-prog').style.width = pct+'%';
+  document.getElementById('intake-step-label').textContent = `Etapa ${step+1} de ${total}`;
+
+  const backBtn = document.getElementById('intake-btn-back');
+  const nextBtn = document.getElementById('intake-btn-next');
+  backBtn.style.display = step>0?'block':'none';
+
+  const isLast = step===total-1;
+  nextBtn.textContent = isLast ? '✅ Gerar meu programa personalizado' : 'Próximo →';
+
+  let html = `<div class="intake-q">${q.q}</div><div class="intake-hint">${q.hint}</div>`;
+
+  if(q.type==='single'){
+    html += `<div class="intake-opts" id="intake-opts">`;
+    q.opts.forEach((o,i)=>{
+      const sel = intakeState.answers[q.id]===o.label;
+      html += `<div class="intake-opt ${sel?'sel':''}" onclick="selIntakeSingle('${q.id}',${i})">
+        <span class="intake-opt-icon">${o.icon}</span>
+        <div><div style="font-size:14px;font-weight:700">${o.label}</div><div style="font-size:11px;color:var(--mu);margin-top:2px">${o.sub||''}</div></div>
+      </div>`;
+    });
+    html += `</div>`;
+  } else if(q.type==='multi'){
+    const selected = intakeState.answers[q.id]||[];
+    html += `<div class="intake-multi-opts" id="intake-opts">`;
+    q.opts.forEach((o,i)=>{
+      const sel = selected.includes(o);
+      html += `<div class="intake-multi-opt ${sel?'sel':''}" onclick="togIntakeMulti('${q.id}','${o.replace(/'/g,"\'")}',this)">${o}</div>`;
+    });
+    html += `</div>`;
+  } else if(q.type==='text'){
+    const val = intakeState.answers[q.id]||'';
+    html += `<textarea class="fi" id="intake-text-${q.id}" rows="4" placeholder="${q.placeholder||''}" style="font-size:14px">${val}</textarea>`;
+  }
+
+  document.getElementById('intake-steps-container').innerHTML = html;
+}
+
+function selIntakeSingle(id, idx){
+  const questions = INTAKE_QUESTIONS[intakeState.programId];
+  const q = questions[intakeState.currentStep];
+  intakeState.answers[id] = q.opts[idx].label;
+  document.querySelectorAll('.intake-opt').forEach((el,i)=>{
+    el.classList.toggle('sel', i===idx);
+  });
+}
+
+function togIntakeMulti(id, val, el){
+  if(!intakeState.answers[id]) intakeState.answers[id]=[];
+  const arr = intakeState.answers[id];
+  const idx = arr.indexOf(val);
+  if(idx>=0){ arr.splice(idx,1); el.classList.remove('sel'); }
+  else { arr.push(val); el.classList.add('sel'); }
+}
+
+function intakeNext(){
+  const questions = INTAKE_QUESTIONS[intakeState.programId];
+  const q = questions[intakeState.currentStep];
+
+  // Save text answer if text type
+  if(q.type==='text'){
+    const el = document.getElementById(`intake-text-${q.id}`);
+    if(el) intakeState.answers[q.id] = el.value;
+  }
+
+  if(intakeState.currentStep < questions.length-1){
+    intakeState.currentStep++;
+    renderIntakeStep(questions);
+    document.querySelector('#modal-intake .modal-bx').scrollTop=0;
+  } else {
+    // Last step — generate AI program
+    generatePersonalizedProgram();
+  }
+}
+
+function intakePrev(){
+  if(intakeState.currentStep>0){
+    intakeState.currentStep--;
+    const questions = INTAKE_QUESTIONS[intakeState.programId];
+    renderIntakeStep(questions);
+  }
+}
+
+async function generatePersonalizedProgram(){
+  const p = CATALOG.find(c=>c.id===intakeState.programId);
+  const u = getU();
+  if(!p||!u) return;
+
+  // Show loading screen
+  document.getElementById('intake-steps-container').innerHTML = `
+    <div class="intake-ai-loading">
+      <div style="font-size:48px;margin-bottom:16px">🤖</div>
+      <div style="font-size:16px;font-weight:800;margin-bottom:8px">Gerando seu programa personalizado</div>
+      <div style="font-size:13px;color:var(--mu);margin-bottom:20px">Analisando suas respostas...</div>
+      <div class="intake-ai-dots"><span></span><span></span><span></span></div>
+    </div>`;
+  document.getElementById('intake-nav').style.display='none';
+
+  const answers = intakeState.answers;
+  const answersText = Object.entries(answers)
+    .map(([k,v])=>`${k}: ${Array.isArray(v)?v.join(', '):v}`)
+    .join('
+');
+
+  const anamneseText = u.anamnese ? `
+Perfil do aluno (da anamnese):
+- Sexo: ${u.anamnese.sexo||'Não informado'}
+- Idade: ${u.anamnese.nasc ? Math.floor((Date.now()-new Date(u.anamnese.nasc))/(365.25*24*3600*1000))+' anos' : 'Não informado'}
+- Peso: ${u.anamnese.peso||'?'}kg | Altura: ${u.anamnese.altura||'?'}cm
+- Lesões: ${(u.anamnese.lesoes||[]).join(', ')||'Nenhuma'}
+- Nível: ${u.anamnese.tempo||'Não informado'}
+- Objetivo principal: ${(u.anamnese.obj||[]).join(', ')||'Não informado'}` : '';
+
+  const prompt = `Você é Rennan Dias, personal trainer especialista em ${p.title}.
+
+PROGRAMA ADQUIRIDO: ${p.title}
+${p.desc}
+${anamneseText}
+
+RESPOSTAS DA FICHA DE PERSONALIZAÇÃO:
+${answersText}
+
+Com base nessas informações, crie um plano de personalização completo e motivador. Retorne APENAS um JSON sem markdown:
+{
+  "saudacao": "mensagem personalizada de boas-vindas de 2 frases, usando o nome ${u.name?.split(' ')[0]||'atleta'}",
+  "perfil": "análise do perfil em 2-3 frases simples",
+  "ajustes": [
+    {"titulo": "ajuste específico 1", "descricao": "explicação clara de como o programa foi adaptado para este aluno"},
+    {"titulo": "ajuste específico 2", "descricao": "..."},
+    {"titulo": "ajuste específico 3", "descricao": "..."}
+  ],
+  "dica_principal": "dica de ouro personalizada para este aluno ter sucesso neste programa",
+  "alerta": "se houver lesão, restrição ou condição especial — o que evitar ou ter cuidado. Se não houver, retorne null",
+  "semana1": "como deve ser a primeira semana especificamente para este aluno"
+}`;
+
+  try {
+    const res = await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({
+        model:'claude-sonnet-4-6',
+        max_tokens:1000,
+        messages:[{role:'user',content:prompt}]
+      })
+    });
+    const data = await res.json();
+    const text = data.content.map(i=>i.text||'').join('').trim().replace(/```json|```/g,'').trim();
+    const plan = JSON.parse(text);
+    showIntakeResult(plan, p, u);
+  } catch(e){
+    console.error('AI intake error:', e);
+    showIntakeResult(null, p, u);
+  }
+}
+
+function showIntakeResult(plan, p, u){
+  // Save personalization to user data
+  const email = DB.get('fq_cur');
+  const users = DB.get('fq_users')||{};
+  if(users[email]){
+    if(!users[email].programIntakes) users[email].programIntakes={};
+    users[email].programIntakes[p.id] = {
+      answers: intakeState.answers,
+      plan,
+      date: new Date().toISOString()
+    };
+    DB.set('fq_users', users);
+    syncU(users[email]);
+  }
+
+  const html = plan ? `
+    <div style="text-align:center;margin-bottom:20px">
+      <div style="font-size:40px;margin-bottom:10px">🎉</div>
+      <div style="font-size:18px;font-weight:900;margin-bottom:6px">Programa personalizado!</div>
+      <div style="font-size:13px;color:var(--t2);line-height:1.6">${plan.saudacao}</div>
+    </div>
+
+    <div class="intake-result-card">
+      <div style="font-size:10px;font-weight:800;color:var(--r);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:8px">📊 Seu perfil</div>
+      <div style="font-size:13px;color:var(--t2);line-height:1.6">${plan.perfil}</div>
+    </div>
+
+    <div class="intake-result-card">
+      <div style="font-size:10px;font-weight:800;color:var(--r);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:12px">⚙️ Como o programa foi ajustado para você</div>
+      ${(plan.ajustes||[]).map(a=>`
+        <div style="margin-bottom:12px;padding-bottom:12px;border-bottom:1px solid var(--b)">
+          <div style="font-size:13px;font-weight:800;margin-bottom:4px">✅ ${a.titulo}</div>
+          <div style="font-size:12px;color:var(--t2);line-height:1.6">${a.descricao}</div>
+        </div>`).join('')}
+    </div>
+
+    ${plan.alerta ? `<div style="background:rgba(229,9,20,.06);border:1px solid rgba(229,9,20,.2);border-radius:12px;padding:14px;margin-bottom:12px">
+      <div style="font-size:11px;font-weight:800;color:var(--r);margin-bottom:6px">⚠️ ATENÇÃO ESPECIAL</div>
+      <div style="font-size:13px;color:var(--t2);line-height:1.6">${plan.alerta}</div>
+    </div>` : ''}
+
+    <div class="intake-result-card">
+      <div style="font-size:10px;font-weight:800;color:#f39c12;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:8px">💡 Dica de ouro para você</div>
+      <div style="font-size:13px;color:var(--t);line-height:1.6;font-style:italic">"${plan.dica_principal}"</div>
+    </div>
+
+    <div class="intake-result-card">
+      <div style="font-size:10px;font-weight:800;color:#2ecc71;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:8px">🚀 Sua Semana 1</div>
+      <div style="font-size:13px;color:var(--t2);line-height:1.6">${plan.semana1}</div>
+    </div>
+  ` : `
+    <div style="text-align:center;padding:20px">
+      <div style="font-size:40px;margin-bottom:12px">✅</div>
+      <div style="font-size:16px;font-weight:800;margin-bottom:8px">Respostas salvas!</div>
+      <div style="font-size:13px;color:var(--mu)">Rennan vai revisar e personalizar seu programa em breve.</div>
+    </div>`;
+
+  document.getElementById('intake-steps-container').innerHTML = html;
+  document.getElementById('intake-nav').style.display='flex';
+  document.getElementById('intake-btn-back').style.display='none';
+
+  const nextBtn = document.getElementById('intake-btn-next');
+  nextBtn.textContent = '🛒 Adquirir programa agora';
+  nextBtn.onclick = ()=>{ closeModal('modal-intake'); buyProgram(p.id, p.mpLink); };
 }
 
 // ══ PWA ══
