@@ -9,7 +9,8 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
 <meta name="apple-mobile-web-app-title" content="FitQuest"/>
 <link rel="manifest" href="manifest.json"/>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>window.supabaseLoaded=false;</script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" onerror="console.warn('Supabase CDN failed')"></script>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
 :root{
@@ -1774,7 +1775,12 @@ textarea.fi{resize:vertical;min-height:80px;}
 const SUPABASE_URL='https://ctbmnvlsvdlrohkcalcm.supabase.co';
 const SUPABASE_KEY='sb_publishable_0jwz3vKIkAakkn8tgNrKKQ_EELiP41g';
 let sb=null;
-try{if(typeof supabase!=='undefined')sb=supabase.createClient(SUPABASE_URL,SUPABASE_KEY);}catch(e){}
+try{
+  if(typeof supabase!=='undefined' && supabase.createClient){
+    sb=supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
+    console.log('Supabase connected');
+  }
+}catch(e){console.warn('Supabase init failed, running offline:',e.message);}
 
 const DB={get(k){try{return JSON.parse(localStorage.getItem(k));}catch{return null;}},set(k,v){localStorage.setItem(k,JSON.stringify(v));},del(k){localStorage.removeItem(k);}};
 
@@ -2178,8 +2184,8 @@ document.addEventListener('click',e=>{if(!e.target.closest('.nav-av')&&!e.target
 window.addEventListener('scroll',()=>{const nav=document.getElementById('app-nav');if(nav)nav.classList.toggle('solid',window.scrollY>50);},{passive:true});
 
 // ══ SUPABASE ══
-async function syncU(u){if(!sb)return;try{await sb.from('alunos').upsert({id:u.id,nome:u.name,email:u.email,senha_hash:u.pass,plano:u.plano||'pendente',treino_liberado:u.trainApproved||false,ai_plan:u.aiPlan||null,anamnese:u.anamnese||null,gym_week:u.gymWeek||1,run_week:u.runWeek||1,gym_done:u.gymDone||{},run_done:u.runDone||{},load_history:u.loadHistory||{},workout_history:u.workoutHistory||[],xp:u.xp||0,level:u.level||1,streak:u.streak||1,coins:u.coins||0,badges:u.badges||[],prs:u.prs||[],stats:u.stats||{treinos:0,distancia:0,semanas:0},updated_at:new Date().toISOString()},{onConflict:'email'});}catch(e){}}
-async function loadUDB(email){if(!sb)return null;try{const{data}=await sb.from('alunos').select('*').eq('email',email).single();if(!data)return null;return{id:data.id,name:data.nome,email:data.email,pass:data.senha_hash,plano:data.plano,trainApproved:data.treino_liberado,aiPlan:data.ai_plan,anamnese:data.anamnese,anamneseDone:!!data.anamnese,gymWeek:data.gym_week||1,runWeek:data.run_week||1,gymDone:data.gym_done||{},runDone:data.run_done||{},loadHistory:data.load_history||{},workoutHistory:data.workout_history||[],xp:data.xp||0,level:data.level||1,streak:data.streak||1,coins:data.coins||0,badges:data.badges||[],prs:data.prs||[],stats:data.stats||{treinos:0,distancia:0,semanas:0},missions:[{id:1,title:'Treinar 3x esta semana',xp:150,progress:0,total:3,type:'gym',done:false},{id:2,title:'Correr 5km esta semana',xp:200,progress:0,total:5,type:'run',done:false},{id:3,title:'Completar o Deload da Semana 4',xp:500,progress:0,total:1,type:'week',done:false},{id:4,title:'Chegar aos 10km correndo',xp:800,progress:0,total:1,type:'run',done:false}],createdAt:data.criado_em};}catch(e){return null;}}
+async function syncU(u){if(!sb||!u)return;try{await sb.from('alunos').upsert({id:u.id,nome:u.name,email:u.email,senha_hash:u.pass,plano:u.plano||'pendente',treino_liberado:u.trainApproved||false,ai_plan:u.aiPlan||null,anamnese:u.anamnese||null,gym_week:u.gymWeek||1,run_week:u.runWeek||1,gym_done:u.gymDone||{},run_done:u.runDone||{},load_history:u.loadHistory||{},workout_history:u.workoutHistory||[],xp:u.xp||0,level:u.level||1,streak:u.streak||1,coins:u.coins||0,badges:u.badges||[],prs:u.prs||[],stats:u.stats||{treinos:0,distancia:0,semanas:0},updated_at:new Date().toISOString()},{onConflict:'email'});}catch(e){}}
+async function loadUDB(email){if(!sb||!email)return null;try{const{data}=await sb.from('alunos').select('*').eq('email',email).single();if(!data)return null;return{id:data.id,name:data.nome,email:data.email,pass:data.senha_hash,plano:data.plano,trainApproved:data.treino_liberado,aiPlan:data.ai_plan,anamnese:data.anamnese,anamneseDone:!!data.anamnese,gymWeek:data.gym_week||1,runWeek:data.run_week||1,gymDone:data.gym_done||{},runDone:data.run_done||{},loadHistory:data.load_history||{},workoutHistory:data.workout_history||[],xp:data.xp||0,level:data.level||1,streak:data.streak||1,coins:data.coins||0,badges:data.badges||[],prs:data.prs||[],stats:data.stats||{treinos:0,distancia:0,semanas:0},missions:[{id:1,title:'Treinar 3x esta semana',xp:150,progress:0,total:3,type:'gym',done:false},{id:2,title:'Correr 5km esta semana',xp:200,progress:0,total:5,type:'run',done:false},{id:3,title:'Completar o Deload da Semana 4',xp:500,progress:0,total:1,type:'week',done:false},{id:4,title:'Chegar aos 10km correndo',xp:800,progress:0,total:1,type:'run',done:false}],createdAt:data.criado_em};}catch(e){return null;}}
 
 // ══ AUTH ══
 const ADMIN_EMAIL='rennan@rennandias.com.br';
@@ -2206,8 +2212,10 @@ async function doLogin(){
   if(!u){showErr('Conta não encontrada.');return;}
   if(u.pass!==btoa(pass)){showErr('Senha incorreta.');return;}
   DB.set('fq_cur',email);
-  if(!u.anamneseDone){initAnam();show('sc-anam');}
-  else{loadApp(email);show('sc-app');}
+  try{
+    if(!u.anamneseDone){initAnam();show('sc-anam');}
+    else{loadApp(email);show('sc-app');}
+  }catch(e){console.error('Login nav error:',e);}
 }
 async function doRegister(){
   const name=document.getElementById('reg-name').value.trim();
@@ -2223,7 +2231,8 @@ async function doRegister(){
   if(existing||users[email]){btn.textContent='Criar conta grátis';btn.disabled=false;showErr('E-mail já cadastrado.');return;}
   const u={id:crypto.randomUUID(),name,email,pass:btoa(pass),anamneseDone:false,createdAt:new Date().toISOString(),plano:'free',trainApproved:true,xp:0,level:1,streak:1,coins:0,stats:{treinos:0,distancia:0,semanas:0},badges:[],missions:[{id:1,title:'Treinar 3x esta semana',xp:150,progress:0,total:3,type:'gym',done:false},{id:2,title:'Correr 5km esta semana',xp:200,progress:0,total:5,type:'run',done:false},{id:3,title:'Completar o Deload da Semana 4',xp:500,progress:0,total:1,type:'week',done:false},{id:4,title:'Chegar aos 10km correndo',xp:800,progress:0,total:1,type:'run',done:false}],prs:[],gymWeek:1,gymDone:{},runWeek:1,runDone:{},aiPlan:null,workoutHistory:[],loadHistory:{}};
   users[email]=u;DB.set('fq_users',users);DB.set('fq_cur',email);
-  await syncU(u);btn.textContent='Criar conta grátis';btn.disabled=false;
+  try{await syncU(u);}catch(e){console.warn('sync error',e);}
+  btn.textContent='Criar conta grátis';btn.disabled=false;
   initAnam();show('sc-anam');
 }
 function doLogout(){if(!confirm('Deseja sair?'))return;DB.del('fq_cur');show('sc-splash');}
@@ -4209,7 +4218,7 @@ function posterCard(p, u){
   </div>`;
 }
 
-function renderHomePrograms(u){
+function renderHomePrograms(u){try{
   // Featured: specialized programs
   const featured = CATALOG.filter(p=>['hypertrophy','elderly','pregnancy','disabled'].includes(p.id));
   const featEl = document.getElementById('home-programs-carousel');
@@ -4219,10 +4228,11 @@ function renderHomePrograms(u){
   const popular = [...CATALOG].sort((a,b)=>b.students-a.students).slice(0,6);
   const popEl = document.getElementById('home-popular-carousel');
   if(popEl) popEl.innerHTML = popular.map(p=>posterCard(p,u)).join('');
+  }catch(e){console.error('renderHomePrograms error:',e);}
 }
 
 // ── RENDER STORE ──
-function renderStore(u){
+function renderStore(u){try{
   const cats = {
     specialized:'store-specialized',
     weight:'store-weight',
@@ -4235,6 +4245,7 @@ function renderStore(u){
     const items = CATALOG.filter(p=>p.category===cat);
     el.innerHTML = items.map(p=>movieCard(p,u)).join('');
   });
+  }catch(e){console.error('renderStore error:',e);}
 }
 
 function movieCard(p, u){
@@ -5049,14 +5060,19 @@ function dismissBanner(){document.getElementById('pwa-banner').style.display='no
 
 // ══ INIT ══
 (async function init(){
-  const email=DB.get('fq_cur');
-  if(!email){show('sc-splash');return;}
-  if(email==='__admin__'){loadAdmin();show('sc-adm');return;}
-  const users=DB.get('fq_users')||{};let u=users[email];
-  if(u&&sb){try{const fresh=await loadUDB(email);if(fresh){u={...u,...fresh};users[email]=u;DB.set('fq_users',users);}}catch(e){}}
-  if(!u){DB.del('fq_cur');show('sc-splash');return;}
-  if(!u.anamneseDone){initAnam();show('sc-anam');return;}
-  loadApp(email);show('sc-app');
+  try{
+    const email=DB.get('fq_cur');
+    if(!email){show('sc-splash');return;}
+    if(email==='__admin__'){loadAdmin();show('sc-adm');return;}
+    const users=DB.get('fq_users')||{};let u=users[email];
+    if(u&&sb){try{const fresh=await loadUDB(email);if(fresh){u={...u,...fresh};users[email]=u;DB.set('fq_users',users);}}catch(e){console.warn('DB sync error:',e);}}
+    if(!u){DB.del('fq_cur');show('sc-splash');return;}
+    if(!u.anamneseDone){initAnam();show('sc-anam');return;}
+    loadApp(email);show('sc-app');
+  }catch(e){
+    console.error('Init error:',e);
+    show('sc-splash');
+  }
 })();
 </script>
 </body>
