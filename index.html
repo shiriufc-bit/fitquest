@@ -31,6 +31,7 @@
 }
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}html{overscroll-behavior:none;}
 body{background:var(--bg);color:var(--t);font-family:"Inter",system-ui,sans-serif;min-height:100vh;overflow-x:hidden;-webkit-text-size-adjust:100%;text-size-adjust:100%;}
+#sc-app{background:radial-gradient(ellipse at 50% 0%,rgba(229,9,20,.04) 0%,transparent 60%),var(--bg);}
 input,button,select,textarea{font-family:"Inter",system-ui,sans-serif;}
 .screen{display:none;}.screen.active{display:block;}
 ::-webkit-scrollbar{width:0px;height:0px;}
@@ -167,7 +168,7 @@ textarea.fi{resize:vertical;min-height:80px;}
 .tp{display:none;}.tp.active{display:block;}
 
 /* HERO BANNER */
-.hero-banner{position:relative;height:75vw;max-height:420px;overflow:hidden;background:#000;}
+.hero-banner{position:relative;height:82vw;max-height:480px;overflow:hidden;background:#000;}
 .hero-banner-bg{position:absolute;inset:0;background:linear-gradient(135deg,#1a0000 0%,#0d0000 40%,#000 100%);}
 .hero-banner-glow{position:absolute;top:0;left:0;right:0;height:100%;background:radial-gradient(ellipse at 30% 50%,rgba(229,9,20,.3) 0%,transparent 70%);}
 .hero-banner-athlete{position:absolute;right:0;top:0;bottom:0;width:65%;display:flex;align-items:center;justify-content:flex-end;}
@@ -184,7 +185,7 @@ textarea.fi{resize:vertical;min-height:80px;}
 /* SECTIONS */
 .section{padding:0 0 8px;}
 .section-hdr{padding:0 20px;margin-bottom:12px;display:flex;align-items:center;justify-content:space-between;}
-.section-title{font-size:18px;font-weight:800;letter-spacing:-.3px;}
+.section-title{font-size:18px;font-weight:800;letter-spacing:-.3px;text-shadow:0 1px 4px rgba(0,0,0,.5);}
 .section-link{font-size:12px;color:var(--r);font-weight:700;cursor:pointer;}
 
 /* CARROSSEL */
@@ -237,7 +238,7 @@ textarea.fi{resize:vertical;min-height:80px;}
 
 /* CONTINUE WATCHING */
 .cw-card{flex-shrink:0;width:240px;background:var(--s);border-radius:8px;overflow:hidden;cursor:pointer;}
-.cw-thumb{height:130px;background:linear-gradient(135deg,#1a0000,#0d0000);display:flex;align-items:center;justify-content:center;font-size:64px;position:relative;}
+.cw-thumb{height:145px;background:linear-gradient(135deg,#1a0000,#0d0000);display:flex;align-items:center;justify-content:center;font-size:64px;position:relative;}
 .cw-thumb::after{content:"";position:absolute;bottom:0;left:0;right:0;height:4px;background:rgba(255,255,255,.1);}
 .cw-bar{position:absolute;bottom:0;left:0;height:4px;background:var(--r);}
 .cw-body{padding:10px 12px 14px;}
@@ -249,7 +250,7 @@ textarea.fi{resize:vertical;min-height:80px;}
 
 /* WORKOUT PAGE (Netflix episode style) */
 .wk-page{background:var(--bg);min-height:100vh;}
-.wk-hero{position:relative;height:60vw;max-height:340px;overflow:hidden;background:#000;}
+.wk-hero{position:relative;height:65vw;max-height:380px;overflow:hidden;background:#000;}
 .wk-hero-bg{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:160px;opacity:.1;}
 .wk-hero-glow{position:absolute;inset:0;background:linear-gradient(135deg,rgba(229,9,20,.2),transparent);}
 .wk-hero-overlay{position:absolute;bottom:0;left:0;right:0;height:60%;background:linear-gradient(transparent,var(--bg));}
@@ -286,7 +287,7 @@ textarea.fi{resize:vertical;min-height:80px;}
 .ep-card.open .ep-chv{transform:rotate(180deg);color:var(--r);}
 .ep-body{display:none;padding:0 16px 16px;}
 .ep-card.open .ep-body{display:block;}
-.ep-thumb{border-radius:8px;background:linear-gradient(135deg,#1a0000,#0d0000);aspect-ratio:16/9;display:flex;flex-direction:column;align-items:center;justify-content:center;margin-bottom:12px;gap:6px;border:1px solid rgba(229,9,20,.1);}
+.ep-thumb{border-radius:8px;background:linear-gradient(135deg,#1a0000,#0d0000);aspect-ratio:16/9;display:flex;flex-direction:column;align-items:center;justify-content:center;margin-bottom:12px;gap:6px;border:1px solid rgba(229,9,20,.15);overflow:hidden;box-shadow:0 4px 20px rgba(0,0,0,.4);}
 .ep-obs{background:rgba(229,9,20,.05);border:1px solid rgba(229,9,20,.1);border-radius:6px;padding:10px 14px;font-size:12px;color:var(--t2);line-height:1.6;margin-bottom:12px;}
 .sets-tbl{width:100%;border-collapse:collapse;margin-bottom:12px;}
 .sets-tbl th{font-size:9px;color:var(--mu);font-weight:800;text-transform:uppercase;letter-spacing:1px;padding:0 0 8px;text-align:center;}
@@ -399,11 +400,11 @@ textarea.fi{resize:vertical;min-height:80px;}
 /* ══ POSTER CARD (Home) ══ */
 .poster-card{flex-shrink:0;width:130px;border-radius:10px;overflow:hidden;cursor:pointer;position:relative;transition:transform .25s;background:#111;box-shadow:0 4px 20px rgba(0,0,0,.5)}
 .poster-card:active{transform:scale(.97)}
-.poster-card-img{width:130px;height:195px;object-fit:cover;display:block;filter:brightness(.85)}
+.poster-card-img{width:130px;height:195px;object-fit:cover;display:block;filter:brightness(.75) saturate(1.1)}
 .poster-card-bg{width:130px;height:195px;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden}
 .poster-card-gradient{position:absolute;inset:0;opacity:.85}
 .poster-card-emoji{position:relative;z-index:1;font-size:52px;filter:drop-shadow(0 4px 12px rgba(0,0,0,.8))}
-.poster-card-footer{position:absolute;bottom:0;left:0;right:0;padding:8px 10px 10px;background:linear-gradient(transparent,rgba(0,0,0,.95))}
+.poster-card-footer{position:absolute;bottom:0;left:0;right:0;padding:24px 10px 10px;background:linear-gradient(transparent,rgba(0,0,0,.98))}
 .poster-card-tag{font-size:8px;font-weight:900;letter-spacing:1px;margin-bottom:3px;text-transform:uppercase}
 .poster-card-title{font-size:11px;font-weight:900;line-height:1.2;color:#fff;text-shadow:0 1px 4px rgba(0,0,0,.8)}
 .poster-card-sub{font-size:9px;color:rgba(255,255,255,.55);margin-top:2px}
@@ -432,7 +433,7 @@ textarea.fi{resize:vertical;min-height:80px;}
 .intake-result-card{background:var(--s);border:1px solid rgba(229,9,20,.2);border-radius:14px;padding:16px;margin-bottom:10px;}
 
 /* ══ STORE ══ */
-.store-hero{position:relative;height:260px;overflow:hidden;background:#000;margin-bottom:0}
+.store-hero{position:relative;height:300px;overflow:hidden;background:#000;margin-bottom:0}
 .store-hero-img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;filter:brightness(.35)}
 .store-hero-glow{position:absolute;inset:0;background:linear-gradient(135deg,rgba(229,9,20,.25),transparent 60%)}
 .store-hero-overlay{position:absolute;bottom:0;left:0;right:0;height:70%;background:linear-gradient(transparent,#0a0a0a)}
@@ -444,8 +445,8 @@ textarea.fi{resize:vertical;min-height:80px;}
 /* MOVIE CARD */
 .movie-card{flex-shrink:0;width:140px;border-radius:10px;overflow:hidden;cursor:pointer;position:relative;transition:transform .2s;background:#111}
 .movie-card:hover{transform:scale(1.04)}
-.movie-card-poster{width:140px;height:200px;object-fit:cover;display:block}
-.movie-card-poster-bg{width:140px;height:200px;display:flex;align-items:center;justify-content:center;font-size:64px;position:relative}
+.movie-card-poster{width:150px;height:215px;object-fit:cover;display:block;filter:brightness(.8) saturate(1.1)}
+.movie-card-poster-bg{width:150px;height:215px;display:flex;align-items:center;justify-content:center;font-size:64px;position:relative}
 .movie-card-locked{position:absolute;top:8px;right:8px;background:rgba(0,0,0,.75);border-radius:6px;padding:3px 7px;font-size:10px}
 .movie-card-badge{position:absolute;top:8px;left:8px;border-radius:4px;padding:2px 7px;font-size:9px;font-weight:900}
 .movie-card-info{padding:8px 10px 10px}
@@ -1016,7 +1017,7 @@ textarea.fi{resize:vertical;min-height:80px;}
       </div>
       <!-- HERO BANNER -->
       <div class="hero-banner">
-        <img src="https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=800&q=80" alt="Treino" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center top;filter:brightness(.45);z-index:0"/>
+        <img src="https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=800&q=85" alt="Treino" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center top;filter:brightness(.55);z-index:0"/>
         <div class="hero-banner-glow"></div>
         <div class="hero-banner-overlay"></div>
         <div class="hero-banner-content">
@@ -1066,12 +1067,15 @@ textarea.fi{resize:vertical;min-height:80px;}
       </div>
 
       <!-- PROGRAMAS EM DESTAQUE -->
-      <div class="section">
+      <div class="section" style="position:relative;overflow:hidden;padding-top:4px;padding-bottom:4px">
+        <div style="position:absolute;inset:0;background-image:url('https://images.unsplash.com/photo-1574680178050-55c6a6a96e0a?w=800&q=60');background-size:cover;background-position:center;filter:brightness(.07);z-index:0"></div>
+        <div style="position:relative;z-index:1">
         <div class="section-hdr">
           <div class="section-title">🎬 Programas</div>
           <div class="section-link" onclick="switchTab('store',document.querySelectorAll('.nbtn')[2])">Ver todos</div>
         </div>
         <div class="carousel" id="home-programs-carousel"></div>
+        </div>
       </div>
 
       <!-- MAIS POPULARES -->
@@ -1084,13 +1088,16 @@ textarea.fi{resize:vertical;min-height:80px;}
       </div>
 
       <!-- MINHA EVOLUÇÃO -->
-      <div class="section">
+      <div class="section" style="position:relative;overflow:hidden">
+        <div style="position:absolute;inset:0;background-image:url('https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=800&q=60');background-size:cover;background-position:center;filter:brightness(.08);z-index:0"></div>
+        <div style="position:relative;z-index:1">
         <div class="section-hdr"><div class="section-title">Minha evolução</div><div class="section-link" onclick="switchTab('prs',document.querySelectorAll('.nbtn')[3])">Ver tudo</div></div>
         <div class="stats-row" id="stats-row">
           <div class="stat-box"><div class="stat-ico">🏋️</div><div class="stat-val" id="s-tr">0</div><div class="stat-lbl">Treinos</div></div>
           <div class="stat-box"><div class="stat-ico">🏃</div><div class="stat-val" id="s-km">0</div><div class="stat-lbl">km rodados</div></div>
           <div class="stat-box"><div class="stat-ico">⭐</div><div class="stat-val" id="s-pr">0</div><div class="stat-lbl">Recordes</div></div>
           <div class="stat-box"><div class="stat-ico">🔥</div><div class="stat-val" id="s-st">0</div><div class="stat-lbl">Dias seguidos</div></div>
+        </div>
         </div>
       </div>
 
@@ -1112,9 +1119,12 @@ textarea.fi{resize:vertical;min-height:80px;}
       </div>
 
       <!-- RANKING TOP 10 ESTILO NETFLIX -->
-      <div class="section">
+      <div class="section" style="position:relative;overflow:hidden">
+        <div style="position:absolute;inset:0;background-image:url('https://images.unsplash.com/photo-1546519638-68e109498ffc?w=800&q=60');background-size:cover;background-position:center;filter:brightness(.07);z-index:0"></div>
+        <div style="position:relative;z-index:1">
         <div class="section-hdr"><div class="section-title">Top Atletas</div><div class="section-link" onclick="switchTab('rank',document.querySelectorAll('.nbtn')[4])">Ver ranking</div></div>
         <div class="carousel" id="ranking-carousel"></div>
+        </div>
       </div>
 
       <!-- MISSÕES -->
@@ -1156,9 +1166,9 @@ textarea.fi{resize:vertical;min-height:80px;}
 
     <!-- RUN -->
     <div class="tp" id="tp-run">
-      <div style="padding-top:60px">
-        <div class="run-hero" style="position:relative;overflow:hidden">
-      <img src="https://images.unsplash.com/photo-1476480862126-209bfaa8edc8?w=600&q=80" alt="Corrida" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;filter:brightness(.25);border-radius:10px"/>
+      <div style="padding-top:0">
+        <div class="run-hero" style="position:relative;overflow:hidden;border-radius:0;margin:0;min-height:200px;padding-top:70px">
+      <img src="https://images.unsplash.com/photo-1461897104016-0b3b00cc81ee?w=800&q=80" alt="Corrida" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;filter:brightness(.28);border-radius:0"/>
       <div style="position:relative;z-index:1">
           <div style="font-size:10px;color:var(--r);font-weight:800;text-transform:uppercase;letter-spacing:2px;margin-bottom:6px" id="run-tag">CORRIDA</div>
           <div style="font-size:22px;font-weight:900;margin-bottom:4px" id="run-title">Programa de Corrida</div>
@@ -1196,7 +1206,7 @@ textarea.fi{resize:vertical;min-height:80px;}
     <!-- PRs -->
     <div class="tp" id="tp-prs">
       <div style="padding-top:70px">
-        <div style="height:140px;position:relative;overflow:hidden">
+        <div style="height:180px;position:relative;overflow:hidden">
           <img src="https://images.unsplash.com/photo-1549576490-b0b4831ef60a?w=800&q=80" alt="Recordes" style="width:100%;height:100%;object-fit:cover;filter:brightness(.3)"/>
           <div style="position:absolute;inset:0;background:linear-gradient(transparent,var(--bg));display:flex;align-items:flex-end;padding:16px 20px">
             <div>
@@ -1218,7 +1228,7 @@ textarea.fi{resize:vertical;min-height:80px;}
     <div class="tp" id="tp-badges">
       <div>
         <div style="padding-top:70px"></div>
-        <div style="height:140px;position:relative;overflow:hidden">
+        <div style="height:180px;position:relative;overflow:hidden">
           <img src="https://images.unsplash.com/photo-1546519638-68e109498ffc?w=800&q=80" alt="Conquistas" style="width:100%;height:100%;object-fit:cover;filter:brightness(.3)"/>
           <div style="position:absolute;inset:0;background:linear-gradient(transparent,var(--bg));display:flex;align-items:flex-end;padding:16px 20px">
             <div>
@@ -1248,7 +1258,7 @@ textarea.fi{resize:vertical;min-height:80px;}
 
         <!-- Store Hero -->
         <div class="store-hero">
-          <img src="https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=800&q=80" class="store-hero-img" alt="FitQuest Store"/>
+          <img src="https://images.unsplash.com/photo-1517836357463-d25dfeac3438?w=800&q=85" class="store-hero-img" alt="FitQuest Store"/>
           <div class="store-hero-glow"></div>
           <div class="store-hero-overlay"></div>
           <div class="store-hero-content">
@@ -2527,7 +2537,7 @@ function renderHistory(u){
   const hist=(u.workoutHistory||[]).slice(-6).reverse();
   const el=document.getElementById('history-carousel');
   if(!hist.length){el.innerHTML='<div style="padding:0 20px;font-size:12px;color:var(--mu)">Nenhum treino ainda. Bora começar! 🎬</div>';return;}
-  el.innerHTML=hist.map(h=>`<div class="cw-card" style="width:200px">
+  el.innerHTML=hist.map(h=>`<div class="cw-card" style="width:220px">
     <div class="cw-thumb" style="height:100px;background:#000;padding:0;overflow:hidden">
     <img src="${h.exercises?.[0]?'https://images.unsplash.com/photo-1583454110551-21f2fa2afe61?w=400&q=80':'https://images.unsplash.com/photo-1476480862126-209bfaa8edc8?w=600&q=80'}" alt="Treino" style="width:100%;height:100%;object-fit:cover;filter:brightness(.6)"/>
   </div>
@@ -3592,7 +3602,7 @@ const CATALOG = [
     category:'specialized',
     tag:'MAIS VENDIDO',tagColor:'#f39c12',
     price:47.90, priceLabel:'R$47,90',
-    img:'https://images.unsplash.com/photo-1534367610401-9f5ed68180aa?w=400&q=80',
+    img:'https://images.unsplash.com/photo-1583454110551-21f2fa2afe61?w=400&q=85',
     emoji:'💪', color:'#c0392b',
     desc:'O programa mais completo para quem quer ganhar massa muscular de verdade. 12 semanas periodizadas com técnicas avançadas baseadas nas evidências mais recentes da ciência do exercício.',
     highlights:['12 semanas periodizadas','Divisão ABCDE','Volume 16-20 séries/músculo','Técnicas avançadas'],
@@ -3608,47 +3618,27 @@ const CATALOG = [
       {
         icon:'🔬',
         title:'A ciência por trás do volume ideal',
-        text:'Uma meta-análise publicada no Journal of Sports Science (Schoenfeld et al., 2017) analisou 15 estudos e concluiu que existe uma clara relação dose-resposta entre volume semanal e hipertrofia. Mais séries, mais crescimento — até um limite.
-
-Uma meta-regressão mais recente (PubMed, 2024), analisando 67 estudos com 2.058 participantes, quantificou esse efeito com precisão: cada série adicional por semana gera em média 0,24% a mais de hipertrofia (IC 95%: 0,15–0,33). O volume ótimo estimado ficou em torno de 12 séries por grupo muscular por semana — com retornos decrescentes acima disso.
-
-Na prática: este programa opera na faixa de 14 a 20 séries semanais por músculo nas semanas de pico, garantindo o máximo estímulo sem ultrapassar a capacidade de recuperação.'
+        text:'Uma meta-análise publicada no Journal of Sports Science (Schoenfeld et al., 2017) analisou 15 estudos e concluiu que existe uma clara relação dose-resposta entre volume semanal e hipertrofia. Mais séries, mais crescimento — até um limite.\n\nUma meta-regressão mais recente (PubMed, 2024), analisando 67 estudos com 2.058 participantes, quantificou esse efeito com precisão: cada série adicional por semana gera em média 0,24% a mais de hipertrofia (IC 95%: 0,15–0,33). O volume ótimo estimado ficou em torno de 12 séries por grupo muscular por semana — com retornos decrescentes acima disso.\n\nNa prática: este programa opera na faixa de 14 a 20 séries semanais por músculo nas semanas de pico, garantindo o máximo estímulo sem ultrapassar a capacidade de recuperação.'
       },
       {
         icon:'⚡',
         title:'Frequência: 2x por semana é o ponto ideal',
-        text:'Uma revisão sistemática publicada no Sports Medicine (Grgic, Schoenfeld & Latella, 2018), analisando estudos que compararam diferentes frequências de treino, concluiu que treinar cada grupo muscular duas vezes por semana produz ganhos de hipertrofia superiores a treinar apenas uma vez — quando o volume semanal é controlado.
-
-O mecanismo explicativo: a síntese proteica muscular após um treino de força dura entre 24 e 48 horas. Ao treinar cada músculo 2x por semana, você mantém a síntese proteica elevada por mais tempo ao longo da semana, criando um ambiente anabólico mais consistente.
-
-Por isso a divisão deste programa é ABCDE com cada grupo muscular aparecendo duas vezes na semana, e não o tradicional "um músculo por dia".'
+        text:'Uma revisão sistemática publicada no Sports Medicine (Grgic, Schoenfeld & Latella, 2018), analisando estudos que compararam diferentes frequências de treino, concluiu que treinar cada grupo muscular duas vezes por semana produz ganhos de hipertrofia superiores a treinar apenas uma vez — quando o volume semanal é controlado.\n\nO mecanismo explicativo: a síntese proteica muscular após um treino de força dura entre 24 e 48 horas. Ao treinar cada músculo 2x por semana, você mantém a síntese proteica elevada por mais tempo ao longo da semana, criando um ambiente anabólico mais consistente.\n\nPor isso a divisão deste programa é ABCDE com cada grupo muscular aparecendo duas vezes na semana, e não o tradicional "um músculo por dia".'
       },
       {
         icon:'📈',
         title:'Sobrecarga progressiva: a única lei do treino',
-        text:'Uma meta-análise publicada no British Journal of Sports Medicine (Currier et al., 2023), revisando 178 estudos com mais de 5.000 participantes, identificou a sobrecarga progressiva como a variável mais consistentemente associada a ganhos de força e hipertrofia.
-
-O corpo se adapta ao estímulo em 2 a 4 semanas. Quando isso acontece, o crescimento para. A sobrecarga progressiva resolve isso: você sistematicamente aumenta carga, volume ou dificuldade para forçar novas adaptações.
-
-Este programa utiliza periodização ondulatória: a intensidade e o volume variam semana a semana de forma planejada, evitando estagnação e garantindo que o corpo nunca se adapte completamente ao estímulo.'
+        text:'Uma meta-análise publicada no British Journal of Sports Medicine (Currier et al., 2023), revisando 178 estudos com mais de 5.000 participantes, identificou a sobrecarga progressiva como a variável mais consistentemente associada a ganhos de força e hipertrofia.\n\nO corpo se adapta ao estímulo em 2 a 4 semanas. Quando isso acontece, o crescimento para. A sobrecarga progressiva resolve isso: você sistematicamente aumenta carga, volume ou dificuldade para forçar novas adaptações.\n\nEste programa utiliza periodização ondulatória: a intensidade e o volume variam semana a semana de forma planejada, evitando estagnação e garantindo que o corpo nunca se adapte completamente ao estímulo.'
       },
       {
         icon:'😴',
         title:'O músculo cresce no descanso — não no treino',
-        text:'O treino é apenas o estímulo. O crescimento acontece durante a recuperação, especialmente no sono profundo (fase N3), quando o GH (hormônio do crescimento) é secretado em pico.
-
-Estudos de privação de sono mostram que dormir menos de 6 horas reduz a síntese proteica muscular em até 18% e eleva o cortisol (hormônio catabólico) cronicamente — sabotando os ganhos mesmo com treino e nutrição perfeitos.
-
-É por isso que as semanas de deload (semanas 4 e 8) são obrigatórias neste programa. Não é fraqueza — é estratégia comprovada. A ciência chama de "supercompensação": o corpo se adapta além do nível anterior durante o descanso.'
+        text:'O treino é apenas o estímulo. O crescimento acontece durante a recuperação, especialmente no sono profundo (fase N3), quando o GH (hormônio do crescimento) é secretado em pico.\n\nEstudos de privação de sono mostram que dormir menos de 6 horas reduz a síntese proteica muscular em até 18% e eleva o cortisol (hormônio catabólico) cronicamente — sabotando os ganhos mesmo com treino e nutrição perfeitos.\n\nÉ por isso que as semanas de deload (semanas 4 e 8) são obrigatórias neste programa. Não é fraqueza — é estratégia comprovada. A ciência chama de "supercompensação": o corpo se adapta além do nível anterior durante o descanso.'
       },
       {
         icon:'🍗',
         title:'Proteína: quanto você realmente precisa',
-        text:'A International Society of Sports Nutrition (ISSN, posição oficial 2022) recomenda 1,6 a 2,2g de proteína por kg de peso corporal por dia para maximizar a hipertrofia muscular. Para um atleta de 80kg, isso significa 128 a 176g de proteína diária.
-
-Um detalhe crítico: a proteína deve ser distribuída em 4 a 6 refeições de 30 a 40g cada, pois a síntese proteica muscular tem um teto por refeição — consumir 100g de proteína de uma vez não é mais eficiente que 30g.
-
-Sobre suplementos: a creatina monohidratada tem o maior corpo de evidências de qualquer suplemento — mais de 500 estudos publicados confirmam ganhos de força de 5 a 15% e hipertrofia adicional. Dose: 3 a 5g/dia, sem fase de carga necessária.'
+        text:'A International Society of Sports Nutrition (ISSN, posição oficial 2022) recomenda 1,6 a 2,2g de proteína por kg de peso corporal por dia para maximizar a hipertrofia muscular. Para um atleta de 80kg, isso significa 128 a 176g de proteína diária.\n\nUm detalhe crítico: a proteína deve ser distribuída em 4 a 6 refeições de 30 a 40g cada, pois a síntese proteica muscular tem um teto por refeição — consumir 100g de proteína de uma vez não é mais eficiente que 30g.\n\nSobre suplementos: a creatina monohidratada tem o maior corpo de evidências de qualquer suplemento — mais de 500 estudos publicados confirmam ganhos de força de 5 a 15% e hipertrofia adicional. Dose: 3 a 5g/dia, sem fase de carga necessária.'
       }
     ]
   },
@@ -3659,7 +3649,7 @@ Sobre suplementos: a creatina monohidratada tem o maior corpo de evidências de 
     category:'specialized',
     tag:'EXCLUSIVO',tagColor:'#9b59b6',
     price:47.90, priceLabel:'R$47,90',
-    img:'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=400&q=80',
+    img:'https://images.unsplash.com/photo-1571019613576-2b22c76fd955?w=400&q=85',
     emoji:'🧓', color:'#8e44ad',
     desc:'Programa baseado em evidências para pessoas acima de 60 anos. Foco em mobilidade, equilíbrio, sarcopenia e qualidade de vida — com total segurança.',
     highlights:['Baixo impacto articular','Mobilidade e equilíbrio','Fortalecimento funcional','Adaptado para cada limitação'],
@@ -3674,38 +3664,22 @@ Sobre suplementos: a creatina monohidratada tem o maior corpo de evidências de 
       {
         icon:'⚠️',
         title:'Sarcopenia: a ameaça silenciosa da longevidade',
-        text:'Uma revisão sistemática publicada no Journal of Clinical Medicine (2024), analisando 11 ensaios clínicos randomizados com 792 participantes (média de 75 anos), confirmou que intervenções de exercício físico melhoram significativamente força de preensão, velocidade de marcha, massa muscular e controle postural em idosos com e sem sarcopenia.
-
-A sarcopenia afeta entre 10% e 40% das pessoas acima de 60 anos, e sua consequência mais grave não é a fraqueza em si — é a cascata de dependência que desencadeia. Idosos sarcopênicos têm 3 vezes mais risco de quedas, internações e mortalidade precoce.
-
-A boa notícia, comprovada pela ciência: o músculo esquelético mantém plasticidade ao longo de toda a vida. Pessoas de 80, 85 e até 90 anos respondem ao treinamento resistido com ganhos mensuráveis de força e massa muscular.'
+        text:'Uma revisão sistemática publicada no Journal of Clinical Medicine (2024), analisando 11 ensaios clínicos randomizados com 792 participantes (média de 75 anos), confirmou que intervenções de exercício físico melhoram significativamente força de preensão, velocidade de marcha, massa muscular e controle postural em idosos com e sem sarcopenia.\n\nA sarcopenia afeta entre 10% e 40% das pessoas acima de 60 anos, e sua consequência mais grave não é a fraqueza em si — é a cascata de dependência que desencadeia. Idosos sarcopênicos têm 3 vezes mais risco de quedas, internações e mortalidade precoce.\n\nA boa notícia, comprovada pela ciência: o músculo esquelético mantém plasticidade ao longo de toda a vida. Pessoas de 80, 85 e até 90 anos respondem ao treinamento resistido com ganhos mensuráveis de força e massa muscular.'
       },
       {
         icon:'🦵',
         title:'Quedas: números que chocam e o que a ciência faz',
-        text:'Uma revisão abrangente publicada na NIH/PMC (2024), analisando 155 estudos publicados entre 2004 e 2024, confirmou que exercícios de equilíbrio e força melhoram controle postural, estabilidade da marcha e coordenação neuromuscular — os três fatores biomecânicos que determinam o risco de queda.
-
-Os resultados são impressionantes: programas multicomponentes (força + equilíbrio + coordenação) reduzem o risco de quedas em até 40% em idosos de alto risco. O Tai Chi, especificamente, demonstrou os melhores resultados para controle postural e resposta neuromuscular.
-
-Este programa integra exercícios de força funcional + equilíbrio estático e dinâmico + treinamento de reação, exatamente o modelo que a ciência identifica como mais eficaz para prevenção de quedas.'
+        text:'Uma revisão abrangente publicada na NIH/PMC (2024), analisando 155 estudos publicados entre 2004 e 2024, confirmou que exercícios de equilíbrio e força melhoram controle postural, estabilidade da marcha e coordenação neuromuscular — os três fatores biomecânicos que determinam o risco de queda.\n\nOs resultados são impressionantes: programas multicomponentes (força + equilíbrio + coordenação) reduzem o risco de quedas em até 40% em idosos de alto risco. O Tai Chi, especificamente, demonstrou os melhores resultados para controle postural e resposta neuromuscular.\n\nEste programa integra exercícios de força funcional + equilíbrio estático e dinâmico + treinamento de reação, exatamente o modelo que a ciência identifica como mais eficaz para prevenção de quedas.'
       },
       {
         icon:'💊',
         title:'Proteína: a dupla força-nutrição que muda tudo',
-        text:'Uma meta-análise publicada no Epidemiology & Health (2024), revisando múltiplos ensaios clínicos com idosos sarcopênicos, demonstrou que a combinação de treinamento resistido + suplementação proteica é significativamente mais eficaz do que o exercício isolado para aumentar massa e força muscular.
-
-O problema específico dos idosos: o que os cientistas chamam de "resistência anabólica" — os músculos de pessoas mais velhas respondem menos eficientemente à proteína alimentar. Para compensar, a necessidade proteica sobe para 1,2 a 1,6g/kg/dia (acima dos 0,8g/kg recomendados para adultos sedentários).
-
-Fontes ideais: whey protein (rápida absorção), frango, peixe, ovos e laticínios — distribuídos em 3 a 4 refeições ao dia para maximizar a síntese proteica.'
+        text:'Uma meta-análise publicada no Epidemiology & Health (2024), revisando múltiplos ensaios clínicos com idosos sarcopênicos, demonstrou que a combinação de treinamento resistido + suplementação proteica é significativamente mais eficaz do que o exercício isolado para aumentar massa e força muscular.\n\nO problema específico dos idosos: o que os cientistas chamam de "resistência anabólica" — os músculos de pessoas mais velhas respondem menos eficientemente à proteína alimentar. Para compensar, a necessidade proteica sobe para 1,2 a 1,6g/kg/dia (acima dos 0,8g/kg recomendados para adultos sedentários).\n\nFontes ideais: whey protein (rápida absorção), frango, peixe, ovos e laticínios — distribuídos em 3 a 4 refeições ao dia para maximizar a síntese proteica.'
       },
       {
         icon:'🧠',
         title:'Exercício e cognição: o cérebro também se fortalece',
-        text:'Revisões sistemáticas recentes confirmam que o exercício físico regular em idosos melhora memória de trabalho, função executiva e velocidade de processamento cognitivo. O mecanismo: o exercício aumenta os níveis de BDNF (fator neurotrófico derivado do cérebro), uma proteína que estimula a criação de novos neurônios e fortalece sinapses existentes.
-
-Um estudo publicado no Frontiers in Aging (2024) avaliou diferentes modalidades de exercício e seus efeitos sobre sarcopenia e cognição simultaneamente, concluindo que programas combinados de força e aeróbico produzem benefícios cognitivos superiores a modalidades isoladas.
-
-Além disso, revisões sobre qualidade de vida em idosos com sarcopenia (MDPI, 2025) mostraram que apenas 6 a 16 semanas de treino resistido intensivo melhoraram significativamente autonomia, bem-estar psicológico e percepção de saúde — dimensões subjetivas que nenhum medicamento consegue abordar.'
+        text:'Revisões sistemáticas recentes confirmam que o exercício físico regular em idosos melhora memória de trabalho, função executiva e velocidade de processamento cognitivo. O mecanismo: o exercício aumenta os níveis de BDNF (fator neurotrófico derivado do cérebro), uma proteína que estimula a criação de novos neurônios e fortalece sinapses existentes.\n\nUm estudo publicado no Frontiers in Aging (2024) avaliou diferentes modalidades de exercício e seus efeitos sobre sarcopenia e cognição simultaneamente, concluindo que programas combinados de força e aeróbico produzem benefícios cognitivos superiores a modalidades isoladas.\n\nAlém disso, revisões sobre qualidade de vida em idosos com sarcopenia (MDPI, 2025) mostraram que apenas 6 a 16 semanas de treino resistido intensivo melhoraram significativamente autonomia, bem-estar psicológico e percepção de saúde — dimensões subjetivas que nenhum medicamento consegue abordar.'
       }
     ]
   },
@@ -3716,7 +3690,7 @@ Além disso, revisões sobre qualidade de vida em idosos com sarcopenia (MDPI, 2
     category:'specialized',
     tag:'EXCLUSIVO',tagColor:'#e91e8c',
     price:67.90, priceLabel:'R$67,90',
-    img:'https://images.unsplash.com/photo-1518611012118-696072aa579a?w=400&q=80',
+    img:'https://images.unsplash.com/photo-1616279969856-759f316a5ac1?w=400&q=85',
     emoji:'🤰', color:'#e91e8c',
     desc:'O programa mais seguro e completo para gestantes. Desenvolvido com base nas diretrizes oficiais do ACOG (American College of Obstetricians and Gynecologists). Exercícios adaptados para cada trimestre.',
     highlights:['Adaptado por trimestre','Baseado nas diretrizes ACOG','Exercícios seguros e supervisionados','Pós-parto incluído'],
@@ -3731,38 +3705,22 @@ Além disso, revisões sobre qualidade de vida em idosos com sarcopenia (MDPI, 2
       {
         icon:'✅',
         title:'O que o ACOG (2024) realmente recomenda',
-        text:'O American College of Obstetricians and Gynecologists (ACOG), em suas diretrizes atualizadas mais recentemente em setembro de 2024, é explícito: mulheres com gravidez sem complicações devem praticar pelo menos 150 minutos de exercício aeróbico moderado por semana, distribuídos ao longo dos dias.
-
-A organização afirma categoricamente que exercícios aeróbicos e de força devem ser encorajados antes, durante e após a gravidez. Mulheres que já treinavam intensamente antes de engravidar podem continuar suas atividades — com monitoramento.
-
-A hesitação histórica de médicos sobre exercício na gravidez não tem base nas evidências atuais. Para uma gravidez saudável sem complicações, os riscos são mínimos e os benefícios são extensos e bem documentados.'
+        text:'O American College of Obstetricians and Gynecologists (ACOG), em suas diretrizes atualizadas mais recentemente em setembro de 2024, é explícito: mulheres com gravidez sem complicações devem praticar pelo menos 150 minutos de exercício aeróbico moderado por semana, distribuídos ao longo dos dias.\n\nA organização afirma categoricamente que exercícios aeróbicos e de força devem ser encorajados antes, durante e após a gravidez. Mulheres que já treinavam intensamente antes de engravidar podem continuar suas atividades — com monitoramento.\n\nA hesitação histórica de médicos sobre exercício na gravidez não tem base nas evidências atuais. Para uma gravidez saudável sem complicações, os riscos são mínimos e os benefícios são extensos e bem documentados.'
       },
       {
         icon:'📊',
         title:'Benefícios comprovados para mãe e bebê',
-        text:'Uma revisão publicada no PMC/NIH (2024), analisando novos ensaios clínicos randomizados e revisões sistemáticas, confirmou que exercício durante a gravidez reduz significativamente o risco de diabetes gestacional, hipertensão e ganho de peso excessivo — as três complicações mais prevalentes.
-
-O ACOG (2020, posição ainda vigente) acrescenta: mulheres que se exercitam durante a gravidez têm taxas menores de parto cesáreo, menor tempo de recuperação pós-parto, e menor risco de transtornos depressivos no pós-parto.
-
-Para o bebê: estudos observacionais mostram que os filhos de mães ativas durante a gravidez nascem com peso mais adequado, frequência cardíaca em repouso mais baixa e melhor tolerância ao estresse do parto.'
+        text:'Uma revisão publicada no PMC/NIH (2024), analisando novos ensaios clínicos randomizados e revisões sistemáticas, confirmou que exercício durante a gravidez reduz significativamente o risco de diabetes gestacional, hipertensão e ganho de peso excessivo — as três complicações mais prevalentes.\n\nO ACOG (2020, posição ainda vigente) acrescenta: mulheres que se exercitam durante a gravidez têm taxas menores de parto cesáreo, menor tempo de recuperação pós-parto, e menor risco de transtornos depressivos no pós-parto.\n\nPara o bebê: estudos observacionais mostram que os filhos de mães ativas durante a gravidez nascem com peso mais adequado, frequência cardíaca em repouso mais baixa e melhor tolerância ao estresse do parto.'
       },
       {
         icon:'📅',
         title:'O que muda em cada trimestre',
-        text:'1º Trimestre (até 13ª semana): fadiga e náusea são os principais desafios. O volume hormonal (especialmente progesterona e hCG) causa cansaço profundo. O foco é manter atividade leve a moderada — qualquer movimento é melhor que nenhum. Evitar superaquecimento é prioritário.
-
-2º Trimestre (14ª a 27ª semana): geralmente o melhor período. Os hormônios se estabilizam, a energia volta e o útero ainda não é grande o suficiente para interferir no movimento. Ideal para fortalecimento de core, glúteos e assoalho pélvico.
-
-3º Trimestre (28ª semana em diante): o centro de gravidade muda. Exercícios em posição supina devem ser evitados (podem comprimir a veia cava inferior). Foco em equilíbrio, respiração e preparação para o trabalho de parto.'
+        text:'1º Trimestre (até 13ª semana): fadiga e náusea são os principais desafios. O volume hormonal (especialmente progesterona e hCG) causa cansaço profundo. O foco é manter atividade leve a moderada — qualquer movimento é melhor que nenhum. Evitar superaquecimento é prioritário.\n\n2º Trimestre (14ª a 27ª semana): geralmente o melhor período. Os hormônios se estabilizam, a energia volta e o útero ainda não é grande o suficiente para interferir no movimento. Ideal para fortalecimento de core, glúteos e assoalho pélvico.\n\n3º Trimestre (28ª semana em diante): o centro de gravidade muda. Exercícios em posição supina devem ser evitados (podem comprimir a veia cava inferior). Foco em equilíbrio, respiração e preparação para o trabalho de parto.'
       },
       {
         icon:'💪',
         title:'O assoalho pélvico: o músculo mais negligenciado',
-        text:'O assoalho pélvico é um conjunto de músculos e ligamentos que sustenta útero, bexiga e intestino. Durante a gravidez, ele suporta um peso progressivo de até 6kg de bebê + placenta + líquido amniótico — durante meses.
-
-Multiplos estudos mostram que mulheres que fortalecem o assoalho pélvico durante a gravidez têm trabalho de parto mais curto, menos risco de incontinência urinária (que afeta 50% das mulheres no pós-parto), e recuperação pós-cesárea ou pós-parto vaginal significativamente mais rápida.
-
-Todos os módulos deste programa incluem exercícios de Kegel progressivos, pontes pélvicas adaptadas e respiração diafragmática — protocolo baseado nas recomendações da Sociedade Brasileira de Fisioterapia em Saúde da Mulher.'
+        text:'O assoalho pélvico é um conjunto de músculos e ligamentos que sustenta útero, bexiga e intestino. Durante a gravidez, ele suporta um peso progressivo de até 6kg de bebê + placenta + líquido amniótico — durante meses.\n\nMultiplos estudos mostram que mulheres que fortalecem o assoalho pélvico durante a gravidez têm trabalho de parto mais curto, menos risco de incontinência urinária (que afeta 50% das mulheres no pós-parto), e recuperação pós-cesárea ou pós-parto vaginal significativamente mais rápida.\n\nTodos os módulos deste programa incluem exercícios de Kegel progressivos, pontes pélvicas adaptadas e respiração diafragmática — protocolo baseado nas recomendações da Sociedade Brasileira de Fisioterapia em Saúde da Mulher.'
       }
     ]
   },
@@ -3773,7 +3731,7 @@ Todos os módulos deste programa incluem exercícios de Kegel progressivos, pont
     category:'specialized',
     tag:'INCLUSIVO',tagColor:'#00acc1',
     price:47.90, priceLabel:'R$47,90',
-    img:'https://images.unsplash.com/photo-1593079831268-3381b0db4a77?w=400&q=80',
+    img:'https://images.unsplash.com/photo-1580128660010-fd027e1e587a?w=400&q=85',
     emoji:'♿', color:'#00acc1',
     desc:'Programa inclusivo adaptado para pessoas com deficiência física. Cada exercício possui variações com embasamento científico e adaptações específicas por tipo de limitação.',
     highlights:['Adaptações para cada deficiência','Cadeirante, amputado e outros','Foco em autonomia e força','100% acessível'],
@@ -3788,42 +3746,22 @@ Todos os módulos deste programa incluem exercícios de Kegel progressivos, pont
       {
         icon:'💡',
         title:'Exercício adaptado: o que a ciência prova',
-        text:'As diretrizes internacionais de atividade física para pessoas com deficiência (WHO, 2020; ACSM, 2022) são claras: pessoas com deficiência física têm as mesmas capacidades de adaptação ao exercício que pessoas sem deficiência — o que muda é a forma de aplicação.
-
-Estudos com atletas paralímpicos demonstram que o treinamento resistido adaptado produz ganhos de força, hipertrofia e composição corporal comparáveis aos de atletas olímpicos convencionais. O músculo não sabe se a pessoa é cadeirante ou não — ele responde ao estímulo mecânico da mesma forma.
-
-A barreira não é biológica — é de acesso a programas bem estruturados e profissionais capacitados. Este programa preenche exatamente essa lacuna.'
+        text:'As diretrizes internacionais de atividade física para pessoas com deficiência (WHO, 2020; ACSM, 2022) são claras: pessoas com deficiência física têm as mesmas capacidades de adaptação ao exercício que pessoas sem deficiência — o que muda é a forma de aplicação.\n\nEstudos com atletas paralímpicos demonstram que o treinamento resistido adaptado produz ganhos de força, hipertrofia e composição corporal comparáveis aos de atletas olímpicos convencionais. O músculo não sabe se a pessoa é cadeirante ou não — ele responde ao estímulo mecânico da mesma forma.\n\nA barreira não é biológica — é de acesso a programas bem estruturados e profissionais capacitados. Este programa preenche exatamente essa lacuna.'
       },
       {
         icon:'🦾',
         title:'Benefícios específicos para cada tipo de deficiência',
-        text:'Para cadeirantes: o treinamento de membros superiores é especialmente crítico. Usuários de cadeira de rodas realizam em média 1.000 a 3.000 propulsões por dia — sem força e resistência muscular adequadas, o resultado é síndrome do manguito rotador, tendinite e dor crônica em ombros. Este programa fortalece preventivamente toda a cintura escapular.
-
-Para amputados: a assimetria muscular causada pela ausência de um membro cria compensações que sobrecarregam articulações do lado oposto. O fortalecimento do membro residual e do contralateral corrige esse desequilíbrio, melhora o uso de próteses e reduz dores compensatórias.
-
-Para condições neuromusculares: o exercício regular melhora a eficiência neuromuscular (o cérebro aprende a recrutar melhor as fibras disponíveis), reduz espasticidade em casos de paralisia parcial e melhora qualidade de vida objetivamente mensurável.'
+        text:'Para cadeirantes: o treinamento de membros superiores é especialmente crítico. Usuários de cadeira de rodas realizam em média 1.000 a 3.000 propulsões por dia — sem força e resistência muscular adequadas, o resultado é síndrome do manguito rotador, tendinite e dor crônica em ombros. Este programa fortalece preventivamente toda a cintura escapular.\n\nPara amputados: a assimetria muscular causada pela ausência de um membro cria compensações que sobrecarregam articulações do lado oposto. O fortalecimento do membro residual e do contralateral corrige esse desequilíbrio, melhora o uso de próteses e reduz dores compensatórias.\n\nPara condições neuromusculares: o exercício regular melhora a eficiência neuromuscular (o cérebro aprende a recrutar melhor as fibras disponíveis), reduz espasticidade em casos de paralisia parcial e melhora qualidade de vida objetivamente mensurável.'
       },
       {
         icon:'❤️',
         title:'Saúde cardiovascular: risco aumentado, solução comprovada',
-        text:'Pessoas com deficiência física têm risco cardiovascular significativamente maior que a população geral — resultado de menor mobilidade, maior tendência ao sedentarismo e, em muitos casos, medicamentos que afetam o metabolismo.
-
-A American Heart Association (AHA) inclui o exercício adaptado como intervenção de primeira linha para redução de risco cardiovascular em PcD. Revisões mostram que programas de 8 a 12 semanas de exercício aeróbico adaptado reduzem pressão arterial, melhora perfil lipídico e aumentam VO₂ máximo em populações com diversas deficiências.
-
-Além disso, uma revisão sistemática recente confirmou que programas de exercício adaptado reduzem sintomas de depressão e ansiedade em PcD em até 40% — benefício de saúde mental que nenhuma medicação consegue reproduzir com os mesmos efeitos colaterais positivos.'
+        text:'Pessoas com deficiência física têm risco cardiovascular significativamente maior que a população geral — resultado de menor mobilidade, maior tendência ao sedentarismo e, em muitos casos, medicamentos que afetam o metabolismo.\n\nA American Heart Association (AHA) inclui o exercício adaptado como intervenção de primeira linha para redução de risco cardiovascular em PcD. Revisões mostram que programas de 8 a 12 semanas de exercício aeróbico adaptado reduzem pressão arterial, melhora perfil lipídico e aumentam VO₂ máximo em populações com diversas deficiências.\n\nAlém disso, uma revisão sistemática recente confirmou que programas de exercício adaptado reduzem sintomas de depressão e ansiedade em PcD em até 40% — benefício de saúde mental que nenhuma medicação consegue reproduzir com os mesmos efeitos colaterais positivos.'
       },
       {
         icon:'🎯',
         title:'Como as adaptações são estruturadas neste programa',
-        text:'Cada exercício deste programa vem com 3 variações de adaptação, baseadas no modelo de classificação funcional utilizado em esportes paralímpicos:
-
-🟢 Nível 1 — Adaptação máxima: exercícios modificados para quem tem limitação severa ou está iniciando. Foco em ativação e controle motor.
-
-🟡 Nível 2 — Adaptação moderada: progressão com resistência leve a moderada. Inclui uso de equipamentos adaptados como faixas elásticas e anilhas.
-
-🔴 Nível 3 — Alta performance: versão de máximo desafio para cada condição. Permite que você alcance resultados de performance comparáveis à população geral.
-
-A progressão é guiada pela percepção subjetiva de esforço (Escala de Borg), não por peso absoluto — tornando o programa seguro e eficaz independentemente do nível inicial.'
+        text:'Cada exercício deste programa vem com 3 variações de adaptação, baseadas no modelo de classificação funcional utilizado em esportes paralímpicos:\n\n🟢 Nível 1 — Adaptação máxima: exercícios modificados para quem tem limitação severa ou está iniciando. Foco em ativação e controle motor.\n\n🟡 Nível 2 — Adaptação moderada: progressão com resistência leve a moderada. Inclui uso de equipamentos adaptados como faixas elásticas e anilhas.\n\n🔴 Nível 3 — Alta performance: versão de máximo desafio para cada condição. Permite que você alcance resultados de performance comparáveis à população geral.\n\nA progressão é guiada pela percepção subjetiva de esforço (Escala de Borg), não por peso absoluto — tornando o programa seguro e eficaz independentemente do nível inicial.'
       }
     ]
   },
@@ -3834,7 +3772,7 @@ A progressão é guiada pela percepção subjetiva de esforço (Escala de Borg),
     category:'weight',
     tag:'TOP 1',tagColor:'#e50914',
     price:47.90, priceLabel:'R$47,90',
-    img:'https://images.unsplash.com/photo-1476480862126-209bfaa8edc8?w=400&q=80',
+    img:'https://images.unsplash.com/photo-1538805060514-97d9cc17730c?w=400&q=85',
     emoji:'🔥', color:'#e50914',
     desc:'O programa definitivo para perda de gordura. Combinação de musculação metabólica + HIIT baseada nas evidências científicas mais recentes para máximo gasto calórico e preservação da massa magra.',
     highlights:['Musculação + HIIT + Corrida','Déficit calórico otimizado','Preserva massa magra','Resultado em 4 semanas'],
@@ -3849,38 +3787,22 @@ A progressão é guiada pela percepção subjetiva de esforço (Escala de Borg),
       {
         icon:'🔬',
         title:'HIIT vs. cardio contínuo: o veredito da ciência',
-        text:'Um estudo publicado no Scientific Reports (Nature, abril de 2024) comparou diretamente HIIT e treinamento contínuo de intensidade moderada (MICT) com o mesmo gasto calórico em homens com obesidade. Resultado: o EPOC (consumo excessivo de oxigênio pós-exercício) foi significativamente maior após HIIT (66,2 kcal) versus MICT (53,9 kcal), especialmente nos primeiros 10 minutos pós-treino.
-
-Mais importante: a taxa de oxidação lipídica (queima de gordura) durante o período de EPOC foi 33% maior no grupo HIIT. Isso significa que o corpo queima proporcionalmente mais gordura nas horas após um treino HIIT — não apenas mais calorias totais.
-
-Outro estudo publicado no PMC (2025), comparando HIIT, HICT e cardio moderado com o mesmo gasto calórico, confirmou: o EPOC foi quase o dobro nos protocolos de alta intensidade (319 mL vs. 168 mL no grupo moderado), com elevação de VO₂ e metabolismo sustentada por 30 a 60 minutos pós-exercício.'
+        text:'Um estudo publicado no Scientific Reports (Nature, abril de 2024) comparou diretamente HIIT e treinamento contínuo de intensidade moderada (MICT) com o mesmo gasto calórico em homens com obesidade. Resultado: o EPOC (consumo excessivo de oxigênio pós-exercício) foi significativamente maior após HIIT (66,2 kcal) versus MICT (53,9 kcal), especialmente nos primeiros 10 minutos pós-treino.\n\nMais importante: a taxa de oxidação lipídica (queima de gordura) durante o período de EPOC foi 33% maior no grupo HIIT. Isso significa que o corpo queima proporcionalmente mais gordura nas horas após um treino HIIT — não apenas mais calorias totais.\n\nOutro estudo publicado no PMC (2025), comparando HIIT, HICT e cardio moderado com o mesmo gasto calórico, confirmou: o EPOC foi quase o dobro nos protocolos de alta intensidade (319 mL vs. 168 mL no grupo moderado), com elevação de VO₂ e metabolismo sustentada por 30 a 60 minutos pós-exercício.'
       },
       {
         icon:'⚖️',
         title:'A matemática do déficit calórico inteligente',
-        text:'O princípio termodinâmico é inescapável: para perder gordura, o gasto calórico precisa superar a ingestão. Mas a magnitude e a distribuição do déficit importam muito.
-
-Um déficit excessivo (acima de 1.000 kcal/dia) acelera a perda de massa magra, reduz o metabolismo basal e compromete a performance nos treinos. O déficit ideal para preservar músculo enquanto perde gordura é de 300 a 500 kcal/dia — suficiente para perder 0,3 a 0,5kg de gordura por semana.
-
-O exercício contribui diretamente para esse déficit. Um treino de musculação metabólica queima 300 a 500 kcal/hora. Um HIIT de 25 minutos, 400 a 600 kcal. Combinados, 4 treinos por semana criam um déficit semanal de 1.600 a 2.400 kcal — sem precisar passar fome.'
+        text:'O princípio termodinâmico é inescapável: para perder gordura, o gasto calórico precisa superar a ingestão. Mas a magnitude e a distribuição do déficit importam muito.\n\nUm déficit excessivo (acima de 1.000 kcal/dia) acelera a perda de massa magra, reduz o metabolismo basal e compromete a performance nos treinos. O déficit ideal para preservar músculo enquanto perde gordura é de 300 a 500 kcal/dia — suficiente para perder 0,3 a 0,5kg de gordura por semana.\n\nO exercício contribui diretamente para esse déficit. Um treino de musculação metabólica queima 300 a 500 kcal/hora. Um HIIT de 25 minutos, 400 a 600 kcal. Combinados, 4 treinos por semana criam um déficit semanal de 1.600 a 2.400 kcal — sem precisar passar fome.'
       },
       {
         icon:'💪',
         title:'Musculação durante o emagrecimento: por que é essencial',
-        text:'A estratégia clássica de "fazer cardio para emagrecer" tem um problema fatal: ela perde músculo junto com gordura. Isso desacelera o metabolismo basal (que é determinado principalmente pela massa muscular) — criando o efeito sanfona.
-
-Um kg de músculo queima 13 a 15 kcal em repouso por dia. Um kg de gordura, apenas 4 kcal. Quanto mais músculo você mantém durante o emagrecimento, mais calorias você queima 24 horas por dia — mesmo dormindo.
-
-A musculação envia um sinal claro ao organismo: "precisamos desses músculos". Com proteína adequada (1,6g/kg/dia) e treino resistido 3 a 4 vezes por semana, é possível perder gordura sem perder músculo — ou até ganhar músculo enquanto emagrece (recomposição corporal), especialmente em iniciantes.'
+        text:'A estratégia clássica de "fazer cardio para emagrecer" tem um problema fatal: ela perde músculo junto com gordura. Isso desacelera o metabolismo basal (que é determinado principalmente pela massa muscular) — criando o efeito sanfona.\n\nUm kg de músculo queima 13 a 15 kcal em repouso por dia. Um kg de gordura, apenas 4 kcal. Quanto mais músculo você mantém durante o emagrecimento, mais calorias você queima 24 horas por dia — mesmo dormindo.\n\nA musculação envia um sinal claro ao organismo: "precisamos desses músculos". Com proteína adequada (1,6g/kg/dia) e treino resistido 3 a 4 vezes por semana, é possível perder gordura sem perder músculo — ou até ganhar músculo enquanto emagrece (recomposição corporal), especialmente em iniciantes.'
       },
       {
         icon:'🍎',
         title:'Nutrição: o que realmente funciona para emagrecer',
-        text:'A pesquisa atual é clara: não existe dieta "mágica". Low carb, jejum intermitente, dieta mediterrânea — todas funcionam quando criam o mesmo déficit calórico. A diferença está na aderência.
-
-O que a ciência aponta como fatores de sucesso a longo prazo: alta ingestão proteica (sacia mais e preserva músculo), alimentos com alta saciedade por caloria (vegetais, frutas, leguminosas), e flexibilidade na dieta (dietas muito restritivas têm altas taxas de abandono).
-
-Um detalhe frequentemente ignorado: a hidratação. Estudos mostram que beber 500ml de água 30 minutos antes das refeições reduz a ingestão calórica em média 13%. Desidratação leve (2% do peso corporal) reduz a performance no treino em 10 a 20% — sabotando o gasto calórico que você trabalhou para criar.'
+        text:'A pesquisa atual é clara: não existe dieta "mágica". Low carb, jejum intermitente, dieta mediterrânea — todas funcionam quando criam o mesmo déficit calórico. A diferença está na aderência.\n\nO que a ciência aponta como fatores de sucesso a longo prazo: alta ingestão proteica (sacia mais e preserva músculo), alimentos com alta saciedade por caloria (vegetais, frutas, leguminosas), e flexibilidade na dieta (dietas muito restritivas têm altas taxas de abandono).\n\nUm detalhe frequentemente ignorado: a hidratação. Estudos mostram que beber 500ml de água 30 minutos antes das refeições reduz a ingestão calórica em média 13%. Desidratação leve (2% do peso corporal) reduz a performance no treino em 10 a 20% — sabotando o gasto calórico que você trabalhou para criar.'
       }
     ]
   },
@@ -3891,7 +3813,7 @@ Um detalhe frequentemente ignorado: a hidratação. Estudos mostram que beber 50
     category:'weight',
     tag:'POPULAR',tagColor:'#2ecc71',
     price:37.90, priceLabel:'R$37,90',
-    img:'https://images.unsplash.com/photo-1551698618-1dfe5d97d256?w=400&q=80',
+    img:'https://images.unsplash.com/photo-1461897104016-0b3b00cc81ee?w=400&q=85',
     emoji:'🏃', color:'#27ae60',
     desc:'Saia do zero e complete seu primeiro 10km em 8 semanas. Programa periodizado com Fartlek, Intervalados e Long Run — baseado em princípios científicos de treinamento aeróbico.',
     highlights:['Zero a 10km em 8 semanas','Fartlek + Intervalados + Long Run','Guia de nutrição incluso','Para absolutamente iniciantes'],
@@ -3906,38 +3828,22 @@ Um detalhe frequentemente ignorado: a hidratação. Estudos mostram que beber 50
       {
         icon:'❤️',
         title:'O que acontece com seu coração quando você começa a correr',
-        text:'O coração é um músculo — e responde ao treinamento como qualquer outro. Com a corrida regular, o ventrículo esquerdo aumenta seu volume interno (dilatação excêntrica), permitindo bombear mais sangue a cada batida. Isso é o que os fisiologistas chamam de "coração atlético".
-
-O resultado prático é mensurável em 4 a 8 semanas: frequência cardíaca em repouso cai (corredores experientes chegam a 40-50 bpm vs. 70-80 de sedentários), VO₂ máximo — principal marcador de saúde cardiovascular — aumenta entre 15 e 25% em iniciantes após 8 semanas de treinamento progressivo.
-
-O American Heart Association aponta que 150 minutos de exercício aeróbico moderado por semana — exatamente o que este programa oferece — reduzem o risco de doença cardiovascular em 35%, acidente vascular cerebral em 25%, e mortalidade por todas as causas em 30%.'
+        text:'O coração é um músculo — e responde ao treinamento como qualquer outro. Com a corrida regular, o ventrículo esquerdo aumenta seu volume interno (dilatação excêntrica), permitindo bombear mais sangue a cada batida. Isso é o que os fisiologistas chamam de "coração atlético".\n\nO resultado prático é mensurável em 4 a 8 semanas: frequência cardíaca em repouso cai (corredores experientes chegam a 40-50 bpm vs. 70-80 de sedentários), VO₂ máximo — principal marcador de saúde cardiovascular — aumenta entre 15 e 25% em iniciantes após 8 semanas de treinamento progressivo.\n\nO American Heart Association aponta que 150 minutos de exercício aeróbico moderado por semana — exatamente o que este programa oferece — reduzem o risco de doença cardiovascular em 35%, acidente vascular cerebral em 25%, e mortalidade por todas as causas em 30%.'
       },
       {
         icon:'🏃',
         title:'O método Run/Walk: por que funciona para iniciantes',
-        text:'O método Run/Walk, validado científicamente pelo Dr. Jeff Galloway e amplamente adotado pela medicina esportiva, é baseado em um princípio fisiológico simples: intercalar corrida com caminhada permite que o sistema cardiovascular e o sistema musculoesquelético se adaptem sem acúmulo de fadiga excessiva.
-
-Estudos com corredores iniciantes mostram que o Run/Walk reduz em até 60% o risco de lesões por sobrecarga comparado ao treino contínuo — porque dá ao tecido conjuntivo (tendões e ligamentos, que se recuperam mais lentamente que o músculo) tempo suficiente para se adaptar entre os estímulos.
-
-Nas primeiras semanas deste programa, o método é aplicado progressivamente: começamos com 1 minuto correndo / 2 minutos caminhando e chegamos à corrida contínua de 10km ao final da 8ª semana.'
+        text:'O método Run/Walk, validado científicamente pelo Dr. Jeff Galloway e amplamente adotado pela medicina esportiva, é baseado em um princípio fisiológico simples: intercalar corrida com caminhada permite que o sistema cardiovascular e o sistema musculoesquelético se adaptem sem acúmulo de fadiga excessiva.\n\nEstudos com corredores iniciantes mostram que o Run/Walk reduz em até 60% o risco de lesões por sobrecarga comparado ao treino contínuo — porque dá ao tecido conjuntivo (tendões e ligamentos, que se recuperam mais lentamente que o músculo) tempo suficiente para se adaptar entre os estímulos.\n\nNas primeiras semanas deste programa, o método é aplicado progressivamente: começamos com 1 minuto correndo / 2 minutos caminhando e chegamos à corrida contínua de 10km ao final da 8ª semana.'
       },
       {
         icon:'🦵',
         title:'Prevenção de lesões: o que você precisa saber antes de começar',
-        text:'Estudos epidemiológicos em corredores mostram que 65 a 80% das lesões são por overtraining — não por falta de preparo físico. O tecido conjuntivo (tendões, ligamentos, cartilagens) se adapta ao impacto da corrida muito mais lentamente que o músculo: enquanto o músculo responde em dias, o tendão leva semanas a meses.
-
-As lesões mais comuns em iniciantes, todas preveníveis: canelite (síndrome do estresse tibial medial) — causada por aumento brusco de volume; fascite plantar — causada por calçado inadequado e fraqueza do arco plantar; joelho do corredor (síndrome patelofemoral) — causada por fraqueza do glúteo médio.
-
-Este programa inclui exercícios de fortalecimento preventivo em cada sessão: tibial anterior, glúteo médio e musculatura intrínseca do pé — exatamente as regiões identificadas pela pesquisa como protetoras contra as lesões mais comuns.'
+        text:'Estudos epidemiológicos em corredores mostram que 65 a 80% das lesões são por overtraining — não por falta de preparo físico. O tecido conjuntivo (tendões, ligamentos, cartilagens) se adapta ao impacto da corrida muito mais lentamente que o músculo: enquanto o músculo responde em dias, o tendão leva semanas a meses.\n\nAs lesões mais comuns em iniciantes, todas preveníveis: canelite (síndrome do estresse tibial medial) — causada por aumento brusco de volume; fascite plantar — causada por calçado inadequado e fraqueza do arco plantar; joelho do corredor (síndrome patelofemoral) — causada por fraqueza do glúteo médio.\n\nEste programa inclui exercícios de fortalecimento preventivo em cada sessão: tibial anterior, glúteo médio e musculatura intrínseca do pé — exatamente as regiões identificadas pela pesquisa como protetoras contra as lesões mais comuns.'
       },
       {
         icon:'⛽',
         title:'Combustível para correr: o guia nutricional do corredor',
-        text:'A corrida é um esporte altamente dependente de glicogênio muscular (carboidrato estocado no músculo). Corredores que restringem carboidratos ficam lentos, cansados e com risco aumentado de lesão — especialmente nas sessões mais longas.
-
-Pré-treino (1 a 2 horas antes): 30 a 60g de carboidrato de fácil digestão. Exemplos: banana + pasta de amendoim, aveia com frutas, torrada com geleia. Evitar gordura e fibra em excesso antes de correr (digestão lenta).
-
-Hidratação: perda de apenas 2% do peso corporal em água reduz a performance aeróbica em 10 a 20%. Para treinos acima de 45 minutos, repor 150 a 200ml a cada 15 a 20 minutos. Para corridas acima de 75 minutos, incluir eletrólitos (sódio, potássio) para prevenir hiponatremia.'
+        text:'A corrida é um esporte altamente dependente de glicogênio muscular (carboidrato estocado no músculo). Corredores que restringem carboidratos ficam lentos, cansados e com risco aumentado de lesão — especialmente nas sessões mais longas.\n\nPré-treino (1 a 2 horas antes): 30 a 60g de carboidrato de fácil digestão. Exemplos: banana + pasta de amendoim, aveia com frutas, torrada com geleia. Evitar gordura e fibra em excesso antes de correr (digestão lenta).\n\nHidratação: perda de apenas 2% do peso corporal em água reduz a performance aeróbica em 10 a 20%. Para treinos acima de 45 minutos, repor 150 a 200ml a cada 15 a 20 minutos. Para corridas acima de 75 minutos, incluir eletrólitos (sódio, potássio) para prevenir hiponatremia.'
       }
     ]
   },
@@ -3948,7 +3854,7 @@ Hidratação: perda de apenas 2% do peso corporal em água reduz a performance a
     category:'health',
     tag:'NOVO',tagColor:'#3498db',
     price:37.90, priceLabel:'R$37,90',
-    img:'https://images.unsplash.com/photo-1518611012118-696072aa579a?w=400&q=80',
+    img:'https://images.unsplash.com/photo-1506126613408-eca07ce68773?w=400&q=85',
     emoji:'🧘', color:'#2980b9',
     desc:'Corrija sua postura, elimine dores crônicas e ganhe mobilidade com exercícios de fisioterapia preventiva baseados em evidências científicas.',
     highlights:['Correção postural','Elimina dor crônica','Mobilidade articular','Exercícios de fisioterapia'],
@@ -3962,42 +3868,22 @@ Hidratação: perda de apenas 2% do peso corporal em água reduz a performance a
       {
         icon:'😰',
         title:'A epidemia das dores posturais: números que impressionam',
-        text:'Segundo a Organização Mundial da Saúde, a dor lombar é a principal causa de incapacidade no mundo — afetando 619 milhões de pessoas em 2020, com projeção de 843 milhões até 2050. No Brasil, é a segunda maior causa de afastamento do trabalho.
-
-Mas o que causa dor nas costas em 2025? Ironicamente, não é o esforço excessivo — é a inatividade. Estudos mostram que o sedentarismo e a postura estática prolongada (8 a 10 horas sentado) enfraquecem a musculatura estabilizadora da coluna, encurtam os flexores do quadril e criam desequilíbrios musculares que sobrecarregam as articulações intervertebrais.
-
-A boa notícia: revisões sistemáticas publicadas em periódicos de reabilitação mostram que exercícios de fortalecimento e mobilidade reduzem a intensidade da dor lombar crônica em 50 a 60% após 6 a 8 semanas de prática regular.'
+        text:'Segundo a Organização Mundial da Saúde, a dor lombar é a principal causa de incapacidade no mundo — afetando 619 milhões de pessoas em 2020, com projeção de 843 milhões até 2050. No Brasil, é a segunda maior causa de afastamento do trabalho.\n\nMas o que causa dor nas costas em 2025? Ironicamente, não é o esforço excessivo — é a inatividade. Estudos mostram que o sedentarismo e a postura estática prolongada (8 a 10 horas sentado) enfraquecem a musculatura estabilizadora da coluna, encurtam os flexores do quadril e criam desequilíbrios musculares que sobrecarregam as articulações intervertebrais.\n\nA boa notícia: revisões sistemáticas publicadas em periódicos de reabilitação mostram que exercícios de fortalecimento e mobilidade reduzem a intensidade da dor lombar crônica em 50 a 60% após 6 a 8 semanas de prática regular.'
       },
       {
         icon:'🏗️',
         title:'Síndrome do cruzamento: o desequilíbrio do século XXI',
-        text:'O fisioterapeuta Vladimir Janda descreveu a "Síndrome do Cruzamento Superior" — um padrão de desequilíbrio muscular extremamente prevalente em pessoas que trabalham sentadas: músculos do peito e pescoço anterior ficam encurtados e hiperativos, enquanto músculos das costas superiores e profundos do pescoço ficam alongados e inibidos.
-
-O resultado visual e funcional: ombros arredondados para frente, pescoço projetado para frente (postura de "tartaruga"), cifose torácica exagerada e perda de mobilidade do ombro.
-
-Este padrão não causa apenas dor — estudos mostram que reduz a capacidade pulmonar em até 30% (o diafragma trabalha comprimido), causa dores de cabeça tensionais por compressão dos nervos cervicais, e está associado a maior risco de lesão no ombro durante exercícios.'
+        text:'O fisioterapeuta Vladimir Janda descreveu a "Síndrome do Cruzamento Superior" — um padrão de desequilíbrio muscular extremamente prevalente em pessoas que trabalham sentadas: músculos do peito e pescoço anterior ficam encurtados e hiperativos, enquanto músculos das costas superiores e profundos do pescoço ficam alongados e inibidos.\n\nO resultado visual e funcional: ombros arredondados para frente, pescoço projetado para frente (postura de "tartaruga"), cifose torácica exagerada e perda de mobilidade do ombro.\n\nEste padrão não causa apenas dor — estudos mostram que reduz a capacidade pulmonar em até 30% (o diafragma trabalha comprimido), causa dores de cabeça tensionais por compressão dos nervos cervicais, e está associado a maior risco de lesão no ombro durante exercícios.'
       },
       {
         icon:'🎯',
         title:'Mobilidade funcional: o que realmente protege suas articulações',
-        text:'A distinção entre mobilidade e flexibilidade é fundamental e frequentemente ignorada. Flexibilidade é amplitude passiva — você consegue ser levado até certa posição por uma força externa. Mobilidade é amplitude ativa — você consegue alcançar e controlar essa posição com seus próprios músculos.
-
-A mobilidade é o que protege articulações. Uma pessoa muito flexível mas sem mobilidade (controle ativo da amplitude) tem articulações instáveis e vulneráveis à lesão.
-
-Este programa desenvolve as 4 regiões com maior impacto na saúde articular e funcional: quadril (restrição de mobilidade do quadril é a causa número 1 de dor lombar compensatória), torácica (restrição da coluna torácica sobrecarrega cervical e lombar), ombro (mobilidade de ombro previne síndrome do impacto) e tornozelo (restrição de tornozelo compromete o agachamento e aumenta risco de joelho).'
+        text:'A distinção entre mobilidade e flexibilidade é fundamental e frequentemente ignorada. Flexibilidade é amplitude passiva — você consegue ser levado até certa posição por uma força externa. Mobilidade é amplitude ativa — você consegue alcançar e controlar essa posição com seus próprios músculos.\n\nA mobilidade é o que protege articulações. Uma pessoa muito flexível mas sem mobilidade (controle ativo da amplitude) tem articulações instáveis e vulneráveis à lesão.\n\nEste programa desenvolve as 4 regiões com maior impacto na saúde articular e funcional: quadril (restrição de mobilidade do quadril é a causa número 1 de dor lombar compensatória), torácica (restrição da coluna torácica sobrecarrega cervical e lombar), ombro (mobilidade de ombro previne síndrome do impacto) e tornozelo (restrição de tornozelo compromete o agachamento e aumenta risco de joelho).'
       },
       {
         icon:'💆',
         title:'Exercícios posturais durante o trabalho: protocolo de emergência',
-        text:'Pesquisas de saúde ocupacional mostram que micro-pausas de exercício durante o trabalho (2 a 5 minutos a cada hora) reduzem dor cervical e lombar em trabalhadores sedentários em até 45% após 4 semanas.
-
-Três exercícios com mais evidência para dor postural aguda:
-
-1️⃣ Chin Tuck (retração cervical): empurre o queixo levemente para trás, como criando um duplo queixo. Ativa os flexores profundos do pescoço e descomprime as vértebras cervicais. 10 repetições, 5 segundos cada.
-
-2️⃣ Hip Hinge (dobradiça do quadril): em pé, incline o tronco para frente mantendo coluna neutra e quadril como eixo. Reativa os glúteos e isquiotibiais e ensina o padrão motor que protege a lombar.
-
-3️⃣ Rotação torácica: sentado, cruze os braços no peito e gire o tronco para cada lado. Recupera a mobilidade da coluna torácica e alivia tensão acumulada no trapézio.'
+        text:'Pesquisas de saúde ocupacional mostram que micro-pausas de exercício durante o trabalho (2 a 5 minutos a cada hora) reduzem dor cervical e lombar em trabalhadores sedentários em até 45% após 4 semanas.\n\nTrês exercícios com mais evidência para dor postural aguda:\n\n1️⃣ Chin Tuck (retração cervical): empurre o queixo levemente para trás, como criando um duplo queixo. Ativa os flexores profundos do pescoço e descomprime as vértebras cervicais. 10 repetições, 5 segundos cada.\n\n2️⃣ Hip Hinge (dobradiça do quadril): em pé, incline o tronco para frente mantendo coluna neutra e quadril como eixo. Reativa os glúteos e isquiotibiais e ensina o padrão motor que protege a lombar.\n\n3️⃣ Rotação torácica: sentado, cruze os braços no peito e gire o tronco para cada lado. Recupera a mobilidade da coluna torácica e alivia tensão acumulada no trapézio.'
       }
     ]
   },
@@ -4008,7 +3894,7 @@ Três exercícios com mais evidência para dor postural aguda:
     category:'health',
     tag:'NOVO',tagColor:'#9b59b6',
     price:27.90, priceLabel:'R$27,90',
-    img:'https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?w=400&q=80',
+    img:'https://images.unsplash.com/photo-1545389336-cf090694435e?w=400&q=85',
     emoji:'🌿', color:'#8e44ad',
     desc:'Combine exercício físico, respiração e mindfulness para reduzir cortisol e ansiedade. Programa baseado em meta-análises recentes sobre exercício e saúde mental.',
     highlights:['Reduz cortisol','30 minutos por dia','Respiração e mindfulness','Melhora qualidade do sono'],
@@ -4023,38 +3909,22 @@ Três exercícios com mais evidência para dor postural aguda:
       {
         icon:'⚗️',
         title:'O que a ciência diz sobre exercício e cortisol em 2025',
-        text:'Uma meta-análise e revisão sistemática publicada no Sports (MDPI, novembro de 2025), analisando 44 ensaios clínicos randomizados sobre exercício e modulação do cortisol em pessoas com sofrimento psicológico, encontrou resultados expressivos: o exercício físico gerou reduções moderadas de cortisol (SMD geral) com efeitos mais fortes sobre estresse (SMD = 0,90), seguido de ansiedade (SMD = 0,74) e depressão (SMD = 0,54).
-
-O estudo identificou também a modalidade mais eficaz: yoga demonstrou o maior efeito sobre o cortisol (SMD = -0,59), seguido por qigong e exercícios multicomponentes. O HIIT, curiosamente, tendeu a aumentar cortisol — coerente com sua natureza de alta intensidade.
-
-A conclusão prática para este programa: a combinação de yoga funcional + cardio leve + respiração — não o exercício intenso — é o protocolo mais eficaz para redução de estresse crônico.'
+        text:'Uma meta-análise e revisão sistemática publicada no Sports (MDPI, novembro de 2025), analisando 44 ensaios clínicos randomizados sobre exercício e modulação do cortisol em pessoas com sofrimento psicológico, encontrou resultados expressivos: o exercício físico gerou reduções moderadas de cortisol (SMD geral) com efeitos mais fortes sobre estresse (SMD = 0,90), seguido de ansiedade (SMD = 0,74) e depressão (SMD = 0,54).\n\nO estudo identificou também a modalidade mais eficaz: yoga demonstrou o maior efeito sobre o cortisol (SMD = -0,59), seguido por qigong e exercícios multicomponentes. O HIIT, curiosamente, tendeu a aumentar cortisol — coerente com sua natureza de alta intensidade.\n\nA conclusão prática para este programa: a combinação de yoga funcional + cardio leve + respiração — não o exercício intenso — é o protocolo mais eficaz para redução de estresse crônico.'
       },
       {
         icon:'📉',
         title:'30-40 minutos, 3 a 5 vezes por semana: a dose exata',
-        text:'Uma meta-análise publicada no PMC (2023), avaliando 12 estudos com 1.351 participantes sobre exercício e saúde mental, identificou a dose ótima com precisão: sessões de 30 a 40 minutos tiveram o efeito mais pronunciado na redução de ansiedade (SMD = -1,29) e depressão (SMD = -1,76) — superando sessões mais curtas e mais longas.
-
-A frequência ideal ficou entre 3 e 5 vezes por semana. Praticar todos os dias não mostrou benefício adicional — e pode aumentar o cortisol cronicamente.
-
-Por que isso importa: muitas pessoas acreditam que "precisam treinar muito para ter benefícios mentais". A ciência mostra que 30 minutos, 4 vezes por semana, produzem efeitos mensuráveis sobre ansiedade, humor e qualidade do sono em apenas 2 a 4 semanas.'
+        text:'Uma meta-análise publicada no PMC (2023), avaliando 12 estudos com 1.351 participantes sobre exercício e saúde mental, identificou a dose ótima com precisão: sessões de 30 a 40 minutos tiveram o efeito mais pronunciado na redução de ansiedade (SMD = -1,29) e depressão (SMD = -1,76) — superando sessões mais curtas e mais longas.\n\nA frequência ideal ficou entre 3 e 5 vezes por semana. Praticar todos os dias não mostrou benefício adicional — e pode aumentar o cortisol cronicamente.\n\nPor que isso importa: muitas pessoas acreditam que "precisam treinar muito para ter benefícios mentais". A ciência mostra que 30 minutos, 4 vezes por semana, produzem efeitos mensuráveis sobre ansiedade, humor e qualidade do sono em apenas 2 a 4 semanas.'
       },
       {
         icon:'🌬️',
         title:'A fisiologia da respiração como medicina',
-        text:'O nervo vago — o "freio" do sistema nervoso simpático — pode ser ativado voluntariamente através da respiração. Especificamente, a fase expiratória longa ativa o nervo vago e induz o estado parassimpático ("rest and digest"), reduzindo frequência cardíaca e pressão arterial em segundos.
-
-A técnica 4-7-8 (inspirar em 4s, suspender em 7s, expirar em 8s) e a respiração coerente (5 segundos para inspirar, 5 para expirar, ciclo de 6 respirações por minuto) têm o maior corpo de evidências para ativação vagal e redução aguda de ansiedade.
-
-Estudos de biofeedback mostram que 5 minutos de respiração coerente reduzem a variabilidade da frequência cardíaca de forma mensurável — um marcador objetivo de ativação do sistema nervoso parassimpático. Este programa ensina e pratica essa técnica em todas as sessões.'
+        text:'O nervo vago — o "freio" do sistema nervoso simpático — pode ser ativado voluntariamente através da respiração. Especificamente, a fase expiratória longa ativa o nervo vago e induz o estado parassimpático ("rest and digest"), reduzindo frequência cardíaca e pressão arterial em segundos.\n\nA técnica 4-7-8 (inspirar em 4s, suspender em 7s, expirar em 8s) e a respiração coerente (5 segundos para inspirar, 5 para expirar, ciclo de 6 respirações por minuto) têm o maior corpo de evidências para ativação vagal e redução aguda de ansiedade.\n\nEstudos de biofeedback mostram que 5 minutos de respiração coerente reduzem a variabilidade da frequência cardíaca de forma mensurável — um marcador objetivo de ativação do sistema nervoso parassimpático. Este programa ensina e pratica essa técnica em todas as sessões.'
       },
       {
         icon:'😴',
         title:'O elo entre exercício, estresse e sono',
-        text:'O estresse crônico eleva o cortisol à noite — o momento em que deveria estar no nível mais baixo. Isso atrasa o início do sono, reduz o sono profundo (fase N3, onde acontece a recuperação) e cria um ciclo vicioso: privação de sono → mais cortisol → mais estresse → menos sono.
-
-O exercício moderado é a intervenção mais eficaz para quebrar esse ciclo. Uma meta-análise do Journal of Sleep Research mostrou que exercício regular melhora eficiência do sono em 65%, reduz o tempo para adormecer em 13 minutos e aumenta o sono profundo.
-
-Um detalhe importante: o horário do treino importa. Exercícios intensos dentro de 3 horas antes de dormir aumentam temperatura corporal central e adrenalina — podendo atrasar o sono. Este programa tem versões adaptadas para quem treina à noite, com intensidade reduzida e trabalho de respiração e alongamento no final da sessão.'
+        text:'O estresse crônico eleva o cortisol à noite — o momento em que deveria estar no nível mais baixo. Isso atrasa o início do sono, reduz o sono profundo (fase N3, onde acontece a recuperação) e cria um ciclo vicioso: privação de sono → mais cortisol → mais estresse → menos sono.\n\nO exercício moderado é a intervenção mais eficaz para quebrar esse ciclo. Uma meta-análise do Journal of Sleep Research mostrou que exercício regular melhora eficiência do sono em 65%, reduz o tempo para adormecer em 13 minutos e aumenta o sono profundo.\n\nUm detalhe importante: o horário do treino importa. Exercícios intensos dentro de 3 horas antes de dormir aumentam temperatura corporal central e adrenalina — podendo atrasar o sono. Este programa tem versões adaptadas para quem treina à noite, com intensidade reduzida e trabalho de respiração e alongamento no final da sessão.'
       }
     ]
   },
@@ -4065,7 +3935,7 @@ Um detalhe importante: o horário do treino importa. Exercícios intensos dentro
     category:'videos',
     tag:'VÍDEO-AULAS',tagColor:'#f39c12',
     price:27.90, priceLabel:'R$27,90',
-    img:'https://images.unsplash.com/photo-1583454110551-21f2fa2afe61?w=400&q=80',
+    img:'https://images.unsplash.com/photo-1599058917212-d750089bc07e?w=400&q=85',
     emoji:'🎥', color:'#d35400',
     desc:'20 vídeo-aulas detalhadas cobrindo a execução perfeita dos principais exercícios, baseadas nas recomendações do NSCA e nas pesquisas mais recentes de biomecânica.',
     highlights:['20 vídeo-aulas HD','Os 20 exercícios mais importantes','Erros comuns corrigidos','Dicas de Rennan Dias'],
@@ -4080,38 +3950,22 @@ Um detalhe importante: o horário do treino importa. Exercícios intensos dentro
       {
         icon:'⚠️',
         title:'Técnica de execução: a variável mais subestimada',
-        text:'Um estudo de 2024 publicado no Sports Medicine (Androulakis-Korakakis et al.) analisou as variáveis que mais impactam a hipertrofia muscular em treinos de força. Entre elas: amplitude de movimento completa produziu ganhos significativamente maiores de hipertrofia comparada à amplitude parcial — especialmente na posição de estiramento máximo do músculo.
-
-Outra descoberta importante: a fase excêntrica (descida do movimento) demonstrou ser tão ou mais importante para hipertrofia quanto a fase concêntrica (subida). Isso contradiz o hábito de "largar" o peso na descida que a maioria dos praticantes tem.
-
-Na prática: uma repetição com técnica correta — amplitude completa, controle excêntrico, ativação do músculo-alvo — é mais eficaz para hipertrofia do que 3 repetições com técnica descuidada.'
+        text:'Um estudo de 2024 publicado no Sports Medicine (Androulakis-Korakakis et al.) analisou as variáveis que mais impactam a hipertrofia muscular em treinos de força. Entre elas: amplitude de movimento completa produziu ganhos significativamente maiores de hipertrofia comparada à amplitude parcial — especialmente na posição de estiramento máximo do músculo.\n\nOutra descoberta importante: a fase excêntrica (descida do movimento) demonstrou ser tão ou mais importante para hipertrofia quanto a fase concêntrica (subida). Isso contradiz o hábito de "largar" o peso na descida que a maioria dos praticantes tem.\n\nNa prática: uma repetição com técnica correta — amplitude completa, controle excêntrico, ativação do músculo-alvo — é mais eficaz para hipertrofia do que 3 repetições com técnica descuidada.'
       },
       {
         icon:'🦵',
         title:'Agachamento: a biomecânica que protege os joelhos',
-        text:'O agachamento livre é frequentemente demonizado como "prejudicial aos joelhos". A evidência científica diz o contrário: quando bem executado, o agachamento profundo (abaixo de 90°) fortalece cartilagem, ligamentos e tendões do joelho — desde que a mecânica seja correta.
-
-Os estudos de eletromiografia mostram que o valgo dinâmico (joelhos caindo para dentro durante o agachamento) é a principal causa de lesão patelofemoral e do ligamento cruzado anterior em agachadores. Isso não é fraqueza de joelho — é fraqueza do glúteo médio, que não consegue manter o alinhamento do fêmur.
-
-Correção evidence-based: fortalecer glúteo médio (abdução de quadril, monster walks com elástico) antes de progredir carga no agachamento. Trabalhamos exatamente isso no módulo 1.'
+        text:'O agachamento livre é frequentemente demonizado como "prejudicial aos joelhos". A evidência científica diz o contrário: quando bem executado, o agachamento profundo (abaixo de 90°) fortalece cartilagem, ligamentos e tendões do joelho — desde que a mecânica seja correta.\n\nOs estudos de eletromiografia mostram que o valgo dinâmico (joelhos caindo para dentro durante o agachamento) é a principal causa de lesão patelofemoral e do ligamento cruzado anterior em agachadores. Isso não é fraqueza de joelho — é fraqueza do glúteo médio, que não consegue manter o alinhamento do fêmur.\n\nCorreção evidence-based: fortalecer glúteo médio (abdução de quadril, monster walks com elástico) antes de progredir carga no agachamento. Trabalhamos exatamente isso no módulo 1.'
       },
       {
         icon:'💪',
         title:'Supino: como maximizar a ativação do peitoral',
-        text:'Estudos de EMG (eletromiografia) mostram que a ativação do peitoral no supino varia enormemente conforme a técnica. Os fatores com maior impacto: ângulo dos cotovelos em relação ao tronco (45-75° maximiza peitoral; 90° recruta mais deltóide anterior), retração escapular (escápulas retraídas e deprimidas aumentam a base de apoio e o pré-estiramento do peitoral), e amplitude de movimento (descer até tocar o peito dobra a ativação comparado a amplitude parcial).
-
-Um erro técnico que poucos percebem: deixar os cotovelos "afundarem" durante a descida (rotação interna do ombro) coloca o manguito rotador em posição de alta tensão — causa frequente de tendinite em levantadores.
-
-As correções específicas que ensinamos: posicionamento das mãos, ângulo do banco, arco da coluna seguro, path da barra, e o "corkscrew" de ativação dos ombros antes de descer.'
+        text:'Estudos de EMG (eletromiografia) mostram que a ativação do peitoral no supino varia enormemente conforme a técnica. Os fatores com maior impacto: ângulo dos cotovelos em relação ao tronco (45-75° maximiza peitoral; 90° recruta mais deltóide anterior), retração escapular (escápulas retraídas e deprimidas aumentam a base de apoio e o pré-estiramento do peitoral), e amplitude de movimento (descer até tocar o peito dobra a ativação comparado a amplitude parcial).\n\nUm erro técnico que poucos percebem: deixar os cotovelos "afundarem" durante a descida (rotação interna do ombro) coloca o manguito rotador em posição de alta tensão — causa frequente de tendinite em levantadores.\n\nAs correções específicas que ensinamos: posicionamento das mãos, ângulo do banco, arco da coluna seguro, path da barra, e o "corkscrew" de ativação dos ombros antes de descer.'
       },
       {
         icon:'📐',
         title:'Padrões de movimento fundamentais: a chave para treinar com segurança e eficácia',
-        text:'O NSCA (National Strength and Conditioning Association) classifica os movimentos fundamentais do treinamento em 7 padrões: empurrar horizontal, empurrar vertical, puxar horizontal, puxar vertical, agachar, dobradiça de quadril e carregar. Dominar esses padrões com qualidade de movimento é a base para treinar com segurança em qualquer nível.
-
-Por que isso importa: a maioria das lesões na academia não acontece nos exercícios avançados — acontece nos exercícios básicos feitos com padrão de movimento inadequado. Um agachamento com má mecânica de tornozelo, ou uma remada com rotação excessiva da lombar, acumula microtraumas ao longo de meses antes de virar uma lesão séria.
-
-Este curso cobre todos os 7 padrões, com análise dos erros mais comuns em cada um e as correções específicas baseadas em avaliação funcional do movimento (FMS - Functional Movement Screen).'
+        text:'O NSCA (National Strength and Conditioning Association) classifica os movimentos fundamentais do treinamento em 7 padrões: empurrar horizontal, empurrar vertical, puxar horizontal, puxar vertical, agachar, dobradiça de quadril e carregar. Dominar esses padrões com qualidade de movimento é a base para treinar com segurança em qualquer nível.\n\nPor que isso importa: a maioria das lesões na academia não acontece nos exercícios avançados — acontece nos exercícios básicos feitos com padrão de movimento inadequado. Um agachamento com má mecânica de tornozelo, ou uma remada com rotação excessiva da lombar, acumula microtraumas ao longo de meses antes de virar uma lesão séria.\n\nEste curso cobre todos os 7 padrões, com análise dos erros mais comuns em cada um e as correções específicas baseadas em avaliação funcional do movimento (FMS - Functional Movement Screen).'
       }
     ]
   },
@@ -4122,7 +3976,7 @@ Este curso cobre todos os 7 padrões, com análise dos erros mais comuns em cada
     category:'videos',
     tag:'E-BOOK',tagColor:'#2ecc71',
     price:27.90, priceLabel:'R$27,90',
-    img:'https://images.unsplash.com/photo-1490645935967-10de6ba17061?w=400&q=80',
+    img:'https://images.unsplash.com/photo-1547592180-85f173990554?w=400&q=85',
     emoji:'🥗', color:'#27ae60',
     desc:'Tudo que você precisa saber sobre nutrição esportiva baseada em evidências: macronutrientes, timing, suplementação com provas científicas e cardápios práticos.',
     highlights:['E-book 80 páginas','10 vídeos explicativos','Cardápio semanal','Guia de suplementação'],
@@ -4137,44 +3991,22 @@ Este curso cobre todos os 7 padrões, com análise dos erros mais comuns em cada
       {
         icon:'🔬',
         title:'Proteína: a ciência por trás da recomendação',
-        text:'A posição oficial da International Society of Sports Nutrition (ISSN, 2022) — a principal organização científica de nutrição esportiva — recomenda 1,6 a 2,2g de proteína por kg de peso corporal para maximizar a hipertrofia muscular. Para objetivos de emagrecimento com preservação de músculo, a recomendação sobe para 2,0 a 2,4g/kg.
-
-Um dado crítico que a maioria ignora: existe um teto de síntese proteica por refeição. Metanálises mostram que doses acima de 40g de proteína em uma única refeição não produzem síntese proteica adicional no músculo — o excesso é oxidado. Distribuir a proteína em 4 a 5 refeições de 30 a 40g cada é 30% mais eficiente que consumir a mesma quantidade em 1 a 2 refeições.
-
-Fontes com maior escore de aminoácidos essenciais (DIAAS — o marcador mais preciso de qualidade proteica): whey protein (1,25), ovos (1,13), leite (1,22), frango (1,08) — superiores a fontes vegetais na maioria dos casos.'
+        text:'A posição oficial da International Society of Sports Nutrition (ISSN, 2022) — a principal organização científica de nutrição esportiva — recomenda 1,6 a 2,2g de proteína por kg de peso corporal para maximizar a hipertrofia muscular. Para objetivos de emagrecimento com preservação de músculo, a recomendação sobe para 2,0 a 2,4g/kg.\n\nUm dado crítico que a maioria ignora: existe um teto de síntese proteica por refeição. Metanálises mostram que doses acima de 40g de proteína em uma única refeição não produzem síntese proteica adicional no músculo — o excesso é oxidado. Distribuir a proteína em 4 a 5 refeições de 30 a 40g cada é 30% mais eficiente que consumir a mesma quantidade em 1 a 2 refeições.\n\nFontes com maior escore de aminoácidos essenciais (DIAAS — o marcador mais preciso de qualidade proteica): whey protein (1,25), ovos (1,13), leite (1,22), frango (1,08) — superiores a fontes vegetais na maioria dos casos.'
       },
       {
         icon:'⚡',
         title:'Carboidratos: o combustível que você não deve cortar',
-        text:'A dieta low carb ganhou popularidade para emagrecimento — mas tem um custo no desempenho atlético que a ciência documenta claramente. O glicogênio muscular é o principal combustível para exercícios acima de 65% do VO₂ máximo (praticamente qualquer treino de academia ou corrida).
-
-Estudos de depleção de glicogênio mostram que quando os estoques caem abaixo de 50%, a performance de força reduz em 15 a 20%, o tempo até a exaustão em exercício aeróbico cai em 25 a 35%, e o risco de lesão aumenta (fadiga muscular compromete a propriocepção e o controle motor).
-
-Para quem treina 4 a 5 vezes por semana, a recomendação atual da ACSM é de 3 a 5g de carboidrato por kg/dia. Cortar carboidrato enquanto treina intensamente é como tentar dirigir uma Ferrari com o tanque vazio — o carro está lá, mas não vai a lugar nenhum.'
+        text:'A dieta low carb ganhou popularidade para emagrecimento — mas tem um custo no desempenho atlético que a ciência documenta claramente. O glicogênio muscular é o principal combustível para exercícios acima de 65% do VO₂ máximo (praticamente qualquer treino de academia ou corrida).\n\nEstudos de depleção de glicogênio mostram que quando os estoques caem abaixo de 50%, a performance de força reduz em 15 a 20%, o tempo até a exaustão em exercício aeróbico cai em 25 a 35%, e o risco de lesão aumenta (fadiga muscular compromete a propriocepção e o controle motor).\n\nPara quem treina 4 a 5 vezes por semana, a recomendação atual da ACSM é de 3 a 5g de carboidrato por kg/dia. Cortar carboidrato enquanto treina intensamente é como tentar dirigir uma Ferrari com o tanque vazio — o carro está lá, mas não vai a lugar nenhum.'
       },
       {
         icon:'💊',
         title:'Suplementação: o que funciona, o que não funciona',
-        text:'O mercado de suplementos movimenta bilhões — com evidências inversamente proporcionais ao preço. Um resumo honesto baseado no nível de evidência científica:
-
-✅ COMPROVADO — Creatina monohidratada: mais de 500 estudos. Aumenta força em 5-15%, hipertrofia em 5-10%, melhora recuperação. 3-5g/dia. Não precisa de fase de carga. R$30-60/mês.
-
-✅ COMPROVADO — Cafeína: melhora performance aeróbica e de força em 3-11%. 200-400mg, 30-60 min antes. R$0,50/treino (café).
-
-✅ COMPROVADO — Proteína em pó (whey, caseína, vegana): conveniência proteica. Funciona como qualquer proteína alimentar. Nenhum poder "mágico".
-
-❌ EVIDÊNCIA FRACA — BCAAs: inúteis se a ingestão proteica total é adequada. A proteína completa contém mais BCAAs que qualquer suplemento de BCAA.
-
-❌ EVIDÊNCIA FRACA — Termogênicos: efeito de 50-100 kcal/dia no máximo, com potencial risco cardiovascular. Não justificam o custo.'
+        text:'O mercado de suplementos movimenta bilhões — com evidências inversamente proporcionais ao preço. Um resumo honesto baseado no nível de evidência científica:\n\n✅ COMPROVADO — Creatina monohidratada: mais de 500 estudos. Aumenta força em 5-15%, hipertrofia em 5-10%, melhora recuperação. 3-5g/dia. Não precisa de fase de carga. R$30-60/mês.\n\n✅ COMPROVADO — Cafeína: melhora performance aeróbica e de força em 3-11%. 200-400mg, 30-60 min antes. R$0,50/treino (café).\n\n✅ COMPROVADO — Proteína em pó (whey, caseína, vegana): conveniência proteica. Funciona como qualquer proteína alimentar. Nenhum poder "mágico".\n\n❌ EVIDÊNCIA FRACA — BCAAs: inúteis se a ingestão proteica total é adequada. A proteína completa contém mais BCAAs que qualquer suplemento de BCAA.\n\n❌ EVIDÊNCIA FRACA — Termogênicos: efeito de 50-100 kcal/dia no máximo, com potencial risco cardiovascular. Não justificam o custo.'
       },
       {
         icon:'🍽️',
         title:'Timing nutricional: quando comer importa (e quando não importa)',
-        text:'A "janela anabólica" pós-treino — a ideia de que você precisa comer proteína dentro de 30 minutos após treinar ou "perderá os ganhos" — foi amplamente exagerada. Pesquisas de Schoenfeld e Aragon (2013, revisado 2018) mostram que a janela é muito mais longa: de 2 a 5 horas pós-treino.
-
-O que realmente importa no timing: o pré-treino. Treinar em jejum ou com glicogênio baixo compromete a performance — e menos intensidade no treino significa menos estímulo para adaptação. Uma refeição completa 2 a 3 horas antes do treino (proteína + carboidrato + gordura moderada) ou um snack leve 30 a 60 minutos antes (banana + whey, por exemplo) otimiza a performance.
-
-Para emagrecimento: a distribuição calórica ao longo do dia importa mais que o timing específico. Comer a maioria das calorias à noite não é inerentemente problemático — o que importa é o total do dia.'
+        text:'A "janela anabólica" pós-treino — a ideia de que você precisa comer proteína dentro de 30 minutos após treinar ou "perderá os ganhos" — foi amplamente exagerada. Pesquisas de Schoenfeld e Aragon (2013, revisado 2018) mostram que a janela é muito mais longa: de 2 a 5 horas pós-treino.\n\nO que realmente importa no timing: o pré-treino. Treinar em jejum ou com glicogênio baixo compromete a performance — e menos intensidade no treino significa menos estímulo para adaptação. Uma refeição completa 2 a 3 horas antes do treino (proteína + carboidrato + gordura moderada) ou um snack leve 30 a 60 minutos antes (banana + whey, por exemplo) otimiza a performance.\n\nPara emagrecimento: a distribuição calórica ao longo do dia importa mais que o timing específico. Comer a maioria das calorias à noite não é inerentemente problemático — o que importa é o total do dia.'
       }
     ]
   },
@@ -4182,16 +4014,16 @@ Para emagrecimento: a distribuição calórica ao longo do dia importa mais que 
 
 // ── RENDER HOME PROGRAMS (poster cards) ──
 const PROGRAM_IMAGES = {
-  hypertrophy: 'https://images.unsplash.com/photo-1534367610401-9f5ed68180aa?w=300&q=80',
-  elderly:     'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=300&q=80',
-  pregnancy:   'https://images.unsplash.com/photo-1518611012118-696072aa579a?w=300&q=80',
-  disabled:    'https://images.unsplash.com/photo-1593079831268-3381b0db4a77?w=300&q=80',
-  fatburn:     'https://images.unsplash.com/photo-1476480862126-209bfaa8edc8?w=300&q=80',
-  running10k:  'https://images.unsplash.com/photo-1551698618-1dfe5d97d256?w=300&q=80',
-  posture:     'https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?w=300&q=80',
-  stress:      'https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?w=300&q=80',
-  technique:   'https://images.unsplash.com/photo-1583454110551-21f2fa2afe61?w=300&q=80',
-  nutrition:   'https://images.unsplash.com/photo-1490645935967-10de6ba17061?w=300&q=80',
+  hypertrophy: 'https://images.unsplash.com/photo-1583454110551-21f2fa2afe61?w=400&q=85',
+  elderly:     'https://images.unsplash.com/photo-1571019613576-2b22c76fd955?w=400&q=85',
+  pregnancy:   'https://images.unsplash.com/photo-1616279969856-759f316a5ac1?w=400&q=85',
+  disabled:    'https://images.unsplash.com/photo-1580128660010-fd027e1e587a?w=400&q=85',
+  fatburn:     'https://images.unsplash.com/photo-1538805060514-97d9cc17730c?w=400&q=85',
+  running10k:  'https://images.unsplash.com/photo-1461897104016-0b3b00cc81ee?w=400&q=85',
+  posture:     'https://images.unsplash.com/photo-1506126613408-eca07ce68773?w=400&q=85',
+  stress:      'https://images.unsplash.com/photo-1545389336-cf090694435e?w=400&q=85',
+  technique:   'https://images.unsplash.com/photo-1599058917212-d750089bc07e?w=400&q=85',
+  nutrition:   'https://images.unsplash.com/photo-1547592180-85f173990554?w=400&q=85',
 };
 
 function posterCard(p, u){
@@ -4359,8 +4191,7 @@ function buyProgram(id, link){
   }
   window.open(link,'_blank');
   setTimeout(()=>{
-    if(confirm('✅ Pagamento realizado?
-Clique OK para verificar o acesso.')){
+    if(confirm('✅ Pagamento realizado?\nClique OK para verificar o acesso.')){
       checkPurchase(id);
     }
   }, 3000);
@@ -4369,8 +4200,7 @@ Clique OK para verificar o acesso.')){
 function checkPurchase(id){
   // In production, this would check Supabase for payment confirmation
   // For now, admin grants access manually
-  alert('⏳ Aguarde a confirmação do pagamento.
-Rennan irá liberar seu acesso em breve!');
+  alert('⏳ Aguarde a confirmação do pagamento.\nRennan irá liberar seu acesso em breve!');
 }
 
 // Admin: grant program access
@@ -4930,8 +4760,7 @@ async function generatePersonalizedProgram(){
   const answers = intakeState.answers;
   const answersText = Object.entries(answers)
     .map(([k,v])=>`${k}: ${Array.isArray(v)?v.join(', '):v}`)
-    .join('
-');
+    .join('\n');
 
   const anamneseText = u.anamnese ? `
 Perfil do aluno (da anamnese):
