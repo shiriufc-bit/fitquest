@@ -60,6 +60,47 @@ function closeEbook() {
   frame.src = '';
   document.body.style.overflow = '';
 }
+
+// ── PACOTE COMPLETO DE EBOOKS ──
+function comprarPacoteEbooks() {
+  // Link do Mercado Pago para o pacote — atualizar quando criar
+  const linkPacote = 'https://mpago.li/pacote-ebooks'; // ← substituir pelo link real
+  
+  const u = getU();
+  if (!u) { show('sc-splash'); return; }
+  
+  // Confirmar compra
+  const ok = confirm('📚 Pacote Completo de E-Books\n\nR$50,00 — Acesso vitalício aos 10 e-books\n\nVocê será redirecionado ao Mercado Pago para finalizar o pagamento.\n\nContinuar?');
+  if (!ok) return;
+  
+  window.open(linkPacote, '_blank');
+  
+  // Polling: verificar se voltou e liberar acesso
+  const btn = event?.target;
+  if (btn) { btn.textContent = '✅ Aguardando confirmação...'; btn.disabled = true; }
+  
+  setTimeout(() => {
+    const confirmado = confirm('✅ Pagamento realizado?\n\nSe sim, seus e-books serão liberados agora!');
+    if (confirmado) {
+      liberarPacoteEbooks(u);
+    } else {
+      if (btn) { btn.textContent = '📚 Comprar Pacote Completo — R$50,00'; btn.disabled = false; }
+    }
+  }, 3000);
+}
+
+function liberarPacoteEbooks(u) {
+  const todosEbooks = ['hypertrophy','elderly','pregnancy','disabled','fatburn','running10k','posture','stress','technique','nutrition'];
+  const users = DB.get('fq_users') || {};
+  u.purchases = [...new Set([...(u.purchases||[]), ...todosEbooks])];
+  u.pacoteEbooks = true;
+  users[u.email] = u;
+  DB.set('fq_users', users);
+  if (sb) syncU(u).catch(()=>{});
+  
+  alert('🎉 Pacote desbloqueado! Todos os 10 e-books estão disponíveis na sua Loja!');
+  renderStore(u);
+}
 </script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" onerror="console.warn('Supabase CDN failed')"></script>
 <style>
@@ -1349,6 +1390,34 @@ textarea.fi{resize:vertical;min-height:80px;}
           </div>
         </div>
 
+        <!-- PACOTE EBOOKS COMPLETO -->
+        <div style="padding:12px 16px 0">
+          <div style="background:linear-gradient(135deg,#0a1a00,#051000);border:1px solid rgba(46,204,113,.25);border-radius:16px;padding:18px;position:relative;overflow:hidden">
+            <!-- Glow -->
+            <div style="position:absolute;top:-30px;right:-30px;width:120px;height:120px;background:radial-gradient(circle,rgba(46,204,113,.15),transparent 70%);pointer-events:none"></div>
+            <!-- Tag -->
+            <div style="font-size:9px;color:#2ecc71;font-weight:900;letter-spacing:2px;text-transform:uppercase;margin-bottom:8px">📚 PACOTE COMPLETO</div>
+            <!-- Title -->
+            <div style="font-size:18px;font-weight:900;line-height:1.2;margin-bottom:6px">10 E-Books por<br><span style="color:#2ecc71">R$50,00</span></div>
+            <!-- Sub -->
+            <div style="font-size:11px;color:var(--t2);line-height:1.6;margin-bottom:14px">Acesso vitalício a todos os 10 e-books científicos. Economia de <b style="color:#2ecc71">R$99,90</b> em relação à compra individual.</div>
+            <!-- Value pills -->
+            <div style="display:flex;flex-wrap:wrap;gap:5px;margin-bottom:14px">
+              <div style="background:rgba(46,204,113,.1);border:1px solid rgba(46,204,113,.2);border-radius:6px;padding:3px 8px;font-size:9px;font-weight:700;color:#2ecc71">✓ Hipertrofia Máxima</div>
+              <div style="background:rgba(46,204,113,.1);border:1px solid rgba(46,204,113,.2);border-radius:6px;padding:3px 8px;font-size:9px;font-weight:700;color:#2ecc71">✓ Emagrecimento Total</div>
+              <div style="background:rgba(46,204,113,.1);border:1px solid rgba(46,204,113,.2);border-radius:6px;padding:3px 8px;font-size:9px;font-weight:700;color:#2ecc71">✓ Do Zero ao 10km</div>
+              <div style="background:rgba(46,204,113,.1);border:1px solid rgba(46,204,113,.2);border-radius:6px;padding:3px 8px;font-size:9px;font-weight:700;color:#2ecc71">✓ Treino 60+</div>
+              <div style="background:rgba(46,204,113,.1);border:1px solid rgba(46,204,113,.2);border-radius:6px;padding:3px 8px;font-size:9px;font-weight:700;color:#2ecc71">✓ + 6 e-books</div>
+            </div>
+            <!-- Price comparison -->
+            <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px">
+              <div style="font-size:11px;color:var(--mu);text-decoration:line-through">De R$149,90</div>
+              <div style="background:#2ecc71;color:#000;border-radius:5px;padding:2px 8px;font-size:10px;font-weight:900">-67% OFF</div>
+            </div>
+            <button onclick="comprarPacoteEbooks()" style="width:100%;padding:13px;background:linear-gradient(135deg,#2ecc71,#27ae60);border:none;border-radius:10px;color:#fff;font-size:14px;font-weight:900;cursor:pointer;letter-spacing:.3px;box-shadow:0 6px 24px rgba(46,204,113,.3)">📚 Comprar Pacote Completo — R$50,00</button>
+          </div>
+        </div>
+
         <!-- Seção: Programas Especializados -->
         <div class="section" style="margin-top:8px">
           <div class="section-hdr"><div class="section-title">🎯 Programas Especializados</div></div>
@@ -1563,7 +1632,10 @@ textarea.fi{resize:vertical;min-height:80px;}
 <div id="sc-adm" class="screen">
   <div class="adm-hdr">
     <div class="adm-logo">⚙️ <span class="r">ADMIN</span></div>
-    <button onclick="adminLogout()" style="background:rgba(229,9,20,.1);border:1px solid rgba(229,9,20,.2);border-radius:6px;padding:5px 10px;color:var(--r);font-size:11px;font-weight:700;cursor:pointer;">Sair</button>
+    <div style="display:flex;gap:6px;align-items:center">
+      <button onclick="entrarComoAluno()" style="background:rgba(46,204,113,.12);border:1px solid rgba(46,204,113,.25);border-radius:6px;padding:5px 12px;color:#2ecc71;font-size:11px;font-weight:800;cursor:pointer;">▶ Acessar App</button>
+      <button onclick="adminLogout()" style="background:rgba(229,9,20,.1);border:1px solid rgba(229,9,20,.2);border-radius:6px;padding:5px 10px;color:var(--r);font-size:11px;font-weight:700;cursor:pointer;">Sair</button>
+    </div>
   </div>
   <div class="adm-body">
     <div class="adm-panel active" id="adm-students">
@@ -2277,7 +2349,11 @@ async function doLogin(){
   const email=document.getElementById('login-email').value.trim();
   const pass=document.getElementById('login-pass').value;
   if(!email||!pass){showErr('Preencha e-mail e senha.');return;}
-  if(email===ADMIN_EMAIL&&pass===ADMIN_PASS){DB.set('fq_cur','__admin__');loadAdmin();show('sc-adm');return;}
+  if(email===ADMIN_EMAIL&&pass===ADMIN_PASS){
+    DB.set('fq_cur','__admin__');
+    seedAdminProfile();
+    loadAdmin();show('sc-adm');return;
+  }
   const btn=document.getElementById('btn-login');btn.textContent='Entrando...';btn.disabled=true;
   const users=DB.get('fq_users')||{};let u=users[email];
   if(!u){u=await loadUDB(email);if(u){users[email]=u;DB.set('fq_users',users);}}
@@ -2308,6 +2384,12 @@ async function doRegister(){
   btn.textContent='Criar conta grátis';btn.disabled=false;
   initAnam();show('sc-anam');
 }
+function checkAdminBtn() {
+  const email = DB.get('fq_cur');
+  const btn = document.getElementById('btn-admin-back');
+  if (btn) btn.style.display = (email === 'rennan@rennandias.com.br') ? 'flex' : 'none';
+}
+
 function doLogout(){if(!confirm('Deseja sair?'))return;DB.del('fq_cur');show('sc-splash');}
 
 // ══ ANAMNESE ══
@@ -2555,6 +2637,7 @@ function loadApp(email){
   const homeName=document.getElementById('home-name');if(homeName)homeName.textContent=u.name||'Atleta';
   updateAvatarDisplays(u);
   renderPerfil(u);
+  checkAdminBtn();
   // XP
   const xpN=(u.level||1)*1000;
   const lvEl=document.getElementById('app-lv');if(lvEl)lvEl.textContent=u.level||1;
@@ -4144,7 +4227,7 @@ function renderStore(u){try{
 }
 
 function movieCard(p, u){
-  const owned = (u?.purchases||[]).includes(p.id) || (u?.trainApproved && p.id==='free');
+  const owned = (u?.purchases||[]).includes(p.id) || (u?.trainApproved && p.id==='free') || u?.pacoteEbooks;
   const lock = owned ? '' : `<div class="movie-card-locked">🔒 ${p.priceLabel}</div>`;
   const badge = `<div class="movie-card-badge" style="background:${p.tagColor}">${p.tag}</div>`;
   return `<div class="movie-card" onclick="openMovie('${p.id}')">
