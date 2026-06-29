@@ -2597,86 +2597,136 @@ async function submitAnam(){
 }
 async function genAI(email,an){
   const exList=EXERCISE_BANK.map(e=>`${e.id}:${e.name}(${e.muscle})`).join(', ');
-  const prompt=`Você é um personal trainer especialista com formação em fisiologia do exercício, reabilitação e periodização científica (NSCA, ACSM, NASM).
+  const diasNum = parseInt((an.dias||'3x').replace(/\D/g,'')) || 3;
+  const durMin = parseInt((an.dur||'60').replace(/[^0-9]/g,'')) || 60;
+  const nivel = an.tempo||'Iniciante (menos de 3 meses)';
+  const isInic = nivel.includes('Iniciante') || nivel.includes('menos de 3');
+  const isAvanc = nivel.includes('Avançado') || nivel.includes('anos') || nivel.includes('2 anos');
+  const temJoelho = an.temJoelho;
+  const temLombar = an.temLombar;
+  const temOmbro = an.temOmbro;
+  const objetivos = (an.obj||[]).join(', ');
+  const foco = (an.foco||[]).join(', ');
+  const sexo = an.sexo||'Não informado';
+  const peso = an.peso||'?';
+  const altura = an.altura||'?';
+  
+  // Determine IMC-aware context
+  const imc = peso && altura ? (parseFloat(peso) / Math.pow(parseFloat(altura)/100, 2)).toFixed(1) : null;
+  
+  // Determine division based on days AND experience AND goals
+  let divisaoRecomendada = '';
+  if(diasNum <= 2) divisaoRecomendada = 'FULL BODY 2x — um treino para o corpo todo, 2 dias na semana. Foco em padrões de movimento: empurrar, puxar, agachar, dobrar.';
+  else if(diasNum === 3 && isInic) divisaoRecomendada = 'FULL BODY 3x — três sessões de corpo inteiro. Cada sessão com 1 exercício por padrão de movimento. Ideal para iniciantes.';
+  else if(diasNum === 3 && !isInic) divisaoRecomendada = 'PUSH/PULL/LEGS — Dia 1: Peito+Ombro+Tríceps (empurrar), Dia 2: Costas+Bíceps (puxar), Dia 3: Pernas+Glúteos. Frequência ótima para intermediários.';
+  else if(diasNum === 4) divisaoRecomendada = 'UPPER/LOWER 4x — Segunda: Upper A (peito+costas), Terça: Lower A (quad+gluteo), Quinta: Upper B (ombro+braços), Sexta: Lower B (posterior+core). Excelente para progressão de força.';
+  else if(diasNum === 5) divisaoRecomendada = 'PPL 5 dias (Push A/Pull A/Legs/Push B/Pull B) ou ABCDE dependendo do objetivo. Para intermediário/avançado com meta de hipertrofia.';
+  else divisaoRecomendada = 'ABCDE 6x — Alta frequência com especialização. Cada dia com grupo muscular específico + músculo secundário diferente. Apenas para alunos avançados e comprometidos.';
+
+  // Metodologia por objetivo
+  let metodologia = '';
+  if(objetivos.includes('Hipertrofia') || objetivos.includes('massa')) {
+    metodologia = `METODOLOGIA HIPERTROFIA (Rennan Dias):
+- Bloco 1 (Semanas 1-2): Adaptação Neural — reps 12-15, RPE 6-7, ênfase na técnica e conexão mente-músculo
+- Bloco 2 (Semanas 3-4): Acumulação — reps 10-12, RPE 7-8, volume cresce 10% por semana
+- Bloco 3 (Semanas 5-6): Intensificação — reps 8-10, RPE 8-9, aumento de carga
+- Bloco 4 (Semanas 7-8): Realização + Deload — semana 7: técnicas avançadas (drop-set, rest-pause), semana 8: deload -40%
+- Exercícios compostos SEMPRE antes dos isolados
+- Priorizar amplitude completa com excêntrico controlado (3 segundos descendo)
+- Variar exercícios ENTRE as semanas (ex: supino reto na sem 1-2, supino inclinado na sem 3-4)`;
+  } else if(objetivos.includes('Emagrecimento') || objetivos.includes('gordura')) {
+    metodologia = `METODOLOGIA EMAGRECIMENTO (Rennan Dias):
+- Circuitos metabólicos com descanso curto (30-45s entre exercícios)
+- Supersets antagonistas para maximizar gasto calórico
+- Reps altas (15-20) em exercícios de membros inferiores (maior massa muscular = mais gasto)
+- HIIT ao final de cada sessão (10-15 min): 30s máximo / 15s recuperação x 8 rodadas
+- Blocos de 4 semanas com semana 4 de deload
+- Exercícios compostos multiarticularmente prioritários
+- Progressão por densidade (mais trabalho no mesmo tempo) antes de aumentar carga`;
+  } else if(objetivos.includes('Força') || objetivos.includes('força')) {
+    metodologia = `METODOLOGIA FORÇA (Rennan Dias):
+- Baseada em 5/3/1 adaptada: semana 1: 3x8-10, semana 2: 3x6-8, semana 3: 3x4-6, semana 4: deload 3x10 leve
+- Exercícios primários (agachamento, supino, terra, desenvolvimento) com progressão de carga semanal
+- Exercícios acessórios com reps moderadas (10-12) para correção de fraquezas
+- Descanso completo (2-3 min) nos compostos pesados
+- Ênfase em ativação do sistema nervoso central antes das séries pesadas`;
+  } else {
+    metodologia = `METODOLOGIA SAÚDE E CONDICIONAMENTO (Rennan Dias):
+- Periodização ondulante: alterna dias de força (6-10 reps) e resistência (15-20 reps)
+- Exercícios funcionais que replicam movimentos do dia a dia
+- Foco em mobilidade e prevenção de lesões
+- Cardio moderado integrado ao fim das sessões (15-20 min, FC 65-75% max)
+- Progressão gradual e sustentável — prioridade na consistência`;
+  }
+
+  const exList2 = EXERCISE_BANK.map(e => `${e.id}:${e.name}(${e.muscle})`).join(', ');
+
+  const prompt = `Você é o Personal Trainer Rennan Dias — especialista em periodização científica, reabilitação funcional e prescrição individualizada de exercícios (NSCA-CPT, ACSM, NASM).
+
+Você tem um estilo PRÓPRIO e MARCANTE: usa variação inteligente de estímulos, combina ciência com prática real, e NUNCA cria treinos genéricos. Cada aluno recebe um programa que só poderia ser dele.
 
 ═══════════════ FICHA COMPLETA DO ALUNO ═══════════════
-DADOS PESSOAIS:
-- Sexo: ${an.sexo||'Não informado'} | Peso: ${an.peso||'?'}kg | Altura: ${an.altura||'?'}cm
-- Profissão: ${an.prof||'Não informado'} | Atividade no trabalho: ${an.atvTrab||'Não informado'}
+DADOS: Sexo: ${sexo} | Peso: ${peso}kg | Altura: ${altura}cm${imc ? ` | IMC: ${imc}` : ''} 
+Profissão: ${an.prof||'?'} | Atividade no trabalho: ${an.atvTrab||'?'}
+Biótipo: ${an.biotipo||'Não informado'} | Acúmulo de gordura: ${an.gordura||'Não informado'}
 
 ESTRUTURA DE TREINO:
-- Experiência: ${an.tempo||'Iniciante'} | Modalidade: ${an.modal||'Ambos'}
-- Dias disponíveis: ${an.dias||'3x'} | Duração por sessão: ${an.dur||'60 min'}
-- Local: ${an.local||'Academia'} | Período: ${an.periodo||'Indiferente'}
+Experiência: ${nivel}
+Dias disponíveis: ${an.dias||'3x'} | Duração: ${an.dur||'60 min'} | Local: ${an.local||'Academia'} | Período: ${an.periodo||'Qualquer'}
+Modalidades: ${an.modal||'Musculação'}
 
 OBJETIVOS:
-- Objetivos: ${(an.obj||[]).join(', ')||'Saúde geral'} | Secundário: ${an.obj2||'Nenhum'}
-- Meta de corrida: ${(an.mc||[]).join(', ')||'Não pratica'} | Prazo: ${an.prazo||'Sem prazo'}
-- Motivação: ${an.motiv||'Não informado'}
+Principal: ${objetivos || 'Saúde geral'}
+Focos musculares: ${foco || 'Corpo todo'}
+Meta de corrida: ${(an.mc||[]).join(', ')||'Não pratica'}
+Prazo: ${an.prazo||'Sem prazo definido'}
+Motivação pessoal: "${an.motiv||'Não informado'}"
 
-SAÚDE:
-- Condições: ${(an.saude||[]).join(', ')||'Nenhuma'}
-- Medicamentos: ${an.med} - ${an.medDesc||'nenhum'}
-- Cirurgias: ${an.cir||'Nenhuma'} | Histórico ativo: ${an.ativo||'Sedentário'}
+SAÚDE E LESÕES:
+Condições de saúde: ${(an.saude||[]).join(', ')||'Nenhuma'}
+Lesões/Dores: ${(an.lesoes||[]).join(', ')||'Nenhuma'}
+Intensidade da dor (0-10): ${an.dorInt||'0'}
+Histórico de atividade: ${an.ativo||'Sedentário'}
 
-⚠️ LESÕES E RESTRIÇÕES (CRÍTICO — ADAPTE O TREINO):
-- Regiões com dor/lesão: ${(an.lesoes||[]).join(', ')||'Nenhuma'}
-- Intensidade da dor: ${an.dorInt||'Sem dor'} | Há quanto tempo: ${an.dorTempo||'Não informado'}
-- Tratamento: ${an.fisio||'Não fez'} | Detalhes: ${an.lesaoDet||'Não informado'}
-- FLAG JOELHO: ${an.temJoelho?'⚠️ SIM — APLICAR PROTOCOLO JOELHO':'✅ Não'}
-- FLAG LOMBAR: ${an.temLombar?'⚠️ SIM — EVITAR CARGAS AXIAIS':'✅ Não'}
-- FLAG OMBRO: ${an.temOmbro?'⚠️ SIM — EVITAR ELEVAÇÃO ACIMA DA CABEÇA':'✅ Não'}
-
-COMPOSIÇÃO E FOCO:
-- Biótipo: ${an.biotipo||'Não informado'} | Acúmulo de gordura: ${an.gordura||'Não informado'}
-- Regiões para focar: ${(an.foco||[]).join(', ')||'Corpo todo'}
-- Suplementação: ${(an.supl||[]).join(', ')||'Nenhuma'}
+⚠️ FLAGS DE SEGURANÇA — PRIORIDADE MÁXIMA:
+JOELHO: ${temJoelho ? '🚫 SIM — PROIBIDO: agachamento profundo, cadeira extensora, leg press amplitude total, avanço profundo, corrida de impacto. OBRIGATÓRIO: hip thrust, cadeira adutora, step controlado, isométricos de quad, fortalecimento de glúteo médio, leg press 0-60° apenas.' : '✅ Livre'}
+LOMBAR: ${temLombar ? '🚫 SIM — PROIBIDO: peso axial pesado, remada curvada com carga, stiff pesado, sit-up, hiperextensão excessiva. OBRIGATÓRIO: prancha, dead bug, bird-dog, remada na máquina, hip thrust, exercícios em decúbito.' : '✅ Livre'}
+OMBRO: ${temOmbro ? '🚫 SIM — PROIBIDO: desenvolvimento acima da cabeça, elevação frontal >90°, remada alta, supino pegada larga, mergulho profundo. OBRIGATÓRIO: rotadores externos, face pull, puxada neutra, remada baixa, isométricos.' : '✅ Livre'}
 
 ESTILO DE VIDA:
-- Sono: ${an.sono||'?'}h/noite | Qualidade: ${an.qualSono||'Não informado'}
-- Estresse: ${an.stress||'Moderado'} | Alimentação: ${an.alim||'Regular'}
-- Hidratação: ${an.agua||'Não informado'} | Hábitos: ${(an.habitos||[]).join(', ')||'Nenhum'}
+Sono: ${an.sono||'?'}h | Estresse: ${an.stress||'?'} | Alimentação: ${an.alim||'?'} | Hidratação: ${an.agua||'?'}
+Suplementação: ${(an.supl||[]).join(', ')||'Nenhuma'}
+Hábitos a evitar: ${(an.habitos||[]).join(', ')||'Nenhum'}
 
-BANCO DE EXERCÍCIOS (use SOMENTE estes IDs):
-${exList}
-═══════════════════════════════════════════════════════
+═══════════════ METODOLOGIA APLICADA ═══════════════
+DIVISÃO PRESCRITA: ${divisaoRecomendada}
 
-REGRAS ABSOLUTAS DE SEGURANÇA:
+${metodologia}
 
-🦵 SE TIVER DOR NO JOELHO (condromalácia ou similar):
-PROIBIDO: agachamento livre com carga pesada (e001 reduzir amplitude para 45°), leg press com amplitude total (e020 - use apenas 0-60°), cadeira extensora (e023 - SUBSTITUIR por isométrico de quadríceps), mesa flexora pesada, avanço profundo, corrida de alto impacto nas primeiras semanas
-OBRIGATÓRIO: hip thrust (e027), stiff com pouca flexão de joelho (e021), elevação pélvica, cadeira adutora, step-ups suaves, fortalecimento de quadril (glúteo médio), exercícios isométricos de quadríceps, leg press 0-45° apenas, panturrilha sentado
+REGRAS DE VARIAÇÃO (OBRIGATÓRIO — garante individualização):
+1. NUNCA use o mesmo exercício para o mesmo músculo em semanas consecutivas sem variar ângulo ou equipamento
+2. Semana 1-2: exercícios mais estáveis/seguros (máquina ou haltere) para aprender o padrão
+3. Semana 3-4: adicionar exercícios livres (barra) quando o padrão estiver consolidado
+4. Semana 5-6: variações de pega, ângulo ou amplitude para novo estímulo
+5. Semana 7: semana de choque com técnicas avançadas (só se nível intermediário/avançado)
+6. Semana 8: DELOAD obrigatório — mesmos exercícios, -40% volume, -30% carga
+7. OBS de cada exercício deve ser ESPECÍFICA e TÉCNICA — não genérica ("controle o excêntrico em 3s", "cotovelos a 45°", "escápulas retraídas")
+8. Para iniciantes: reps 12-15, 2-3 séries, descanso 75-90s, cargas leves-moderadas
+9. Para intermediários: reps 8-12, 3-4 séries, descanso 60-90s, cargas moderadas-altas
+10. Para avançados: reps 6-10 nos compostos / 10-15 nos isolados, 4-5 séries, descanso variável
 
-🔵 SE TIVER DOR LOMBAR OU HÉRNIA:
-PROIBIDO: peso acima da cabeça com carga alta (e009), remada curvada pesada (e005 - adaptar), stiff com carga alta, agachamento profundo, sit-ups, flexão de tronco
-OBRIGATÓRIO: core estabilizador (prancha e029), remada em máquina ou cabo, exercícios em decúbito, fortalecimento de glúteos, hip thrust, exercícios de extensão de quadril
+BANCO DE EXERCÍCIOS (use SOMENTE estes IDs — nunca invente IDs):
+${exList2}
 
-💪 SE TIVER DOR NO OMBRO:
-PROIBIDO: desenvolvimento acima da cabeça (e009, e010), elevação frontal acima de 90° (e012), remada alta, flexão de cotovelo com supinação forçada
-OBRIGATÓRIO: rotadores externos, remada baixa (e030), puxada neutra, face pulls, isometria de ombro
+═══════════════ FORMATO DE SAÍDA ═══════════════
+Retorne APENAS JSON válido sem markdown, sem explicações, sem comentários.
+A divisão dos treinos deve refletir EXATAMENTE a divisão prescrita acima (não use sempre ABC — adapte ao número de dias).
+Cada "obs" deve ter dica técnica ESPECÍFICA e DIFERENTE para cada exercício.
+Varie os exercícios entre as semanas sempre que possível mantendo o padrão de movimento.
 
-REGRAS CIENTÍFICAS DE PERIODIZAÇÃO:
-1. DIVISÃO ABC: Treino A (Peito/Tríceps), Treino B (Costas/Bíceps), Treino C (Pernas/Ombros)
-2. VOLUME: 10-20 séries/músculo/semana | Adaptar conforme duração disponível
-3. Se duração < 45min: máximo 4 exercícios por treino
-4. Se duração 45-60min: máximo 6 exercícios
-5. Se duração 60-90min: máximo 8 exercícios
-6. Se duração > 90min: até 10 exercícios com técnicas avançadas
-7. PROGRESSÃO: aumentar carga ou volume a cada semana
-8. DELOAD obrigatório na Semana 4 e 8 (40% menos volume)
-9. Para INICIANTES: priorizar cadeia cinética fechada, reps 12-15, cargas leves
-10. Para AVANÇADOS: periodização ondulante, técnicas como dropset, supersérie
-11. Cada campo "obs" deve ter uma dica técnica específica e motivacional
-
-CORRIDA (se aplicável):
-- SE TIVER LESÃO NO JOELHO: inicio com caminhada + corrida leve, sem impacto alto, aumentar muito gradualmente
-- Sessões: Terça (técnica/qualidade), Quinta (intensidade), Sábado (Long Run)
-- Incluir: Fartlek, Intervalados, Progressivo, Tempo Run, Long Run
-- Deload semanas 4 e 8
-
-Retorne APENAS JSON sem markdown, sem explicações:
-{"gym":{"Semana 1":{"fase":"Adaptação — Base","days":{"Treino A — Peito/Tríceps":[{"id":"e001","sets":3,"reps":"12","load":"Leve-Moderada","rest":90,"obs":"dica técnica"}],"Treino B — Costas/Bíceps":[...],"Treino C — Pernas/Ombros":[...]}},"Semana 2":{...},"Semana 3":{...},"Semana 4":{"fase":"⚡ DELOAD — Recuperação Ativa",...},"Semana 5":{...},"Semana 6":{...},"Semana 7":{...},"Semana 8":{"fase":"⚡ DELOAD — Pré-Novo Ciclo",...}},"run":{"Semana 1":{"meta":"Base Aeróbica","sessions":[{"day":"Ter","type":"Corrida Leve","dist":"3 km","pace":"7:30 min/km","dur":"~24 min","tip":"dica detalhada"},...]},...}}`;
-  const res=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-6',max_tokens:4000,messages:[{role:'user',content:prompt}]})});
+{"gym":{"Semana 1":{"fase":"Nome da fase — descrição motivacional breve","days":{"[Nome do Treino — ex: Full Body A ou Push — Peito/Ombro/Tríceps]":[{"id":"e001","sets":3,"reps":"12","load":"Leve-Moderada","rest":90,"obs":"dica técnica específica e útil"}]}},"Semana 2":{...},"Semana 3":{...},"Semana 4":{"fase":"⚡ DELOAD — Recuperação Ativa",...},"Semana 5":{...},"Semana 6":{...},"Semana 7":{...},"Semana 8":{"fase":"⚡ DELOAD — Preparação para Novo Ciclo",...}},"run":{"Semana 1":{"meta":"objetivo da semana","sessions":[{"day":"Ter","type":"tipo de treino","dist":"X km","pace":"X:XX min/km","dur":"~XX min","tip":"dica específica para este aluno baseada no perfil dele"}]}}}`;
+  
+const res=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-6',max_tokens:4000,messages:[{role:'user',content:prompt}]})});
   const data=await res.json();
   const plan=JSON.parse(data.content.map(i=>i.text||'').join('').trim().replace(/```json|```/g,'').trim());
   const users=DB.get('fq_users')||{};

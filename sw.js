@@ -1,6 +1,6 @@
-// ══ FitQuest Service Worker v33 ══
-// Gerado em: 29/06/2026 20:06
-const CACHE_NAME = 'fitquest-v33';
+// ══ FitQuest Service Worker v34 ══
+// Gerado em: 29/06/2026 20:28
+const CACHE_NAME = 'fitquest-v34';
 
 const ASSETS = [
   '/fitquest/',
