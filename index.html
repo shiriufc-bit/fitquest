@@ -9,7 +9,58 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
 <meta name="apple-mobile-web-app-title" content="FitQuest"/>
 <link rel="manifest" href="manifest.json"/>
-<script>window.supabaseLoaded=false;</script>
+<script>window.supabaseLoaded=false;
+// ══ EBOOK VIEWER ══
+const EBOOK_FILES = {
+  hypertrophy: 'ebook-hipertrofia-maxima.pdf',
+  elderly:     'ebook-treino-60plus.pdf',
+  pregnancy:   'ebook-gravidez-ativa.pdf',
+  disabled:    'ebook-movimento-livre.pdf',
+  fatburn:     'ebook-emagrecimento-total.pdf',
+  running10k:  'ebook-do-zero-ao-10km.pdf',
+  posture:     'ebook-postura-mobilidade.pdf',
+  stress:      'ebook-anti-estresse.pdf',
+  technique:   'ebook-tecnica-perfeita.pdf',
+  nutrition:   'ebook-nutricao-performance.pdf',
+};
+
+function openEbook(programId) {
+  const file = EBOOK_FILES[programId];
+  if (!file) { alert('E-Book nao disponivel ainda.'); return; }
+  
+  // Get program title for the topbar
+  const p = CATALOG.find(c => c.id === programId);
+  const title = p ? p.title : 'E-Book FitQuest';
+  document.getElementById('ebook-title-bar').textContent = title;
+  
+  // Show modal with loading state
+  const modal = document.getElementById('modal-ebook');
+  const frame = document.getElementById('ebook-frame');
+  const loading = document.getElementById('ebook-loading');
+  
+  modal.classList.add('open');
+  frame.style.display = 'none';
+  loading.style.display = 'flex';
+  document.body.style.overflow = 'hidden';
+  
+  // Load the PDF — hosted on GitHub Pages same domain
+  const baseUrl = window.location.origin + window.location.pathname.replace('index.html','').replace(/\/+$/, '');
+  frame.src = baseUrl + '/' + file;
+}
+
+function ebookLoaded() {
+  document.getElementById('ebook-frame').style.display = 'block';
+  document.getElementById('ebook-loading').style.display = 'none';
+}
+
+function closeEbook() {
+  const modal = document.getElementById('modal-ebook');
+  const frame = document.getElementById('ebook-frame');
+  modal.classList.remove('open');
+  frame.src = '';
+  document.body.style.overflow = '';
+}
+</script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" onerror="console.warn('Supabase CDN failed')"></script>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
@@ -530,6 +581,18 @@ textarea.fi{resize:vertical;min-height:80px;}
 .profile-av img{width:100%;height:100%;object-fit:cover;}
 .profile-av-badge{position:absolute;bottom:0;right:0;width:20px;height:20px;background:var(--r);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;border:2px solid var(--bg);}
 @keyframes fu{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:translateY(0);}}
+
+/* ══ EBOOK VIEWER ══ */
+#modal-ebook{position:fixed;inset:0;background:#0a0a0a;z-index:600;display:none;flex-direction:column;}
+#modal-ebook.open{display:flex;}
+.ebook-topbar{background:rgba(15,15,15,.98);border-bottom:2px solid #e50914;padding:12px 16px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;}
+.ebook-logo{font-size:15px;font-weight:900;color:#fff;letter-spacing:-0.5px;}.ebook-logo span{color:#e50914;}
+.ebook-title-bar{font-size:11px;color:#999;font-weight:600;max-width:55%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.ebook-close{background:#e50914;border:none;border-radius:6px;color:#fff;font-size:12px;font-weight:800;padding:7px 14px;cursor:pointer;letter-spacing:.3px;}
+#ebook-frame{flex:1;width:100%;border:none;background:#1a1a1a;}
+.ebook-loading{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;color:#737373;}
+.ebook-loading .spinner{width:40px;height:40px;border:3px solid #2a2a2a;border-top:3px solid #e50914;border-radius:50%;animation:spin 1s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg);}}
 </style>
 </head>
 <body>
@@ -3601,7 +3664,7 @@ const CATALOG = [
     subtitle:'12 semanas · Nível avançado',
     category:'specialized',
     tag:'MAIS VENDIDO',tagColor:'#f39c12',
-    price:47.90, priceLabel:'R$47,90',
+    price:47.90, priceLabel:'R$14,99',
     img:'https://images.unsplash.com/photo-1583454110551-21f2fa2afe61?w=400&q=85',
     emoji:'💪', color:'#c0392b',
     desc:'O programa mais completo para quem quer ganhar massa muscular de verdade. 12 semanas periodizadas com técnicas avançadas baseadas nas evidências mais recentes da ciência do exercício.',
@@ -3648,7 +3711,7 @@ const CATALOG = [
     subtitle:'8 semanas · Todos os níveis',
     category:'specialized',
     tag:'EXCLUSIVO',tagColor:'#9b59b6',
-    price:47.90, priceLabel:'R$47,90',
+    price:47.90, priceLabel:'R$14,99',
     img:'https://images.unsplash.com/photo-1571019613576-2b22c76fd955?w=400&q=85',
     emoji:'🧓', color:'#8e44ad',
     desc:'Programa baseado em evidências para pessoas acima de 60 anos. Foco em mobilidade, equilíbrio, sarcopenia e qualidade de vida — com total segurança.',
@@ -3689,7 +3752,7 @@ const CATALOG = [
     subtitle:'Por trimestre · Gestantes',
     category:'specialized',
     tag:'EXCLUSIVO',tagColor:'#e91e8c',
-    price:67.90, priceLabel:'R$67,90',
+    price:67.90, priceLabel:'R$14,99',
     img:'https://images.unsplash.com/photo-1616279969856-759f316a5ac1?w=400&q=85',
     emoji:'🤰', color:'#e91e8c',
     desc:'O programa mais seguro e completo para gestantes. Desenvolvido com base nas diretrizes oficiais do ACOG (American College of Obstetricians and Gynecologists). Exercícios adaptados para cada trimestre.',
@@ -3730,7 +3793,7 @@ const CATALOG = [
     subtitle:'Pessoas com deficiência',
     category:'specialized',
     tag:'INCLUSIVO',tagColor:'#00acc1',
-    price:47.90, priceLabel:'R$47,90',
+    price:47.90, priceLabel:'R$14,99',
     img:'https://images.unsplash.com/photo-1576678927484-cc907957088c?w=400&q=85',
     emoji:'♿', color:'#00acc1',
     desc:'Programa inclusivo adaptado para pessoas com deficiência física. Cada exercício possui variações com embasamento científico e adaptações específicas por tipo de limitação.',
@@ -3771,7 +3834,7 @@ const CATALOG = [
     subtitle:'12 semanas · Iniciante/Intermediário',
     category:'weight',
     tag:'TOP 1',tagColor:'#e50914',
-    price:47.90, priceLabel:'R$47,90',
+    price:47.90, priceLabel:'R$14,99',
     img:'https://images.unsplash.com/photo-1538805060514-97d9cc17730c?w=400&q=85',
     emoji:'🔥', color:'#e50914',
     desc:'O programa definitivo para perda de gordura. Combinação de musculação metabólica + HIIT baseada nas evidências científicas mais recentes para máximo gasto calórico e preservação da massa magra.',
@@ -3812,7 +3875,7 @@ const CATALOG = [
     subtitle:'8 semanas · Iniciantes',
     category:'weight',
     tag:'POPULAR',tagColor:'#2ecc71',
-    price:37.90, priceLabel:'R$37,90',
+    price:37.90, priceLabel:'R$14,99',
     img:'https://images.unsplash.com/photo-1461897104016-0b3b00cc81ee?w=400&q=85',
     emoji:'🏃', color:'#27ae60',
     desc:'Saia do zero e complete seu primeiro 10km em 8 semanas. Programa periodizado com Fartlek, Intervalados e Long Run — baseado em princípios científicos de treinamento aeróbico.',
@@ -3853,7 +3916,7 @@ const CATALOG = [
     subtitle:'6 semanas · Todos os níveis',
     category:'health',
     tag:'NOVO',tagColor:'#3498db',
-    price:37.90, priceLabel:'R$37,90',
+    price:37.90, priceLabel:'R$14,99',
     img:'https://images.unsplash.com/photo-1506126613408-eca07ce68773?w=400&q=85',
     emoji:'🧘', color:'#2980b9',
     desc:'Corrija sua postura, elimine dores crônicas e ganhe mobilidade com exercícios de fisioterapia preventiva baseados em evidências científicas.',
@@ -3893,7 +3956,7 @@ const CATALOG = [
     subtitle:'4 semanas · Todos os níveis',
     category:'health',
     tag:'NOVO',tagColor:'#9b59b6',
-    price:27.90, priceLabel:'R$27,90',
+    price:27.90, priceLabel:'R$14,99',
     img:'https://images.unsplash.com/photo-1545389336-cf090694435e?w=400&q=85',
     emoji:'🌿', color:'#8e44ad',
     desc:'Combine exercício físico, respiração e mindfulness para reduzir cortisol e ansiedade. Programa baseado em meta-análises recentes sobre exercício e saúde mental.',
@@ -3934,7 +3997,7 @@ const CATALOG = [
     subtitle:'20 vídeo-aulas · Todos os níveis',
     category:'videos',
     tag:'VÍDEO-AULAS',tagColor:'#f39c12',
-    price:27.90, priceLabel:'R$27,90',
+    price:27.90, priceLabel:'R$14,99',
     img:'https://images.unsplash.com/photo-1599058917212-d750089bc07e?w=400&q=85',
     emoji:'🎥', color:'#d35400',
     desc:'20 vídeo-aulas detalhadas cobrindo a execução perfeita dos principais exercícios, baseadas nas recomendações do NSCA e nas pesquisas mais recentes de biomecânica.',
@@ -3975,7 +4038,7 @@ const CATALOG = [
     subtitle:'Guia completo · E-book + Vídeos',
     category:'videos',
     tag:'E-BOOK',tagColor:'#2ecc71',
-    price:27.90, priceLabel:'R$27,90',
+    price:27.90, priceLabel:'R$14,99',
     img:'https://images.unsplash.com/photo-1547592180-85f173990554?w=400&q=85',
     emoji:'🥗', color:'#27ae60',
     desc:'Tudo que você precisa saber sobre nutrição esportiva baseada em evidências: macronutrientes, timing, suplementação com provas científicas e cardápios práticos.',
@@ -4168,7 +4231,7 @@ function openMovie(id){
 
     <!-- CTA -->
     ${owned
-      ? `<button class="btn-p" onclick="alert('Em breve: acesso ao conteúdo premium!')">▶ Acessar programa</button>`
+      ? `<button class="btn-p" onclick="openEbook('${p.id}')">📖 Acessar E-Book</button>`
       : `<div style="background:rgba(229,9,20,.06);border:1px solid rgba(229,9,20,.15);border-radius:12px;padding:14px;margin-bottom:12px;text-align:center">
           <div style="font-size:28px;font-weight:900;color:var(--r);margin-bottom:2px">${p.priceLabel}</div>
           <div style="font-size:11px;color:var(--mu)">Pagamento único · Acesso vitalício</div>
@@ -4904,5 +4967,19 @@ function dismissBanner(){document.getElementById('pwa-banner').style.display='no
   }
 })();
 </script>
+
+<!-- ══ EBOOK VIEWER MODAL ══ -->
+<div id="modal-ebook">
+  <div class="ebook-topbar">
+    <div class="ebook-logo"><span>FIT</span>QUEST</div>
+    <div class="ebook-title-bar" id="ebook-title-bar">E-Book Premium</div>
+    <button class="ebook-close" onclick="closeEbook()">✕ Fechar</button>
+  </div>
+  <div class="ebook-loading" id="ebook-loading">
+    <div class="spinner"></div>
+    <div style="font-size:13px">Carregando seu e-book...</div>
+  </div>
+  <iframe id="ebook-frame" style="display:none" onload="ebookLoaded()"></iframe>
+</div>
 </body>
 </html>
