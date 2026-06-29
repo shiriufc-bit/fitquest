@@ -64,7 +64,7 @@ function closeEbook() {
 // ── PACOTE COMPLETO DE EBOOKS ──
 function comprarPacoteEbooks() {
   // Link do Mercado Pago para o pacote — atualizar quando criar
-  const linkPacote = 'https://mpago.li/pacote-ebooks'; // ← substituir pelo link real
+  const linkPacote = 'https://mpago.la/26kZgpg';
   
   const u = getU();
   if (!u) { show('sc-splash'); return; }
@@ -4030,7 +4030,7 @@ const CATALOG = [
       {n:4,title:'Semana 9–10: Intensificação',dur:'5 dias/semana'},
       {n:5,title:'Semana 11–12: Pico + Deload',dur:'5 dias/semana'},
     ],
-    mpLink:'https://mpago.li/1mYcngV', students:523, rating:4.9,
+    mpLink:'https://mpago.la/22dn7UY', students:523, rating:4.9,
     content:[
       {
         icon:'🔬',
@@ -4076,7 +4076,7 @@ const CATALOG = [
       {n:3,title:'Semana 5–6: Equilíbrio e Coordenação',dur:'3 dias/semana'},
       {n:4,title:'Semana 7–8: Manutenção Ativa',dur:'3 dias/semana'},
     ],
-    mpLink:'https://mpago.li/1mYcngV', students:187, rating:5.0,
+    mpLink:'https://mpago.la/22dn7UY', students:187, rating:5.0,
     content:[
       {
         icon:'⚠️',
@@ -4117,7 +4117,7 @@ const CATALOG = [
       {n:3,title:'3º Trimestre: Manutenção',dur:'3 dias/semana'},
       {n:4,title:'Pós-parto: Recuperação',dur:'2 dias/semana'},
     ],
-    mpLink:'https://mpago.li/1mYcngV', students:94, rating:5.0,
+    mpLink:'https://mpago.la/22dn7UY', students:94, rating:5.0,
     content:[
       {
         icon:'✅',
@@ -4158,7 +4158,7 @@ const CATALOG = [
       {n:3,title:'Semana 5–6: Resistência',dur:'3 dias/semana'},
       {n:4,title:'Semana 7–8: Performance',dur:'3 dias/semana'},
     ],
-    mpLink:'https://mpago.li/1mYcngV', students:62, rating:4.8,
+    mpLink:'https://mpago.la/22dn7UY', students:62, rating:4.8,
     content:[
       {
         icon:'💡',
@@ -4199,7 +4199,7 @@ const CATALOG = [
       {n:3,title:'Semana 7–9: Aceleração',dur:'5 dias/semana'},
       {n:4,title:'Semana 10–12: Definição Final',dur:'5 dias/semana'},
     ],
-    mpLink:'https://mpago.li/1mYcngV', students:841, rating:4.9,
+    mpLink:'https://mpago.la/22dn7UY', students:841, rating:4.9,
     content:[
       {
         icon:'🔬',
@@ -4240,7 +4240,7 @@ const CATALOG = [
       {n:3,title:'Semana 5–6: Velocidade',dur:'3 dias/semana'},
       {n:4,title:'Semana 7–8: Prova Simulada',dur:'3 dias/semana'},
     ],
-    mpLink:'https://mpago.li/1qj9bY9', students:312, rating:4.8,
+    mpLink:'https://mpago.la/22dn7UY', students:312, rating:4.8,
     content:[
       {
         icon:'❤️',
@@ -4280,7 +4280,7 @@ const CATALOG = [
       {n:2,title:'Semana 3–4: Correção Ativa',dur:'4 dias/semana'},
       {n:3,title:'Semana 5–6: Manutenção',dur:'4 dias/semana'},
     ],
-    mpLink:'https://mpago.li/1qj9bY9', students:198, rating:4.7,
+    mpLink:'https://mpago.la/22dn7UY', students:198, rating:4.7,
     content:[
       {
         icon:'😰',
@@ -4321,7 +4321,7 @@ const CATALOG = [
       {n:3,title:'Semana 3: Cardio Leve',dur:'5 dias/semana'},
       {n:4,title:'Semana 4: Integração',dur:'5 dias/semana'},
     ],
-    mpLink:'https://mpago.li/1qj9bY9', students:145, rating:4.9,
+    mpLink:'https://mpago.la/22dn7UY', students:145, rating:4.9,
     content:[
       {
         icon:'⚗️',
@@ -4362,7 +4362,7 @@ const CATALOG = [
       {n:3,title:'Módulo 3: Core e Funcional',dur:'4 vídeos'},
       {n:4,title:'Módulo 4: Erros Comuns',dur:'3 vídeos'},
     ],
-    mpLink:'https://mpago.li/1qj9bY9', students:267, rating:5.0,
+    mpLink:'https://mpago.la/22dn7UY', students:267, rating:5.0,
     content:[
       {
         icon:'⚠️',
@@ -4403,7 +4403,7 @@ const CATALOG = [
       {n:3,title:'Parte 3: Suplementação',dur:'2 vídeos'},
       {n:4,title:'Parte 4: Cardápios Práticos',dur:'2 vídeos'},
     ],
-    mpLink:'https://mpago.li/21vSJoW', students:389, rating:4.8,
+    mpLink:'https://mpago.la/22dn7UY', students:389, rating:4.8,
     content:[
       {
         icon:'🔬',
@@ -4599,6 +4599,7 @@ function openMovie(id){
 }
 
 function buyProgram(id, link){
+  if(!link) link='https://mpago.la/22dn7UY';
   const email = DB.get('fq_cur');
   const users = DB.get('fq_users')||{};
   if(users[email]){
