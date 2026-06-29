@@ -424,25 +424,86 @@ textarea.fi{resize:vertical;min-height:80px;}
 /* ADMIN */
 #sc-adm{display:none;flex-direction:column;min-height:100vh;background:var(--bg);}
 #sc-adm.active{display:flex;}
-.adm-hdr{background:rgba(10,10,10,.95);border-bottom:1px solid var(--b);padding:14px 18px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:10;backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);}
-.adm-logo{font-size:16px;font-weight:900;}
+/* ══ ADMIN PANEL REDESIGN ══ */
+.adm-hdr{background:rgba(8,8,8,.98);border-bottom:1px solid rgba(229,9,20,.2);padding:12px 16px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:10;backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);}
+.adm-logo{display:flex;align-items:center;gap:8px;font-size:14px;font-weight:900;letter-spacing:.5px;}
 .adm-logo .r{color:var(--r);}
-.adm-body{flex:1;padding:14px 14px 90px;max-width:600px;width:100%;margin:0 auto;}
+.adm-logo-badge{background:var(--r);border-radius:5px;padding:2px 7px;font-size:9px;font-weight:900;color:#fff;letter-spacing:1px;}
+.adm-body{flex:1;padding:0 0 90px;max-width:680px;width:100%;margin:0 auto;overflow-y:auto;}
 .adm-panel{display:none;}.adm-panel.active{display:block;}
-.adm-nav{position:fixed;bottom:0;left:0;right:0;background:rgba(10,10,10,.98);border-top:1px solid var(--b);display:flex;padding:10px 4px 22px;z-index:10;backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);}
-.st-card{background:var(--s);border:1px solid var(--b);border-radius:10px;padding:14px;margin-bottom:10px;}
-.st-card.ok{border-color:rgba(46,204,113,.2);}
-.st-card.pend{border-color:rgba(229,9,20,.15);}
-.st-top{display:flex;align-items:center;gap:12px;margin-bottom:10px;}
-.st-av{width:40px;height:40px;border-radius:6px;background:var(--r);display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:900;color:#fff;flex-shrink:0;}
-.st-inf{flex:1;}.st-nm{font-size:13px;font-weight:800;}.st-em{font-size:10px;color:var(--t2);margin-top:2px;}
-.st-st{font-size:9px;font-weight:800;padding:4px 9px;border-radius:4px;white-space:nowrap;}
+.adm-nav{position:fixed;bottom:0;left:0;right:0;background:rgba(8,8,8,.98);border-top:1px solid rgba(229,9,20,.15);display:flex;padding:8px 4px 22px;z-index:10;backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);}
+/* Dashboard header */
+.adm-dash-header{background:linear-gradient(135deg,rgba(229,9,20,.12) 0%,rgba(0,0,0,0) 60%),#0d0d0d;padding:18px 16px 14px;border-bottom:1px solid rgba(255,255,255,.05);}
+.adm-welcome{font-size:11px;color:var(--t2);font-weight:600;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:4px;}
+.adm-title{font-size:20px;font-weight:900;line-height:1.2;margin-bottom:14px;}
+/* KPI cards */
+.adm-kpis{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;padding:12px 16px 0;}
+.kpi-card{background:#111;border:1px solid rgba(255,255,255,.06);border-radius:12px;padding:14px;position:relative;overflow:hidden;}
+.kpi-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;}
+.kpi-card.red::before{background:var(--r);}
+.kpi-card.green::before{background:#2ecc71;}
+.kpi-card.blue::before{background:#3498db;}
+.kpi-card.gold::before{background:#f39c12;}
+.kpi-icon{font-size:20px;margin-bottom:8px;}
+.kpi-val{font-size:28px;font-weight:900;line-height:1;}
+.kpi-card.red .kpi-val{color:var(--r);}
+.kpi-card.green .kpi-val{color:#2ecc71;}
+.kpi-card.blue .kpi-val{color:#3498db;}
+.kpi-card.gold .kpi-val{color:#f39c12;}
+.kpi-lbl{font-size:10px;color:var(--mu);font-weight:600;text-transform:uppercase;letter-spacing:1px;margin-top:4px;}
+/* Section title */
+.adm-sec-title{font-size:11px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;color:var(--t2);padding:16px 16px 8px;display:flex;align-items:center;justify-content:space-between;}
+.adm-sec-title span{color:var(--r);}
+/* Student card redesign */
+.st-card{background:#0f0f0f;border:1px solid rgba(255,255,255,.06);border-radius:14px;margin:0 12px 10px;overflow:hidden;transition:border-color .2s;}
+.st-card:hover{border-color:rgba(229,9,20,.2);}
+.st-card.ok{border-color:rgba(46,204,113,.15);}
+.st-card.pend{border-color:rgba(229,9,20,.2);}
+.st-card-header{display:flex;align-items:center;gap:12px;padding:14px 14px 10px;}
+.st-av{width:42px;height:42px;border-radius:10px;background:linear-gradient(135deg,var(--r),#800);display:flex;align-items:center;justify-content:center;font-size:17px;font-weight:900;color:#fff;flex-shrink:0;}
+.st-inf{flex:1;min-width:0;}
+.st-nm{font-size:14px;font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.st-em{font-size:10px;color:var(--t2);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.st-st{font-size:9px;font-weight:900;padding:4px 10px;border-radius:6px;white-space:nowrap;letter-spacing:.5px;}
 .st-st.ok{background:rgba(46,204,113,.1);color:#2ecc71;border:1px solid rgba(46,204,113,.2);}
 .st-st.pend{background:rgba(229,9,20,.1);color:var(--r);border:1px solid rgba(229,9,20,.2);}
-.st-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:5px;margin-bottom:10px;}
-.st-stat{background:rgba(255,255,255,.04);border:1px solid var(--b);border-radius:8px;padding:7px;text-align:center;}
-.st-sv{font-size:14px;font-weight:900;}.st-sl{font-size:8px;color:var(--mu);font-weight:600;text-transform:uppercase;margin-top:1px;}
-.st-btns{display:flex;gap:5px;flex-wrap:wrap;}
+/* Metric row */
+.st-metrics{display:grid;grid-template-columns:repeat(5,1fr);gap:0;border-top:1px solid rgba(255,255,255,.05);border-bottom:1px solid rgba(255,255,255,.05);}
+.st-metric{padding:10px 6px;text-align:center;border-right:1px solid rgba(255,255,255,.05);}
+.st-metric:last-child{border-right:none;}
+.st-mv{font-size:15px;font-weight:900;}
+.st-ml{font-size:7.5px;color:var(--mu);font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-top:2px;}
+/* Progress bar */
+.st-prog-bar{height:3px;background:rgba(255,255,255,.06);margin:0;position:relative;}
+.st-prog-fill{height:100%;background:linear-gradient(90deg,var(--r),#ff5555);border-radius:0 3px 3px 0;transition:width .5s;}
+/* Action buttons */
+.st-actions{display:flex;gap:5px;padding:10px 12px;flex-wrap:wrap;}
+.st-btn{padding:7px 12px;border-radius:7px;font-size:10px;font-weight:800;cursor:pointer;border:none;letter-spacing:.3px;transition:all .15s;}
+.st-btn:hover{transform:translateY(-1px);}
+.st-btn.approve{background:rgba(46,204,113,.15);color:#2ecc71;border:1px solid rgba(46,204,113,.3);}
+.st-btn.revoke{background:rgba(229,9,20,.1);color:var(--r);border:1px solid rgba(229,9,20,.2);}
+.st-btn.edit{background:rgba(52,152,219,.1);color:#3498db;border:1px solid rgba(52,152,219,.2);}
+.st-btn.anam{background:rgba(243,156,18,.1);color:#f39c12;border:1px solid rgba(243,156,18,.2);}
+.st-btn.del{background:rgba(255,255,255,.05);color:var(--mu);border:1px solid rgba(255,255,255,.08);}
+.st-btn.ebook{background:rgba(155,89,182,.1);color:#9b59b6;border:1px solid rgba(155,89,182,.2);}
+/* Filter bar */
+.adm-filter{display:flex;gap:6px;padding:0 12px 10px;overflow-x:auto;}
+.adm-filter::-webkit-scrollbar{display:none;}
+.filter-btn{padding:6px 14px;border-radius:20px;font-size:10px;font-weight:800;cursor:pointer;border:1px solid rgba(255,255,255,.1);background:transparent;color:var(--t2);white-space:nowrap;transition:all .2s;}
+.filter-btn.active{background:var(--r);border-color:var(--r);color:#fff;}
+/* Search */
+.adm-search{margin:12px 12px 0;position:relative;}
+.adm-search input{width:100%;background:#111;border:1px solid rgba(255,255,255,.08);border-radius:10px;padding:11px 14px 11px 38px;color:#fff;font-size:13px;}
+.adm-search input:focus{outline:none;border-color:rgba(229,9,20,.4);}
+.adm-search::before{content:'🔍';position:absolute;left:12px;top:50%;transform:translateY(-50%);font-size:14px;}
+/* Revenue card */
+.revenue-card{margin:12px;background:linear-gradient(135deg,#0a1500,#050a00);border:1px solid rgba(46,204,113,.2);border-radius:14px;padding:16px;}
+.revenue-label{font-size:9px;font-weight:900;letter-spacing:2px;color:#2ecc71;text-transform:uppercase;margin-bottom:6px;}
+.revenue-val{font-size:32px;font-weight:900;color:#2ecc71;line-height:1;}
+.revenue-sub{font-size:11px;color:var(--t2);margin-top:4px;}
+/* Empty state */
+.adm-empty{text-align:center;padding:60px 20px;color:var(--mu);}
+.adm-empty-icon{font-size:48px;margin-bottom:12px;}
 .btn-sm{padding:7px 11px;border-radius:6px;font-size:10px;font-weight:800;cursor:pointer;border:none;transition:all .2s;}
 .btn-ap{background:rgba(46,204,113,.1);color:#2ecc71;border:1px solid rgba(46,204,113,.2)!important;}
 .btn-rv{background:rgba(229,9,20,.1);color:#ff6b6b;border:1px solid rgba(229,9,20,.15)!important;}
@@ -1630,30 +1691,89 @@ textarea.fi{resize:vertical;min-height:80px;}
 
 <!-- ADMIN -->
 <div id="sc-adm" class="screen">
+  <!-- HEADER -->
   <div class="adm-hdr">
-    <div class="adm-logo">⚙️ <span class="r">ADMIN</span></div>
+    <div class="adm-logo">
+      <span><span class="r">FIT</span>QUEST</span>
+      <div class="adm-logo-badge">ADMIN</div>
+    </div>
     <div style="display:flex;gap:6px;align-items:center">
-      <button onclick="entrarComoAluno()" style="background:rgba(46,204,113,.12);border:1px solid rgba(46,204,113,.25);border-radius:6px;padding:5px 12px;color:#2ecc71;font-size:11px;font-weight:800;cursor:pointer;">▶ Acessar App</button>
-      <button onclick="adminLogout()" style="background:rgba(229,9,20,.1);border:1px solid rgba(229,9,20,.2);border-radius:6px;padding:5px 10px;color:var(--r);font-size:11px;font-weight:700;cursor:pointer;">Sair</button>
+      <button onclick="entrarComoAluno()" style="background:rgba(46,204,113,.12);border:1px solid rgba(46,204,113,.25);border-radius:7px;padding:6px 12px;color:#2ecc71;font-size:10px;font-weight:900;cursor:pointer;letter-spacing:.3px">▶ Acessar App</button>
+      <button onclick="adminLogout()" style="background:rgba(229,9,20,.08);border:1px solid rgba(229,9,20,.18);border-radius:7px;padding:6px 10px;color:var(--r);font-size:10px;font-weight:800;cursor:pointer">Sair</button>
     </div>
   </div>
+
+  <!-- BODY -->
   <div class="adm-body">
-    <div class="adm-panel active" id="adm-students">
-      <div style="display:flex;gap:8px;margin-bottom:14px" id="adm-stats"></div>
-      <div class="stl">Todos os alunos</div>
-      <div id="students-list"></div>
+
+    <!-- TAB: DASHBOARD -->
+    <div class="adm-panel active" id="adm-dashboard">
+      <div class="adm-dash-header">
+        <div class="adm-welcome">Painel de Controle</div>
+        <div class="adm-title">Rennan Dias<br><span style="color:var(--r)">Assessoria Esportiva</span></div>
+      </div>
+      <!-- KPIs -->
+      <div class="adm-kpis" id="adm-kpis"></div>
+      <!-- Revenue -->
+      <div class="adm-sec-title">💰 Receita Estimada</div>
+      <div class="revenue-card" id="adm-revenue"></div>
+      <!-- Quick actions -->
+      <div class="adm-sec-title">⚡ Ações Rápidas</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:0 12px 16px">
+        <button onclick="switchAdm('students',document.querySelectorAll('.adm-nbtn')[1])" style="background:#111;border:1px solid rgba(255,255,255,.08);border-radius:12px;padding:16px;color:#fff;font-size:12px;font-weight:800;cursor:pointer;text-align:left">
+          <div style="font-size:24px;margin-bottom:6px">👥</div>Ver Alunos
+        </button>
+        <button onclick="switchAdm('exercises',document.querySelectorAll('.adm-nbtn')[2])" style="background:#111;border:1px solid rgba(255,255,255,.08);border-radius:12px;padding:16px;color:#fff;font-size:12px;font-weight:800;cursor:pointer;text-align:left">
+          <div style="font-size:24px;margin-bottom:6px">🏋️</div>Exercícios
+        </button>
+        <button onclick="admExportCSV()" style="background:#111;border:1px solid rgba(255,255,255,.08);border-radius:12px;padding:16px;color:#fff;font-size:12px;font-weight:800;cursor:pointer;text-align:left">
+          <div style="font-size:24px;margin-bottom:6px">📊</div>Exportar CSV
+        </button>
+        <button onclick="admSendAll()" style="background:#111;border:1px solid rgba(255,255,255,.08);border-radius:12px;padding:16px;color:#fff;font-size:12px;font-weight:800;cursor:pointer;text-align:left">
+          <div style="font-size:24px;margin-bottom:6px">📣</div>Liberar Todos
+        </button>
+      </div>
+      <!-- Recent students -->
+      <div class="adm-sec-title">🕐 Cadastros Recentes <span id="adm-recent-count"></span></div>
+      <div id="adm-recent-list"></div>
     </div>
+
+    <!-- TAB: ALUNOS -->
+    <div class="adm-panel" id="adm-students">
+      <div style="padding-top:12px">
+        <!-- Search -->
+        <div class="adm-search">
+          <input id="adm-search-input" placeholder="Buscar aluno por nome ou e-mail..." oninput="admSearch(this.value)"/>
+        </div>
+        <!-- Filters -->
+        <div class="adm-filter" style="padding-top:10px">
+          <button class="filter-btn active" onclick="admFilter('all',this)">Todos</button>
+          <button class="filter-btn" onclick="admFilter('active',this)">✅ Ativos</button>
+          <button class="filter-btn" onclick="admFilter('pending',this)">⏳ Pendentes</button>
+          <button class="filter-btn" onclick="admFilter('ebooks',this)">📚 Com E-Books</button>
+          <button class="filter-btn" onclick="admFilter('inactive',this)">😴 Sem treino</button>
+        </div>
+        <div id="students-list"></div>
+      </div>
+    </div>
+
+    <!-- TAB: EXERCICIOS -->
     <div class="adm-panel" id="adm-exercises">
-      <div style="font-size:13px;color:var(--t2);margin-bottom:14px">Banco de exercícios global.</div>
-      <button class="btn-p" style="margin-bottom:12px" onclick="openAddEx()">+ Adicionar exercício</button>
-      <div style="display:flex;gap:5px;flex-wrap:wrap;margin-bottom:10px" id="muscle-filters"></div>
-      <input class="fi" id="bank-search" placeholder="🔍 Buscar..." oninput="filterBank()" style="margin-bottom:10px"/>
-      <div id="exercise-bank-list"></div>
+      <div style="padding:12px">
+        <button class="btn-p" style="margin-bottom:12px;width:100%" onclick="openAddEx()">+ Adicionar Exercício</button>
+        <div style="display:flex;gap:5px;flex-wrap:wrap;margin-bottom:10px" id="muscle-filters"></div>
+        <input class="fi" id="bank-search" placeholder="🔍 Buscar exercício..." oninput="filterBank()" style="margin-bottom:10px"/>
+        <div id="exercise-bank-list"></div>
+      </div>
     </div>
+
   </div>
+
+  <!-- BOTTOM NAV -->
   <div class="adm-nav">
-    <button class="nbtn active" onclick="switchAdm('students',this)"><span class="nico">👥</span><span class="nlbl">Alunos</span><div class="ndot"></div></button>
-    <button class="nbtn" onclick="switchAdm('exercises',this)"><span class="nico">🏋️</span><span class="nlbl">Exercícios</span><div class="ndot"></div></button>
+    <button class="nbtn adm-nbtn active" onclick="switchAdm('dashboard',this)"><span class="nico">📊</span><span class="nlbl">Dashboard</span><div class="ndot"></div></button>
+    <button class="nbtn adm-nbtn" onclick="switchAdm('students',this)"><span class="nico">👥</span><span class="nlbl">Alunos</span><div class="ndot"></div></button>
+    <button class="nbtn adm-nbtn" onclick="switchAdm('exercises',this)"><span class="nico">🏋️</span><span class="nlbl">Exercícios</span><div class="ndot"></div></button>
   </div>
 </div>
 
@@ -2942,12 +3062,163 @@ function switchTab(name,btn){
 function adminLogout(){DB.del('fq_cur');show('sc-splash');}
 function switchAdm(name,btn){document.querySelectorAll('.adm-panel').forEach(p=>p.classList.remove('active'));document.querySelectorAll('.adm-nav .nbtn').forEach(b=>b.classList.remove('active'));document.getElementById('adm-'+name).classList.add('active');if(btn)btn.classList.add('active');if(name==='exercises')renderBank();}
 function loadAdmin(){
-  const users=DB.get('fq_users')||{};const all=Object.values(users);
-  const ap=all.filter(u=>u.trainApproved).length;const pend=all.filter(u=>!u.trainApproved).length;
-  document.getElementById('adm-stats').innerHTML=`<div style="flex:1;background:rgba(229,9,20,.08);border:1px solid rgba(229,9,20,.15);border-radius:8px;padding:10px;text-align:center"><div style="font-size:22px;font-weight:900;color:var(--r)">${all.length}</div><div style="font-size:9px;color:var(--mu)">Total</div></div><div style="flex:1;background:rgba(46,204,113,.06);border:1px solid rgba(46,204,113,.12);border-radius:8px;padding:10px;text-align:center"><div style="font-size:22px;font-weight:900;color:#2ecc71">${ap}</div><div style="font-size:9px;color:var(--mu)">Ativos</div></div><div style="flex:1;background:rgba(229,9,20,.06);border:1px solid rgba(229,9,20,.1);border-radius:8px;padding:10px;text-align:center"><div style="font-size:22px;font-weight:900;color:var(--r)">${pend}</div><div style="font-size:9px;color:var(--mu)">Pendentes</div></div>`;
-  if(!all.length){document.getElementById('students-list').innerHTML='<div style="text-align:center;color:var(--mu);padding:40px">Nenhum aluno ainda.</div>';return;}
-  document.getElementById('students-list').innerHTML=[...all].sort((a,b)=>new Date(b.createdAt||0)-new Date(a.createdAt||0)).map(u=>`<div class="st-card ${u.trainApproved?'ok':'pend'}"><div class="st-top"><div class="st-av">${u.name?u.name[0].toUpperCase():'?'}</div><div class="st-inf"><div class="st-nm">${u.name}</div><div class="st-em">${u.email}</div></div><div class="st-st ${u.trainApproved?'ok':'pend'}">${u.trainApproved?'✅ Ativo':'⏳ Pendente'}</div></div><div class="st-stats"><div class="st-stat"><div class="st-sv" style="color:var(--r)">${u.stats?.treinos||0}</div><div class="st-sl">Treinos</div></div><div class="st-stat"><div class="st-sv" style="color:#3498db">${u.stats?.distancia||0}</div><div class="st-sl">km</div></div><div class="st-stat"><div class="st-sv" style="color:#f39c12">${u.level||1}</div><div class="st-sl">Nível</div></div><div class="st-stat"><div class="st-sv" style="color:#2ecc71">${u.gymWeek||1}</div><div class="st-sl">Semana</div></div></div><div class="st-btns">${!u.trainApproved?`<button class="btn-sm btn-ap" onclick="admApprove('${u.email}')">✅ Liberar</button>`:''} ${u.trainApproved?`<button class="btn-sm btn-rv" onclick="admRevoke('${u.email}')">🚫 Revogar</button>`:''} <button class="btn-sm btn-ed" onclick="openEditSt('${u.email}')">✏️ Editar</button> <button class="btn-sm btn-vw" onclick="openAnam('${u.email}')">📋 Anamnese</button> <button class="btn-sm btn-dl" onclick="admDel('${u.email}')">🗑️</button></div></div>`).join('');
+  const users=DB.get('fq_users')||{};
+  const all=Object.values(users).filter(u=>u.email!=='rennan@rennandias.com.br');
+  const active=all.filter(u=>u.trainApproved);
+  const pending=all.filter(u=>!u.trainApproved);
+  const withEbooks=all.filter(u=>(u.purchases||[]).length>0||u.pacoteEbooks);
+  const totalWorkouts=all.reduce((s,u)=>s+(u.stats?.treinos||0),0);
+  const ebookRevenue=all.reduce((s,u)=>{
+    const ind=(u.purchases||[]).length*14.99;
+    const pack=u.pacoteEbooks?50:0;
+    return s+Math.max(ind,pack);
+  },0);
+
+  // ── KPIs ──
+  const kpiEl=document.getElementById('adm-kpis');
+  if(kpiEl) kpiEl.innerHTML=`
+    <div class="kpi-card red"><div class="kpi-icon">👥</div><div class="kpi-val">${all.length}</div><div class="kpi-lbl">Total de Alunos</div></div>
+    <div class="kpi-card green"><div class="kpi-icon">✅</div><div class="kpi-val">${active.length}</div><div class="kpi-lbl">Ativos</div></div>
+    <div class="kpi-card gold"><div class="kpi-icon">⏳</div><div class="kpi-val">${pending.length}</div><div class="kpi-lbl">Pendentes</div></div>
+    <div class="kpi-card blue"><div class="kpi-icon">📚</div><div class="kpi-val">${withEbooks.length}</div><div class="kpi-lbl">Com E-Books</div></div>`;
+
+  // ── Revenue ──
+  const revEl=document.getElementById('adm-revenue');
+  if(revEl) revEl.innerHTML=`
+    <div class="revenue-label">💰 Receita Estimada Total</div>
+    <div class="revenue-val">R$ ${ebookRevenue.toFixed(2).replace('.',',')}</div>
+    <div class="revenue-sub">${withEbooks.length} alunos com e-books · Média R$ ${withEbooks.length?((ebookRevenue/withEbooks.length).toFixed(2).replace('.',',')):0} por aluno</div>
+    <div style="margin-top:10px;display:flex;gap:6px;flex-wrap:wrap">
+      <div style="background:rgba(46,204,113,.1);border:1px solid rgba(46,204,113,.2);border-radius:6px;padding:5px 10px;font-size:10px;color:#2ecc71;font-weight:700">🏋️ ${totalWorkouts} treinos totais</div>
+      <div style="background:rgba(52,152,219,.1);border:1px solid rgba(52,152,219,.2);border-radius:6px;padding:5px 10px;font-size:10px;color:#3498db;font-weight:700">📚 ${withEbooks.length} compraram e-books</div>
+    </div>`;
+
+  // ── Recent (last 5) ──
+  const recent=[...all].sort((a,b)=>new Date(b.createdAt||0)-new Date(a.createdAt||0)).slice(0,5);
+  const rcEl=document.getElementById('adm-recent-list');
+  const rcCount=document.getElementById('adm-recent-count');
+  if(rcCount) rcCount.textContent=`(${recent.length})`;
+  if(rcEl) rcEl.innerHTML=recent.length?recent.map(u=>admStudentCard(u,true)).join(''):`<div class="adm-empty"><div class="adm-empty-icon">👥</div><div>Nenhum aluno ainda</div></div>`;
+
+  // ── Full students list ──
+  admRenderStudents(all,'all');
 }
+
+function admStudentCard(u, compact=false){
+  const purchases=u.purchases||[];
+  const ebookCount=u.pacoteEbooks?10:purchases.length;
+  const xpPct=Math.min(100,((u.xp||0)%1000)/10);
+  const lastSeen=u.lastLogin?new Date(u.lastLogin).toLocaleDateString('pt-BR'):'N/A';
+  const streakColor=u.streak>=7?'#f39c12':u.streak>=3?'#2ecc71':'#737373';
+
+  return `<div class="st-card ${u.trainApproved?'ok':'pend'}">
+    <!-- Header -->
+    <div class="st-card-header">
+      <div class="st-av" style="background:linear-gradient(135deg,${u.avatar?.color||'#e50914'},#600)">${u.name?u.name[0].toUpperCase():'?'}</div>
+      <div class="st-inf">
+        <div class="st-nm">${u.name||'Sem nome'}</div>
+        <div class="st-em">${u.email}</div>
+        <div style="font-size:9px;color:var(--mu);margin-top:2px">Cadastro: ${u.createdAt?new Date(u.createdAt).toLocaleDateString('pt-BR'):'N/A'}</div>
+      </div>
+      <div class="st-st ${u.trainApproved?'ok':'pend'}">${u.trainApproved?'✅ ATIVO':'⏳ PENDENTE'}</div>
+    </div>
+    <!-- XP progress bar -->
+    <div class="st-prog-bar"><div class="st-prog-fill" style="width:${xpPct}%"></div></div>
+    <!-- Metrics -->
+    <div class="st-metrics">
+      <div class="st-metric"><div class="st-mv" style="color:var(--r)">${u.stats?.treinos||0}</div><div class="st-ml">Treinos</div></div>
+      <div class="st-metric"><div class="st-mv" style="color:#3498db">${u.stats?.distancia||0}</div><div class="st-ml">km</div></div>
+      <div class="st-metric"><div class="st-mv" style="color:#f39c12">${u.level||1}</div><div class="st-ml">Nível</div></div>
+      <div class="st-metric"><div class="st-mv" style="color:${streakColor}">${u.streak||0}🔥</div><div class="st-ml">Streak</div></div>
+      <div class="st-metric"><div class="st-mv" style="color:#9b59b6">${ebookCount}</div><div class="st-ml">E-Books</div></div>
+    </div>
+    <!-- Anamnese quick info -->
+    ${u.anamnese?`<div style="padding:8px 14px;border-bottom:1px solid rgba(255,255,255,.04);display:flex;gap:8px;flex-wrap:wrap">
+      <div style="font-size:9px;color:var(--mu)">⚧ ${u.anamnese.sexo||'—'}</div>
+      <div style="font-size:9px;color:var(--mu)">⚖️ ${u.anamnese.peso||'—'}kg</div>
+      <div style="font-size:9px;color:var(--mu)">📏 ${u.anamnese.altura||'—'}cm</div>
+      <div style="font-size:9px;color:var(--mu)">🎯 Semana ${u.gymWeek||1}</div>
+      <div style="font-size:9px;color:var(--mu)">📅 ${lastSeen}</div>
+    </div>`:''}
+    <!-- Actions -->
+    <div class="st-actions">
+      ${!u.trainApproved?`<button class="st-btn approve" onclick="admApprove('${u.email}')">✅ Liberar</button>`:''}
+      ${u.trainApproved?`<button class="st-btn revoke" onclick="admRevoke('${u.email}')">🚫 Revogar</button>`:''}
+      <button class="st-btn edit" onclick="openEditSt('${u.email}')">✏️ Editar</button>
+      <button class="st-btn anam" onclick="openAnam('${u.email}')">📋 Anamnese</button>
+      <button class="st-btn ebook" onclick="admGiveAllEbooks('${u.email}')">📚 Liberar E-Books</button>
+      <button class="st-btn del" onclick="admDel('${u.email}')">🗑️</button>
+    </div>
+  </div>`;
+}
+
+function admRenderStudents(list, filter){
+  const el=document.getElementById('students-list');
+  if(!el) return;
+  if(!list.length){
+    el.innerHTML='<div class="adm-empty"><div class="adm-empty-icon">👥</div><div>Nenhum aluno neste filtro</div></div>';
+    return;
+  }
+  el.innerHTML=[...list].sort((a,b)=>new Date(b.createdAt||0)-new Date(a.createdAt||0)).map(u=>admStudentCard(u)).join('');
+}
+
+function admFilter(f,btn){
+  document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  const users=DB.get('fq_users')||{};
+  let all=Object.values(users).filter(u=>u.email!=='rennan@rennandias.com.br');
+  if(f==='active') all=all.filter(u=>u.trainApproved);
+  else if(f==='pending') all=all.filter(u=>!u.trainApproved);
+  else if(f==='ebooks') all=all.filter(u=>(u.purchases||[]).length>0||u.pacoteEbooks);
+  else if(f==='inactive') all=all.filter(u=>!u.gymDone||Object.keys(u.gymDone||{}).length===0);
+  admRenderStudents(all,f);
+}
+
+function admSearch(q){
+  const users=DB.get('fq_users')||{};
+  const all=Object.values(users).filter(u=>u.email!=='rennan@rennandias.com.br');
+  const filtered=q?all.filter(u=>(u.name||'').toLowerCase().includes(q.toLowerCase())||(u.email||'').toLowerCase().includes(q.toLowerCase())):all;
+  admRenderStudents(filtered,'search');
+}
+
+function admGiveAllEbooks(email){
+  if(!confirm(`Liberar todos os e-books para ${email}?`)) return;
+  const users=DB.get('fq_users')||{};
+  if(!users[email]) return;
+  const all=['hypertrophy','elderly','pregnancy','disabled','fatburn','running10k','posture','stress','technique','nutrition'];
+  users[email].purchases=[...new Set([...(users[email].purchases||[]),...all])];
+  users[email].pacoteEbooks=true;
+  DB.set('fq_users',users);
+  if(sb) syncU(users[email]).catch(()=>{});
+  loadAdmin();
+  alert('✅ E-books liberados!');
+}
+
+function admExportCSV(){
+  const users=DB.get('fq_users')||{};
+  const all=Object.values(users).filter(u=>u.email!=='rennan@rennandias.com.br');
+  const rows=[['Nome','Email','Status','Nivel','XP','Streak','Treinos','km','Semana','E-Books','Cadastro']];
+  all.forEach(u=>{
+    rows.push([u.name||'',u.email,u.trainApproved?'Ativo':'Pendente',u.level||1,u.xp||0,u.streak||0,u.stats?.treinos||0,u.stats?.distancia||0,u.gymWeek||1,(u.purchases||[]).length+(u.pacoteEbooks?10:0),u.createdAt?new Date(u.createdAt).toLocaleDateString('pt-BR'):'']);
+  });
+  const csv=rows.map(r=>r.join(',')).join('\n');
+  const a=document.createElement('a');
+  a.href='data:text/csv;charset=utf-8,'+encodeURIComponent(csv);
+  a.download='fitquest-alunos.csv';
+  a.click();
+}
+
+function admSendAll(){
+  if(!confirm('Liberar treino para TODOS os alunos pendentes?')) return;
+  const users=DB.get('fq_users')||{};
+  Object.keys(users).forEach(e=>{if(users[e].email!=='rennan@rennandias.com.br') users[e].trainApproved=true;});
+  DB.set('fq_users',users);
+  loadAdmin();
+  alert('✅ Todos os alunos foram liberados!');
+}
+
+
+
 async function admApprove(e){const users=DB.get('fq_users')||{};if(!users[e])return;users[e].trainApproved=true;DB.set('fq_users',users);if(sb)await sb.from('alunos').update({treino_liberado:true}).eq('email',e);loadAdmin();}
 async function admRevoke(e){if(!confirm('Revogar?'))return;const users=DB.get('fq_users')||{};if(!users[e])return;users[e].trainApproved=false;DB.set('fq_users',users);if(sb)await sb.from('alunos').update({treino_liberado:false}).eq('email',e);loadAdmin();}
 function admDel(e){if(!confirm('Excluir aluno?'))return;const users=DB.get('fq_users')||{};delete users[e];DB.set('fq_users',users);loadAdmin();}
