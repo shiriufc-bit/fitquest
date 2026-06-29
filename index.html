@@ -43,9 +43,14 @@ function openEbook(programId) {
   loading.style.display = 'flex';
   document.body.style.overflow = 'hidden';
   
-  // Load the PDF — hosted on GitHub Pages same domain
-  const baseUrl = window.location.origin + window.location.pathname.replace('index.html','').replace(/\/+$/, '');
-  frame.src = baseUrl + '/' + file;
+  // Build PDF URL - GitHub Pages root
+  const baseUrl = window.location.origin + window.location.pathname
+    .split('/').slice(0,-1).join('/');
+  const pdfUrl = baseUrl + '/' + file;
+  
+  // Try iframe first, fallback to Google Docs viewer for mobile compatibility
+  const googleViewer = 'https://docs.google.com/viewer?embedded=true&url=' + encodeURIComponent(pdfUrl);
+  frame.src = googleViewer;
 }
 
 function ebookLoaded() {
@@ -59,6 +64,18 @@ function closeEbook() {
   modal.classList.remove('open');
   frame.src = '';
   document.body.style.overflow = '';
+}
+
+function abrirEbookDireto() {
+  const frame = document.getElementById('ebook-frame');
+  if (!frame.src) return;
+  // Extract original PDF URL from Google viewer URL
+  const match = frame.src.match(/url=([^&]+)/);
+  if (match) {
+    window.open(decodeURIComponent(match[1]), '_blank');
+  } else {
+    window.open(frame.src, '_blank');
+  }
 }
 
 // ── PACOTE COMPLETO DE EBOOKS ──
@@ -4444,7 +4461,7 @@ const PROGRAM_IMAGES = {
 };
 
 function posterCard(p, u){
-  const owned = (u?.purchases||[]).includes(p.id);
+  const owned = (u?.purchases||[]).includes(p.id) || u?.pacoteEbooks;
   const img = PROGRAM_IMAGES[p.id] || p.img;
   const badge = owned
     ? `<div class="poster-card-owned">✅ Seu</div>`
@@ -5328,7 +5345,10 @@ function dismissBanner(){document.getElementById('pwa-banner').style.display='no
   <div class="ebook-topbar">
     <div class="ebook-logo"><span>FIT</span>QUEST</div>
     <div class="ebook-title-bar" id="ebook-title-bar">E-Book Premium</div>
-    <button class="ebook-close" onclick="closeEbook()">✕ Fechar</button>
+    <div style="display:flex;gap:6px">
+      <button id="ebook-open-btn" onclick="abrirEbookDireto()" style="background:rgba(255,255,255,.1);border:none;border-radius:6px;color:#fff;font-size:11px;font-weight:700;padding:6px 12px;cursor:pointer">↗ Abrir</button>
+      <button class="ebook-close" onclick="closeEbook()">✕ Fechar</button>
+    </div>
   </div>
   <div class="ebook-loading" id="ebook-loading">
     <div class="spinner"></div>
