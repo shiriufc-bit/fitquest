@@ -1088,6 +1088,7 @@ textarea.fi{resize:vertical;min-height:80px;}
   <nav class="app-nav" id="app-nav">
     <div class="nav-logo"><span class="r">FIT</span>QUEST</div>
     <div class="nav-right">
+      <button id="btn-admin-back" onclick="voltarAdmin()" style="display:none;background:rgba(46,204,113,.12);border:1px solid rgba(46,204,113,.25);border-radius:5px;padding:4px 9px;color:#2ecc71;font-size:10px;font-weight:800;cursor:pointer;align-items:center;gap:4px">⚙️ Admin</button>
       <div class="nav-streak">🔥 <span id="streak-val">1</span>d</div>
       <div class="nav-av" id="nav-av" onclick="toggleMenu()">?</div>
     </div>
@@ -2895,7 +2896,6 @@ function checkUnlockOnLoad(email){
 // ══ PAYMENT ══
 let selPlanName=null;let selPlanPrice=0;
 
-async 
 async function checkPay(){
   const email=DB.get('fq_cur');const fresh=await loadUDB(email);const users=DB.get('fq_users')||{};
   if(fresh&&fresh.trainApproved){users[email]={...users[email],...fresh};DB.set('fq_users',users);loadApp(email);show('sc-app');}
