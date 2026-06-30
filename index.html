@@ -226,33 +226,6 @@ textarea.fi{resize:vertical;min-height:80px;}
 .ok-title{font-size:26px;font-weight:900;margin-bottom:10px;}
 .ok-sub{font-size:14px;color:var(--t2);line-height:1.7;margin-bottom:32px;max-width:300px;}
 
-/* ══ PAYMENT ══ */
-#sc-pay{min-height:100vh;background:var(--bg);display:none;}
-#sc-pay.active{display:block;}
-.pay-wrap{padding:0 0 100px;}
-.pay-hero{background:linear-gradient(135deg,rgba(229,9,20,.2),rgba(180,7,16,.08)),#111;padding:32px 20px 24px;border-bottom:1px solid var(--b);position:relative;overflow:hidden;}
-.pay-hero::before{content:"👑";position:absolute;right:-10px;top:-10px;font-size:120px;opacity:.06;}
-.pay-hero-tag{font-size:10px;color:var(--r);font-weight:800;text-transform:uppercase;letter-spacing:2px;margin-bottom:8px;}
-.pay-hero-title{font-size:26px;font-weight:900;margin-bottom:6px;}
-.pay-hero-sub{font-size:13px;color:var(--t2);}
-.pay-plans{padding:16px;}
-.plan-card{background:var(--s);border:1.5px solid rgba(255,255,255,.1);border-radius:10px;padding:18px;margin-bottom:12px;cursor:pointer;transition:all .25s;position:relative;overflow:hidden;}
-.plan-card::before{content:"";position:absolute;top:0;left:0;width:4px;height:100%;background:rgba(255,255,255,.1);transition:all .2s;}
-.plan-card.sel{border-color:var(--r);background:rgba(229,9,20,.06);}
-.plan-card.sel::before{background:var(--r);}
-.plan-badge{display:inline-block;background:var(--r);color:#fff;border-radius:4px;padding:3px 10px;font-size:9px;font-weight:900;letter-spacing:1.5px;margin-bottom:10px;}
-.plan-hdr{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:12px;}
-.plan-nm{font-size:16px;font-weight:900;}
-.plan-ds{font-size:11px;color:var(--t2);margin-top:3px;}
-.plan-pr{font-size:32px;font-weight:900;color:var(--r);letter-spacing:-1px;line-height:1;}
-.plan-pe{font-size:10px;color:var(--t2);text-align:right;margin-top:3px;}
-.plan-fts{display:flex;flex-direction:column;gap:5px;}
-.plan-ft{font-size:12px;color:var(--t2);}
-.plan-card.sel .plan-ft{color:var(--t);}
-#btn-pay{font-size:16px;padding:17px;border-radius:8px;margin:0 16px;width:calc(100% - 32px);}
-.pay-safe{text-align:center;margin-top:12px;font-size:11px;color:var(--mu);padding:0 16px;}
-.btn-already{display:block;margin:12px 16px 0;padding:13px;background:rgba(255,255,255,.06);border:1px solid var(--b);border-radius:8px;color:var(--t2);font-size:13px;font-weight:700;cursor:pointer;text-align:center;}
-.btn-sair{display:block;margin:10px auto 0;background:none;border:none;color:var(--mu);font-size:12px;cursor:pointer;text-decoration:underline;}
 
 /* ══ APP ══ */
 #sc-app{display:none;flex-direction:column;min-height:100vh;background:var(--bg);}
@@ -1108,57 +1081,7 @@ textarea.fi{resize:vertical;min-height:80px;}
   <button class="btn-p" id="btn-go-app" style="max-width:280px;display:none" onclick="goToApp()">Escolher meu plano 🚀</button>
 </div>
 
-<!-- PAYMENT -->
-<div id="sc-pay" class="screen">
-  <div class="pay-wrap">
-    <div class="pay-hero">
-      <div class="pay-hero-tag">FitQuest Pro</div>
-      <div class="pay-hero-title">Desbloqueie seu<br>potencial completo</div>
-      <div class="pay-hero-sub">Treino personalizado por Rennan Dias · Gamificação · Suporte direto</div>
-    </div>
-    <div class="pay-plans">
-      <div class="plan-card" id="plan-mensal" onclick="selPlan('mensal',59.90,this)">
-        <div class="plan-hdr">
-          <div><div class="plan-nm">🔥 Mensal</div><div class="plan-ds">Renovação automática todo mês</div></div>
-          <div><div class="plan-pr">R$59<span style="font-size:18px">,90</span></div><div class="plan-pe">/mês</div></div>
-        </div>
-        <div class="plan-fts">
-          <div class="plan-ft">✅ Treino personalizado por Rennan Dias</div>
-          <div class="plan-ft">✅ App gamificado completo</div>
-          <div class="plan-ft">✅ Suporte com Rennan</div>
-        </div>
-      </div>
-      <div class="plan-card" id="plan-trimestral" onclick="selPlan('trimestral',149.90,this)">
-        <div class="plan-badge">MAIS POPULAR</div>
-        <div class="plan-hdr">
-          <div><div class="plan-nm">⚡ Trimestral</div><div class="plan-ds">3 meses · Economize R$30</div></div>
-          <div><div class="plan-pr">R$149<span style="font-size:18px">,90</span></div><div class="plan-pe">/trimestre</div></div>
-        </div>
-        <div class="plan-fts">
-          <div class="plan-ft">✅ Tudo do mensal</div>
-          <div class="plan-ft">✅ Revisão mensal do treino</div>
-          <div class="plan-ft">✅ Prioridade no suporte</div>
-        </div>
-      </div>
-      <div class="plan-card" id="plan-anual" onclick="selPlan('anual',539.90,this)">
-        <div class="plan-badge" style="background:rgba(243,156,18,.9)">MELHOR VALOR</div>
-        <div class="plan-hdr">
-          <div><div class="plan-nm">👑 Anual</div><div class="plan-ds">12 meses · Economize R$178</div></div>
-          <div><div class="plan-pr">R$539<span style="font-size:18px">,90</span></div><div class="plan-pe">/ano</div></div>
-        </div>
-        <div class="plan-fts">
-          <div class="plan-ft">✅ Tudo do trimestral</div>
-          <div class="plan-ft">✅ Consultoria mensal por vídeo</div>
-          <div class="plan-ft">✅ Acesso vitalício</div>
-        </div>
-      </div>
-    </div>
-    <button id="btn-pay" class="btn-p" style="display:none" onclick="iniciarPagamento()">Assinar agora ▶</button>
-    <div class="pay-safe">🔒 Pagamento seguro via Mercado Pago · PIX ou cartão</div>
-    <button class="btn-already" onclick="checkPay()">✅ Já realizei o pagamento</button>
-    <button class="btn-sair" onclick="doLogout()">Sair da conta</button>
-  </div>
-</div>
+
 
 <!-- APP -->
 <div id="sc-app" class="screen">
@@ -1454,17 +1377,14 @@ textarea.fi{resize:vertical;min-height:80px;}
           </div>
         </div>
 
-        <!-- PRO Banner -->
+        <!-- CONSULTORIA CTA Banner -->
         <div style="padding:16px 16px 0">
-          <div class="pro-banner">
-            <div style="font-size:10px;color:#f39c12;font-weight:800;letter-spacing:2px;margin-bottom:6px">👑 FITQUEST PRO</div>
-            <div class="pro-banner-title">Acesso ilimitado a<br>todos os programas</div>
-            <div class="pro-banner-sub">Todos os programas especializados + treino personalizado + suporte direto com Rennan Dias</div>
-            <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px">
-              <div><div style="font-size:28px;font-weight:900;color:#f39c12">R$59<span style="font-size:16px">,90</span></div><div style="font-size:10px;color:var(--mu)">/mês · cancele quando quiser</div></div>
-              <div style="font-size:11px;color:var(--t2);flex:1">ou R$149,90/trimestre<br>ou R$539,90/ano</div>
-            </div>
-            <button class="btn-pro" onclick="iniciarPagamento('mensal')">👑 Assinar FitQuest Pro</button>
+          <div style="background:linear-gradient(135deg,rgba(229,9,20,.12),#0d0d0d);border:1px solid rgba(229,9,20,.25);border-radius:16px;padding:18px;position:relative;overflow:hidden">
+            <div style="position:absolute;top:-20px;right:-20px;font-size:90px;opacity:.05">⭐</div>
+            <div style="font-size:10px;color:var(--r);font-weight:900;letter-spacing:2px;margin-bottom:6px">⭐ ACOMPANHAMENTO PREMIUM</div>
+            <div style="font-size:18px;font-weight:900;line-height:1.2;margin-bottom:6px">Quer resultado de verdade?<br>Treine com o Rennan</div>
+            <div style="font-size:11px;color:var(--t2);line-height:1.6;margin-bottom:14px">Consultoria individual com ajustes semanais, correção de execução por vídeo e suporte direto no WhatsApp. Musculação e corrida.</div>
+            <button onclick="switchTab('consult',document.querySelectorAll('.nbtn')[3])" style="width:100%;padding:13px;background:var(--r);border:none;border-radius:10px;color:#fff;font-size:14px;font-weight:900;cursor:pointer">⭐ Conhecer a Consultoria</button>
           </div>
         </div>
 
@@ -1518,6 +1438,108 @@ textarea.fi{resize:vertical;min-height:80px;}
         <div class="section" style="padding-bottom:100px">
           <div class="section-hdr"><div class="section-title">🎥 Vídeo-aulas</div></div>
           <div class="carousel" id="store-videos"></div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- CONSULTORIA -->
+    <div class="tp" id="tp-consult">
+      <!-- Hero -->
+      <div style="position:relative;height:240px;overflow:hidden">
+        <img src="https://images.unsplash.com/photo-1599058917212-d750089bc07e?w=800&q=80" alt="Consultoria" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;filter:brightness(.32)"/>
+        <div style="position:absolute;inset:0;background:linear-gradient(135deg,rgba(229,9,20,.4),transparent 60%)"></div>
+        <div style="position:absolute;bottom:0;left:0;right:0;height:60%;background:linear-gradient(transparent,#0a0a0a)"></div>
+        <div style="position:absolute;bottom:18px;left:16px;right:16px">
+          <div style="display:inline-block;background:var(--r);color:#fff;border-radius:4px;padding:3px 10px;font-size:10px;font-weight:900;letter-spacing:1.5px;margin-bottom:8px">⭐ ACOMPANHAMENTO PREMIUM</div>
+          <div style="font-size:26px;font-weight:900;line-height:1.1;margin-bottom:6px">Consultoria<br>com Rennan Dias</div>
+          <div style="font-size:12px;color:rgba(255,255,255,.7)">Acompanhamento humano, real e personalizado</div>
+        </div>
+      </div>
+
+      <div style="padding:16px 16px 90px">
+
+        <!-- Diferença IA vs Humano -->
+        <div style="background:linear-gradient(135deg,rgba(229,9,20,.08),transparent);border:1px solid rgba(229,9,20,.15);border-radius:14px;padding:16px;margin-bottom:18px">
+          <div style="font-size:14px;font-weight:800;margin-bottom:10px">🤖 Treino IA vs ⭐ Consultoria Humana</div>
+          <div style="font-size:12px;color:var(--t2);line-height:1.7">
+            O <b style="color:#fff">treino por IA</b> do app é ótimo para começar. Mas a <b style="color:var(--r)">consultoria com o Rennan</b> é outro nível: ajustes semanais no seu treino, correção de execução por vídeo, suporte direto no WhatsApp e um plano que evolui com você de verdade.
+          </div>
+        </div>
+
+        <!-- O que está incluso -->
+        <div style="font-size:15px;font-weight:800;margin-bottom:12px">✅ O que você recebe</div>
+        <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:22px">
+          <div style="display:flex;gap:12px;align-items:flex-start;background:#111;border:1px solid var(--b);border-radius:12px;padding:14px">
+            <div style="font-size:22px">📋</div>
+            <div><div style="font-size:13px;font-weight:800;margin-bottom:2px">Plano 100% individual</div><div style="font-size:11px;color:var(--t2);line-height:1.5">Montado pelo Rennan para o seu objetivo, rotina e nível.</div></div>
+          </div>
+          <div style="display:flex;gap:12px;align-items:flex-start;background:#111;border:1px solid var(--b);border-radius:12px;padding:14px">
+            <div style="font-size:22px">🔄</div>
+            <div><div style="font-size:13px;font-weight:800;margin-bottom:2px">Ajustes semanais</div><div style="font-size:11px;color:var(--t2);line-height:1.5">Seu treino evolui toda semana conforme seu progresso.</div></div>
+          </div>
+          <div style="display:flex;gap:12px;align-items:flex-start;background:#111;border:1px solid var(--b);border-radius:12px;padding:14px">
+            <div style="font-size:22px">🎥</div>
+            <div><div style="font-size:13px;font-weight:800;margin-bottom:2px">Correção de execução</div><div style="font-size:11px;color:var(--t2);line-height:1.5">Envie vídeos dos exercícios e receba correção técnica.</div></div>
+          </div>
+          <div style="display:flex;gap:12px;align-items:flex-start;background:#111;border:1px solid var(--b);border-radius:12px;padding:14px">
+            <div style="font-size:22px">💬</div>
+            <div><div style="font-size:13px;font-weight:800;margin-bottom:2px">Suporte direto no WhatsApp</div><div style="font-size:11px;color:var(--t2);line-height:1.5">Tire dúvidas e receba motivação direto com o Rennan.</div></div>
+          </div>
+        </div>
+
+        <!-- Modalidades -->
+        <div style="font-size:15px;font-weight:800;margin-bottom:12px">🎯 Escolha sua modalidade</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:22px">
+          <div onclick="selConsultModal('musculacao',this)" class="consult-modal" style="background:#111;border:2px solid var(--r);border-radius:14px;padding:16px;text-align:center;cursor:pointer">
+            <div style="font-size:32px;margin-bottom:6px">🏋️</div>
+            <div style="font-size:13px;font-weight:800">Musculação</div>
+            <div style="font-size:10px;color:var(--t2);margin-top:2px">Força · Hipertrofia · Estética</div>
+          </div>
+          <div onclick="selConsultModal('corrida',this)" class="consult-modal" style="background:#111;border:2px solid var(--b);border-radius:14px;padding:16px;text-align:center;cursor:pointer">
+            <div style="font-size:32px;margin-bottom:6px">🏃</div>
+            <div style="font-size:13px;font-weight:800">Corrida</div>
+            <div style="font-size:10px;color:var(--t2);margin-top:2px">5k · 10k · 21k · Maratona</div>
+          </div>
+        </div>
+
+        <!-- Planos -->
+        <div style="font-size:15px;font-weight:800;margin-bottom:12px">📅 Planos disponíveis</div>
+        <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:22px">
+          <div onclick="selConsultPlan('Mensal',this)" class="consult-plan" style="background:#111;border:2px solid var(--b);border-radius:12px;padding:14px;display:flex;align-items:center;justify-content:space-between;cursor:pointer">
+            <div><div style="font-size:14px;font-weight:800">Plano Mensal</div><div style="font-size:10px;color:var(--t2)">Flexível · renove quando quiser</div></div>
+            <div style="font-size:18px">→</div>
+          </div>
+          <div onclick="selConsultPlan('Semestral',this)" class="consult-plan" style="background:linear-gradient(135deg,rgba(243,156,18,.1),#111);border:2px solid rgba(243,156,18,.4);border-radius:12px;padding:14px;display:flex;align-items:center;justify-content:space-between;cursor:pointer;position:relative">
+            <div style="position:absolute;top:-8px;right:12px;background:#f39c12;color:#000;border-radius:4px;padding:2px 8px;font-size:8px;font-weight:900;letter-spacing:.5px">MAIS ESCOLHIDO</div>
+            <div><div style="font-size:14px;font-weight:800">Plano Semestral</div><div style="font-size:10px;color:var(--t2)">6 meses · melhor custo-benefício</div></div>
+            <div style="font-size:18px">→</div>
+          </div>
+          <div onclick="selConsultPlan('Anual',this)" class="consult-plan" style="background:linear-gradient(135deg,rgba(46,204,113,.1),#111);border:2px solid rgba(46,204,113,.3);border-radius:12px;padding:14px;display:flex;align-items:center;justify-content:space-between;cursor:pointer;position:relative">
+            <div style="position:absolute;top:-8px;right:12px;background:#2ecc71;color:#000;border-radius:4px;padding:2px 8px;font-size:8px;font-weight:900;letter-spacing:.5px">MELHOR PREÇO</div>
+            <div><div style="font-size:14px;font-weight:800">Plano Anual</div><div style="font-size:10px;color:var(--t2)">12 meses · resultado garantido</div></div>
+            <div style="font-size:18px">→</div>
+          </div>
+        </div>
+
+        <!-- Formulário de captura -->
+        <div style="background:#0d0d0d;border:1px solid var(--b);border-radius:16px;padding:18px;margin-bottom:18px">
+          <div style="font-size:15px;font-weight:800;margin-bottom:4px">📝 Quero começar agora</div>
+          <div style="font-size:11px;color:var(--t2);margin-bottom:14px">Preencha e o Rennan entra em contato com você!</div>
+          <input id="cons-nome" placeholder="Seu nome completo" style="width:100%;background:#1a1a1a;border:1px solid var(--b);border-radius:10px;padding:12px;color:#fff;font-size:13px;margin-bottom:10px"/>
+          <input id="cons-fone" placeholder="Seu WhatsApp (com DDD)" inputmode="tel" style="width:100%;background:#1a1a1a;border:1px solid var(--b);border-radius:10px;padding:12px;color:#fff;font-size:13px;margin-bottom:10px"/>
+          <textarea id="cons-obj" placeholder="Seu objetivo (ex: emagrecer 10kg, correr meu primeiro 10k...)" rows="2" style="width:100%;background:#1a1a1a;border:1px solid var(--b);border-radius:10px;padding:12px;color:#fff;font-size:13px;margin-bottom:14px;resize:none"></textarea>
+          <button onclick="enviarConsultoria()" style="width:100%;padding:14px;background:#25D366;border:none;border-radius:10px;color:#fff;font-size:15px;font-weight:900;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px">
+            <span style="font-size:18px">💬</span> Enviar e falar no WhatsApp
+          </button>
+        </div>
+
+        <!-- Botão WhatsApp direto -->
+        <div style="text-align:center">
+          <div style="font-size:12px;color:var(--t2);margin-bottom:10px">Ou fale agora mesmo:</div>
+          <a href="https://wa.me/5531995250330?text=Ol%C3%A1%20Rennan!%20Tenho%20interesse%20na%20consultoria." target="_blank" style="display:inline-flex;align-items:center;gap:8px;background:rgba(37,211,102,.12);border:1px solid rgba(37,211,102,.3);border-radius:10px;padding:12px 24px;color:#25D366;font-size:14px;font-weight:800;text-decoration:none">
+            <span style="font-size:18px">💬</span> (31) 99525-0330
+          </a>
         </div>
 
       </div>
@@ -1701,6 +1723,7 @@ textarea.fi{resize:vertical;min-height:80px;}
     <button class="nbtn active" onclick="switchTab('home',this)"><span class="nico">🏠</span><span class="nlbl">Início</span><div class="ndot"></div></button>
     <button class="nbtn" onclick="switchTab('gym',this)"><span class="nico">🏋️</span><span class="nlbl">Treino</span><div class="ndot"></div></button>
     <button class="nbtn" onclick="switchTab('store',this)"><span class="nico">🎬</span><span class="nlbl">Loja</span><div class="ndot"></div></button>
+    <button class="nbtn" onclick="switchTab('consult',this)"><span class="nico">⭐</span><span class="nlbl">Consultoria</span><div class="ndot"></div></button>
     <button class="nbtn" onclick="switchTab('evo',this)"><span class="nico">📈</span><span class="nlbl">Evolução</span><div class="ndot"></div></button>
     <button class="nbtn" onclick="switchTab('perfil',this)"><span class="nico" id="nav-perfil-ico">👤</span><span class="nlbl">Perfil</span><div class="ndot"></div></button>
   </div>
@@ -1734,6 +1757,9 @@ textarea.fi{resize:vertical;min-height:80px;}
       <!-- Revenue -->
       <div class="adm-sec-title">💰 Receita Estimada</div>
       <div class="revenue-card" id="adm-revenue"></div>
+      <!-- Leads de Consultoria -->
+      <div class="adm-sec-title">⭐ Leads de Consultoria <span id="adm-leads-count"></span></div>
+      <div id="adm-leads-list" style="padding:0 12px"></div>
       <!-- Quick actions -->
       <div class="adm-sec-title">⚡ Ações Rápidas</div>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:0 12px 16px">
@@ -2584,7 +2610,13 @@ async function submitAnam(){
   document.getElementById('ok-title').textContent='Avaliação recebida!';
   document.getElementById('ok-sub').textContent='Rennan irá analisar seu perfil e montar seu plano!';
   document.getElementById('btn-go-app').style.display='none';
-  try{await genAI(email,an);}catch(e){console.log('AI error:',e);}
+  try{
+    await genAIWithRetry(email,an,2);
+  }catch(e){
+    console.error('AI error após retries:',e);
+    // Fallback: gerar treino básico local para não deixar o aluno sem nada
+    gerarTreinoFallback(email,an);
+  }
   // Auto-libera acesso (sem pagamento)
   users[email].trainApproved=true;
   DB.set('fq_users',users);
@@ -2595,6 +2627,66 @@ async function submitAnam(){
   document.getElementById('btn-go-app').style.display='block';
   document.getElementById('btn-go-app').textContent='Acessar meu treino 🚀';
 }
+async function genAIWithRetry(email, an, maxRetries){
+  let lastErr;
+  for(let i=0; i<=maxRetries; i++){
+    try {
+      await genAI(email, an);
+      return; // sucesso
+    } catch(e){
+      lastErr = e;
+      console.warn(`Tentativa ${i+1} falhou:`, e.message);
+      if(i < maxRetries){
+        // atualizar mensagem na tela
+        const sub = document.getElementById('ok-sub');
+        if(sub) sub.textContent = 'Finalizando os últimos ajustes do seu treino...';
+        await new Promise(r => setTimeout(r, 1500));
+      }
+    }
+  }
+  throw lastErr;
+}
+
+function gerarTreinoFallback(email, an){
+  // Treino básico garantido caso a IA falhe — usa o banco de exercícios local
+  const users = DB.get('fq_users')||{};
+  if(!users[email]) return;
+  const dias = parseInt((an.dias||'3x').replace(/\D/g,'')) || 3;
+  const temJoelho = an.temJoelho, temLombar = an.temLombar, temOmbro = an.temOmbro;
+  
+  // Selecionar exercícios seguros do banco
+  const safe = (m) => EXERCISE_BANK.filter(e => {
+    if(temJoelho && /agachamento|leg|extensora|avanço/i.test(e.name)) return false;
+    if(temLombar && /stiff|terra|remada curvada|lombar/i.test(e.name)) return false;
+    if(temOmbro && /desenvolvimento|elevação|militar/i.test(e.name)) return false;
+    return e.muscle && e.muscle.toLowerCase().includes(m.toLowerCase());
+  });
+  
+  const pick = (m, n) => safe(m).slice(0, n).map(e => ({
+    id: e.id, sets: 3, reps: '12', load: 'Moderada', rest: 75,
+    obs: 'Controle o movimento e foque na execução correta.'
+  }));
+  
+  const treinoA = [...pick('Peito',2), ...pick('Tríceps',2), ...pick('Ombro',1)];
+  const treinoB = [...pick('Costas',2), ...pick('Bíceps',2), ...pick('Core',1)];
+  const treinoC = [...pick('Quadríceps',2), ...pick('Posterior',1), ...pick('Glúteo',1), ...pick('Panturrilha',1)];
+  
+  const days = dias <= 2 
+    ? {'Treino A — Corpo Todo':[...pick('Peito',1),...pick('Costas',1),...pick('Quadríceps',1),...pick('Ombro',1),...pick('Core',1)]}
+    : {'Treino A — Peito/Ombro/Tríceps':treinoA,'Treino B — Costas/Bíceps':treinoB,'Treino C — Pernas':treinoC};
+  
+  const semana = {fase:'Semana de Adaptação — foque na técnica', days};
+  const gym = {};
+  for(let s=1; s<=8; s++) gym['Semana '+s] = JSON.parse(JSON.stringify(semana));
+  
+  users[email].aiPlan = {gym, run:{}};
+  users[email].trainApproved = true;
+  users[email].usouFallback = true;
+  DB.set('fq_users', users);
+  if(sb) syncU(users[email]).catch(()=>{});
+  console.log('✅ Treino fallback gerado');
+}
+
 async function genAI(email,an){
   const exList=EXERCISE_BANK.map(e=>`${e.id}:${e.name}(${e.muscle})`).join(', ');
   const diasNum = parseInt((an.dias||'3x').replace(/\D/g,'')) || 3;
@@ -2726,9 +2818,32 @@ Varie os exercícios entre as semanas sempre que possível mantendo o padrão de
 
 {"gym":{"Semana 1":{"fase":"Nome da fase — descrição motivacional breve","days":{"[Nome do Treino — ex: Full Body A ou Push — Peito/Ombro/Tríceps]":[{"id":"e001","sets":3,"reps":"12","load":"Leve-Moderada","rest":90,"obs":"dica técnica específica e útil"}]}},"Semana 2":{...},"Semana 3":{...},"Semana 4":{"fase":"⚡ DELOAD — Recuperação Ativa",...},"Semana 5":{...},"Semana 6":{...},"Semana 7":{...},"Semana 8":{"fase":"⚡ DELOAD — Preparação para Novo Ciclo",...}},"run":{"Semana 1":{"meta":"objetivo da semana","sessions":[{"day":"Ter","type":"tipo de treino","dist":"X km","pace":"X:XX min/km","dur":"~XX min","tip":"dica específica para este aluno baseada no perfil dele"}]}}}`;
   
-const res=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-6',max_tokens:4000,messages:[{role:'user',content:prompt}]})});
+const res=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-6',max_tokens:8000,messages:[{role:'user',content:prompt}]})});
+  if(!res.ok){
+    console.error('API error:', res.status);
+    throw new Error('Falha na geração do treino (HTTP '+res.status+')');
+  }
   const data=await res.json();
-  const plan=JSON.parse(data.content.map(i=>i.text||'').join('').trim().replace(/```json|```/g,'').trim());
+  let rawText = data.content.map(i=>i.text||'').join('').trim();
+  // Limpar markdown e extrair JSON
+  rawText = rawText.replace(/```json/gi,'').replace(/```/g,'').trim();
+  // Tentar extrair apenas o objeto JSON (do primeiro { ao último })
+  const firstBrace = rawText.indexOf('{');
+  const lastBrace = rawText.lastIndexOf('}');
+  if(firstBrace >= 0 && lastBrace > firstBrace){
+    rawText = rawText.substring(firstBrace, lastBrace+1);
+  }
+  let plan;
+  try {
+    plan = JSON.parse(rawText);
+  } catch(parseErr) {
+    console.error('JSON parse failed:', parseErr, 'Raw:', rawText.substring(0,500));
+    throw new Error('A resposta da IA veio incompleta. Tente novamente.');
+  }
+  // Validar estrutura mínima
+  if(!plan || !plan.gym){
+    throw new Error('Plano gerado está incompleto. Tente novamente.');
+  }
   const users=DB.get('fq_users')||{};
   if(users[email]){
     users[email].aiPlan=plan;
@@ -2779,23 +2894,8 @@ function checkUnlockOnLoad(email){
 
 // ══ PAYMENT ══
 let selPlanName=null;let selPlanPrice=0;
-function selPlan(plan,price,el){
-  selPlanName=plan;selPlanPrice=price;
-  document.querySelectorAll('.plan-card').forEach(c=>c.classList.remove('sel'));
-  el.classList.add('sel');
-  const btn=document.getElementById('btn-pay');
-  btn.style.display='block';
-  btn.textContent=`▶ Assinar ${plan} — R$${price.toFixed(2).replace('.',',')}`;
-}
-async function iniciarPagamento(plan){
-  if(plan) selPlanName=plan;
-  if(!selPlanName)return;
-  const email=DB.get('fq_cur');
-  const links={mensal:'https://mpago.li/1mYcngV',trimestral:'https://mpago.li/1qj9bY9',anual:'https://mpago.li/21vSJoW'};
-  if(sb){try{await sb.from('pagamentos').insert({aluno_email:email,plano:selPlanName,valor:selPlanPrice,status:'pendente',criado_em:new Date().toISOString()});}catch(e){}}
-  window.open(links[selPlanName],'_blank');
-  setTimeout(()=>{if(confirm('Já realizou o pagamento?\nClique OK para verificar.'))checkPay();},3000);
-}
+
+async 
 async function checkPay(){
   const email=DB.get('fq_cur');const fresh=await loadUDB(email);const users=DB.get('fq_users')||{};
   if(fresh&&fresh.trainApproved){users[email]={...users[email],...fresh};DB.set('fq_users',users);loadApp(email);show('sc-app');}
@@ -3169,6 +3269,49 @@ function loadAdmin(){
 
   // ── Full students list ──
   admRenderStudents(all,'all');
+
+  // ── Leads de Consultoria ──
+  admRenderLeads();
+}
+
+function admRenderLeads(){
+  const leads = DB.get('fq_consult_leads') || [];
+  const countEl = document.getElementById('adm-leads-count');
+  const listEl = document.getElementById('adm-leads-list');
+  if(countEl) countEl.textContent = `(${leads.length})`;
+  if(!listEl) return;
+  if(!leads.length){
+    listEl.innerHTML = '<div style="background:#0f0f0f;border:1px solid var(--b);border-radius:12px;padding:20px;text-align:center;color:var(--mu);font-size:12px">Nenhum lead de consultoria ainda</div>';
+    return;
+  }
+  listEl.innerHTML = [...leads].reverse().map((l,i)=>{
+    const modalIcon = l.modalidade==='musculacao'?'🏋️':'🏃';
+    const dataF = l.data?new Date(l.data).toLocaleDateString('pt-BR'):'';
+    const msg = `Ol%C3%A1%20${encodeURIComponent(l.nome)}!%20Sou%20o%20Rennan,%20recebi%20seu%20interesse%20na%20consultoria%20de%20${l.modalidade==='musculacao'?'Muscula%C3%A7%C3%A3o':'Corrida'}.`;
+    const foneClean = (l.fone||'').replace(/\D/g,'');
+    const waFone = foneClean.length>=10 ? (foneClean.startsWith('55')?foneClean:'55'+foneClean) : '5531995250330';
+    return `<div style="background:#0f0f0f;border:1px solid rgba(243,156,18,.2);border-radius:12px;padding:14px;margin-bottom:8px">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px">
+        <div>
+          <div style="font-size:14px;font-weight:800">${modalIcon} ${l.nome}</div>
+          <div style="font-size:11px;color:var(--t2);margin-top:2px">${l.fone} · Plano ${l.plano}</div>
+        </div>
+        <div style="font-size:9px;color:var(--mu)">${dataF}</div>
+      </div>
+      ${l.obj?`<div style="font-size:11px;color:var(--t2);background:rgba(255,255,255,.03);border-radius:8px;padding:8px;margin-bottom:8px">🎯 ${l.obj}</div>`:''}
+      <div style="display:flex;gap:6px">
+        <a href="https://wa.me/${waFone}?text=${msg}" target="_blank" style="flex:1;text-align:center;background:rgba(37,211,102,.12);border:1px solid rgba(37,211,102,.3);border-radius:8px;padding:8px;color:#25D366;font-size:11px;font-weight:800;text-decoration:none">💬 Responder</a>
+        <button onclick="admDelLead(${leads.length-1-i})" style="background:rgba(255,255,255,.05);border:1px solid var(--b);border-radius:8px;padding:8px 12px;color:var(--mu);font-size:11px;font-weight:700;cursor:pointer">🗑️</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function admDelLead(idx){
+  const leads = DB.get('fq_consult_leads') || [];
+  leads.splice(idx,1);
+  DB.set('fq_consult_leads', leads);
+  admRenderLeads();
 }
 
 function admStudentCard(u, compact=false){
@@ -5388,6 +5531,53 @@ function dismissBanner(){document.getElementById('pwa-banner').style.display='no
     show('sc-splash');
   }
 })();
+
+// ── CONSULTORIA ──
+let consultModal = 'musculacao';
+let consultPlan = 'Semestral';
+function selConsultModal(m, el) {
+  consultModal = m;
+  document.querySelectorAll('.consult-modal').forEach(c => c.style.border = '2px solid var(--b)');
+  el.style.border = '2px solid var(--r)';
+}
+function selConsultPlan(p, el) {
+  consultPlan = p;
+  document.querySelectorAll('.consult-plan').forEach(c => c.style.borderColor = 'var(--b)');
+  el.style.borderColor = 'var(--r)';
+}
+function enviarConsultoria() {
+  const nome = document.getElementById('cons-nome').value.trim();
+  const fone = document.getElementById('cons-fone').value.trim();
+  const obj = document.getElementById('cons-obj').value.trim();
+  if (!nome) { alert('Por favor, preencha seu nome.'); return; }
+  if (!fone) { alert('Por favor, preencha seu WhatsApp.'); return; }
+  const leads = DB.get('fq_consult_leads') || [];
+  leads.push({ nome, fone, obj, modalidade: consultModal, plano: consultPlan, data: new Date().toISOString(), status: 'novo' });
+  DB.set('fq_consult_leads', leads);
+  if (sb) { try { sb.from('consultoria_leads').insert({ nome, telefone: fone, objetivo: obj, modalidade: consultModal, plano: consultPlan, criado_em: new Date().toISOString() }).then(()=>{}).catch(()=>{}); } catch(e) {} }
+  const modalLabel = consultModal === 'musculacao' ? 'Musculação' : 'Corrida';
+  const msg = `Olá Rennan! Quero começar a consultoria.%0A%0A*Nome:* ${encodeURIComponent(nome)}%0A*WhatsApp:* ${encodeURIComponent(fone)}%0A*Modalidade:* ${encodeURIComponent(modalLabel)}%0A*Plano:* ${encodeURIComponent(consultPlan)}%0A*Objetivo:* ${encodeURIComponent(obj || 'A definir')}`;
+  window.open(`https://wa.me/5531995250330?text=${msg}`, '_blank');
+}
+// ── ADMIN: SEED PERFIL ──
+function seedAdminProfile() {
+  const allEbooks = ['hypertrophy','elderly','pregnancy','disabled','fatburn','running10k','posture','stress','technique','nutrition'];
+  const users = DB.get('fq_users') || {};
+  const existing = users['rennan@rennandias.com.br'] || {};
+  users['rennan@rennandias.com.br'] = {
+    ...existing, id: existing.id || 'admin-rennan-001', name: 'Rennan Dias', email: 'rennan@rennandias.com.br',
+    pass: btoa('RennanAdmin@2025'), anamneseDone: true, trainApproved: true, plano: 'pro', isAdmin: true, pacoteEbooks: true,
+    purchases: allEbooks, xp: existing.xp || 9999, level: existing.level || 10, streak: existing.streak || 0, coins: existing.coins || 9999,
+    gymWeek: existing.gymWeek || 1, runWeek: existing.runWeek || 1, stats: existing.stats || {treinos:0,distancia:0,semanas:1},
+    badges: existing.badges || [], prs: existing.prs || [], missions: existing.missions || [], gymDone: existing.gymDone || {}, runDone: existing.runDone || {},
+    workoutHistory: existing.workoutHistory || [], loadHistory: existing.loadHistory || {}, aiPlan: existing.aiPlan || null, avatar: existing.avatar || {color:'#e50914'},
+    anamnese: existing.anamnese || { sexo:'Masculino',peso:'80',altura:'180',tempo:'Avançado (mais de 2 anos)',obj:['Hipertrofia (ganho de massa muscular)'],lesoes:['Nenhuma dor ou lesão'],temJoelho:false,temLombar:false,temOmbro:false }
+  };
+  DB.set('fq_users', users);
+}
+function entrarComoAluno() { seedAdminProfile(); DB.set('fq_cur', 'rennan@rennandias.com.br'); loadApp('rennan@rennandias.com.br'); show('sc-app'); }
+function voltarAdmin() { DB.set('fq_cur', '__admin__'); loadAdmin(); show('sc-adm'); }
+
 </script>
 
 <!-- ══ EBOOK VIEWER MODAL ══ -->
