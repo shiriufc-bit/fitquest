@@ -26,7 +26,7 @@ const EBOOK_FILES = {
 
 function openEbook(programId) {
   const file = EBOOK_FILES[programId];
-  if (!file) { alert('E-Book nao disponivel ainda.'); return; }
+  if (!file) { fqToast('📕 E-Book ainda não disponível.','warn'); return; }
   
   // Get program title for the topbar
   const p = CATALOG.find(c => c.id === programId);
@@ -79,33 +79,15 @@ function abrirEbookDireto() {
 }
 
 // ── PACOTE COMPLETO DE EBOOKS ──
-function comprarPacoteEbooks() {
-  // Link do Mercado Pago para o pacote — atualizar quando criar
-  const linkPacote = 'https://mpago.la/26kZgpg';
-  
+async function comprarPacoteEbooks() {
   const u = getU();
   if (!u) { show('sc-splash'); return; }
-  
-  // Confirmar compra
-  const ok = confirm('📚 Pacote Completo de E-Books\n\nR$50,00 — Acesso vitalício aos 10 e-books\n\nVocê será redirecionado ao Mercado Pago para finalizar o pagamento.\n\nContinuar?');
+  const ok = await fqConfirm('📚 Pacote Completo de E-Books', 'R$ 50,00 — acesso vitalício aos 10 e-books.\n\nVocê será redirecionado ao Mercado Pago para pagar com Pix, cartão ou boleto. Assim que o pagamento for aprovado, os e-books são liberados automaticamente.', 'Ir para o pagamento');
   if (!ok) return;
-  
-  window.open(linkPacote, '_blank');
-  
-  // Polling: verificar se voltou e liberar acesso
-  const btn = event?.target;
-  if (btn) { btn.textContent = '✅ Aguardando confirmação...'; btn.disabled = true; }
-  
-  setTimeout(() => {
-    const confirmado = confirm('✅ Pagamento realizado?\n\nSe sim, seus e-books serão liberados agora!');
-    if (confirmado) {
-      liberarPacoteEbooks(u);
-    } else {
-      if (btn) { btn.textContent = '📚 Comprar Pacote Completo — R$50,00'; btn.disabled = false; }
-    }
-  }, 3000);
+  fqCheckout('pacote_ebooks', 'https://mpago.la/26kZgpg');
 }
 
+// Chamada apenas quando o pagamento é confirmado (webhook/admin)
 function liberarPacoteEbooks(u) {
   const todosEbooks = ['hypertrophy','elderly','pregnancy','disabled','fatburn','running10k','posture','stress','technique','nutrition'];
   const users = DB.get('fq_users') || {};
@@ -114,8 +96,7 @@ function liberarPacoteEbooks(u) {
   users[u.email] = u;
   DB.set('fq_users', users);
   if (sb) syncU(u).catch(()=>{});
-  
-  alert('🎉 Pacote desbloqueado! Todos os 10 e-books estão disponíveis na sua Loja!');
+  fqToast('🎉 Pacote desbloqueado! Os 10 e-books estão na sua Loja!','ok');
   renderStore(u);
 }
 </script>
@@ -685,6 +666,27 @@ textarea.fi{resize:vertical;min-height:80px;}
 .ebook-loading{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;color:#737373;}
 .ebook-loading .spinner{width:40px;height:40px;border:3px solid #2a2a2a;border-top:3px solid #e50914;border-radius:50%;animation:spin 1s linear infinite;}
 @keyframes spin{to{transform:rotate(360deg);}}
+/* ══ FQ UI KIT: TOASTS + DIALOGS ══ */
+#fq-toasts{position:fixed;top:calc(env(safe-area-inset-top,0px) + 12px);left:50%;transform:translateX(-50%);z-index:99999;display:flex;flex-direction:column;gap:8px;width:min(92vw,420px);pointer-events:none;}
+.fq-toast{background:#181818;border:1px solid var(--b2);border-radius:12px;padding:12px 16px;font-size:13px;font-weight:600;color:var(--t);box-shadow:0 8px 30px rgba(0,0,0,.6);opacity:0;transform:translateY(-14px);transition:all .3s cubic-bezier(.2,.9,.3,1.2);text-align:center;line-height:1.5;}
+.fq-toast.in{opacity:1;transform:translateY(0);}
+.fq-toast.ok{border-color:rgba(46,204,113,.4);background:linear-gradient(135deg,#12261a,#181818);}
+.fq-toast.warn{border-color:rgba(243,156,18,.4);background:linear-gradient(135deg,#2a2110,#181818);}
+.fq-toast.err{border-color:rgba(229,9,20,.45);background:linear-gradient(135deg,#2a1012,#181818);}
+.fq-dlg-ov{position:fixed;inset:0;background:rgba(0,0,0,.75);backdrop-filter:blur(4px);z-index:99998;display:flex;align-items:center;justify-content:center;padding:24px;opacity:0;transition:opacity .25s;}
+.fq-dlg-ov.in{opacity:1;}
+.fq-dlg{background:#161616;border:1px solid var(--b2);border-radius:20px;padding:26px 22px;width:min(100%,360px);text-align:center;box-shadow:0 20px 60px rgba(0,0,0,.7);transform:scale(.94);transition:transform .25s;}
+.fq-dlg-ov.in .fq-dlg{transform:scale(1);}
+.fq-dlg-ico{font-size:38px;margin-bottom:10px;}
+.fq-dlg-title{font-size:17px;font-weight:900;margin-bottom:8px;}
+.fq-dlg-msg{font-size:13px;color:var(--t2);line-height:1.65;margin-bottom:18px;}
+.fq-dlg-btns{display:flex;gap:10px;}
+.fq-dlg-btn{flex:1;padding:13px;border-radius:12px;font-size:14px;font-weight:800;cursor:pointer;border:none;}
+.fq-dlg-btn.pri{background:var(--gr);color:#fff;}
+.fq-dlg-btn.sec{background:rgba(255,255,255,.07);color:var(--t2);border:1px solid var(--b);}
+.fq-paywait{display:flex;flex-direction:column;align-items:center;gap:14px;padding:10px 0;}
+.fq-paywait .spinner{width:38px;height:38px;border:3px solid rgba(255,255,255,.12);border-top-color:var(--r);border-radius:50%;animation:spin 1s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg)}}
 </style>
 </head>
 <body>
@@ -1088,7 +1090,6 @@ textarea.fi{resize:vertical;min-height:80px;}
   <nav class="app-nav" id="app-nav">
     <div class="nav-logo"><span class="r">FIT</span>QUEST</div>
     <div class="nav-right">
-      <button id="btn-admin-back" onclick="voltarAdmin()" style="display:none;background:rgba(46,204,113,.12);border:1px solid rgba(46,204,113,.25);border-radius:5px;padding:4px 9px;color:#2ecc71;font-size:10px;font-weight:800;cursor:pointer;align-items:center;gap:4px">⚙️ Admin</button>
       <div class="nav-streak">🔥 <span id="streak-val">1</span>d</div>
       <div class="nav-av" id="nav-av" onclick="toggleMenu()">?</div>
     </div>
@@ -1518,7 +1519,7 @@ textarea.fi{resize:vertical;min-height:80px;}
           </div>
           <div onclick="selConsultPlan('Anual',this)" class="consult-plan" style="background:linear-gradient(135deg,rgba(46,204,113,.1),#111);border:2px solid rgba(46,204,113,.3);border-radius:12px;padding:14px;display:flex;align-items:center;justify-content:space-between;cursor:pointer;position:relative">
             <div style="position:absolute;top:-8px;right:12px;background:#2ecc71;color:#000;border-radius:4px;padding:2px 8px;font-size:8px;font-weight:900;letter-spacing:.5px">MELHOR PREÇO</div>
-            <div><div style="font-size:14px;font-weight:800">Plano Anual</div><div style="font-size:10px;color:var(--t2)">12 meses · resultado garantido</div></div>
+            <div><div style="font-size:14px;font-weight:800">Plano Anual</div><div style="font-size:10px;color:var(--t2)">12 meses · melhor custo-benefício</div></div>
             <div style="font-size:18px">→</div>
           </div>
         </div>
@@ -2083,6 +2084,7 @@ textarea.fi{resize:vertical;min-height:80px;}
 // ══ SUPABASE ══
 const SUPABASE_URL='https://ctbmnvlsvdlrohkcalcm.supabase.co';
 const SUPABASE_KEY='sb_publishable_0jwz3vKIkAakkn8tgNrKKQ_EELiP41g';
+const FN_URL=SUPABASE_URL+'/functions/v1';
 let sb=null;
 try{
   if(typeof supabase!=='undefined' && supabase.createClient){
@@ -2092,6 +2094,43 @@ try{
 }catch(e){console.warn('Supabase init failed, running offline:',e.message);}
 
 const DB={get(k){try{return JSON.parse(localStorage.getItem(k));}catch{return null;}},set(k,v){localStorage.setItem(k,JSON.stringify(v));},del(k){localStorage.removeItem(k);}};
+
+// ══ UI KIT: TOASTS + MODAIS (substituem alert/confirm nativos) ══
+function fqToast(msg,type='info',ms=4000){
+  let wrap=document.getElementById('fq-toasts');
+  if(!wrap){wrap=document.createElement('div');wrap.id='fq-toasts';document.body.appendChild(wrap);}
+  const t=document.createElement('div');
+  t.className='fq-toast '+type;
+  t.textContent=msg;
+  wrap.appendChild(t);
+  requestAnimationFrame(()=>t.classList.add('in'));
+  setTimeout(()=>{t.classList.remove('in');setTimeout(()=>t.remove(),350);},ms);
+}
+function fqDialog({title,msg,okText='OK',cancelText=null,icon=''}){
+  return new Promise(resolve=>{
+    const old=document.getElementById('fq-dialog');if(old)old.remove();
+    const ov=document.createElement('div');
+    ov.id='fq-dialog';ov.className='fq-dlg-ov';
+    ov.innerHTML=`<div class="fq-dlg">
+      ${icon?`<div class="fq-dlg-ico">${icon}</div>`:''}
+      <div class="fq-dlg-title">${title}</div>
+      ${msg?`<div class="fq-dlg-msg">${String(msg).replace(/\n/g,'<br>')}</div>`:''}
+      <div class="fq-dlg-btns">
+        ${cancelText?`<button class="fq-dlg-btn sec" data-v="0">${cancelText}</button>`:''}
+        <button class="fq-dlg-btn pri" data-v="1">${okText}</button>
+      </div>
+    </div>`;
+    ov.addEventListener('click',e=>{
+      const b=e.target.closest('.fq-dlg-btn');
+      if(b){ov.remove();resolve(b.dataset.v==='1');}
+      else if(e.target===ov&&cancelText){ov.remove();resolve(false);}
+    });
+    document.body.appendChild(ov);
+    requestAnimationFrame(()=>ov.classList.add('in'));
+  });
+}
+function fqAlert(title,msg,icon='💡'){return fqDialog({title,msg,icon});}
+function fqConfirm(title,msg,okText='Confirmar',icon='🤔'){return fqDialog({title,msg,okText,cancelText:'Cancelar',icon});}
 
 let EXERCISE_BANK=[
   {id:'e001',name:'Supino Plano',muscle:'Peito',equipment:'Barra/Halteres',emoji:'🏋️',obs:'Escápulas retraídas, cotovelos a 45°. Desça até tocar o peito.'},
@@ -2492,13 +2531,20 @@ function toggleMenu(){document.getElementById('nav-menu').classList.toggle('open
 document.addEventListener('click',e=>{if(!e.target.closest('.nav-av')&&!e.target.closest('.nav-menu'))document.getElementById('nav-menu').classList.remove('open');});
 window.addEventListener('scroll',()=>{const nav=document.getElementById('app-nav');if(nav)nav.classList.toggle('solid',window.scrollY>50);},{passive:true});
 
-// ══ SUPABASE ══
-async function syncU(u){if(!sb||!u)return;try{await sb.from('alunos').upsert({id:u.id,nome:u.name,email:u.email,senha_hash:u.pass,plano:u.plano||'pendente',treino_liberado:u.trainApproved||false,ai_plan:u.aiPlan||null,anamnese:u.anamnese||null,gym_week:u.gymWeek||1,run_week:u.runWeek||1,gym_done:u.gymDone||{},run_done:u.runDone||{},load_history:u.loadHistory||{},workout_history:u.workoutHistory||[],xp:u.xp||0,level:u.level||1,streak:u.streak||1,coins:u.coins||0,badges:u.badges||[],prs:u.prs||[],stats:u.stats||{treinos:0,distancia:0,semanas:0},updated_at:new Date().toISOString()},{onConflict:'email'});}catch(e){}}
-async function loadUDB(email){if(!sb||!email)return null;try{const{data}=await sb.from('alunos').select('*').eq('email',email).single();if(!data)return null;return{id:data.id,name:data.nome,email:data.email,pass:data.senha_hash,plano:data.plano,trainApproved:data.treino_liberado,aiPlan:data.ai_plan,anamnese:data.anamnese,anamneseDone:!!data.anamnese,gymWeek:data.gym_week||1,runWeek:data.run_week||1,gymDone:data.gym_done||{},runDone:data.run_done||{},loadHistory:data.load_history||{},workoutHistory:data.workout_history||[],xp:data.xp||0,level:data.level||1,streak:data.streak||1,coins:data.coins||0,badges:data.badges||[],prs:data.prs||[],stats:data.stats||{treinos:0,distancia:0,semanas:0},missions:[{id:1,title:'Treinar 3x esta semana',xp:150,progress:0,total:3,type:'gym',done:false},{id:2,title:'Correr 5km esta semana',xp:200,progress:0,total:5,type:'run',done:false},{id:3,title:'Completar o Deload da Semana 4',xp:500,progress:0,total:1,type:'week',done:false},{id:4,title:'Chegar aos 10km correndo',xp:800,progress:0,total:1,type:'run',done:false}],createdAt:data.criado_em};}catch(e){return null;}}
+// ══ SUPABASE: SYNC DE DADOS (vinculado ao usuário autenticado) ══
+const MISSOES_PADRAO=[{id:1,title:'Treinar 3x esta semana',xp:150,progress:0,total:3,type:'gym',done:false},{id:2,title:'Correr 5km esta semana',xp:200,progress:0,total:5,type:'run',done:false},{id:3,title:'Completar o Deload da Semana 4',xp:500,progress:0,total:1,type:'week',done:false},{id:4,title:'Chegar aos 10km correndo',xp:800,progress:0,total:1,type:'run',done:false}];
+function rowToUser(data){
+  return{id:data.id,name:data.nome,email:data.email,plano:data.plano,trainApproved:data.treino_liberado,isAdmin:!!data.is_admin,aiPlan:data.ai_plan,anamnese:data.anamnese,anamneseDone:!!data.anamnese,gymWeek:data.gym_week||1,runWeek:data.run_week||1,gymDone:data.gym_done||{},runDone:data.run_done||{},loadHistory:data.load_history||{},workoutHistory:data.workout_history||[],xp:data.xp||0,level:data.level||1,streak:data.streak||1,coins:data.coins||0,badges:data.badges||[],prs:data.prs||[],stats:data.stats||{treinos:0,distancia:0,semanas:0},purchases:data.purchases||[],pacoteEbooks:!!data.pacote_ebooks,programIntakes:data.program_intakes||{},avatar:data.avatar||null,evals:data.evals||[],missions:MISSOES_PADRAO.map(m=>({...m})),createdAt:data.criado_em,lastLogin:data.ultimo_acesso};
+}
+function userToRow(u){
+  return{id:u.id,nome:u.name,email:u.email,plano:u.plano||'free',treino_liberado:u.trainApproved||false,ai_plan:u.aiPlan||null,anamnese:u.anamnese||null,gym_week:u.gymWeek||1,run_week:u.runWeek||1,gym_done:u.gymDone||{},run_done:u.runDone||{},load_history:u.loadHistory||{},workout_history:u.workoutHistory||[],xp:u.xp||0,level:u.level||1,streak:u.streak||1,coins:u.coins||0,badges:u.badges||[],prs:u.prs||[],stats:u.stats||{treinos:0,distancia:0,semanas:0},avatar:u.avatar||null,evals:u.evals||[],program_intakes:u.programIntakes||{},ultimo_acesso:new Date().toISOString(),updated_at:new Date().toISOString()};
+  // Obs.: purchases/pacote_ebooks/is_admin/plano NÃO são enviados pelo aluno — são protegidos no banco e só mudam via webhook de pagamento ou admin.
+}
+async function syncU(u){if(!sb||!u||!u.id)return;try{await sb.from('alunos').upsert(userToRow(u),{onConflict:'id'});}catch(e){console.warn('sync:',e.message);}}
+async function loadUDB(userId){if(!sb||!userId)return null;try{const{data}=await sb.from('alunos').select('*').eq('id',userId).single();if(!data)return null;return rowToUser(data);}catch(e){return null;}}
 
-// ══ AUTH ══
+// ══ AUTH (Supabase Auth — senhas nunca ficam no código nem no navegador) ══
 const ADMIN_EMAIL='rennan@rennandias.com.br';
-const ADMIN_PASS='RennanAdmin@2025';
 function goAuth(mode){show('sc-auth');switchAuth(mode);}
 function switchAuth(mode){
   document.getElementById('form-login').style.display=mode==='login'?'block':'none';
@@ -2509,52 +2555,80 @@ function switchAuth(mode){
   document.getElementById('auth-error').style.display='none';
 }
 function showErr(msg){const e=document.getElementById('auth-error');e.textContent=msg;e.style.display='block';}
+async function entrarComPerfil(u){
+  const users=DB.get('fq_users')||{};
+  users[u.email]=u;DB.set('fq_users',users);DB.set('fq_cur',u.email);
+  if(u.isAdmin){await loadAdmin();show('sc-adm');return;}
+  if(!u.anamneseDone){initAnam();show('sc-anam');}
+  else{loadApp(u.email);show('sc-app');}
+}
 async function doLogin(){
-  const email=document.getElementById('login-email').value.trim();
+  const email=document.getElementById('login-email').value.trim().toLowerCase();
   const pass=document.getElementById('login-pass').value;
   if(!email||!pass){showErr('Preencha e-mail e senha.');return;}
-  if(email===ADMIN_EMAIL&&pass===ADMIN_PASS){
-    DB.set('fq_cur','__admin__');
-    seedAdminProfile();
-    loadAdmin();show('sc-adm');return;
-  }
+  if(!sb){showErr('Sem conexão com o servidor. Verifique sua internet e recarregue a página.');return;}
   const btn=document.getElementById('btn-login');btn.textContent='Entrando...';btn.disabled=true;
-  const users=DB.get('fq_users')||{};let u=users[email];
-  if(!u){u=await loadUDB(email);if(u){users[email]=u;DB.set('fq_users',users);}}
-  btn.textContent='Entrar';btn.disabled=false;
-  if(!u){showErr('Conta não encontrada.');return;}
-  if(u.pass!==btoa(pass)){showErr('Senha incorreta.');return;}
-  DB.set('fq_cur',email);
   try{
-    if(!u.anamneseDone){initAnam();show('sc-anam');}
-    else{loadApp(email);show('sc-app');}
-  }catch(e){console.error('Login nav error:',e);}
+    const{data,error}=await sb.auth.signInWithPassword({email,password:pass});
+    if(error){
+      const m=/invalid/i.test(error.message)?'E-mail ou senha incorretos.':(/confirm/i.test(error.message)?'Confirme seu e-mail antes de entrar (verifique sua caixa de entrada).':'Não foi possível entrar: '+error.message);
+      showErr(m);return;
+    }
+    let u=await loadUDB(data.user.id);
+    if(!u){
+      // Primeiro login sem perfil ainda (conta criada antes ou pelo painel) — cria o perfil
+      u=novoPerfilLocal(data.user.id,data.user.user_metadata?.nome||email.split('@')[0],email);
+      if(email===ADMIN_EMAIL)u.isAdmin=true;
+      await sb.from('alunos').upsert(userToRow(u),{onConflict:'id'});
+      const fresh=await loadUDB(data.user.id);if(fresh)u=fresh;
+    }
+    await entrarComPerfil(u);
+  }catch(e){console.error('Login error:',e);showErr('Erro ao entrar. Tente novamente.');}
+  finally{btn.textContent='Entrar';btn.disabled=false;}
+}
+function novoPerfilLocal(id,name,email){
+  return{id,name,email,anamneseDone:false,createdAt:new Date().toISOString(),plano:'free',trainApproved:true,isAdmin:false,xp:0,level:1,streak:1,coins:0,stats:{treinos:0,distancia:0,semanas:0},badges:[],missions:MISSOES_PADRAO.map(m=>({...m})),prs:[],gymWeek:1,gymDone:{},runWeek:1,runDone:{},aiPlan:null,workoutHistory:[],loadHistory:{},purchases:[],pacoteEbooks:false,programIntakes:{},evals:[]};
 }
 async function doRegister(){
   const name=document.getElementById('reg-name').value.trim();
-  const email=document.getElementById('reg-email').value.trim();
+  const email=document.getElementById('reg-email').value.trim().toLowerCase();
   const pass=document.getElementById('reg-pass').value;
   const pass2=document.getElementById('reg-pass2').value;
   if(!name||!email||!pass){showErr('Preencha todos os campos.');return;}
   if(pass.length<6){showErr('Senha mínimo 6 caracteres.');return;}
   if(pass!==pass2){showErr('Senhas não conferem.');return;}
   if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){showErr('E-mail inválido.');return;}
+  if(!sb){showErr('Sem conexão com o servidor. Verifique sua internet e recarregue a página.');return;}
   const btn=document.getElementById('btn-reg');btn.textContent='Criando...';btn.disabled=true;
-  const existing=await loadUDB(email);const users=DB.get('fq_users')||{};
-  if(existing||users[email]){btn.textContent='Criar conta grátis';btn.disabled=false;showErr('E-mail já cadastrado.');return;}
-  const u={id:crypto.randomUUID(),name,email,pass:btoa(pass),anamneseDone:false,createdAt:new Date().toISOString(),plano:'free',trainApproved:true,xp:0,level:1,streak:1,coins:0,stats:{treinos:0,distancia:0,semanas:0},badges:[],missions:[{id:1,title:'Treinar 3x esta semana',xp:150,progress:0,total:3,type:'gym',done:false},{id:2,title:'Correr 5km esta semana',xp:200,progress:0,total:5,type:'run',done:false},{id:3,title:'Completar o Deload da Semana 4',xp:500,progress:0,total:1,type:'week',done:false},{id:4,title:'Chegar aos 10km correndo',xp:800,progress:0,total:1,type:'run',done:false}],prs:[],gymWeek:1,gymDone:{},runWeek:1,runDone:{},aiPlan:null,workoutHistory:[],loadHistory:{}};
-  users[email]=u;DB.set('fq_users',users);DB.set('fq_cur',email);
-  try{await syncU(u);}catch(e){console.warn('sync error',e);}
-  btn.textContent='Criar conta grátis';btn.disabled=false;
-  initAnam();show('sc-anam');
+  try{
+    const{data,error}=await sb.auth.signUp({email,password:pass,options:{data:{nome:name}}});
+    if(error){
+      const m=/already|registered/i.test(error.message)?'E-mail já cadastrado. Use "Entrar".':'Não foi possível criar a conta: '+error.message;
+      showErr(m);return;
+    }
+    if(!data.session){
+      showErr('Conta criada! Enviamos um link de confirmação para o seu e-mail. Confirme e depois faça login.');
+      switchAuth('login');return;
+    }
+    const u=novoPerfilLocal(data.user.id,name,email);
+    if(email===ADMIN_EMAIL)u.isAdmin=true;
+    await sb.from('alunos').upsert(userToRow(u),{onConflict:'id'});
+    const users=DB.get('fq_users')||{};users[email]=u;DB.set('fq_users',users);DB.set('fq_cur',email);
+    initAnam();show('sc-anam');
+  }catch(e){console.error('Register error:',e);showErr('Erro ao criar conta. Tente novamente.');}
+  finally{btn.textContent='Criar conta grátis';btn.disabled=false;}
 }
 function checkAdminBtn() {
-  const email = DB.get('fq_cur');
+  const u = getU();
   const btn = document.getElementById('btn-admin-back');
-  if (btn) btn.style.display = (email === 'rennan@rennandias.com.br') ? 'flex' : 'none';
+  if (btn) btn.style.display = (u&&u.isAdmin) ? 'flex' : 'none';
 }
 
-function doLogout(){if(!confirm('Deseja sair?'))return;DB.del('fq_cur');show('sc-splash');}
+async function doLogout(){
+  if(!await fqConfirm('Sair da conta','Deseja realmente sair?','Sair','👋'))return;
+  try{if(sb)await sb.auth.signOut();}catch(e){}
+  DB.del('fq_cur');show('sc-splash');
+}
 
 // ══ ANAMNESE ══
 let anamStep=1;
@@ -2688,171 +2762,148 @@ function gerarTreinoFallback(email, an){
   console.log('✅ Treino fallback gerado');
 }
 
+// ══ MOTOR DE TREINO INTELIGENTE — 100% local, sem API externa ══
+// Gera plano de 8 semanas periodizado a partir da anamnese (metodologia Rennan Dias).
+const POOLS={
+  peito:['e001','e002','e003','e004'],
+  costas:['e006','e030','e007','e005','e042','e049','e008'],
+  ombro:['e010','e011','e043','e012','e009','e044'],
+  biceps:['e013','e014','e045','e015'],
+  triceps:['e016','e017','e050','e018'],
+  quad:['e020','e019','e026','e048','e023','e037','e032'],
+  posterior:['e024','e021'],
+  gluteo:['e027','e031','e022','e047','e035'],
+  pant:['e025'],
+  core:['e029','e028','e039','e040']
+};
+function poolSeguro(grupo,an){
+  let list=(POOLS[grupo]||[]).map(getExById).filter(Boolean);
+  if(an.temJoelho)list=list.filter(e=>!/agachamento livre|leg press 45|cadeira extensora|avanço|hack/i.test(e.name));
+  if(an.temLombar)list=list.filter(e=>!/remada curvada|stiff|superman|agachamento livre/i.test(e.name));
+  if(an.temOmbro)list=list.filter(e=>!/desenvolvimento barra|elevação frontal/i.test(e.name));
+  if(an.temJoelho&&grupo==='quad')list=list.concat([getExById('e038'),getExById('e036'),getExById('e034')]);
+  if(an.temJoelho&&grupo==='gluteo')list=[getExById('e035')].concat(list);
+  if(an.temLombar&&grupo==='core')list=[getExById('e040'),getExById('e039')].concat(list);
+  if(an.temOmbro&&grupo==='ombro')list=list.concat([getExById('e044')]);
+  const seen=new Set();
+  return list.filter(e=>e&&!seen.has(e.id)&&seen.add(e.id));
+}
+function divisaoPorPerfil(dias,isInic){
+  if(dias<=2)return{nome:'Full Body 2x',dias:[
+    {label:'Treino A — Corpo Todo',slots:['peito','costas','quad','ombro','posterior','core']},
+    {label:'Treino B — Corpo Todo',slots:['costas','peito','gluteo','biceps','triceps','core']}]};
+  if(dias===3&&isInic)return{nome:'Full Body 3x',dias:[
+    {label:'Treino A — Corpo Todo',slots:['peito','costas','quad','ombro','core']},
+    {label:'Treino B — Corpo Todo',slots:['costas','peito','gluteo','biceps','triceps']},
+    {label:'Treino C — Corpo Todo',slots:['quad','posterior','peito','costas','pant','core']}]};
+  if(dias===3)return{nome:'Push / Pull / Legs',dias:[
+    {label:'Push — Peito/Ombro/Tríceps',slots:['peito','peito','ombro','ombro','triceps','triceps']},
+    {label:'Pull — Costas/Bíceps',slots:['costas','costas','costas','biceps','biceps','core']},
+    {label:'Legs — Pernas/Glúteos',slots:['quad','quad','posterior','gluteo','pant','core']}]};
+  if(dias===4)return{nome:'Upper / Lower',dias:[
+    {label:'Upper A — Peito/Costas',slots:['peito','costas','peito','costas','ombro','triceps']},
+    {label:'Lower A — Quadríceps/Glúteo',slots:['quad','quad','gluteo','pant','core']},
+    {label:'Upper B — Ombro/Braços',slots:['ombro','ombro','costas','biceps','triceps','core']},
+    {label:'Lower B — Posterior/Glúteo',slots:['posterior','gluteo','quad','gluteo','pant','core']}]};
+  if(dias===5)return{nome:'PPL 5x — Push/Pull/Legs + Upper/Lower',dias:[
+    {label:'Push A — Peito/Ombro/Tríceps',slots:['peito','peito','ombro','ombro','triceps','triceps']},
+    {label:'Pull A — Costas/Bíceps',slots:['costas','costas','costas','biceps','biceps','core']},
+    {label:'Legs — Pernas Completas',slots:['quad','quad','posterior','gluteo','pant','core']},
+    {label:'Upper — Peito/Costas/Ombro',slots:['peito','costas','ombro','peito','costas','triceps']},
+    {label:'Lower + Core',slots:['gluteo','quad','posterior','pant','core','core']}]};
+  return{nome:'ABCDE — Alta Frequência',dias:[
+    {label:'A — Peito',slots:['peito','peito','peito','triceps','core']},
+    {label:'B — Costas',slots:['costas','costas','costas','biceps','core']},
+    {label:'C — Pernas (Quadríceps)',slots:['quad','quad','quad','pant','core']},
+    {label:'D — Ombros/Braços',slots:['ombro','ombro','biceps','triceps','core']},
+    {label:'E — Posterior/Glúteos',slots:['posterior','gluteo','gluteo','pant','core']},
+    {label:'F — Core + Fraquezas',slots:['core','core','peito','costas','pant']}]};
+}
+function periodizacao(objetivo,semana,isInic){
+  // Retorna {fase, reps, sets, rest, load, dica} para a semana (1-8)
+  const deload=(semana===4||semana===8);
+  if(deload)return{fase:semana===4?'⚡ DELOAD — Recuperação Ativa':'⚡ DELOAD — Preparação para Novo Ciclo',reps:'12-15',sets:2,rest:60,load:'Leve (-40%)',dica:'Semana leve de propósito: metade do peso habitual, técnica perfeita e sono em dia. É aqui que o corpo cresce.'};
+  if(/emagre|gordura|defini/i.test(objetivo)){
+    const fases={1:['🔥 Ativação Metabólica','15-20',3,40,'Leve-Moderada','Descansos curtos: o relógio é seu treino. Mantenha o ritmo.'],2:['🔥 Ativação Metabólica II','15-18',3,40,'Moderada','Aumente levemente a carga mantendo o descanso curto.'],3:['⚡ Densidade — Mais Trabalho, Menos Tempo','12-15',4,35,'Moderada','Uma série a mais por exercício. Hidrate-se bem.'],5:['🚀 Intensificação Metabólica','12-15',4,30,'Moderada-Pesada','Descanso caiu para 30s. Foco total.'],6:['🚀 Intensificação II','10-12',4,30,'Pesada controlada','Cargas mais altas sem perder a execução.'],7:['🏁 Pico — Semana Desafio','10-15',4,30,'Pesada controlada','Última semana forte do ciclo. Dê o seu máximo com segurança.']};
+    const f=fases[semana]||fases[1];return{fase:f[0],reps:f[1],sets:f[2],rest:f[3],load:f[4],dica:f[5]};
+  }
+  if(/força/i.test(objetivo)){
+    const fases={1:['🏗️ Base de Força','8-10',3,120,'Moderada','Aprenda a criar tensão total no corpo antes de cada série.'],2:['🏗️ Base de Força II','6-8',4,150,'Moderada-Pesada','Aumente a carga se completou todas as reps na semana passada.'],3:['⚙️ Progressão Pesada','4-6',4,180,'Pesada','Compostos primeiro, sempre com aquecimento progressivo.'],5:['💥 Sobrecarga','4-6',5,180,'Pesada','Mais uma série de trabalho. Descanso completo entre séries.'],6:['💥 Sobrecarga II','3-5',5,180,'Muito pesada','Zona de força máxima. Peça ajuda de um parceiro se precisar.'],7:['🏆 Pico de Força','3-5',5,180,'Muito pesada','Semana de testar seus novos limites com segurança.']};
+    const f=fases[semana]||fases[1];return{fase:f[0],reps:f[1],sets:f[2],rest:f[3],load:f[4],dica:f[5]};
+  }
+  // Hipertrofia / saúde geral (padrão)
+  const setsBase=isInic?3:4;
+  const fases={1:['🌱 Adaptação Neural','12-15',3,75,'Leve-Moderada','Conexão mente-músculo: sinta o músculo alvo em cada repetição.'],2:['🌱 Adaptação II','12-15',3,75,'Moderada','Mesmos exercícios, um pouco mais de carga. Excêntrico em 3s.'],3:['📈 Acumulação de Volume','10-12',setsBase,90,'Moderada','O volume sobe. Anote as cargas para progredir toda semana.'],5:['🔥 Intensificação','8-10',setsBase,90,'Pesada controlada','Novos exercícios, novas cargas. Busque 1 rep a mais por série.'],6:['🔥 Intensificação II','8-10',setsBase,90,'Pesada','Últimas séries perto da falha (RPE 8-9).'],7:['💎 Realização — Técnicas Avançadas','8-12',setsBase,90,'Pesada','Na última série de cada exercício, faça um drop-set: reduza 30% e continue até a falha.']};
+  const f=fases[semana]||fases[1];return{fase:f[0],reps:f[1],sets:f[2],rest:f[3],load:f[4],dica:f[5]};
+}
+function motorTreino(an){
+  const diasNum=Math.min(6,Math.max(2,parseInt((an.dias||'3x').replace(/\D/g,''))||3));
+  const durMin=parseInt((an.dur||'60').replace(/\D/g,''))||60;
+  const nivel=an.tempo||'Iniciante (menos de 3 meses)';
+  const isInic=/inici|menos de 3/i.test(nivel);
+  const objetivo=(an.obj||[]).join(' ')||'Saúde';
+  const div=divisaoPorPerfil(diasNum,isInic);
+  const maxEx=durMin<=45?5:durMin<=60?6:durMin<=80?7:8;
+  const gym={};
+  const usados={}; // controla variação entre mesociclos
+  for(let s=1;s<=8;s++){
+    const per=periodizacao(objetivo,s,isInic);
+    const meso=s<=4?0:1; // mesociclo A (sem 1-4) e B (sem 5-8) usam exercícios diferentes
+    const days={};
+    div.dias.forEach((dia,di)=>{
+      const slots=dia.slots.slice(0,maxEx);
+      const contag={};
+      const exs=[];
+      slots.forEach(grupo=>{
+        const pool=poolSeguro(grupo,an);
+        if(!pool.length)return;
+        const idx=((contag[grupo]||0)+meso+di)%pool.length;
+        contag[grupo]=(contag[grupo]||0)+1;
+        const ex=pool[idx];
+        if(exs.some(e=>e.id===ex.id))return;
+        exs.push({id:ex.id,sets:per.sets,reps:per.reps,load:per.load,rest:per.rest,obs:ex.obs+(s===1?' Primeira semana: priorize a técnica.':'')});
+      });
+      if(exs.length)days[dia.label]=exs;
+    });
+    gym['Semana '+s]={fase:per.fase+' — '+per.dica,days};
+  }
+  // Corrida: só gera se o aluno escolheu correr; senão usa o programa padrão do app
+  let run=null;
+  if(/corrida|ambos/i.test(an.modal||'')){
+    run=motorCorrida(an);
+  }
+  return{gym,run};
+}
+function motorCorrida(an){
+  const ativo=/sim|regular|3x|ativo/i.test(an.ativo||'')||/intermedi|avanç/i.test(an.tempo||'');
+  const semanas={};
+  const base=ativo?
+    [[2.5,'7:30'],[3,'7:15'],[3.5,'7:00'],[2.5,'7:30'],[4,'6:50'],[5,'6:40'],[6,'6:30'],[4,'7:00']]:
+    [[1.5,'8:30'],[2,'8:15'],[2.5,'8:00'],[1.5,'8:30'],[3,'7:45'],[3.5,'7:30'],[4,'7:15'],[3,'8:00']];
+  const metas=['Criar o hábito — caminhada + trote leve','Aumentar o tempo em movimento','Primeira semana de progressão real','⚡ Semana leve — recuperação','Construir resistência','Ritmo mais forte','Semana de pico do ciclo','⚡ Recuperação — preparar novo ciclo'];
+  for(let s=1;s<=8;s++){
+    const[dist,pace]=base[s-1];
+    semanas['Semana '+s]={meta:metas[s-1],sessions:[
+      {day:'Ter',type:s<=2&&!ativo?'Caminhada + Trote':'Rodagem leve',dist:dist+' km',pace,dur:'~'+Math.round(dist*parseFloat(pace.replace(':','.'))*1.05)+' min',tip:'Corra em ritmo de conversa: se não consegue falar, desacelere.'},
+      {day:'Qui',type:'Treino intervalado leve',dist:Math.max(1,Math.round(dist*0.7*10)/10)+' km',pace:'variado',dur:'~25 min',tip:'Alterne 1 min mais forte / 2 min leve. Aquecça 5 min antes.'},
+      {day:'Sáb',type:'Rodagem longa',dist:Math.round(dist*1.2*10)/10+' km',pace:pace,dur:'~'+Math.round(dist*1.2*parseFloat(pace.replace(':','.'))*1.05)+' min',tip:'O treino mais importante da semana. Ritmo confortável do início ao fim.'}
+    ]};
+  }
+  return semanas;
+}
 async function genAI(email,an){
-  const exList=EXERCISE_BANK.map(e=>`${e.id}:${e.name}(${e.muscle})`).join(', ');
-  const diasNum = parseInt((an.dias||'3x').replace(/\D/g,'')) || 3;
-  const durMin = parseInt((an.dur||'60').replace(/[^0-9]/g,'')) || 60;
-  const nivel = an.tempo||'Iniciante (menos de 3 meses)';
-  const isInic = nivel.includes('Iniciante') || nivel.includes('menos de 3');
-  const isAvanc = nivel.includes('Avançado') || nivel.includes('anos') || nivel.includes('2 anos');
-  const temJoelho = an.temJoelho;
-  const temLombar = an.temLombar;
-  const temOmbro = an.temOmbro;
-  const objetivos = (an.obj||[]).join(', ');
-  const foco = (an.foco||[]).join(', ');
-  const sexo = an.sexo||'Não informado';
-  const peso = an.peso||'?';
-  const altura = an.altura||'?';
-  
-  // Determine IMC-aware context
-  const imc = peso && altura ? (parseFloat(peso) / Math.pow(parseFloat(altura)/100, 2)).toFixed(1) : null;
-  
-  // Determine division based on days AND experience AND goals
-  let divisaoRecomendada = '';
-  if(diasNum <= 2) divisaoRecomendada = 'FULL BODY 2x — um treino para o corpo todo, 2 dias na semana. Foco em padrões de movimento: empurrar, puxar, agachar, dobrar.';
-  else if(diasNum === 3 && isInic) divisaoRecomendada = 'FULL BODY 3x — três sessões de corpo inteiro. Cada sessão com 1 exercício por padrão de movimento. Ideal para iniciantes.';
-  else if(diasNum === 3 && !isInic) divisaoRecomendada = 'PUSH/PULL/LEGS — Dia 1: Peito+Ombro+Tríceps (empurrar), Dia 2: Costas+Bíceps (puxar), Dia 3: Pernas+Glúteos. Frequência ótima para intermediários.';
-  else if(diasNum === 4) divisaoRecomendada = 'UPPER/LOWER 4x — Segunda: Upper A (peito+costas), Terça: Lower A (quad+gluteo), Quinta: Upper B (ombro+braços), Sexta: Lower B (posterior+core). Excelente para progressão de força.';
-  else if(diasNum === 5) divisaoRecomendada = 'PPL 5 dias (Push A/Pull A/Legs/Push B/Pull B) ou ABCDE dependendo do objetivo. Para intermediário/avançado com meta de hipertrofia.';
-  else divisaoRecomendada = 'ABCDE 6x — Alta frequência com especialização. Cada dia com grupo muscular específico + músculo secundário diferente. Apenas para alunos avançados e comprometidos.';
-
-  // Metodologia por objetivo
-  let metodologia = '';
-  if(objetivos.includes('Hipertrofia') || objetivos.includes('massa')) {
-    metodologia = `METODOLOGIA HIPERTROFIA (Rennan Dias):
-- Bloco 1 (Semanas 1-2): Adaptação Neural — reps 12-15, RPE 6-7, ênfase na técnica e conexão mente-músculo
-- Bloco 2 (Semanas 3-4): Acumulação — reps 10-12, RPE 7-8, volume cresce 10% por semana
-- Bloco 3 (Semanas 5-6): Intensificação — reps 8-10, RPE 8-9, aumento de carga
-- Bloco 4 (Semanas 7-8): Realização + Deload — semana 7: técnicas avançadas (drop-set, rest-pause), semana 8: deload -40%
-- Exercícios compostos SEMPRE antes dos isolados
-- Priorizar amplitude completa com excêntrico controlado (3 segundos descendo)
-- Variar exercícios ENTRE as semanas (ex: supino reto na sem 1-2, supino inclinado na sem 3-4)`;
-  } else if(objetivos.includes('Emagrecimento') || objetivos.includes('gordura')) {
-    metodologia = `METODOLOGIA EMAGRECIMENTO (Rennan Dias):
-- Circuitos metabólicos com descanso curto (30-45s entre exercícios)
-- Supersets antagonistas para maximizar gasto calórico
-- Reps altas (15-20) em exercícios de membros inferiores (maior massa muscular = mais gasto)
-- HIIT ao final de cada sessão (10-15 min): 30s máximo / 15s recuperação x 8 rodadas
-- Blocos de 4 semanas com semana 4 de deload
-- Exercícios compostos multiarticularmente prioritários
-- Progressão por densidade (mais trabalho no mesmo tempo) antes de aumentar carga`;
-  } else if(objetivos.includes('Força') || objetivos.includes('força')) {
-    metodologia = `METODOLOGIA FORÇA (Rennan Dias):
-- Baseada em 5/3/1 adaptada: semana 1: 3x8-10, semana 2: 3x6-8, semana 3: 3x4-6, semana 4: deload 3x10 leve
-- Exercícios primários (agachamento, supino, terra, desenvolvimento) com progressão de carga semanal
-- Exercícios acessórios com reps moderadas (10-12) para correção de fraquezas
-- Descanso completo (2-3 min) nos compostos pesados
-- Ênfase em ativação do sistema nervoso central antes das séries pesadas`;
-  } else {
-    metodologia = `METODOLOGIA SAÚDE E CONDICIONAMENTO (Rennan Dias):
-- Periodização ondulante: alterna dias de força (6-10 reps) e resistência (15-20 reps)
-- Exercícios funcionais que replicam movimentos do dia a dia
-- Foco em mobilidade e prevenção de lesões
-- Cardio moderado integrado ao fim das sessões (15-20 min, FC 65-75% max)
-- Progressão gradual e sustentável — prioridade na consistência`;
-  }
-
-  const exList2 = EXERCISE_BANK.map(e => `${e.id}:${e.name}(${e.muscle})`).join(', ');
-
-  const prompt = `Você é o Personal Trainer Rennan Dias — especialista em periodização científica, reabilitação funcional e prescrição individualizada de exercícios (NSCA-CPT, ACSM, NASM).
-
-Você tem um estilo PRÓPRIO e MARCANTE: usa variação inteligente de estímulos, combina ciência com prática real, e NUNCA cria treinos genéricos. Cada aluno recebe um programa que só poderia ser dele.
-
-═══════════════ FICHA COMPLETA DO ALUNO ═══════════════
-DADOS: Sexo: ${sexo} | Peso: ${peso}kg | Altura: ${altura}cm${imc ? ` | IMC: ${imc}` : ''} 
-Profissão: ${an.prof||'?'} | Atividade no trabalho: ${an.atvTrab||'?'}
-Biótipo: ${an.biotipo||'Não informado'} | Acúmulo de gordura: ${an.gordura||'Não informado'}
-
-ESTRUTURA DE TREINO:
-Experiência: ${nivel}
-Dias disponíveis: ${an.dias||'3x'} | Duração: ${an.dur||'60 min'} | Local: ${an.local||'Academia'} | Período: ${an.periodo||'Qualquer'}
-Modalidades: ${an.modal||'Musculação'}
-
-OBJETIVOS:
-Principal: ${objetivos || 'Saúde geral'}
-Focos musculares: ${foco || 'Corpo todo'}
-Meta de corrida: ${(an.mc||[]).join(', ')||'Não pratica'}
-Prazo: ${an.prazo||'Sem prazo definido'}
-Motivação pessoal: "${an.motiv||'Não informado'}"
-
-SAÚDE E LESÕES:
-Condições de saúde: ${(an.saude||[]).join(', ')||'Nenhuma'}
-Lesões/Dores: ${(an.lesoes||[]).join(', ')||'Nenhuma'}
-Intensidade da dor (0-10): ${an.dorInt||'0'}
-Histórico de atividade: ${an.ativo||'Sedentário'}
-
-⚠️ FLAGS DE SEGURANÇA — PRIORIDADE MÁXIMA:
-JOELHO: ${temJoelho ? '🚫 SIM — PROIBIDO: agachamento profundo, cadeira extensora, leg press amplitude total, avanço profundo, corrida de impacto. OBRIGATÓRIO: hip thrust, cadeira adutora, step controlado, isométricos de quad, fortalecimento de glúteo médio, leg press 0-60° apenas.' : '✅ Livre'}
-LOMBAR: ${temLombar ? '🚫 SIM — PROIBIDO: peso axial pesado, remada curvada com carga, stiff pesado, sit-up, hiperextensão excessiva. OBRIGATÓRIO: prancha, dead bug, bird-dog, remada na máquina, hip thrust, exercícios em decúbito.' : '✅ Livre'}
-OMBRO: ${temOmbro ? '🚫 SIM — PROIBIDO: desenvolvimento acima da cabeça, elevação frontal >90°, remada alta, supino pegada larga, mergulho profundo. OBRIGATÓRIO: rotadores externos, face pull, puxada neutra, remada baixa, isométricos.' : '✅ Livre'}
-
-ESTILO DE VIDA:
-Sono: ${an.sono||'?'}h | Estresse: ${an.stress||'?'} | Alimentação: ${an.alim||'?'} | Hidratação: ${an.agua||'?'}
-Suplementação: ${(an.supl||[]).join(', ')||'Nenhuma'}
-Hábitos a evitar: ${(an.habitos||[]).join(', ')||'Nenhum'}
-
-═══════════════ METODOLOGIA APLICADA ═══════════════
-DIVISÃO PRESCRITA: ${divisaoRecomendada}
-
-${metodologia}
-
-REGRAS DE VARIAÇÃO (OBRIGATÓRIO — garante individualização):
-1. NUNCA use o mesmo exercício para o mesmo músculo em semanas consecutivas sem variar ângulo ou equipamento
-2. Semana 1-2: exercícios mais estáveis/seguros (máquina ou haltere) para aprender o padrão
-3. Semana 3-4: adicionar exercícios livres (barra) quando o padrão estiver consolidado
-4. Semana 5-6: variações de pega, ângulo ou amplitude para novo estímulo
-5. Semana 7: semana de choque com técnicas avançadas (só se nível intermediário/avançado)
-6. Semana 8: DELOAD obrigatório — mesmos exercícios, -40% volume, -30% carga
-7. OBS de cada exercício deve ser ESPECÍFICA e TÉCNICA — não genérica ("controle o excêntrico em 3s", "cotovelos a 45°", "escápulas retraídas")
-8. Para iniciantes: reps 12-15, 2-3 séries, descanso 75-90s, cargas leves-moderadas
-9. Para intermediários: reps 8-12, 3-4 séries, descanso 60-90s, cargas moderadas-altas
-10. Para avançados: reps 6-10 nos compostos / 10-15 nos isolados, 4-5 séries, descanso variável
-
-BANCO DE EXERCÍCIOS (use SOMENTE estes IDs — nunca invente IDs):
-${exList2}
-
-═══════════════ FORMATO DE SAÍDA ═══════════════
-Retorne APENAS JSON válido sem markdown, sem explicações, sem comentários.
-A divisão dos treinos deve refletir EXATAMENTE a divisão prescrita acima (não use sempre ABC — adapte ao número de dias).
-Cada "obs" deve ter dica técnica ESPECÍFICA e DIFERENTE para cada exercício.
-Varie os exercícios entre as semanas sempre que possível mantendo o padrão de movimento.
-
-{"gym":{"Semana 1":{"fase":"Nome da fase — descrição motivacional breve","days":{"[Nome do Treino — ex: Full Body A ou Push — Peito/Ombro/Tríceps]":[{"id":"e001","sets":3,"reps":"12","load":"Leve-Moderada","rest":90,"obs":"dica técnica específica e útil"}]}},"Semana 2":{...},"Semana 3":{...},"Semana 4":{"fase":"⚡ DELOAD — Recuperação Ativa",...},"Semana 5":{...},"Semana 6":{...},"Semana 7":{...},"Semana 8":{"fase":"⚡ DELOAD — Preparação para Novo Ciclo",...}},"run":{"Semana 1":{"meta":"objetivo da semana","sessions":[{"day":"Ter","type":"tipo de treino","dist":"X km","pace":"X:XX min/km","dur":"~XX min","tip":"dica específica para este aluno baseada no perfil dele"}]}}}`;
-  
-const res=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-6',max_tokens:8000,messages:[{role:'user',content:prompt}]})});
-  if(!res.ok){
-    console.error('API error:', res.status);
-    throw new Error('Falha na geração do treino (HTTP '+res.status+')');
-  }
-  const data=await res.json();
-  let rawText = data.content.map(i=>i.text||'').join('').trim();
-  // Limpar markdown e extrair JSON
-  rawText = rawText.replace(/```json/gi,'').replace(/```/g,'').trim();
-  // Tentar extrair apenas o objeto JSON (do primeiro { ao último })
-  const firstBrace = rawText.indexOf('{');
-  const lastBrace = rawText.lastIndexOf('}');
-  if(firstBrace >= 0 && lastBrace > firstBrace){
-    rawText = rawText.substring(firstBrace, lastBrace+1);
-  }
-  let plan;
-  try {
-    plan = JSON.parse(rawText);
-  } catch(parseErr) {
-    console.error('JSON parse failed:', parseErr, 'Raw:', rawText.substring(0,500));
-    throw new Error('A resposta da IA veio incompleta. Tente novamente.');
-  }
-  // Validar estrutura mínima
-  if(!plan || !plan.gym){
-    throw new Error('Plano gerado está incompleto. Tente novamente.');
-  }
+  // Geração 100% local e instantânea — sem custo e sem depender de internet
+  const plan=motorTreino(an);
+  if(!plan||!plan.gym||!Object.keys(plan.gym).length)throw new Error('Falha ao montar o plano.');
   const users=DB.get('fq_users')||{};
   if(users[email]){
     users[email].aiPlan=plan;
-    users[email].trainApproved=true; // approve after AI finishes
+    users[email].trainApproved=true;
     DB.set('fq_users',users);
     await syncU(users[email]);
   }
 }
+
 function goToApp(){const email=DB.get('fq_cur');loadApp(email);show('sc-app');}
 
 function startUnlockCountdown(email, delayMs){
@@ -2893,13 +2944,97 @@ function checkUnlockOnLoad(email){
   return true;
 }
 
-// ══ PAYMENT ══
+// ══ PAYMENT — Mercado Pago com liberação automática ══
 let selPlanName=null;let selPlanPrice=0;
+let payPollTimer=null;
 
 async function checkPay(){
-  const email=DB.get('fq_cur');const fresh=await loadUDB(email);const users=DB.get('fq_users')||{};
-  if(fresh&&fresh.trainApproved){users[email]={...users[email],...fresh};DB.set('fq_users',users);loadApp(email);show('sc-app');}
-  else{alert('⏳ Pagamento ainda não confirmado.\nAssim que Rennan confirmar, você terá acesso!');}
+  const u=getU();if(!u)return;
+  const fresh=await loadUDB(u.id);const users=DB.get('fq_users')||{};
+  if(fresh&&fresh.trainApproved){users[u.email]={...users[u.email],...fresh};DB.set('fq_users',users);loadApp(u.email);show('sc-app');}
+  else{fqToast('⏳ Pagamento ainda não confirmado. Assim que aprovar, seu acesso libera sozinho!','warn');}
+}
+
+// Cria o checkout no servidor (Edge Function) — preço vem do banco, nunca do navegador
+async function fqCheckout(productId, fallbackLink){
+  const u=getU();
+  if(!u){show('sc-auth');switchAuth('login');return;}
+  fqToast('Abrindo o pagamento seguro...','info',2500);
+  try{
+    if(!sb)throw new Error('offline');
+    const{data:{session}}=await sb.auth.getSession();
+    if(!session)throw new Error('sem-sessao');
+    const res=await fetch(FN_URL+'/create-checkout',{
+      method:'POST',
+      headers:{'Content-Type':'application/json','Authorization':'Bearer '+session.access_token},
+      body:JSON.stringify({produto:productId})
+    });
+    if(!res.ok)throw new Error('fn-'+res.status);
+    const{init_point}=await res.json();
+    if(!init_point)throw new Error('sem-link');
+    window.open(init_point,'_blank');
+    aguardarPagamento(productId,true);
+  }catch(e){
+    console.warn('Checkout automático indisponível ('+e.message+'), usando link direto.');
+    if(fallbackLink){
+      window.open(fallbackLink,'_blank');
+      aguardarPagamento(productId,false);
+    }else{
+      fqAlert('Ops!','Não foi possível abrir o pagamento agora. Tente novamente em instantes.','😕');
+    }
+  }
+}
+
+// Modal de espera + verificação automática da compra no banco
+function aguardarPagamento(productId, automatico){
+  const old=document.getElementById('fq-dialog');if(old)old.remove();
+  const ov=document.createElement('div');
+  ov.id='fq-dialog';ov.className='fq-dlg-ov';
+  ov.innerHTML=`<div class="fq-dlg"><div class="fq-paywait">
+    <div class="spinner"></div>
+    <div class="fq-dlg-title">Aguardando pagamento</div>
+    <div class="fq-dlg-msg">${automatico
+      ?'Finalize o pagamento na aba do Mercado Pago.<br>Assim que for aprovado, seu acesso libera <b>automaticamente</b> aqui — pode levar alguns segundos.'
+      :'Finalize o pagamento na aba do Mercado Pago.<br>Seu acesso será liberado assim que o pagamento for confirmado.'}</div>
+    <button class="fq-dlg-btn sec" style="width:100%" onclick="cancelarEsperaPagamento()">Fechar — verifico depois</button>
+  </div></div>`;
+  document.body.appendChild(ov);
+  requestAnimationFrame(()=>ov.classList.add('in'));
+  let tentativas=0;
+  clearInterval(payPollTimer);
+  payPollTimer=setInterval(async()=>{
+    tentativas++;
+    if(tentativas>120){clearInterval(payPollTimer);return;} // ~10 min
+    const ok=await verificarCompra(productId);
+    if(ok){
+      clearInterval(payPollTimer);
+      const d=document.getElementById('fq-dialog');if(d)d.remove();
+      fqToast('🎉 Pagamento aprovado! Acesso liberado!','ok',6000);
+      const u=getU();if(u){renderStore(u);renderHomePrograms(u);}
+    }
+  },5000);
+}
+function cancelarEsperaPagamento(){
+  clearInterval(payPollTimer);
+  const d=document.getElementById('fq-dialog');if(d)d.remove();
+  fqToast('Sem problema! Quando o pagamento aprovar, o acesso aparece na Loja.','info',5000);
+}
+// Confere no banco se a compra foi registrada pelo webhook
+async function verificarCompra(productId){
+  const u=getU();if(!u||!sb)return false;
+  try{
+    const fresh=await loadUDB(u.id);
+    if(!fresh)return false;
+    const tem=(fresh.purchases||[]).includes(productId)||(productId==='pacote_ebooks'&&fresh.pacoteEbooks);
+    if(tem){
+      const users=DB.get('fq_users')||{};
+      users[u.email]={...users[u.email],purchases:fresh.purchases,pacoteEbooks:fresh.pacoteEbooks};
+      DB.set('fq_users',users);
+      if(productId==='pacote_ebooks'||fresh.pacoteEbooks)users[u.email].purchases=[...new Set([...(fresh.purchases||[]),'hypertrophy','elderly','pregnancy','disabled','fatburn','running10k','posture','stress','technique','nutrition'])];
+      DB.set('fq_users',users);
+    }
+    return tem;
+  }catch(e){return false;}
 }
 
 // ══ TIMER ══
@@ -2911,7 +3046,17 @@ function addTime(s){timerSec+=s;document.getElementById('timer-display').textCon
 
 // ══ BADGES ══
 const BADGES=[{id:'b1',icon:'🔥',name:'Streak 7 dias',c:u=>u.streak>=7},{id:'b2',icon:'🏃',name:'Primeira corrida',c:u=>u.stats.distancia>0},{id:'b3',icon:'⚡',name:'10 treinos',c:u=>u.stats.treinos>=10},{id:'b4',icon:'💎',name:'Semana 4 completa',c:u=>(u.gymWeek||1)>4},{id:'b5',icon:'🏋️',name:'50 treinos',c:u=>u.stats.treinos>=50},{id:'b6',icon:'🌟',name:'Streak 30 dias',c:u=>u.streak>=30},{id:'b7',icon:'🚀',name:'10km total',c:u=>u.stats.distancia>=10},{id:'b8',icon:'👑',name:'Programa completo',c:u=>(u.gymWeek||1)>=12}];
-const RMOCK=[{name:'Marina Costa',xp:5800,level:9},{name:'Rafael Mendes',xp:5100,level:8},{name:'Ana Rodrigues',xp:3200,level:7},{name:'Carlos Lima',xp:2900,level:6}];
+// Ranking real — carregado do banco (só nomes próprios de alunos reais, nunca inventados)
+let RANKING_CACHE=[];
+async function carregarRanking(){
+  if(!sb)return[];
+  try{
+    const{data,error}=await sb.rpc('get_ranking');
+    if(error||!data)return[];
+    RANKING_CACHE=data.map(r=>({name:r.nome,xp:r.xp||0,level:r.nivel||1}));
+    return RANKING_CACHE;
+  }catch(e){return[];}
+}
 
 // ══ LOAD APP ══
 function loadApp(email){
@@ -2954,6 +3099,7 @@ function loadApp(email){
   // Render
   renderMissions(u.missions||[]);
   renderRankingCarousel(u,email,users);
+  carregarRanking().then(()=>{try{renderRankingCarousel(u,email,users);renderRankingFull(u,email,users);}catch(e){}});
   renderHistory(u);
   renderGym(u);
   renderRun(u);
@@ -3036,11 +3182,16 @@ function getExImg(muscle){
   return 'https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=400&q=80';
 }
 
-// ══ RANKING CAROUSEL ══
+// ══ RANKING (dados reais do banco) ══
+function montarListaRanking(u,email){
+  const me={name:(u.name||'Você').split(' ')[0],xp:u.xp||0,level:u.level||1,isMe:true};
+  const outros=RANKING_CACHE.filter(r=>r.name&&!(r.name===me.name&&r.xp===me.xp));
+  const combined=[me,...outros].sort((a,b)=>b.xp-a.xp);
+  const seen=new Set();
+  return combined.filter(r=>{const k=r.name+'|'+r.xp;if(seen.has(k))return false;seen.add(k);return true;});
+}
 function renderRankingCarousel(u,email,users){
-  const allR=Object.values(users).filter(x=>x.anamneseDone).map(x=>({name:x.name,xp:x.xp||0,level:x.level||1,isMe:x.email===email}));
-  const combined=[...RMOCK,...allR].sort((a,b)=>b.xp-a.xp);
-  const seen=new Set();const uniq=combined.filter(r=>{if(seen.has(r.name))return false;seen.add(r.name);return true;}).slice(0,10);
+  const uniq=montarListaRanking(u,email).slice(0,10);
   document.getElementById('ranking-carousel').innerHTML=uniq.map((r,i)=>`<div class="rk-card">
     <div class="rk-card-num">${i+1}</div>
     <div class="rk-card-info">
@@ -3053,9 +3204,7 @@ function renderRankingCarousel(u,email,users){
 
 // ══ RANKING FULL ══
 function renderRankingFull(u,email,users){
-  const allR=Object.values(users).filter(x=>x.anamneseDone).map(x=>({name:x.name,xp:x.xp||0,level:x.level||1,isMe:x.email===email}));
-  const combined=[...RMOCK,...allR].sort((a,b)=>b.xp-a.xp);
-  const seen=new Set();const uniq=combined.filter(r=>{if(seen.has(r.name))return false;seen.add(r.name);return true;});
+  const uniq=montarListaRanking(u,email);
   const medals=['🥇','🥈','🥉'];const myPos=uniq.findIndex(r=>r.isMe)+1;
   document.getElementById('my-rank').textContent=myPos||'–';
   document.getElementById('ranking-full').innerHTML=uniq.map((r,i)=>{const p=i+1;return `<div style="background:${r.isMe?'rgba(229,9,20,.08)':'var(--s)'};border:1px solid ${r.isMe?'rgba(229,9,20,.25)':'var(--b)'};border-radius:8px;padding:12px 14px;display:flex;align-items:center;gap:12px;margin:0 20px 8px">
@@ -3148,7 +3297,7 @@ function completeWk(w,d){
   u.workoutHistory.push({week:w,day:d,date:new Date().toLocaleDateString('pt-BR'),exercises:exs.map(e=>{const ex=getExById(e.id);return{name:ex?.name||e.id,load:u.loadHistory?.[`${w}_${d}_${e.id}`]||''};})});
   const allDays=Object.keys(P[w].days);const tw=Object.keys(P).length;
   if(allDays.every(dd=>u.gymDone[`${w}_${dd}`])){const wn=parseInt(w.split(' ')[1]);if(wn===(u.gymWeek||1)&&(u.gymWeek||1)<tw){u.gymWeek=(u.gymWeek||1)+1;u.xp+=200;u.coins+=50;u.stats.semanas++;}}
-  if((u.xp||0)>=(u.level||1)*1000){u.level=(u.level||1)+1;u.xp=0;setTimeout(()=>alert('🎉 Subiu para o Nível '+(u.level||1)+'!'),200);}
+  if((u.xp||0)>=(u.level||1)*1000){u.level=(u.level||1)+1;u.xp=0;setTimeout(()=>fqToast('🎉 Subiu para o Nível '+(u.level||1)+'!','ok',5000),200);}
   DB.set('fq_users',users);loadApp(email);switchTab('gym',document.querySelectorAll('.nbtn')[1]);
 }
 
@@ -3225,17 +3374,33 @@ function switchTab(name,btn){
   }
 }
 
-// ══ ADMIN ══
-function adminLogout(){DB.del('fq_cur');show('sc-splash');}
+// ══ ADMIN (dados vêm do Supabase — todos os alunos, de qualquer aparelho) ══
+window.ADM_CACHE=[];
+window.ADM_COMPRAS=[];
+async function adminLogout(){try{if(sb)await sb.auth.signOut();}catch(e){}DB.del('fq_cur');show('sc-splash');}
 function switchAdm(name,btn){document.querySelectorAll('.adm-panel').forEach(p=>p.classList.remove('active'));document.querySelectorAll('.adm-nav .nbtn').forEach(b=>b.classList.remove('active'));document.getElementById('adm-'+name).classList.add('active');if(btn)btn.classList.add('active');if(name==='exercises')renderBank();}
-function loadAdmin(){
-  const users=DB.get('fq_users')||{};
-  const all=Object.values(users).filter(u=>u.email!=='rennan@rennandias.com.br');
+async function loadAdmin(){
+  let all=[];
+  if(sb){
+    try{
+      const{data,error}=await sb.from('alunos').select('*').order('criado_em',{ascending:false});
+      if(!error&&data)all=data.map(rowToUser).filter(u=>!u.isAdmin);
+      const{data:compras}=await sb.from('compras').select('*').order('criado_em',{ascending:false});
+      window.ADM_COMPRAS=compras||[];
+    }catch(e){console.warn('Admin load:',e);}
+  }
+  if(!all.length){
+    const users=DB.get('fq_users')||{};
+    all=Object.values(users).filter(u=>u.email!==ADMIN_EMAIL);
+  }
+  window.ADM_CACHE=all;
   const active=all.filter(u=>u.trainApproved);
   const pending=all.filter(u=>!u.trainApproved);
   const withEbooks=all.filter(u=>(u.purchases||[]).length>0||u.pacoteEbooks);
   const totalWorkouts=all.reduce((s,u)=>s+(u.stats?.treinos||0),0);
-  const ebookRevenue=all.reduce((s,u)=>{
+  // Receita real: soma das compras confirmadas no banco; se não houver, estimativa
+  const receitaReal=(window.ADM_COMPRAS||[]).reduce((s,c)=>s+(parseFloat(c.valor)||0),0);
+  const ebookRevenue=receitaReal>0?receitaReal:all.reduce((s,u)=>{
     const ind=(u.purchases||[]).length*14.99;
     const pack=u.pacoteEbooks?50:0;
     return s+Math.max(ind,pack);
@@ -3251,8 +3416,9 @@ function loadAdmin(){
 
   // ── Revenue ──
   const revEl=document.getElementById('adm-revenue');
+  const receitaLabel=(window.ADM_COMPRAS||[]).length?'💰 Receita Confirmada (Mercado Pago)':'💰 Receita Estimada Total';
   if(revEl) revEl.innerHTML=`
-    <div class="revenue-label">💰 Receita Estimada Total</div>
+    <div class="revenue-label">${receitaLabel}</div>
     <div class="revenue-val">R$ ${ebookRevenue.toFixed(2).replace('.',',')}</div>
     <div class="revenue-sub">${withEbooks.length} alunos com e-books · Média R$ ${withEbooks.length?((ebookRevenue/withEbooks.length).toFixed(2).replace('.',',')):0} por aluno</div>
     <div style="margin-top:10px;display:flex;gap:6px;flex-wrap:wrap">
@@ -3274,8 +3440,16 @@ function loadAdmin(){
   admRenderLeads();
 }
 
-function admRenderLeads(){
-  const leads = DB.get('fq_consult_leads') || [];
+async function admRenderLeads(){
+  let leads = [];
+  if(sb){
+    try{
+      const{data}=await sb.from('consultoria_leads').select('*').order('criado_em',{ascending:false});
+      if(data)leads=data.map(l=>({id:l.id,nome:l.nome,fone:l.telefone,obj:l.objetivo,modalidade:l.modalidade,plano:l.plano,data:l.criado_em}));
+    }catch(e){}
+  }
+  if(!leads.length)leads = DB.get('fq_consult_leads') || [];
+  window.ADM_LEADS=leads;
   const countEl = document.getElementById('adm-leads-count');
   const listEl = document.getElementById('adm-leads-list');
   if(countEl) countEl.textContent = `(${leads.length})`;
@@ -3284,7 +3458,7 @@ function admRenderLeads(){
     listEl.innerHTML = '<div style="background:#0f0f0f;border:1px solid var(--b);border-radius:12px;padding:20px;text-align:center;color:var(--mu);font-size:12px">Nenhum lead de consultoria ainda</div>';
     return;
   }
-  listEl.innerHTML = [...leads].reverse().map((l,i)=>{
+  listEl.innerHTML = leads.map((l,i)=>{
     const modalIcon = l.modalidade==='musculacao'?'🏋️':'🏃';
     const dataF = l.data?new Date(l.data).toLocaleDateString('pt-BR'):'';
     const msg = `Ol%C3%A1%20${encodeURIComponent(l.nome)}!%20Sou%20o%20Rennan,%20recebi%20seu%20interesse%20na%20consultoria%20de%20${l.modalidade==='musculacao'?'Muscula%C3%A7%C3%A3o':'Corrida'}.`;
@@ -3301,16 +3475,19 @@ function admRenderLeads(){
       ${l.obj?`<div style="font-size:11px;color:var(--t2);background:rgba(255,255,255,.03);border-radius:8px;padding:8px;margin-bottom:8px">🎯 ${l.obj}</div>`:''}
       <div style="display:flex;gap:6px">
         <a href="https://wa.me/${waFone}?text=${msg}" target="_blank" style="flex:1;text-align:center;background:rgba(37,211,102,.12);border:1px solid rgba(37,211,102,.3);border-radius:8px;padding:8px;color:#25D366;font-size:11px;font-weight:800;text-decoration:none">💬 Responder</a>
-        <button onclick="admDelLead(${leads.length-1-i})" style="background:rgba(255,255,255,.05);border:1px solid var(--b);border-radius:8px;padding:8px 12px;color:var(--mu);font-size:11px;font-weight:700;cursor:pointer">🗑️</button>
+        <button onclick="admDelLead(${i})" style="background:rgba(255,255,255,.05);border:1px solid var(--b);border-radius:8px;padding:8px 12px;color:var(--mu);font-size:11px;font-weight:700;cursor:pointer">🗑️</button>
       </div>
     </div>`;
   }).join('');
 }
 
-function admDelLead(idx){
-  const leads = DB.get('fq_consult_leads') || [];
-  leads.splice(idx,1);
-  DB.set('fq_consult_leads', leads);
+async function admDelLead(idx){
+  const leads = window.ADM_LEADS||[];
+  const lead = leads[idx];
+  if(!lead)return;
+  if(!await fqConfirm('Excluir lead','Remover este lead da lista?','Excluir','🗑️'))return;
+  if(lead.id&&sb){try{await sb.from('consultoria_leads').delete().eq('id',lead.id);}catch(e){}}
+  else{const local=DB.get('fq_consult_leads')||[];local.splice(idx,1);DB.set('fq_consult_leads',local);}
   admRenderLeads();
 }
 
@@ -3375,8 +3552,7 @@ function admRenderStudents(list, filter){
 function admFilter(f,btn){
   document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
   btn.classList.add('active');
-  const users=DB.get('fq_users')||{};
-  let all=Object.values(users).filter(u=>u.email!=='rennan@rennandias.com.br');
+  let all=[...(window.ADM_CACHE||[])];
   if(f==='active') all=all.filter(u=>u.trainApproved);
   else if(f==='pending') all=all.filter(u=>!u.trainApproved);
   else if(f==='ebooks') all=all.filter(u=>(u.purchases||[]).length>0||u.pacoteEbooks);
@@ -3385,28 +3561,23 @@ function admFilter(f,btn){
 }
 
 function admSearch(q){
-  const users=DB.get('fq_users')||{};
-  const all=Object.values(users).filter(u=>u.email!=='rennan@rennandias.com.br');
+  const all=window.ADM_CACHE||[];
   const filtered=q?all.filter(u=>(u.name||'').toLowerCase().includes(q.toLowerCase())||(u.email||'').toLowerCase().includes(q.toLowerCase())):all;
   admRenderStudents(filtered,'search');
 }
 
-function admGiveAllEbooks(email){
-  if(!confirm(`Liberar todos os e-books para ${email}?`)) return;
-  const users=DB.get('fq_users')||{};
-  if(!users[email]) return;
+async function admGiveAllEbooks(email){
+  if(!await fqConfirm('Liberar e-books',`Liberar todos os 10 e-books para ${email}?`,'Liberar','📚')) return;
   const all=['hypertrophy','elderly','pregnancy','disabled','fatburn','running10k','posture','stress','technique','nutrition'];
-  users[email].purchases=[...new Set([...(users[email].purchases||[]),...all])];
-  users[email].pacoteEbooks=true;
-  DB.set('fq_users',users);
-  if(sb) syncU(users[email]).catch(()=>{});
-  loadAdmin();
-  alert('✅ E-books liberados!');
+  if(sb){try{await sb.from('alunos').update({purchases:all,pacote_ebooks:true}).eq('email',email);}catch(e){}}
+  const users=DB.get('fq_users')||{};
+  if(users[email]){users[email].purchases=all;users[email].pacoteEbooks=true;DB.set('fq_users',users);}
+  await loadAdmin();
+  fqToast('✅ E-books liberados para '+email,'ok');
 }
 
 function admExportCSV(){
-  const users=DB.get('fq_users')||{};
-  const all=Object.values(users).filter(u=>u.email!=='rennan@rennandias.com.br');
+  const all=window.ADM_CACHE||[];
   const rows=[['Nome','Email','Status','Nivel','XP','Streak','Treinos','km','Semana','E-Books','Cadastro']];
   all.forEach(u=>{
     rows.push([u.name||'',u.email,u.trainApproved?'Ativo':'Pendente',u.level||1,u.xp||0,u.streak||0,u.stats?.treinos||0,u.stats?.distancia||0,u.gymWeek||1,(u.purchases||[]).length+(u.pacoteEbooks?10:0),u.createdAt?new Date(u.createdAt).toLocaleDateString('pt-BR'):'']);
@@ -3418,20 +3589,19 @@ function admExportCSV(){
   a.click();
 }
 
-function admSendAll(){
-  if(!confirm('Liberar treino para TODOS os alunos pendentes?')) return;
+async function admSendAll(){
+  if(!await fqConfirm('Liberar todos','Liberar treino para TODOS os alunos pendentes?','Liberar todos','🚀')) return;
+  if(sb){try{await sb.from('alunos').update({treino_liberado:true}).eq('treino_liberado',false);}catch(e){}}
   const users=DB.get('fq_users')||{};
-  Object.keys(users).forEach(e=>{if(users[e].email!=='rennan@rennandias.com.br') users[e].trainApproved=true;});
+  Object.keys(users).forEach(e=>{if(users[e].email!==ADMIN_EMAIL) users[e].trainApproved=true;});
   DB.set('fq_users',users);
-  loadAdmin();
-  alert('✅ Todos os alunos foram liberados!');
+  await loadAdmin();
+  fqToast('✅ Todos os alunos foram liberados!','ok');
 }
 
-
-
-async function admApprove(e){const users=DB.get('fq_users')||{};if(!users[e])return;users[e].trainApproved=true;DB.set('fq_users',users);if(sb)await sb.from('alunos').update({treino_liberado:true}).eq('email',e);loadAdmin();}
-async function admRevoke(e){if(!confirm('Revogar?'))return;const users=DB.get('fq_users')||{};if(!users[e])return;users[e].trainApproved=false;DB.set('fq_users',users);if(sb)await sb.from('alunos').update({treino_liberado:false}).eq('email',e);loadAdmin();}
-function admDel(e){if(!confirm('Excluir aluno?'))return;const users=DB.get('fq_users')||{};delete users[e];DB.set('fq_users',users);loadAdmin();}
+async function admApprove(e){if(sb)await sb.from('alunos').update({treino_liberado:true}).eq('email',e);const users=DB.get('fq_users')||{};if(users[e]){users[e].trainApproved=true;DB.set('fq_users',users);}await loadAdmin();fqToast('✅ Aluno liberado!','ok');}
+async function admRevoke(e){if(!await fqConfirm('Revogar acesso',`Revogar o acesso de ${e}?`,'Revogar','🚫'))return;if(sb)await sb.from('alunos').update({treino_liberado:false}).eq('email',e);const users=DB.get('fq_users')||{};if(users[e]){users[e].trainApproved=false;DB.set('fq_users',users);}await loadAdmin();}
+async function admDel(e){if(!await fqConfirm('Excluir aluno',`Excluir ${e} definitivamente? Os dados de treino serão perdidos.`,'Excluir','🗑️'))return;if(sb){try{await sb.from('alunos').delete().eq('email',e);}catch(err){}}const users=DB.get('fq_users')||{};delete users[e];DB.set('fq_users',users);await loadAdmin();}
 
 // BANK
 let bankF='';let muscF='';
@@ -3450,12 +3620,12 @@ function openAddEx(id=null){
 }
 function saveEx(id){
   const name=document.getElementById('ex-name').value.trim();const muscle=document.getElementById('ex-muscle').value.trim();
-  if(!name||!muscle){alert('Nome e músculo obrigatórios.');return;}
+  if(!name||!muscle){fqToast('Nome e músculo obrigatórios.','warn');return;}
   const obj={id,name,muscle,equipment:document.getElementById('ex-equip').value.trim(),emoji:document.getElementById('ex-emoji').value.trim()||'🏋️',obs:document.getElementById('ex-obs').value.trim()};
   const idx=EXERCISE_BANK.findIndex(e=>e.id===id);if(idx>=0)EXERCISE_BANK[idx]=obj;else EXERCISE_BANK.push(obj);
-  closeModal('modal-add-ex');renderBank();alert('✅ Salvo!');
+  closeModal('modal-add-ex');renderBank();fqToast('✅ Exercício salvo!','ok');
 }
-function delEx(id){if(!confirm('Excluir?'))return;const i=EXERCISE_BANK.findIndex(e=>e.id===id);if(i>=0)EXERCISE_BANK.splice(i,1);renderBank();}
+async function delEx(id){if(!await fqConfirm('Excluir exercício','Remover este exercício do banco?','Excluir','🗑️'))return;const i=EXERCISE_BANK.findIndex(e=>e.id===id);if(i>=0)EXERCISE_BANK.splice(i,1);renderBank();}
 
 // EDIT STUDENT
 let editEmail=null;let editGW='Semana 1';let editRW='Semana 1';
@@ -3501,8 +3671,8 @@ function renderERW(w,u){
   h+=`<button class="btn-addex" onclick="addSRun('${w}')" style="border-color:rgba(229,9,20,.2);color:var(--r)">+ Sessão</button><button class="btn-savewk" onclick="saveERW('${w}')" style="margin-top:8px">💾 Salvar corrida</button>`;
   document.getElementById('erw-content').innerHTML=h;
 }
-function saveEGW(w){const users=DB.get('fq_users')||{};const u=users[editEmail];if(!u)return;ensureAP(u);const ef=document.getElementById('ef');if(ef)u.aiPlan.gym[w].fase=ef.value;document.querySelectorAll('#egw-content .mi[data-field],#egw-content select[data-field]').forEach(inp=>{const day=inp.dataset.day;const idx=parseInt(inp.dataset.idx);const field=inp.dataset.field;if(day&&!isNaN(idx)&&field&&u.aiPlan.gym[w].days[day]?.[idx]!==undefined)u.aiPlan.gym[w].days[day][idx][field]=['sets','rest'].includes(field)?parseInt(inp.value)||1:inp.value;});u.trainApproved=true;DB.set('fq_users',users);alert('✅ Salvo!');}
-function saveERW(w){const users=DB.get('fq_users')||{};const u=users[editEmail];if(!u)return;ensureAP(u);const ef=document.getElementById('erf');if(ef)u.aiPlan.run[w].meta=ef.value;document.querySelectorAll('#erw-content .mi[data-field]').forEach(inp=>{const si=parseInt(inp.dataset.si);const field=inp.dataset.field;if(!isNaN(si)&&field&&u.aiPlan.run[w].sessions[si])u.aiPlan.run[w].sessions[si][field]=inp.value;});u.trainApproved=true;DB.set('fq_users',users);alert('✅ Salvo!');}
+function saveEGW(w){const users=DB.get('fq_users')||{};const u=users[editEmail];if(!u)return;ensureAP(u);const ef=document.getElementById('ef');if(ef)u.aiPlan.gym[w].fase=ef.value;document.querySelectorAll('#egw-content .mi[data-field],#egw-content select[data-field]').forEach(inp=>{const day=inp.dataset.day;const idx=parseInt(inp.dataset.idx);const field=inp.dataset.field;if(day&&!isNaN(idx)&&field&&u.aiPlan.gym[w].days[day]?.[idx]!==undefined)u.aiPlan.gym[w].days[day][idx][field]=['sets','rest'].includes(field)?parseInt(inp.value)||1:inp.value;});u.trainApproved=true;DB.set('fq_users',users);syncU(u).catch(()=>{});fqToast('✅ Treino salvo!','ok');}
+function saveERW(w){const users=DB.get('fq_users')||{};const u=users[editEmail];if(!u)return;ensureAP(u);const ef=document.getElementById('erf');if(ef)u.aiPlan.run[w].meta=ef.value;document.querySelectorAll('#erw-content .mi[data-field]').forEach(inp=>{const si=parseInt(inp.dataset.si);const field=inp.dataset.field;if(!isNaN(si)&&field&&u.aiPlan.run[w].sessions[si])u.aiPlan.run[w].sessions[si][field]=inp.value;});u.trainApproved=true;DB.set('fq_users',users);syncU(u).catch(()=>{});fqToast('✅ Treino salvo!','ok');}
 function addSEx(w,d){const users=DB.get('fq_users')||{};const u=users[editEmail];if(!u)return;ensureAP(u);u.aiPlan.gym[w].days[d].push({id:EXERCISE_BANK[0]?.id||'e001',sets:3,reps:'12',load:'Moderada',rest:60});DB.set('fq_users',users);renderEGW(w,u);}
 function remSEx(w,d,i){const users=DB.get('fq_users')||{};const u=users[editEmail];if(!u)return;u.aiPlan.gym[w].days[d].splice(i,1);DB.set('fq_users',users);renderEGW(w,u);}
 function addSRun(w){const users=DB.get('fq_users')||{};const u=users[editEmail];if(!u)return;ensureAP(u);u.aiPlan.run[w].sessions.push({day:'Seg',type:'Corrida Leve',dist:'5 km',pace:'7:00 min/km',dur:'~35 min',tip:'Ritmo confortável.'});DB.set('fq_users',users);renderERW(w,u);}
@@ -3580,7 +3750,7 @@ function selColor(el){
 function handlePhotoUpload(e){
   const file = e.target.files[0];
   if(!file) return;
-  if(file.size > 5*1024*1024){ alert('Foto muito grande! Máximo 5MB.'); return; }
+  if(file.size > 5*1024*1024){ fqToast('Foto muito grande! Máximo 5MB.','warn'); return; }
   const reader = new FileReader();
   reader.onload = ev=>{
     avState.photoData = ev.target.result;
@@ -3797,7 +3967,7 @@ function saveEval(){
   const date  = document.getElementById('eval-date')?.value;
   const peso  = parseFloat(document.getElementById('eval-peso')?.value||0);
   const obs   = document.getElementById('eval-obs')?.value||'';
-  if(!date||!peso){ alert('Preencha a data e o peso!'); return; }
+  if(!date||!peso){ fqToast('Preencha a data e o peso!','warn'); return; }
 
   const idade = u.anamnese?.nasc ? Math.floor((Date.now()-new Date(u.anamnese.nasc))/(365.25*24*3600*1000)) : 30;
   const sexo  = u.anamnese?.sexo || 'Masculino';
@@ -3815,14 +3985,14 @@ function saveEval(){
       parseFloat(document.getElementById('d-coxa')?.value||0),
     ];
     const soma = dobras.reduce((a,b)=>a+b,0);
-    if(soma <= 0){ alert('Preencha as dobras cutâneas!'); return; }
+    if(soma <= 0){ fqToast('Preencha as dobras cutâneas!','warn'); return; }
     const r = calcPollock7(dobras, idade, sexo, peso);
-    if(!r){ alert('Verifique os dados inseridos!'); return; }
+    if(!r){ fqToast('Verifique os dados inseridos!','warn'); return; }
     evalData = {...evalData, dobras, soma:r.soma, dc:r.dc, fatPct:parseFloat(r.fatPct), fatKg:parseFloat(r.fatKg), leanKg:parseFloat(r.leanKg)};
   } else {
     const fatPct = parseFloat(document.getElementById('bio-fat')?.value||0);
     const leanKg = parseFloat(document.getElementById('bio-lean')?.value||0);
-    if(!fatPct){ alert('Preencha o % de gordura!'); return; }
+    if(!fatPct){ fqToast('Preencha o % de gordura!','warn'); return; }
     const fatKg = (fatPct/100)*peso;
     evalData = {
       ...evalData,
@@ -3842,11 +4012,11 @@ function saveEval(){
   closeModal('modal-eval');
   renderEvo(u);
   setTimeout(()=>renderPizzaCharts(u), 100);
-  alert('✅ Avaliação salva com sucesso!');
+  fqToast('✅ Avaliação salva com sucesso!','ok');
 }
 
-function deleteEval(id){
-  if(!confirm('Excluir esta avaliação?')) return;
+async function deleteEval(id){
+  if(!await fqConfirm('Excluir avaliação','Remover esta avaliação corporal?','Excluir','🗑️')) return;
   const email = DB.get('fq_cur');
   const users = DB.get('fq_users')||{};
   const u = users[email];
@@ -4228,7 +4398,7 @@ const CATALOG = [
     subtitle:'12 semanas · Nível avançado',
     category:'specialized',
     tag:'MAIS VENDIDO',tagColor:'#f39c12',
-    price:47.90, priceLabel:'R$14,99',
+    price:14.99, priceLabel:'R$14,99',
     img:'https://images.unsplash.com/photo-1583454110551-21f2fa2afe61?w=400&q=85',
     emoji:'💪', color:'#c0392b',
     desc:'O programa mais completo para quem quer ganhar massa muscular de verdade. 12 semanas periodizadas com técnicas avançadas baseadas nas evidências mais recentes da ciência do exercício.',
@@ -4240,7 +4410,7 @@ const CATALOG = [
       {n:4,title:'Semana 9–10: Intensificação',dur:'5 dias/semana'},
       {n:5,title:'Semana 11–12: Pico + Deload',dur:'5 dias/semana'},
     ],
-    mpLink:'https://mpago.la/22dn7UY', students:523, rating:4.9,
+    mpLink:'https://mpago.la/22dn7UY',
     content:[
       {
         icon:'🔬',
@@ -4275,7 +4445,7 @@ const CATALOG = [
     subtitle:'8 semanas · Todos os níveis',
     category:'specialized',
     tag:'EXCLUSIVO',tagColor:'#9b59b6',
-    price:47.90, priceLabel:'R$14,99',
+    price:14.99, priceLabel:'R$14,99',
     img:'https://images.unsplash.com/photo-1571019613576-2b22c76fd955?w=400&q=85',
     emoji:'🧓', color:'#8e44ad',
     desc:'Programa baseado em evidências para pessoas acima de 60 anos. Foco em mobilidade, equilíbrio, sarcopenia e qualidade de vida — com total segurança.',
@@ -4286,7 +4456,7 @@ const CATALOG = [
       {n:3,title:'Semana 5–6: Equilíbrio e Coordenação',dur:'3 dias/semana'},
       {n:4,title:'Semana 7–8: Manutenção Ativa',dur:'3 dias/semana'},
     ],
-    mpLink:'https://mpago.la/22dn7UY', students:187, rating:5.0,
+    mpLink:'https://mpago.la/22dn7UY',
     content:[
       {
         icon:'⚠️',
@@ -4316,7 +4486,7 @@ const CATALOG = [
     subtitle:'Por trimestre · Gestantes',
     category:'specialized',
     tag:'EXCLUSIVO',tagColor:'#e91e8c',
-    price:67.90, priceLabel:'R$14,99',
+    price:14.99, priceLabel:'R$14,99',
     img:'https://images.unsplash.com/photo-1616279969856-759f316a5ac1?w=400&q=85',
     emoji:'🤰', color:'#e91e8c',
     desc:'O programa mais seguro e completo para gestantes. Desenvolvido com base nas diretrizes oficiais do ACOG (American College of Obstetricians and Gynecologists). Exercícios adaptados para cada trimestre.',
@@ -4327,7 +4497,7 @@ const CATALOG = [
       {n:3,title:'3º Trimestre: Manutenção',dur:'3 dias/semana'},
       {n:4,title:'Pós-parto: Recuperação',dur:'2 dias/semana'},
     ],
-    mpLink:'https://mpago.la/22dn7UY', students:94, rating:5.0,
+    mpLink:'https://mpago.la/22dn7UY',
     content:[
       {
         icon:'✅',
@@ -4357,7 +4527,7 @@ const CATALOG = [
     subtitle:'Pessoas com deficiência',
     category:'specialized',
     tag:'INCLUSIVO',tagColor:'#00acc1',
-    price:47.90, priceLabel:'R$14,99',
+    price:14.99, priceLabel:'R$14,99',
     img:'https://images.unsplash.com/photo-1576678927484-cc907957088c?w=400&q=85',
     emoji:'♿', color:'#00acc1',
     desc:'Programa inclusivo adaptado para pessoas com deficiência física. Cada exercício possui variações com embasamento científico e adaptações específicas por tipo de limitação.',
@@ -4368,7 +4538,7 @@ const CATALOG = [
       {n:3,title:'Semana 5–6: Resistência',dur:'3 dias/semana'},
       {n:4,title:'Semana 7–8: Performance',dur:'3 dias/semana'},
     ],
-    mpLink:'https://mpago.la/22dn7UY', students:62, rating:4.8,
+    mpLink:'https://mpago.la/22dn7UY',
     content:[
       {
         icon:'💡',
@@ -4398,18 +4568,18 @@ const CATALOG = [
     subtitle:'12 semanas · Iniciante/Intermediário',
     category:'weight',
     tag:'TOP 1',tagColor:'#e50914',
-    price:47.90, priceLabel:'R$14,99',
+    price:14.99, priceLabel:'R$14,99',
     img:'https://images.unsplash.com/photo-1538805060514-97d9cc17730c?w=400&q=85',
     emoji:'🔥', color:'#e50914',
     desc:'O programa definitivo para perda de gordura. Combinação de musculação metabólica + HIIT baseada nas evidências científicas mais recentes para máximo gasto calórico e preservação da massa magra.',
-    highlights:['Musculação + HIIT + Corrida','Déficit calórico otimizado','Preserva massa magra','Resultado em 4 semanas'],
+    highlights:['Musculação + HIIT + Corrida','Déficit calórico otimizado','Preserva massa magra','Progressão semana a semana'],
     episodes:[
       {n:1,title:'Semana 1–3: Ativação Metabólica',dur:'4 dias/semana'},
       {n:2,title:'Semana 4–6: HIIT Progressivo',dur:'4 dias/semana'},
       {n:3,title:'Semana 7–9: Aceleração',dur:'5 dias/semana'},
       {n:4,title:'Semana 10–12: Definição Final',dur:'5 dias/semana'},
     ],
-    mpLink:'https://mpago.la/22dn7UY', students:841, rating:4.9,
+    mpLink:'https://mpago.la/22dn7UY',
     content:[
       {
         icon:'🔬',
@@ -4439,7 +4609,7 @@ const CATALOG = [
     subtitle:'8 semanas · Iniciantes',
     category:'weight',
     tag:'POPULAR',tagColor:'#2ecc71',
-    price:37.90, priceLabel:'R$14,99',
+    price:14.99, priceLabel:'R$14,99',
     img:'https://images.unsplash.com/photo-1461897104016-0b3b00cc81ee?w=400&q=85',
     emoji:'🏃', color:'#27ae60',
     desc:'Saia do zero e complete seu primeiro 10km em 8 semanas. Programa periodizado com Fartlek, Intervalados e Long Run — baseado em princípios científicos de treinamento aeróbico.',
@@ -4450,7 +4620,7 @@ const CATALOG = [
       {n:3,title:'Semana 5–6: Velocidade',dur:'3 dias/semana'},
       {n:4,title:'Semana 7–8: Prova Simulada',dur:'3 dias/semana'},
     ],
-    mpLink:'https://mpago.la/22dn7UY', students:312, rating:4.8,
+    mpLink:'https://mpago.la/22dn7UY',
     content:[
       {
         icon:'❤️',
@@ -4480,7 +4650,7 @@ const CATALOG = [
     subtitle:'6 semanas · Todos os níveis',
     category:'health',
     tag:'NOVO',tagColor:'#3498db',
-    price:37.90, priceLabel:'R$14,99',
+    price:14.99, priceLabel:'R$14,99',
     img:'https://images.unsplash.com/photo-1506126613408-eca07ce68773?w=400&q=85',
     emoji:'🧘', color:'#2980b9',
     desc:'Corrija sua postura, elimine dores crônicas e ganhe mobilidade com exercícios de fisioterapia preventiva baseados em evidências científicas.',
@@ -4490,7 +4660,7 @@ const CATALOG = [
       {n:2,title:'Semana 3–4: Correção Ativa',dur:'4 dias/semana'},
       {n:3,title:'Semana 5–6: Manutenção',dur:'4 dias/semana'},
     ],
-    mpLink:'https://mpago.la/22dn7UY', students:198, rating:4.7,
+    mpLink:'https://mpago.la/22dn7UY',
     content:[
       {
         icon:'😰',
@@ -4520,7 +4690,7 @@ const CATALOG = [
     subtitle:'4 semanas · Todos os níveis',
     category:'health',
     tag:'NOVO',tagColor:'#9b59b6',
-    price:27.90, priceLabel:'R$14,99',
+    price:14.99, priceLabel:'R$14,99',
     img:'https://images.unsplash.com/photo-1545389336-cf090694435e?w=400&q=85',
     emoji:'🌿', color:'#8e44ad',
     desc:'Combine exercício físico, respiração e mindfulness para reduzir cortisol e ansiedade. Programa baseado em meta-análises recentes sobre exercício e saúde mental.',
@@ -4531,7 +4701,7 @@ const CATALOG = [
       {n:3,title:'Semana 3: Cardio Leve',dur:'5 dias/semana'},
       {n:4,title:'Semana 4: Integração',dur:'5 dias/semana'},
     ],
-    mpLink:'https://mpago.la/22dn7UY', students:145, rating:4.9,
+    mpLink:'https://mpago.la/22dn7UY',
     content:[
       {
         icon:'⚗️',
@@ -4561,7 +4731,7 @@ const CATALOG = [
     subtitle:'20 vídeo-aulas · Todos os níveis',
     category:'videos',
     tag:'VÍDEO-AULAS',tagColor:'#f39c12',
-    price:27.90, priceLabel:'R$14,99',
+    price:14.99, priceLabel:'R$14,99',
     img:'https://images.unsplash.com/photo-1599058917212-d750089bc07e?w=400&q=85',
     emoji:'🎥', color:'#d35400',
     desc:'20 vídeo-aulas detalhadas cobrindo a execução perfeita dos principais exercícios, baseadas nas recomendações do NSCA e nas pesquisas mais recentes de biomecânica.',
@@ -4572,7 +4742,7 @@ const CATALOG = [
       {n:3,title:'Módulo 3: Core e Funcional',dur:'4 vídeos'},
       {n:4,title:'Módulo 4: Erros Comuns',dur:'3 vídeos'},
     ],
-    mpLink:'https://mpago.la/22dn7UY', students:267, rating:5.0,
+    mpLink:'https://mpago.la/22dn7UY',
     content:[
       {
         icon:'⚠️',
@@ -4602,7 +4772,7 @@ const CATALOG = [
     subtitle:'Guia completo · E-book + Vídeos',
     category:'videos',
     tag:'E-BOOK',tagColor:'#2ecc71',
-    price:27.90, priceLabel:'R$14,99',
+    price:14.99, priceLabel:'R$14,99',
     img:'https://images.unsplash.com/photo-1547592180-85f173990554?w=400&q=85',
     emoji:'🥗', color:'#27ae60',
     desc:'Tudo que você precisa saber sobre nutrição esportiva baseada em evidências: macronutrientes, timing, suplementação com provas científicas e cardápios práticos.',
@@ -4613,7 +4783,7 @@ const CATALOG = [
       {n:3,title:'Parte 3: Suplementação',dur:'2 vídeos'},
       {n:4,title:'Parte 4: Cardápios Práticos',dur:'2 vídeos'},
     ],
-    mpLink:'https://mpago.la/22dn7UY', students:389, rating:4.8,
+    mpLink:'https://mpago.la/22dn7UY',
     content:[
       {
         icon:'🔬',
@@ -4683,8 +4853,8 @@ function renderHomePrograms(u){try{
   const featEl = document.getElementById('home-programs-carousel');
   if(featEl) featEl.innerHTML = featured.map(p=>posterCard(p,u)).join('');
 
-  // Popular: top sellers
-  const popular = [...CATALOG].sort((a,b)=>b.students-a.students).slice(0,6);
+  // Destaques da loja
+  const popular = CATALOG.slice(0,6);
   const popEl = document.getElementById('home-popular-carousel');
   if(popEl) popEl.innerHTML = popular.map(p=>posterCard(p,u)).join('');
   }catch(e){console.error('renderHomePrograms error:',e);}
@@ -4737,7 +4907,6 @@ function openMovie(id){
   document.getElementById('movie-hero-img').src = p.img;
   const body = document.getElementById('movie-modal-body');
 
-  const starsHtml = '⭐'.repeat(Math.round(p.rating));
   const highlightsHtml = p.highlights.map(h=>`
     <div style="display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid var(--b)">
       <span style="color:var(--r);font-size:14px">✓</span>
@@ -4770,10 +4939,9 @@ function openMovie(id){
     <div style="font-size:24px;font-weight:900;margin-bottom:4px;line-height:1.1">${p.title}</div>
     <div style="font-size:12px;color:var(--t2);margin-bottom:12px">${p.subtitle}</div>
 
-    <!-- Rating + students -->
+    <!-- Selo -->
     <div style="display:flex;gap:12px;align-items:center;margin-bottom:14px">
-      <span style="font-size:12px;color:#f39c12">${starsHtml} ${p.rating}</span>
-      <span style="font-size:11px;color:var(--mu)">👥 ${p.students.toLocaleString()} alunos</span>
+      <span style="font-size:11px;color:var(--mu)">🧠 Método Rennan Dias · baseado em evidências</span>
       ${owned?'<span style="background:rgba(46,204,113,.1);border:1px solid rgba(46,204,113,.2);border-radius:6px;padding:2px 10px;font-size:10px;font-weight:800;color:#2ecc71">✅ Você tem acesso</span>':''}
     </div>
 
@@ -4809,7 +4977,6 @@ function openMovie(id){
 }
 
 function buyProgram(id, link){
-  if(!link) link='https://mpago.la/22dn7UY';
   const email = DB.get('fq_cur');
   const users = DB.get('fq_users')||{};
   if(users[email]){
@@ -4817,30 +4984,17 @@ function buyProgram(id, link){
     if(!users[email].pendingPurchases.includes(id)) users[email].pendingPurchases.push(id);
     DB.set('fq_users', users);
   }
-  window.open(link,'_blank');
-  setTimeout(()=>{
-    if(confirm('✅ Pagamento realizado?\nClique OK para verificar o acesso.')){
-      checkPurchase(id);
-    }
-  }, 3000);
+  fqCheckout(id, link||'https://mpago.la/22dn7UY');
 }
 
-function checkPurchase(id){
-  // In production, this would check Supabase for payment confirmation
-  // For now, admin grants access manually
-  alert('⏳ Aguarde a confirmação do pagamento.\nRennan irá liberar seu acesso em breve!');
-}
-
-// Admin: grant program access
-function admGrantProgram(email, programId){
+// Admin: liberar programa manualmente (ex.: venda por fora / cortesia)
+async function admGrantProgram(email, programId){
   const users = DB.get('fq_users')||{};
-  if(!users[email]) return;
-  if(!users[email].purchases) users[email].purchases=[];
-  if(!users[email].purchases.includes(programId)){
-    users[email].purchases.push(programId);
-    DB.set('fq_users',users);
-    if(window.sb) sb.from('alunos').update({purchases:users[email].purchases}).eq('email',email);
-  }
+  const st=(window.ADM_CACHE||[]).find(a=>a.email===email);
+  const atual=st?(st.purchases||[]):((users[email]&&users[email].purchases)||[]);
+  const novas=[...new Set([...atual,programId])];
+  if(users[email]){users[email].purchases=novas;DB.set('fq_users',users);}
+  if(sb) await sb.from('alunos').update({purchases:novas,pacote_ebooks:novas.length>=10}).eq('email',email);
 }
 
 // ══ PROGRAM INTAKE — PERSONALIZAÇÃO COM IA ══
@@ -5385,61 +5539,52 @@ async function generatePersonalizedProgram(){
     </div>`;
   document.getElementById('intake-nav').style.display='none';
 
-  const answers = intakeState.answers;
-  const answersText = Object.entries(answers)
-    .map(([k,v])=>`${k}: ${Array.isArray(v)?v.join(', '):v}`)
-    .join('\n');
+  // Geração local e instantânea da personalização (sem API externa)
+  setTimeout(()=>{
+    try{
+      const plan = montarPersonalizacao(p, intakeState.answers, u);
+      showIntakeResult(plan, p, u);
+    }catch(e){
+      console.error('Intake local error:', e);
+      showIntakeResult(null, p, u);
+    }
+  }, 1200);
+}
 
-  const anamneseText = u.anamnese ? `
-Perfil do aluno (da anamnese):
-- Sexo: ${u.anamnese.sexo||'Não informado'}
-- Idade: ${u.anamnese.nasc ? Math.floor((Date.now()-new Date(u.anamnese.nasc))/(365.25*24*3600*1000))+' anos' : 'Não informado'}
-- Peso: ${u.anamnese.peso||'?'}kg | Altura: ${u.anamnese.altura||'?'}cm
-- Lesões: ${(u.anamnese.lesoes||[]).join(', ')||'Nenhuma'}
-- Nível: ${u.anamnese.tempo||'Não informado'}
-- Objetivo principal: ${(u.anamnese.obj||[]).join(', ')||'Não informado'}` : '';
+// Monta a personalização com base nas respostas da ficha + anamnese
+function montarPersonalizacao(p, answers, u){
+  const nome = (u.name||'Atleta').split(' ')[0];
+  const an = u.anamnese||{};
+  const resp = k => answers[k] ? (Array.isArray(answers[k])?answers[k].join(', '):answers[k]) : '';
+  const lesoes = (an.lesoes||[]).filter(l=>!/nenhuma/i.test(l));
+  const dores = Array.isArray(answers.dores)?answers.dores.filter(d=>!/nenhuma/i.test(d)):[];
+  const restricoes = Array.isArray(answers.restricoes)?answers.restricoes.filter(r=>!/nenhuma|sem restri/i.test(r)):[];
+  const obsTexto = (answers.obs||'').trim();
 
-  const prompt = `Você é Rennan Dias, personal trainer especialista em ${p.title}.
+  const ajustes = [];
+  if(resp('nivel')) ajustes.push({titulo:'Intensidade calibrada para o seu nível', descricao:`Você indicou "${resp('nivel')}". As cargas, o volume de séries e a complexidade dos exercícios do ${p.title} partem exatamente desse ponto — nem fácil demais, nem além do que seu corpo está pronto para executar.`});
+  if(resp('foco')) ajustes.push({titulo:'Prioridade nos seus focos', descricao:`Seus grupos/temas prioritários (${resp('foco')}) recebem mais volume e aparecem no início das sessões, quando sua energia está no máximo.`});
+  if(resp('tempo')||resp('disponibilidade')) ajustes.push({titulo:'Encaixado na sua rotina', descricao:`Com "${resp('tempo')||resp('disponibilidade')}", cada sessão foi dimensionada para caber no seu tempo real — consistência vale mais do que sessões heroicas de vez em quando.`});
+  if(resp('trimestre')) ajustes.push({titulo:'Adaptado à sua fase da gestação', descricao:`Programa ajustado para "${resp('trimestre')}": exercícios, posições e intensidade seguem as recomendações de segurança para esta fase. Mantenha seu obstetra sempre informado.`});
+  if(resp('idade')) ajustes.push({titulo:'Progressão segura para a sua faixa etária', descricao:`Na faixa "${resp('idade')}", o programa prioriza força funcional, equilíbrio e articulações protegidas, com progressão gradual semana a semana.`});
+  if(resp('tipo')) ajustes.push({titulo:'Exercícios adaptados à sua condição', descricao:`Todos os movimentos foram selecionados considerando "${resp('tipo')}", com alternativas seguras e foco em autonomia e força real para o dia a dia.`});
+  if(resp('obstaculo')||resp('fraqueza')||resp('problema')) ajustes.push({titulo:'Estratégia contra o seu maior desafio', descricao:`Seu principal obstáculo ("${resp('obstaculo')||resp('fraqueza')||resp('problema')}") guiou a estrutura do programa: cada semana tem um plano claro para você não travar nesse ponto de novo.`});
+  if(dores.length||lesoes.length) ajustes.push({titulo:'Proteção das regiões sensíveis', descricao:`Regiões sinalizadas (${[...new Set([...dores,...lesoes])].join(', ')}) recebem exercícios substitutos e trabalho de fortalecimento preventivo — treinar sem dor é inegociável.`});
+  if(restricoes.length) ajustes.push({titulo:'Respeitando suas restrições', descricao:`As orientações consideram: ${restricoes.join(', ')}. Nada no programa entra em conflito com essas condições.`});
+  while(ajustes.length<3) ajustes.push({titulo:'Progressão periodizada Rennan Dias', descricao:'O programa segue blocos de adaptação, acumulação e intensificação com semanas de deload programadas — o método que gera resultado sem estagnar.'});
 
-PROGRAMA ADQUIRIDO: ${p.title}
-${p.desc}
-${anamneseText}
+  const alerta = (dores.length||lesoes.length||/liberação|restrições/i.test(resp('liberacao')))
+    ? `Atenção especial: ${[...new Set([...dores,...lesoes])].join(', ')||'sua condição indicada'}. Interrompa qualquer exercício que gere dor aguda e avise o Rennan pelo WhatsApp para ajustarmos na hora.${resp('liberacao')&&!/sim/i.test(resp('liberacao'))?' E lembre-se: consulte seu médico antes de iniciar.':''}`
+    : null;
 
-RESPOSTAS DA FICHA DE PERSONALIZAÇÃO:
-${answersText}
-
-Com base nessas informações, crie um plano de personalização completo e motivador. Retorne APENAS um JSON sem markdown:
-{
-  "saudacao": "mensagem personalizada de boas-vindas de 2 frases, usando o nome ${u.name?.split(' ')[0]||'atleta'}",
-  "perfil": "análise do perfil em 2-3 frases simples",
-  "ajustes": [
-    {"titulo": "ajuste específico 1", "descricao": "explicação clara de como o programa foi adaptado para este aluno"},
-    {"titulo": "ajuste específico 2", "descricao": "..."},
-    {"titulo": "ajuste específico 3", "descricao": "..."}
-  ],
-  "dica_principal": "dica de ouro personalizada para este aluno ter sucesso neste programa",
-  "alerta": "se houver lesão, restrição ou condição especial — o que evitar ou ter cuidado. Se não houver, retorne null",
-  "semana1": "como deve ser a primeira semana especificamente para este aluno"
-}`;
-
-  try {
-    const res = await fetch('https://api.anthropic.com/v1/messages',{
-      method:'POST',
-      headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({
-        model:'claude-sonnet-4-6',
-        max_tokens:1000,
-        messages:[{role:'user',content:prompt}]
-      })
-    });
-    const data = await res.json();
-    const text = data.content.map(i=>i.text||'').join('').trim().replace(/```json|```/g,'').trim();
-    const plan = JSON.parse(text);
-    showIntakeResult(plan, p, u);
-  } catch(e){
-    console.error('AI intake error:', e);
-    showIntakeResult(null, p, u);
-  }
+  return {
+    saudacao:`${nome}, seja muito bem-vindo(a) ao ${p.title}! Analisei suas respostas e o programa já está moldado para a sua realidade — agora é executar.`,
+    perfil:`Perfil identificado: ${resp('nivel')||resp('atividade')||resp('experiencia')||an.tempo||'em evolução'}${an.peso?`, ${an.peso}kg`:''}${an.altura?` e ${an.altura}cm`:''}. ${resp('objetivo')||(an.obj||[])[0]?`Objetivo central: ${resp('objetivo')||(an.obj||[]).join(', ')}.`:'Objetivo: evoluir com constância e segurança.'}${obsTexto?` Suas observações ("${obsTexto.slice(0,120)}${obsTexto.length>120?'...':''}") foram consideradas.`:''}`,
+    ajustes:ajustes.slice(0,4),
+    dica_principal:`Nas 2 primeiras semanas, seu único objetivo é não faltar. A adaptação neural vem antes do resultado visível — quem executa a semana 1 e 2 completa tem 3x mais chance de chegar na semana 12. Anote suas cargas em todos os treinos.`,
+    alerta,
+    semana1:`Comece com as cargas sugeridas como "confortáveis": você deve terminar cada série sentindo que ainda faria 2-3 repetições. Foque em aprender a execução perfeita de cada exercício, durma bem e hidrate-se. A partir da semana 2, começamos a progressão de verdade.`
+  };
 }
 
 function showIntakeResult(plan, p, u){
@@ -5512,18 +5657,38 @@ function showIntakeResult(plan, p, u){
 if('serviceWorker' in navigator)window.addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}));
 let deferredPrompt=null;
 window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();deferredPrompt=e;setTimeout(()=>{if(!localStorage.getItem('pwa-dismissed'))document.getElementById('pwa-banner').style.display='block';},5000);});
-function installPWA(){if(deferredPrompt){deferredPrompt.prompt();deferredPrompt.userChoice.then(()=>{deferredPrompt=null;dismissBanner();});}else{alert('No iPhone:\n1. Toque em compartilhar (□↑)\n2. "Adicionar à Tela de Início"\n3. "Adicionar"');dismissBanner();}}
+function installPWA(){if(deferredPrompt){deferredPrompt.prompt();deferredPrompt.userChoice.then(()=>{deferredPrompt=null;dismissBanner();});}else{fqAlert('Instalar no iPhone','1. Toque em compartilhar (□↑)\n2. "Adicionar à Tela de Início"\n3. "Adicionar"','📱');dismissBanner();}}
 function dismissBanner(){document.getElementById('pwa-banner').style.display='none';localStorage.setItem('pwa-dismissed','1');}
 
 // ══ INIT ══
 (async function init(){
   try{
+    // Voltou do Mercado Pago?
+    const qs=new URLSearchParams(location.search);
+    if(qs.get('pagamento')==='sucesso')setTimeout(()=>fqToast('🎉 Pagamento aprovado! Seu acesso já está liberado na Loja.','ok',7000),800);
+    else if(qs.get('pagamento')==='pendente')setTimeout(()=>fqToast('⏳ Pagamento em processamento. Assim que aprovar, o acesso libera sozinho.','warn',7000),800);
+    if(qs.has('pagamento'))history.replaceState(null,'',location.pathname);
+    // 1) Sessão real do Supabase Auth (persistida com segurança pelo próprio Supabase)
+    if(sb){
+      const{data:{session}}=await sb.auth.getSession();
+      if(session&&session.user){
+        const fresh=await loadUDB(session.user.id);
+        if(fresh){
+          const users=DB.get('fq_users')||{};
+          users[fresh.email]={...(users[fresh.email]||{}),...fresh};
+          DB.set('fq_users',users);DB.set('fq_cur',fresh.email);
+          if(fresh.isAdmin){await loadAdmin();show('sc-adm');return;}
+          if(!fresh.anamneseDone){initAnam();show('sc-anam');return;}
+          loadApp(fresh.email);show('sc-app');return;
+        }
+      }
+    }
+    // 2) Fallback offline: usa o cache local do último login (sem senhas armazenadas)
     const email=DB.get('fq_cur');
     if(!email){show('sc-splash');return;}
-    if(email==='__admin__'){loadAdmin();show('sc-adm');return;}
-    const users=DB.get('fq_users')||{};let u=users[email];
-    if(u&&sb){try{const fresh=await loadUDB(email);if(fresh){u={...u,...fresh};users[email]=u;DB.set('fq_users',users);}}catch(e){console.warn('DB sync error:',e);}}
+    const users=DB.get('fq_users')||{};const u=users[email];
     if(!u){DB.del('fq_cur');show('sc-splash');return;}
+    if(u.isAdmin){await loadAdmin();show('sc-adm');return;}
     if(!u.anamneseDone){initAnam();show('sc-anam');return;}
     loadApp(email);show('sc-app');
   }catch(e){
@@ -5549,8 +5714,8 @@ function enviarConsultoria() {
   const nome = document.getElementById('cons-nome').value.trim();
   const fone = document.getElementById('cons-fone').value.trim();
   const obj = document.getElementById('cons-obj').value.trim();
-  if (!nome) { alert('Por favor, preencha seu nome.'); return; }
-  if (!fone) { alert('Por favor, preencha seu WhatsApp.'); return; }
+  if (!nome) { fqToast('Por favor, preencha seu nome.','warn'); return; }
+  if (!fone) { fqToast('Por favor, preencha seu WhatsApp.','warn'); return; }
   const leads = DB.get('fq_consult_leads') || [];
   leads.push({ nome, fone, obj, modalidade: consultModal, plano: consultPlan, data: new Date().toISOString(), status: 'novo' });
   DB.set('fq_consult_leads', leads);
@@ -5559,24 +5724,22 @@ function enviarConsultoria() {
   const msg = `Olá Rennan! Quero começar a consultoria.%0A%0A*Nome:* ${encodeURIComponent(nome)}%0A*WhatsApp:* ${encodeURIComponent(fone)}%0A*Modalidade:* ${encodeURIComponent(modalLabel)}%0A*Plano:* ${encodeURIComponent(consultPlan)}%0A*Objetivo:* ${encodeURIComponent(obj || 'A definir')}`;
   window.open(`https://wa.me/5531995250330?text=${msg}`, '_blank');
 }
-// ── ADMIN: SEED PERFIL ──
-function seedAdminProfile() {
-  const allEbooks = ['hypertrophy','elderly','pregnancy','disabled','fatburn','running10k','posture','stress','technique','nutrition'];
+// ── ADMIN: VER O APP COMO ALUNO (usa o próprio perfil autenticado do Rennan) ──
+function entrarComoAluno() {
   const users = DB.get('fq_users') || {};
-  const existing = users['rennan@rennandias.com.br'] || {};
-  users['rennan@rennandias.com.br'] = {
-    ...existing, id: existing.id || 'admin-rennan-001', name: 'Rennan Dias', email: 'rennan@rennandias.com.br',
-    pass: btoa('RennanAdmin@2025'), anamneseDone: true, trainApproved: true, plano: 'pro', isAdmin: true, pacoteEbooks: true,
-    purchases: allEbooks, xp: existing.xp || 9999, level: existing.level || 10, streak: existing.streak || 0, coins: existing.coins || 9999,
-    gymWeek: existing.gymWeek || 1, runWeek: existing.runWeek || 1, stats: existing.stats || {treinos:0,distancia:0,semanas:1},
-    badges: existing.badges || [], prs: existing.prs || [], missions: existing.missions || [], gymDone: existing.gymDone || {}, runDone: existing.runDone || {},
-    workoutHistory: existing.workoutHistory || [], loadHistory: existing.loadHistory || {}, aiPlan: existing.aiPlan || null, avatar: existing.avatar || {color:'#e50914'},
-    anamnese: existing.anamnese || { sexo:'Masculino',peso:'80',altura:'180',tempo:'Avançado (mais de 2 anos)',obj:['Hipertrofia (ganho de massa muscular)'],lesoes:['Nenhuma dor ou lesão'],temJoelho:false,temLombar:false,temOmbro:false }
-  };
-  DB.set('fq_users', users);
+  const u = users[ADMIN_EMAIL];
+  if(!u){fqToast('Perfil do admin ainda não carregado. Recarregue a página.','warn');return;}
+  if(!u.anamneseDone){
+    // Perfil de demonstração para o admin navegar no app
+    u.anamneseDone=true;u.trainApproved=true;u.pacoteEbooks=true;
+    u.purchases=['hypertrophy','elderly','pregnancy','disabled','fatburn','running10k','posture','stress','technique','nutrition'];
+    u.anamnese=u.anamnese||{sexo:'Masculino',peso:'80',altura:'180',tempo:'Avançado (mais de 2 anos)',obj:['Hipertrofia (ganho de massa muscular)'],lesoes:['Nenhuma dor ou lesão'],temJoelho:false,temLombar:false,temOmbro:false,modal:'Ambos',dias:'4x',dur:'60'};
+    if(!u.aiPlan){try{u.aiPlan=motorTreino(u.anamnese);}catch(e){}}
+    users[ADMIN_EMAIL]=u;DB.set('fq_users',users);
+  }
+  DB.set('fq_cur', ADMIN_EMAIL); loadApp(ADMIN_EMAIL); show('sc-app');
 }
-function entrarComoAluno() { seedAdminProfile(); DB.set('fq_cur', 'rennan@rennandias.com.br'); loadApp('rennan@rennandias.com.br'); show('sc-app'); }
-function voltarAdmin() { DB.set('fq_cur', '__admin__'); loadAdmin(); show('sc-adm'); }
+function voltarAdmin() { loadAdmin(); show('sc-adm'); }
 
 </script>
 
