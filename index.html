@@ -2692,10 +2692,13 @@ async function submitAnam(){
     // Fallback: gerar treino básico local para não deixar o aluno sem nada
     gerarTreinoFallback(email,an);
   }
-  // Auto-libera acesso (sem pagamento)
-  users[email].trainApproved=true;
-  DB.set('fq_users',users);
-  await syncU(users[email]);
+  // Auto-libera acesso (sem pagamento) — relê o cache para NÃO sobrescrever o plano recém-gerado
+  const usersFinal=DB.get('fq_users')||users;
+  if(usersFinal[email]){
+    usersFinal[email].trainApproved=true;
+    DB.set('fq_users',usersFinal);
+    await syncU(usersFinal[email]);
+  }
   document.querySelector('.ok-ico').textContent='🎉';
   document.getElementById('ok-title').textContent='Tudo pronto!';
   document.getElementById('ok-sub').textContent='Seu treino foi gerado! Hora de começar 🎬';
