@@ -2819,6 +2819,8 @@ async function submitAnam(){
   document.getElementById('btn-go-app').style.display='block';
   document.getElementById('btn-go-app').textContent='Acessar meu treino 🚀';
 }
+function goToApp(){const email=DB.get('fq_cur');loadApp(email);show('sc-app');}
+
 async function genAIWithRetry(email, an, maxRetries){
   let lastErr;
   for(let i=0; i<=maxRetries; i++){
@@ -5936,8 +5938,8 @@ function entrarComoAluno() {
     u.anamneseDone=true;u.trainApproved=true;u.pacoteEbooks=true;
     u.purchases=['hypertrophy','elderly','pregnancy','disabled','fatburn','running10k','posture','stress','technique','nutrition'];
     u.anamnese=u.anamnese||{sexo:'Masculino',peso:'80',altura:'180',tempo:'Avançado (mais de 2 anos)',obj:['Hipertrofia (ganho de massa muscular)'],lesoes:['Nenhuma dor ou lesão'],temJoelho:false,temLombar:false,temOmbro:false,modal:'Ambos',dias:'4x',dur:'60'};
-    if(!u.aiPlan){try{u.aiPlan=motorTreino(u.anamnese);}catch(e){}}
     users[ADMIN_EMAIL]=u;DB.set('fq_users',users);
+    if(!u.aiPlan){try{gerarTreinoFallback(ADMIN_EMAIL,u.anamnese);}catch(e){}}
   }
   DB.set('fq_cur', ADMIN_EMAIL); loadApp(ADMIN_EMAIL); show('sc-app');
 }
