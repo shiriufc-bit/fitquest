@@ -2671,6 +2671,7 @@ function switchAuth(mode){
 }
 function showErr(msg){const e=document.getElementById('auth-error');e.textContent=msg;e.style.display='block';}
 async function entrarComPerfil(u){
+  if(u.email===ADMIN_EMAIL)u.isAdmin=true; // admin SEMPRE reconhecido pelo e-mail
   const users=DB.get('fq_users')||{};
   users[u.email]=u;DB.set('fq_users',users);DB.set('fq_cur',u.email);
   if(u.isAdmin){await loadAdmin();show('sc-adm');return;}
@@ -2712,6 +2713,7 @@ async function doLogin(){
       await sb.from('alunos').upsert(userToRow(u),{onConflict:'id'});
       const fresh=await loadUDB(data.user.id);if(fresh)u=fresh;
     }
+    if(email===ADMIN_EMAIL)u.isAdmin=true; // garante admin mesmo se o banco não tiver a flag
     await entrarComPerfil(u);
   }catch(e){console.error('Login error:',e);showErr('Erro ao entrar. Tente novamente.');}
   finally{btn.textContent='Entrar';btn.disabled=false;}
@@ -2745,6 +2747,7 @@ async function doRegister(){
     await sb.from('alunos').upsert(userToRow(u),{onConflict:'id'});
     const users=DB.get('fq_users')||{};users[email]=u;DB.set('fq_users',users);DB.set('fq_cur',email);
     enviarEmailBoasVindas(name, email); // e-mail de boas-vindas (não bloqueia)
+    if(u.isAdmin){await loadAdmin();show('sc-adm');return;}
     initAnam();show('sc-anam');
   }catch(e){console.error('Register error:',e);showErr('Erro ao criar conta. Tente novamente.');}
   finally{btn.textContent='Criar conta grátis';btn.disabled=false;}
@@ -2816,25 +2819,32 @@ async function submitAnam(){
   document.getElementById('ok-title').textContent='Avaliação recebida!';
   document.getElementById('ok-sub').textContent='Rennan irá analisar seu perfil e montar seu plano!';
   document.getElementById('btn-go-app').style.display='none';
+  document.getElementById('ok-sub').textContent='Gerando seu treino personalizado... isso pode levar até 1 minuto. Não feche o app! 🤖';
   try{
     await genAIWithRetry(email,an,2);
   }catch(e){
     console.error('AI error após retries:',e);
-    // Fallback: gerar treino básico local para não deixar o aluno sem nada
-    gerarTreinoFallback(email,an);
+    try{gerarTreinoFallback(email,an);}catch(e2){console.error('Fallback error:',e2);}
   }
-  // Auto-libera acesso (sem pagamento) — relê o cache para NÃO sobrescrever o plano recém-gerado
-  const usersFinal=DB.get('fq_users')||users;
-  if(usersFinal[email]){
-    usersFinal[email].trainApproved=true;
-    DB.set('fq_users',usersFinal);
-    await syncU(usersFinal[email]);
+  try{
+    // Garantia final: se por qualquer motivo ainda não há plano, gera o fallback
+    const chk=DB.get('fq_users')||{};
+    if(chk[email]&&!chk[email].aiPlan){gerarTreinoFallback(email,an);}
+    const usersFinal=DB.get('fq_users')||users;
+    if(usersFinal[email]){
+      usersFinal[email].trainApproved=true;
+      DB.set('fq_users',usersFinal);
+      syncU(usersFinal[email]).catch(()=>{}); // sync não bloqueia a liberação
+    }
+  }catch(e3){console.error('Pós-IA:',e3);}
+  finally{
+    // O botão SEMPRE aparece — nenhum erro acima pode travar o aluno aqui
+    const ico=document.querySelector('.ok-ico');if(ico)ico.textContent='🎉';
+    const t=document.getElementById('ok-title');if(t)t.textContent='Tudo pronto!';
+    const s=document.getElementById('ok-sub');if(s)s.textContent='Seu treino foi gerado! Hora de começar 🎬';
+    const b=document.getElementById('btn-go-app');
+    if(b){b.style.display='block';b.textContent='Acessar meu treino 🚀';}
   }
-  document.querySelector('.ok-ico').textContent='🎉';
-  document.getElementById('ok-title').textContent='Tudo pronto!';
-  document.getElementById('ok-sub').textContent='Seu treino foi gerado! Hora de começar 🎬';
-  document.getElementById('btn-go-app').style.display='block';
-  document.getElementById('btn-go-app').textContent='Acessar meu treino 🚀';
 }
 function goToApp(){const email=DB.get('fq_cur');loadApp(email);show('sc-app');}
 
@@ -3106,11 +3116,17 @@ Sessões de corrida: incluir campo "estrutura" com divisão do treino (aquecimen
 
 {"gym":{"Semana 1":{"fase":"[fase motivacional]","days":{"[Nome exato do treino]":[{"id":"e001","sets":3,"reps":"12","load":"Leve (40-50% 1RM)","rest":90,"obs":"dica técnica específica"}]}},"Semana 2":{...},"Semana 3":{...},"Semana 4":{"fase":"⚡ DELOAD — Recuperação Ativa",...},"Semana 5":{...},"Semana 6":{...},"Semana 7":{...},"Semana 8":{"fase":"⚡ DELOAD — Supercompensação Final",...}},"run":{"Semana 1":{"meta":"[objetivo da semana]","sessions":[{"day":"Ter","type":"Leve (Base Aeróbica)","dist":"5 km","pace":"${paceBase}/km","fc":"Z2 (${z2})","dur":"~38 min","estrutura":"Aquecimento 5min caminhada → 28min Z2 → 5min desaceleração","tip":"[dica personalizada com meta e pace]"}]}}}`;
 
-  const res=await fetch('https://api.anthropic.com/v1/messages',{
-    method:'POST',
-    headers:{'Content-Type':'application/json'},
-    body:JSON.stringify({model:'claude-sonnet-4-6',max_tokens:8000,messages:[{role:'user',content:prompt}]})
-  });
+  const _ctrl=new AbortController();
+  const _tmo=setTimeout(()=>_ctrl.abort(),45000); // timeout 45s — nunca trava para sempre
+  let res;
+  try{
+    res=await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({model:'claude-sonnet-4-6',max_tokens:8000,messages:[{role:'user',content:prompt}]}),
+      signal:_ctrl.signal
+    });
+  }finally{clearTimeout(_tmo);}
   if(!res.ok){const err=await res.json().catch(()=>({}));throw new Error(`API ${res.status}: ${err.error?.message||'error'}`);}
   const data=await res.json();
   let raw=data.content.map(i=>i.text||'').join('').trim();
@@ -5910,11 +5926,18 @@ function dismissBanner(){document.getElementById('pwa-banner').style.display='no
       if(session&&session.user){
         const fresh=await loadUDB(session.user.id);
         if(fresh){
+          if(fresh.email===ADMIN_EMAIL)fresh.isAdmin=true; // admin pelo e-mail, sempre
           const users=DB.get('fq_users')||{};
-          users[fresh.email]={...(users[fresh.email]||{}),...fresh};
+          const local=users[fresh.email]||{};
+          // Merge inteligente: banco NUNCA regride anamnese/plano feitos localmente
+          const merged={...local,...fresh};
+          if(local.anamneseDone&&!fresh.anamneseDone){merged.anamneseDone=true;merged.anamnese=local.anamnese;}
+          if(local.aiPlan&&!fresh.aiPlan){merged.aiPlan=local.aiPlan;}
+          users[fresh.email]=merged;
           DB.set('fq_users',users);DB.set('fq_cur',fresh.email);
-          if(fresh.isAdmin){await loadAdmin();show('sc-adm');return;}
-          if(!fresh.anamneseDone){initAnam();show('sc-anam');return;}
+          if(merged.isAdmin){await loadAdmin();show('sc-adm');return;}
+          if(!merged.anamneseDone){initAnam();show('sc-anam');return;}
+          if(!merged.aiPlan){try{gerarTreinoFallback(fresh.email,merged.anamnese||{});}catch(e){}} // nunca entrar sem plano
           loadApp(fresh.email);show('sc-app');return;
         }
       }
@@ -5924,8 +5947,10 @@ function dismissBanner(){document.getElementById('pwa-banner').style.display='no
     if(!email){show('sc-splash');return;}
     const users=DB.get('fq_users')||{};const u=users[email];
     if(!u){DB.del('fq_cur');show('sc-splash');return;}
+    if(email===ADMIN_EMAIL)u.isAdmin=true;
     if(u.isAdmin){await loadAdmin();show('sc-adm');return;}
     if(!u.anamneseDone){initAnam();show('sc-anam');return;}
+    if(!u.aiPlan){try{gerarTreinoFallback(email,u.anamnese||{});}catch(e){}}
     loadApp(email);show('sc-app');
   }catch(e){
     console.error('Init error:',e);
