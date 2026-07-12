@@ -700,6 +700,7 @@ textarea.fi{resize:vertical;min-height:80px;}
 
 <!-- SPLASH -->
 <div id="sc-splash" class="screen active">
+  <div id="fq-version-badge" style="position:absolute;bottom:8px;right:12px;font-size:9px;color:#333;font-weight:700;z-index:5">v51</div>
   <img src="https://images.unsplash.com/photo-1517836357463-d25dfeac3438?w=800&q=80" alt="Fitness" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center top;filter:brightness(.35);z-index:0"/>
   <div class="splash-glow"></div>
   <div class="splash-noise"></div>
@@ -2097,6 +2098,7 @@ textarea.fi{resize:vertical;min-height:80px;}
 
 <script>
 // ══ SUPABASE ══
+const FQ_VERSION='v51';console.log('%cFitQuest '+FQ_VERSION,'color:#e50914;font-weight:bold;font-size:14px');
 const SUPABASE_URL='https://ctbmnvlsvdlrohkcalcm.supabase.co';
 const SUPABASE_KEY='sb_publishable_0jwz3vKIkAakkn8tgNrKKQ_EELiP41g'; // publishable key (segura para frontend — protegida via RLS no Supabase)
 const FN_URL=SUPABASE_URL+'/functions/v1';
@@ -2715,7 +2717,13 @@ async function doLogin(){
     }
     if(email===ADMIN_EMAIL)u.isAdmin=true; // garante admin mesmo se o banco não tiver a flag
     await entrarComPerfil(u);
-  }catch(e){console.error('Login error:',e);showErr('Erro ao entrar. Tente novamente.');}
+  }catch(e){
+    console.error('Login error:',e);
+    const isNet=/fetch|network|failed|load/i.test(e?.message||'');
+    showErr(isNet
+      ?'⚠️ Servidor indisponível. O projeto Supabase pode estar pausado — acesse app.supabase.com e clique em Restore/Resume.'
+      :'Erro ao entrar: '+(e?.message||'tente novamente'));
+  }
   finally{btn.textContent='Entrar';btn.disabled=false;}
 }
 function novoPerfilLocal(id,name,email){
@@ -2749,7 +2757,13 @@ async function doRegister(){
     enviarEmailBoasVindas(name, email); // e-mail de boas-vindas (não bloqueia)
     if(u.isAdmin){await loadAdmin();show('sc-adm');return;}
     initAnam();show('sc-anam');
-  }catch(e){console.error('Register error:',e);showErr('Erro ao criar conta. Tente novamente.');}
+  }catch(e){
+    console.error('Register error:',e);
+    const isNet=/fetch|network|failed|load/i.test(e?.message||'');
+    showErr(isNet
+      ?'⚠️ Servidor indisponível. O projeto Supabase pode estar pausado — acesse app.supabase.com e clique em Restore/Resume.'
+      :'Erro ao criar conta: '+(e?.message||'tente novamente'));
+  }
   finally{btn.textContent='Criar conta grátis';btn.disabled=false;}
 }
 function checkAdminBtn() {
@@ -6131,6 +6145,23 @@ function sanitizeNum(val, min=0, max=300){
   if(isNaN(n)) return min;
   return Math.min(Math.max(n, min), max);
 }
+
+
+// ══ HEALTH CHECK — avisa se o Supabase está fora do ar/pausado ══
+async function fqHealthCheck(){
+  if(!sb)return;
+  try{
+    const ctrl=new AbortController();
+    const t=setTimeout(()=>ctrl.abort(),8000);
+    const r=await fetch(SUPABASE_URL+'/auth/v1/health',{signal:ctrl.signal,headers:{apikey:SUPABASE_KEY}});
+    clearTimeout(t);
+    if(!r.ok)throw new Error('status '+r.status);
+  }catch(e){
+    console.warn('Health check falhou:',e.message);
+    if(typeof fqToast==='function')fqToast('⚠️ Servidor indisponível no momento. Se você é o administrador: verifique se o projeto Supabase está pausado (app.supabase.com → Restore).','warn',10000);
+  }
+}
+setTimeout(fqHealthCheck,3000);
 
 </script>
 
