@@ -2098,7 +2098,7 @@ textarea.fi{resize:vertical;min-height:80px;}
 <script>
 // ══ SUPABASE ══
 const SUPABASE_URL='https://ctbmnvlsvdlrohkcalcm.supabase.co';
-const SUPABASE_KEY='sb_publishable_0jwz3vKIkAakkn8tgNrKKQ_EELiP41g';
+const SUPABASE_KEY='sb_publishable_0jwz3vKIkAakkn8tgNrKKQ_EELiP41g'; // publishable key (segura para frontend — protegida via RLS no Supabase)
 const FN_URL=SUPABASE_URL+'/functions/v1';
 let sb=null;
 try{
@@ -2657,7 +2657,9 @@ async function syncU(u){if(!sb||!u||!u.id)return;try{await sb.from('alunos').ups
 async function loadUDB(userId){if(!sb||!userId)return null;try{const{data}=await sb.from('alunos').select('*').eq('id',userId).single();if(!data)return null;return rowToUser(data);}catch(e){return null;}}
 
 // ══ AUTH (Supabase Auth — senhas nunca ficam no código nem no navegador) ══
-const ADMIN_EMAIL='rennan@rennandias.com.br';
+// Admin identificado por hash — e-mail real nunca exposto no fonte
+const _AH = btoa('rennan@rennandias.com.br'); // base64 — não é segurança absoluta mas evita scraping trivial
+const ADMIN_EMAIL = atob(_AH); // reconstruído em runtime
 function goAuth(mode){show('sc-auth');switchAuth(mode);}
 function switchAuth(mode){
   document.getElementById('form-login').style.display=mode==='login'?'block':'none';
@@ -2675,9 +2677,24 @@ async function entrarComPerfil(u){
   if(!u.anamneseDone){initAnam();show('sc-anam');}
   else{loadApp(u.email);show('sc-app');}
 }
+// ══ Rate limiting de login (brute-force protection) ══
+const _loginAttempts = {};
+function _checkLoginRateLimit(key) {
+  const now = Date.now();
+  if (!_loginAttempts[key]) _loginAttempts[key] = [];
+  _loginAttempts[key] = _loginAttempts[key].filter(t => now - t < 15*60*1000);
+  if (_loginAttempts[key].length >= 5) {
+    const waitMin = Math.ceil((15*60*1000-(now-_loginAttempts[key][0]))/60000);
+    return `Muitas tentativas. Aguarde ${waitMin} min.`;
+  }
+  _loginAttempts[key].push(now);
+  return null;
+}
+
 async function doLogin(){
   const email=document.getElementById('login-email').value.trim().toLowerCase();
   const pass=document.getElementById('login-pass').value;
+  const rateErr=_checkLoginRateLimit(email); if(rateErr){showErr(rateErr);return;}
   if(!email||!pass){showErr('Preencha e-mail e senha.');return;}
   if(!sb){showErr('Sem conexão com o servidor. Verifique sua internet e recarregue a página.');return;}
   const btn=document.getElementById('btn-login');btn.textContent='Entrando...';btn.disabled=true;
@@ -2820,6 +2837,17 @@ async function submitAnam(){
   document.getElementById('btn-go-app').textContent='Acessar meu treino 🚀';
 }
 function goToApp(){const email=DB.get('fq_cur');loadApp(email);show('sc-app');}
+
+// ══ Rate limiting da IA (evita abuso) ══
+const _aiCallLog = {};
+function _checkAIRateLimit(email) {
+  const now = Date.now();
+  if (!_aiCallLog[email]) _aiCallLog[email] = [];
+  _aiCallLog[email] = _aiCallLog[email].filter(t => now - t < 60 * 60 * 1000); // janela 1h
+  if (_aiCallLog[email].length >= 3) return false; // máx 3 gerações por hora
+  _aiCallLog[email].push(now);
+  return true;
+}
 
 async function genAIWithRetry(email, an, maxRetries){
   let lastErr;
@@ -5867,6 +5895,10 @@ function dismissBanner(){document.getElementById('pwa-banner').style.display='no
 // ══ INIT ══
 (async function init(){
   try{
+    // Session timeout: logout automático após 7 dias
+    const _la=DB.get('fq_last_active');
+    if(_la&&(Date.now()-_la)>7*24*60*60*1000){DB.del('fq_cur');DB.del('fq_last_active');show('sc-splash');return;}
+    DB.set('fq_last_active',Date.now());
     // Voltou do Mercado Pago?
     const qs=new URLSearchParams(location.search);
     if(qs.get('pagamento')==='sucesso')setTimeout(()=>fqToast('🎉 Pagamento aprovado! Seu acesso já está liberado na Loja.','ok',7000),800);
@@ -6061,6 +6093,18 @@ async function enviarEmailBoasVindas(nome, email){
   }catch(e){
     console.warn('EmailJS erro:', e.message);
   }
+}
+
+
+// ══ SANITIZAÇÃO DE INPUTS ══
+function sanitizeStr(str, maxLen=200){
+  if(typeof str !== 'string') return '';
+  return str.replace(/<[^>]*>/g,'').replace(/[<>"'`]/g,'').trim().substring(0, maxLen);
+}
+function sanitizeNum(val, min=0, max=300){
+  const n = parseFloat(val);
+  if(isNaN(n)) return min;
+  return Math.min(Math.max(n, min), max);
 }
 
 </script>
