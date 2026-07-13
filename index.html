@@ -700,7 +700,7 @@ textarea.fi{resize:vertical;min-height:80px;}
 
 <!-- SPLASH -->
 <div id="sc-splash" class="screen active">
-  <div id="fq-version-badge" style="position:absolute;bottom:8px;right:12px;font-size:9px;color:#333;font-weight:700;z-index:5">v51</div>
+  <div id="fq-version-badge" style="position:absolute;bottom:8px;right:12px;font-size:9px;color:#333;font-weight:700;z-index:5">v53</div>
   <img src="https://images.unsplash.com/photo-1517836357463-d25dfeac3438?w=800&q=80" alt="Fitness" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center top;filter:brightness(.35);z-index:0"/>
   <div class="splash-glow"></div>
   <div class="splash-noise"></div>
@@ -2098,7 +2098,11 @@ textarea.fi{resize:vertical;min-height:80px;}
 
 <script>
 // ══ SUPABASE ══
-const FQ_VERSION='v51';console.log('%cFitQuest '+FQ_VERSION,'color:#e50914;font-weight:bold;font-size:14px');
+const FQ_VERSION='v53';console.log('%cFitQuest '+FQ_VERSION,'color:#e50914;font-weight:bold;font-size:14px');
+// ══ PROXY DE IA (Cloudflare Worker) ══
+// Quando preenchido, a IA real funciona em produção com a chave protegida no servidor.
+// Deixe '' para usar o plano local (fallback). Ex: 'https://fitquest-ai.SEU-USUARIO.workers.dev'
+const AI_PROXY_URL='';
 const SUPABASE_URL='https://ctbmnvlsvdlrohkcalcm.supabase.co';
 const SUPABASE_KEY='sb_publishable_0jwz3vKIkAakkn8tgNrKKQ_EELiP41g'; // publishable key (segura para frontend — protegida via RLS no Supabase)
 const FN_URL=SUPABASE_URL+'/functions/v1';
@@ -2597,8 +2601,8 @@ function closeModal(id){document.getElementById(id).classList.remove('open');}
 function getExById(id){return EXERCISE_BANK.find(e=>e.id===id)||null;}
 function getU(){const e=DB.get('fq_cur');if(!e||e==='__admin__')return null;return(DB.get('fq_users')||{})[e]||null;}
 function saveU(u){const users=DB.get('fq_users')||{};users[u.email]=u;DB.set('fq_users',users);syncU(u);}
-function getGP(u){return u.aiPlan?.gym||DG;}
-function getRP(u){return u.aiPlan?.run||DR;}
+function getGP(u){const g=u.aiPlan?.gym;return (g&&Object.keys(g).length)?g:DG;}
+function getRP(u){const r=u.aiPlan?.run;return (r&&Object.keys(r).length)?r:DR;}
 function toggleMenu(){document.getElementById('nav-menu').classList.toggle('open');}
 document.addEventListener('click',e=>{if(!e.target.closest('.nav-av')&&!e.target.closest('.nav-menu'))document.getElementById('nav-menu').classList.remove('open');});
 window.addEventListener('scroll',()=>{const nav=document.getElementById('app-nav');if(nav)nav.classList.toggle('solid',window.scrollY>50);},{passive:true});
@@ -3134,7 +3138,8 @@ Sessões de corrida: incluir campo "estrutura" com divisão do treino (aquecimen
   const _tmo=setTimeout(()=>_ctrl.abort(),45000); // timeout 45s — nunca trava para sempre
   let res;
   try{
-    res=await fetch('https://api.anthropic.com/v1/messages',{
+    const _aiUrl=AI_PROXY_URL||'https://api.anthropic.com/v1/messages';
+    res=await fetch(_aiUrl,{
       method:'POST',
       headers:{'Content-Type':'application/json'},
       body:JSON.stringify({model:'claude-sonnet-4-6',max_tokens:8000,messages:[{role:'user',content:prompt}]}),
@@ -3317,14 +3322,15 @@ function loadApp(email){
   const cwBarRun=document.getElementById('cw-bar-run');if(cwBarRun)cwBarRun.style.width=pctR+'%';
   const cwSubRun=document.getElementById('cw-sub-run');if(cwSubRun)cwSubRun.textContent=`${rw} · ${rprog?.meta||''}`;
   // Render
-  renderMissions(u.missions||[]);
-  renderRankingCarousel(u,email,users);
+  const _safe=(fn,name)=>{try{fn();}catch(e){console.error('render '+name+':',e.message);}};
+  _safe(()=>renderMissions(u.missions||[]),'missions');
+  _safe(()=>renderRankingCarousel(u,email,users),'rankCar');
   carregarRanking().then(()=>{try{renderRankingCarousel(u,email,users);renderRankingFull(u,email,users);}catch(e){}});
-  renderHistory(u);
-  renderGym(u);
-  renderRun(u);
-  renderRankingFull(u,email,users);
-  renderPRs(u.prs||[]);
+  _safe(()=>renderHistory(u),'history');
+  _safe(()=>renderGym(u),'gym');
+  _safe(()=>renderRun(u),'run');
+  _safe(()=>renderRankingFull(u,email,users),'rankFull');
+  _safe(()=>renderPRs(u.prs||[]),'prs');
   renderBadges(u.badges||[]);
   renderEvo(u);
   renderStore(u);
@@ -3458,7 +3464,7 @@ function renderRankingFull(u,email,users){
 // ══ GYM ══
 let curGymWeek='Semana 1';let curGymDay='Treino A';
 function renderGym(u){
-  const P=getGP(u);const wks=Object.keys(P);curGymWeek=`Semana ${u.gymWeek||1}`;const prog=P[curGymWeek]||P[wks[0]];
+  const P=getGP(u);const wks=Object.keys(P);curGymWeek=`Semana ${u.gymWeek||1}`;const prog=P[curGymWeek]||P[wks[0]]||{fase:'',days:{}};if(!P[curGymWeek]&&wks[0])curGymWeek=wks[0];
   if(!u.trainApproved){
     document.getElementById('gym-hero-tag').textContent='EM BREVE';
     document.getElementById('gym-hero-title').textContent='Treino Personalizado';
@@ -3564,7 +3570,7 @@ function completeWk(w,d){
 
 // ══ RUN ══
 function renderRun(u){
-  const R=getRP(u);const wks=Object.keys(R);const cw=`Semana ${u.runWeek||1}`;const prog=R[cw]||R[wks[0]];
+  const R=getRP(u);const wks=Object.keys(R);const cw=`Semana ${u.runWeek||1}`;const prog=R[cw]||R[wks[0]]||{meta:'',sessions:[]};
   if(!u.trainApproved){document.getElementById('run-sessions').innerHTML=`<div style="text-align:center;padding:40px 20px"><div style="font-size:48px;margin-bottom:12px">⏳</div><div style="font-size:16px;font-weight:800;margin-bottom:8px">Programa de corrida em preparação</div><div style="font-size:13px;color:var(--t2)">Rennan está elaborando seu plano de corrida personalizado!</div></div>`;return;}
   document.getElementById('run-tag').textContent='🏃 CORRIDA';
   document.getElementById('run-title').textContent=`${cw} — ${prog.meta}`;

@@ -1,6 +1,6 @@
-// ══ FitQuest Service Worker v51 ══
-// Gerado em: 12/07/2026
-const CACHE_NAME = 'fitquest-v51';
+// ══ FitQuest Service Worker v53 ══
+// Gerado em: 13/07/2026
+const CACHE_NAME = 'fitquest-v53';
 
 const ASSETS = [
   '/fitquest/',
@@ -32,6 +32,7 @@ self.addEventListener('fetch', e => {
   if(
     url.hostname.includes('supabase.co') ||
     url.hostname.includes('anthropic.com') ||
+    url.hostname.includes('workers.dev') ||
     url.hostname.includes('mercadopago') ||
     url.hostname.includes('mpago') ||
     url.hostname.includes('googleapis.com') ||
