@@ -700,7 +700,7 @@ textarea.fi{resize:vertical;min-height:80px;}
 
 <!-- SPLASH -->
 <div id="sc-splash" class="screen active">
-  <div id="fq-version-badge" style="position:absolute;bottom:8px;right:12px;font-size:9px;color:#333;font-weight:700;z-index:5">v53</div>
+  <div id="fq-version-badge" style="position:absolute;bottom:8px;right:12px;font-size:9px;color:#333;font-weight:700;z-index:5">v55</div>
   <img src="https://images.unsplash.com/photo-1517836357463-d25dfeac3438?w=800&q=80" alt="Fitness" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center top;filter:brightness(.35);z-index:0"/>
   <div class="splash-glow"></div>
   <div class="splash-noise"></div>
@@ -2098,7 +2098,7 @@ textarea.fi{resize:vertical;min-height:80px;}
 
 <script>
 // ══ SUPABASE ══
-const FQ_VERSION='v53';console.log('%cFitQuest '+FQ_VERSION,'color:#e50914;font-weight:bold;font-size:14px');
+const FQ_VERSION='v55';console.log('%cFitQuest '+FQ_VERSION,'color:#e50914;font-weight:bold;font-size:14px');
 // ══ PROXY DE IA (Cloudflare Worker) ══
 // Quando preenchido, a IA real funciona em produção com a chave protegida no servidor.
 // Deixe '' para usar o plano local (fallback). Ex: 'https://fitquest-ai.SEU-USUARIO.workers.dev'
@@ -2260,6 +2260,81 @@ let EXERCISE_BANK=[
   {id:'e103',name:'Pull-over Cabo',muscle:'Costas/Serrátil',equipment:'Cabo',emoji:'🎣',obs:'Braços semi-estendidos, puxe a barra do alto até as coxas em arco. Isolamento de dorsais.'},
   {id:'e104',name:'Panturrilha no Smith',muscle:'Panturrilha',equipment:'Smith',emoji:'🏛️',obs:'Antepé em step, barra nos ombros. Segurança do Smith permite cargas altas.'},
   {id:'e105',name:'Prancha com Elevação de Perna',muscle:'Core/Glúteo',equipment:'Peso Corporal',emoji:'�959',obs:'Prancha estável + eleve uma perna 15cm por 2s alternando. Anti-rotação avançada.'},
+  {id:'e106',name:'Kettlebell Goblet Squat',muscle:'Quadríceps/Glúteo/Core',equipment:'Kettlebell',emoji:'🔔',obs:'KB no peito, cotovelos dentro dos joelhos. Ensina o padrão de agachamento com tronco ereto.'},
+  {id:'e107',name:'Turkish Get-Up',muscle:'Corpo Todo/Core',equipment:'Kettlebell',emoji:'🧎',obs:'Do chão até de pé com KB acima da cabeça. Movimento completo — comece com peso muito leve.'},
+  {id:'e108',name:'Kettlebell Clean',muscle:'Corpo Todo/Posterior',equipment:'Kettlebell',emoji:'🔄',obs:'Puxada explosiva do chão ao rack. Quadril gera a força, braço só guia.'},
+  {id:'e109',name:'Kettlebell Snatch',muscle:'Corpo Todo/Ombro',equipment:'Kettlebell',emoji:'💥',obs:'Do chão ao topo em um movimento. Avançado — domine o swing e o clean antes.'},
+  {id:'e110',name:'Thruster',muscle:'Corpo Todo/Ombro/Quadríceps',equipment:'Halteres/Barra',emoji:'🚀',obs:'Agachamento frontal + desenvolvimento em movimento único. Extremamente metabólico.'},
+  {id:'e111',name:'Wall Ball',muscle:'Corpo Todo/Quadríceps/Ombro',equipment:'Medicine Ball',emoji:'🎯',obs:'Agache e arremesse a bola na parede. Pegue no ar e repita. Cardio + força.'},
+  {id:'e112',name:'Slam Ball',muscle:'Core/Costas/Ombro',equipment:'Medicine Ball',emoji:'⚡',obs:'Erga acima da cabeça e arremesse no chão com força total. Potência e descarga.'},
+  {id:'e113',name:'Battle Rope',muscle:'Ombro/Core/Cardio',equipment:'Corda Naval',emoji:'🌊',obs:'Ondas alternadas ou simultâneas. 20-30s de esforço máximo. Cardio brutal sem impacto.'},
+  {id:'e114',name:'Sled Push',muscle:'Corpo Todo/Quadríceps',equipment:'Trenó',emoji:'🛷',obs:'Empurre o trenó em posição inclinada, passos curtos e potentes. Zero impacto excêntrico.'},
+  {id:'e115',name:'Sled Pull',muscle:'Costas/Posterior',equipment:'Trenó',emoji:'🪢',obs:'Puxe o trenó caminhando para trás. Excelente para reabilitação de joelho.'},
+  {id:'e116',name:'Box Jump',muscle:'Quadríceps/Glúteo/Pliometria',equipment:'Caixa',emoji:'📦',obs:'Salte na caixa, DESÇA caminhando (não pule de volta). Aterrisse suave, joelhos alinhados.'},
+  {id:'e117',name:'Salto Agachado (Squat Jump)',muscle:'Quadríceps/Glúteo/Pliometria',equipment:'Peso Corporal',emoji:'🦘',obs:'Agache e exploda para cima. Aterrisse suave, absorvendo com os joelhos. Máx 8-10 reps.'},
+  {id:'e118',name:'Salto Amplo (Broad Jump)',muscle:'Glúteo/Posterior/Pliometria',equipment:'Peso Corporal',emoji:'➡️',obs:'Salto horizontal máximo. Braços impulsionam. Aterrisse em agachamento controlado.'},
+  {id:'e119',name:'Skater Jump',muscle:'Glúteo Médio/Pliometria',equipment:'Peso Corporal',emoji:'⛸️',obs:'Salto lateral de uma perna para a outra. Estabilize 1s antes do próximo. Anti-lesão de joelho.'},
+  {id:'e120',name:'Flexão Pliométrica',muscle:'Peito/Tríceps/Pliometria',equipment:'Peso Corporal',emoji:'👏',obs:'Flexão com as mãos saindo do chão. Avançado — domine 20 flexões normais antes.'},
+  {id:'e121',name:'Bear Crawl',muscle:'Core/Ombro/Corpo Todo',equipment:'Peso Corporal',emoji:'🐻',obs:'Quatro apoios, joelhos a 3cm do chão. Braço e perna opostos avançam juntos. Core em fogo.'},
+  {id:'e122',name:'Crab Walk',muscle:'Tríceps/Glúteo/Core',equipment:'Peso Corporal',emoji:'🦀',obs:'De costas para o chão, quadril elevado. Caminhe para frente e para trás.'},
+  {id:'e123',name:'Urso para Prancha (Bear to Plank)',muscle:'Core/Ombro',equipment:'Peso Corporal',emoji:'🔀',obs:'Alterne entre posição de urso e prancha sem mover as mãos. Estabilidade dinâmica.'},
+  {id:'e124',name:'Agachamento Búlgaro com Salto',muscle:'Quadríceps/Glúteo/Pliometria',equipment:'Banco',emoji:'🇧🇬',obs:'Búlgaro explosivo com salto. Unilateral + pliometria. Muito avançado.'},
+  {id:'e125',name:'Pistol Squat',muscle:'Quadríceps/Glúteo/Core',equipment:'Peso Corporal',emoji:'🔫',obs:'Agachamento em uma perna, outra estendida à frente. O rei dos unilaterais. Use apoio no início.'},
+  {id:'e126',name:'Step-Up com Joelho Alto',muscle:'Quadríceps/Glúteo/Core',equipment:'Caixa',emoji:'🪜',obs:'Suba no step e eleve o joelho oposto ao peito. Equilíbrio + força unilateral.'},
+  {id:'e127',name:'Afundo Reverso',muscle:'Quadríceps/Glúteo',equipment:'Halteres/Livre',emoji:'↩️',obs:'Passo para TRÁS (não à frente). Menos stress no joelho que o avanço tradicional.'},
+  {id:'e128',name:'Afundo Lateral',muscle:'Adutores/Glúteo Médio',equipment:'Halteres/Livre',emoji:'↔️',obs:'Passo lateral amplo, sente no quadril. Trabalha o plano frontal — esquecido pela maioria.'},
+  {id:'e129',name:'Cossack Squat',muscle:'Adutores/Quadríceps/Mobilidade',equipment:'Peso Corporal',emoji:'🕺',obs:'Agachamento lateral profundo com a outra perna estendida. Mobilidade + força de adutores.'},
+  {id:'e130',name:'Elevação Pélvica Unilateral',muscle:'Glúteo',equipment:'Peso Corporal',emoji:'🍑',obs:'Uma perna no chão, outra estendida. Corrige assimetria de glúteo. Aperte 2s no topo.'},
+  {id:'e131',name:'Nordic Curl',muscle:'Posterior',equipment:'Peso Corporal',emoji:'🇳🇴',obs:'Ajoelhado, pés presos, desça controlando com o posterior. Reduz lesão de isquiotibiais em 51%.'},
+  {id:'e132',name:'Copenhagen Plank',muscle:'Adutores/Core',equipment:'Banco',emoji:'🇩🇰',obs:'Prancha lateral com a perna de cima apoiada no banco. Previne lesão de adutor (pubalgia).'},
+  {id:'e133',name:'Prancha com Toque no Ombro',muscle:'Core/Anti-rotação',equipment:'Peso Corporal',emoji:'🤚',obs:'Em prancha, toque o ombro oposto alternadamente. Quadril NÃO gira. Anti-rotação puro.'},
+  {id:'e134',name:'Pallof Press',muscle:'Core/Anti-rotação',equipment:'Cabo',emoji:'🛡️',obs:'De lado ao cabo, empurre à frente resistindo à rotação. O melhor exercício de core funcional.'},
+  {id:'e135',name:'Dead Bug',muscle:'Core Profundo',equipment:'Peso Corporal',emoji:'🐞',obs:'Deitado, braço e perna opostos descem. Lombar COLADA no chão. Ativa transverso do abdômen.'},
+  {id:'e136',name:'Bird Dog',muscle:'Core/Lombar/Glúteo',equipment:'Peso Corporal',emoji:'🐦',obs:'Quatro apoios, estenda braço e perna opostos. Segure 3s. Estabilidade da coluna.'},
+  {id:'e137',name:'Hollow Body Hold',muscle:'Core Completo',equipment:'Peso Corporal',emoji:'🌙',obs:'Deitado, ombros e pernas fora do chão, lombar colada. Base da ginástica. Segure 20-40s.'},
+  {id:'e138',name:'Prancha Dinâmica (Up-Down)',muscle:'Core/Tríceps/Ombro',equipment:'Peso Corporal',emoji:'⬆️',obs:'Alterne entre prancha de antebraço e de mão. Quadril estável, sem balanço.'},
+  {id:'e139',name:'Windshield Wiper',muscle:'Oblíquos/Core',equipment:'Peso Corporal',emoji:'🚗',obs:'Deitado, pernas a 90°, gire de um lado ao outro controlando. Avançado.'},
+  {id:'e140',name:'Hanging Leg Raise',muscle:'Abdômen Inferior',equipment:'Barra Fixa',emoji:'🪝',obs:'Pendurado, eleve as pernas estendidas até 90°. Sem balanço. O padrão-ouro de core.'},
+  {id:'e141',name:'Toes to Bar',muscle:'Core Completo',equipment:'Barra Fixa',emoji:'🎪',obs:'Pendurado, leve os pés até tocar a barra. Requer força e mobilidade. Muito avançado.'},
+  {id:'e142',name:'L-Sit',muscle:'Core/Tríceps',equipment:'Paralelas',emoji:'🇱',obs:'Sustentado nas paralelas, pernas estendidas à frente formando L. Isometria brutal.'},
+  {id:'e143',name:'Burpee com Salto na Caixa',muscle:'Corpo Todo/Cardio',equipment:'Caixa',emoji:'📦',obs:'Burpee completo + box jump. Condicionamento máximo. Ritmo constante, técnica primeiro.'},
+  {id:'e144',name:'Polichinelo (Jumping Jack)',muscle:'Cardio/Corpo Todo',equipment:'Peso Corporal',emoji:'⭐',obs:'Clássico do aquecimento. Eleve a FC gradualmente. 30-60s.'},
+  {id:'e145',name:'Corrida Estacionária Alta',muscle:'Cardio/Core',equipment:'Peso Corporal',emoji:'🏃',obs:'Joelhos até a altura do quadril, ritmo acelerado. 30s de esforço.'},
+  {id:'e146',name:'Skipping (Corda)',muscle:'Cardio/Panturrilha',equipment:'Corda',emoji:'🪢',obs:'Pular corda: 10 min queimam o equivalente a 30 min de corrida. Aterrisse na ponta dos pés.'},
+  {id:'e147',name:'Sprint na Esteira',muscle:'Cardio/Quadríceps',equipment:'Esteira',emoji:'💨',obs:'Tiros de 20-30s em velocidade máxima, 90s de caminhada. Protocolo HIIT clássico.'},
+  {id:'e148',name:'Bike Ergométrica HIIT',muscle:'Cardio/Quadríceps',equipment:'Bike',emoji:'🚴',obs:'30s de sprint máximo + 90s leve. 8-10 rounds. Baixo impacto, alta intensidade.'},
+  {id:'e149',name:'Remo Ergômetro',muscle:'Corpo Todo/Cardio',equipment:'Remo',emoji:'🚣',obs:'Sequência: pernas → tronco → braços (e volta invertido). 85% do trabalho vem das pernas.'},
+  {id:'e150',name:'Escada (StairMaster)',muscle:'Glúteo/Quadríceps/Cardio',equipment:'Máquina',emoji:'🪜',obs:'Não se apoie nas alças! Postura ereta, passos completos. Cardio + glúteo.'},
+  {id:'e151',name:'Elíptico',muscle:'Cardio/Corpo Todo',equipment:'Elíptico',emoji:'🎿',obs:'Zero impacto articular. Ideal para quem tem lesão de joelho e precisa de cardio.'},
+  {id:'e152',name:'Gato-Vaca (Cat-Cow)',muscle:'Mobilidade/Coluna',equipment:'Peso Corporal',emoji:'🐱',obs:'Quatro apoios, alterne flexão e extensão da coluna. Aquecimento obrigatório para a lombar.'},
+  {id:'e153',name:'Rotação Torácica no Chão',muscle:'Mobilidade/Torácica',equipment:'Peso Corporal',emoji:'🌀',obs:'Deitado de lado, joelho apoiado, gire o braço de cima abrindo o peito. Postura de escritório.'},
+  {id:'e154',name:'Mobilidade de Quadril 90/90',muscle:'Mobilidade/Quadril',equipment:'Peso Corporal',emoji:'📐',obs:'Sentado, pernas a 90°, alterne os lados sem usar as mãos. Libera quadril travado.'},
+  {id:'e155',name:'Alongamento de Flexores de Quadril',muscle:'Mobilidade/Quadril',equipment:'Peso Corporal',emoji:'🧘',obs:'Ajoelhado, empurre o quadril à frente contraindo o glúteo. Antídoto para ficar sentado.'},
+  {id:'e156',name:'Dislocação de Ombro com Bastão',muscle:'Mobilidade/Ombro',equipment:'Bastão',emoji:'🏒',obs:'Pegada larga, passe o bastão de frente para trás com braços estendidos. Saúde do ombro.'},
+  {id:'e157',name:'Alongamento de Peitoral na Porta',muscle:'Mobilidade/Peito',equipment:'Peso Corporal',emoji:'🚪',obs:'Antebraço na batente, gire o corpo. 30s cada lado. Corrige ombros arredondados.'},
+  {id:'e158',name:'Foam Roller Torácico',muscle:'Mobilidade/Liberação',equipment:'Foam Roller',emoji:'🎳',obs:'Role a coluna torácica (nunca a lombar!). Libera tensão e melhora a extensão.'},
+  {id:'e159',name:'Foam Roller IT Band',muscle:'Mobilidade/Liberação',equipment:'Foam Roller',emoji:'🦵',obs:'Role a lateral da coxa. Dói, mas alivia joelho do corredor. 60s cada perna.'},
+  {id:'e160',name:'Alongamento de Panturrilha na Parede',muscle:'Mobilidade/Panturrilha',equipment:'Peso Corporal',emoji:'🧱',obs:'Perna de trás estendida, calcanhar no chão. Essencial para corredores e agachamento profundo.'},
+  {id:'e161',name:'Postura da Criança (Balasana)',muscle:'Mobilidade/Coluna',equipment:'Peso Corporal',emoji:'🧘',obs:'Ajoelhado, tronco sobre as coxas, braços estendidos. Descompressão lombar e respiração.'},
+  {id:'e162',name:'Cachorro Olhando para Baixo',muscle:'Mobilidade/Posterior',equipment:'Peso Corporal',emoji:'🐕',obs:'V invertido, calcanhares em direção ao chão. Alonga posterior, panturrilha e ombro.'},
+  {id:'e163',name:'Ativação de Glúteo com Mini Band',muscle:'Glúteo Médio/Ativação',equipment:'Mini Band',emoji:'🎀',obs:'Faixa acima dos joelhos, caminhada lateral. 20 passos cada lado ANTES de treinar pernas.'},
+  {id:'e164',name:'Clamshell',muscle:'Glúteo Médio',equipment:'Mini Band',emoji:'🐚',obs:'Deitado de lado, abra o joelho de cima mantendo os pés juntos. Previne joelho valgo.'},
+  {id:'e165',name:'Monster Walk',muscle:'Glúteo Médio/Ativação',equipment:'Mini Band',emoji:'👹',obs:'Faixa nos tornozelos, caminhe em posição de semi-agachamento. Ativação pré-treino.'},
+  {id:'e166',name:'Rotação Externa com Elástico',muscle:'Manguito Rotador',equipment:'Elástico',emoji:'🔄',obs:'Cotovelo colado ao corpo a 90°, gire para fora. Prevenção de lesão de ombro. Sempre leve.'},
+  {id:'e167',name:'Y-T-W no Banco',muscle:'Ombro Posterior/Postura',equipment:'Halteres',emoji:'🔤',obs:'Deitado no banco inclinado, faça as letras Y, T e W com os braços. Pesos MUITO leves.'},
+  {id:'e168',name:'Face Pull com Rotação',muscle:'Manguito/Ombro Posterior',equipment:'Cabo',emoji:'😤',obs:'Face pull + rotação externa no final. O melhor exercício preventivo de ombro que existe.'},
+  {id:'e169',name:'Escápula Push-Up',muscle:'Serrátil/Escápula',equipment:'Peso Corporal',emoji:'🦋',obs:'Em prancha, aproxime e afaste as escápulas SEM dobrar os cotovelos. Ativa o serrátil.'},
+  {id:'e170',name:'Chin Tuck',muscle:'Cervical/Postura',equipment:'Peso Corporal',emoji:'😐',obs:'Empurre o queixo para trás (papada). Segure 5s. Corrige pescoço projetado do celular.'},
+  {id:'e171',name:'Farmer Walk Unilateral',muscle:'Core/Oblíquos/Antebraço',equipment:'Halteres',emoji:'⚖️',obs:'Peso em UMA mão só. O core trabalha para não deixar o tronco inclinar. Anti-flexão lateral.'},
+  {id:'e172',name:'Rack Carry',muscle:'Core/Ombro',equipment:'Kettlebell',emoji:'🎒',obs:'KB no rack (frente do ombro), caminhe. Core e postura sob carga.'},
+  {id:'e173',name:'Overhead Carry',muscle:'Ombro/Core',equipment:'Kettlebell/Halteres',emoji:'🙌',obs:'Peso acima da cabeça, braço travado, caminhe. Estabilidade de ombro extrema.'},
+  {id:'e174',name:'Landmine Press',muscle:'Ombro/Peito',equipment:'Landmine',emoji:'📐',obs:'Barra ancorada no chão, empurre na diagonal. Amigável ao ombro — ótima alternativa ao desenvolvimento.'},
+  {id:'e175',name:'Landmine Row',muscle:'Costas',equipment:'Landmine',emoji:'🎣',obs:'Remada com a barra ancorada. Amplitude excelente, menos stress lombar que a remada curvada.'},
+  {id:'e176',name:'Landmine Rotation',muscle:'Core/Oblíquos',equipment:'Landmine',emoji:'🌪️',obs:'Barra na diagonal, gire o tronco de lado a lado. Rotação com carga — esporte específico.'},
+  {id:'e177',name:'Bulgarian Split Squat Isométrico',muscle:'Quadríceps/Glúteo',equipment:'Banco',emoji:'⏸️',obs:'Segure a posição baixa do búlgaro por 20-30s. Isometria = ganho de força na amplitude treinada.'},
+  {id:'e178',name:'Wall Sit',muscle:'Quadríceps/Isometria',equipment:'Parede',emoji:'🧱',obs:'Costas na parede, joelhos a 90°. Segure até a falha. Zero impacto, muito eficaz.'},
+  {id:'e179',name:'Isometria de Supino (Pausa)',muscle:'Peito',equipment:'Barra',emoji:'⏱️',obs:'Pause 3s com a barra a 2cm do peito. Elimina o rebote e expõe o ponto fraco.'},
+  {id:'e180',name:'Agachamento com Pausa',muscle:'Quadríceps/Glúteo',equipment:'Barra',emoji:'⏸️',obs:'Pause 3s no fundo do agachamento. Força na posição mais difícil — sem usar o reflexo elástico.'},
 ];
 
 const DG={
@@ -2893,25 +2968,502 @@ async function genAIWithRetry(email, an, maxRetries){
   throw lastErr;
 }
 
-function gerarTreinoFallback(email,an){
-  const users=DB.get('fq_users')||{};if(!users[email])return;
+// ══════════════════════════════════════════════════════════════
+// MOTOR RENNAN DIAS v1 — Sistema especialista de prescrição
+// Divisão adaptativa por nível · Periodização ondulatória
+// Deload condicional · Contraindicações por lesão
+// ══════════════════════════════════════════════════════════════
+
+// ─── 1. PERFIL DO ALUNO (interpreta a anamnese) ───
+function RD_perfil(an){
+  const t=(an.tempo||'').toLowerCase();
+  let nivel='iniciante';
+  if(t.includes('nunca'))nivel='destreinado';
+  else if(t.includes('iniciante'))nivel='iniciante';
+  else if(t.includes('intermedi'))nivel='intermediario';
+  else if(t.includes('avan'))nivel='avancado';
+
   const dias=parseInt((an.dias||'3x').replace(/\D/g,''))||3;
-  const safe=(m)=>EXERCISE_BANK.filter(e=>{
-    if(an.temJoelho&&/agachamento|leg|extensora/i.test(e.name))return false;
-    if(an.temLombar&&/stiff|terra|remada curvada/i.test(e.name))return false;
-    if(an.temOmbro&&/desenvolvimento|elevação/i.test(e.name))return false;
-    return e.muscle&&e.muscle.toLowerCase().includes(m.toLowerCase());
+  const dur=parseInt((an.dur||'60').replace(/\D/g,''))||60;
+
+  const objs=(an.obj||[]).join(' ').toLowerCase();
+  let objetivo='saude';
+  if(/hipertrofia|massa/.test(objs))objetivo='hipertrofia';
+  else if(/emagre|gordura|perder/.test(objs))objetivo='emagrecimento';
+  else if(/for[çc]a/.test(objs))objetivo='forca';
+  else if(/funcional|mobilidade|postura/.test(objs))objetivo='funcional';
+  else if(/resist|condicion/.test(objs))objetivo='resistencia';
+
+  // Idade e FC máxima (Tanaka: 208 - 0.7 × idade)
+  let idade=30;
+  if(an.nasc){const y=new Date(an.nasc).getFullYear();if(y>1900)idade=new Date().getFullYear()-y;}
+  const fcMax=Math.round(208-0.7*idade);
+
+  // Recuperação: sono, estresse e idade limitam volume
+  let recup=1.0;
+  const sono=(an.sono||'').toLowerCase();
+  if(/menos de 5|4h|5h/.test(sono))recup-=0.20;
+  else if(/5 a 6|6h/.test(sono))recup-=0.10;
+  const stress=(an.stress||'').toLowerCase();
+  if(/alto|muito/.test(stress))recup-=0.15;
+  if(idade>=55)recup-=0.15;else if(idade>=45)recup-=0.08;
+  recup=Math.max(0.55,Math.min(1.0,recup));
+
+  // Ambiente de treino
+  const local=(an.local||'').toLowerCase();
+  let ambiente='completa';
+  if(/b[áa]sica/.test(local))ambiente='basica';
+  else if(/casa com/.test(local))ambiente='casa_equip';
+  else if(/casa sem/.test(local))ambiente='casa_livre';
+  else if(/rua|pista/.test(local))ambiente='rua';
+
+  // Corrida
+  const mc=(an.mc||[]).join(' ');
+  let corrida=null;
+  if(!/Não pratico/i.test(mc)){
+    if(/42|Maratona(?! \(21)/i.test(mc))corrida='maratona';
+    else if(/21|Meia/i.test(mc))corrida='meia';
+    else if(/10 ?km/i.test(mc))corrida='10k';
+    else if(/5 ?km/i.test(mc))corrida='5k';
+    else if(/pace|velocidade/i.test(mc))corrida='pace';
+  }
+
+  // Prioridades musculares (o que o aluno quer focar)
+  const foco=(an.foco||[]).map(f=>f.toLowerCase());
+
+  return {nivel,dias,dur,objetivo,idade,fcMax,recup,ambiente,corrida,foco,
+    lesoes:{joelho:!!an.temJoelho,lombar:!!an.temLombar,ombro:!!an.temOmbro},
+    peso:parseFloat(an.peso)||75};
+}
+
+// ─── 2. DIVISÃO INTELIGENTE (nível decide, não só os dias) ───
+function RD_divisao(p){
+  const {nivel,dias,objetivo}=p;
+  // Objetivo funcional/mobilidade: divisão própria
+  if(objetivo==='funcional'){
+    if(dias<=2)return ['FuncA','FuncC'].slice(0,dias);
+    if(dias===3)return ['FuncA','FuncB','FuncC'];
+    if(dias===4)return ['FuncA','FuncB','FuncC','HIIT'];
+    return ['FuncA','FuncB','FuncC','HIIT','FullA'].slice(0,dias);
+  }
+  // Emagrecimento com 4+ dias: injeta 1 dia de HIIT
+  if(objetivo==='emagrecimento'&&dias>=4&&nivel!=='destreinado'){
+    const base=nivel==='avancado'?['Push','Pull','Legs']:['UpperA','LowerA','UpperB'];
+    return dias===4?[...base,'HIIT']:[...base,'LowerB','HIIT'].slice(0,dias);
+  }
+  // Destreinado/iniciante: frequência alta por músculo, exercícios básicos
+  if(nivel==='destreinado'||nivel==='iniciante'){
+    if(dias<=2)return ['FullA','FullB'].slice(0,dias);
+    if(dias===3)return ['FullA','FullB','FullC'];
+    if(dias===4)return ['UpperA','LowerA','UpperB','LowerB'];
+    return ['UpperA','LowerA','UpperB','LowerB','FullA'].slice(0,dias);
+  }
+  // Intermediário: Upper/Lower ou PPL
+  if(nivel==='intermediario'){
+    if(dias<=2)return ['UpperA','LowerA'].slice(0,dias);
+    if(dias===3)return ['Push','Pull','Legs'];
+    if(dias===4)return ['UpperA','LowerA','UpperB','LowerB'];
+    if(dias===5)return ['Push','Pull','Legs','UpperA','LowerA'];
+    return ['Push','Pull','Legs','UpperA','LowerA','FullA']; // 6d sem duplicar chaves
+  }
+  // Avançado: PPL 2x ou split por grupo
+  if(dias<=3)return ['Push','Pull','Legs'].slice(0,dias);
+  if(dias===4)return ['Peito+Triceps','Costas+Biceps','Pernas','Ombro+Core'];
+  if(dias===5)return ['Peito+Triceps','Costas+Biceps','Pernas','Ombro+Core','PosteriorPant'];
+  return ['Push','Pull','Legs','Peito+Triceps','Costas+Biceps','Pernas']; // 6d: sem chaves repetidas
+}
+
+// Nome legível de cada dia
+const RD_NOMES={
+  FuncA:'Funcional A — Corpo Todo + Core',FuncB:'Funcional B — Potência + Condicionamento',
+  FuncC:'Funcional C — Cadeia Posterior + Mobilidade',HIIT:'HIIT — Condicionamento Metabólico',
+  FullA:'Full Body A — Corpo Todo',FullB:'Full Body B — Corpo Todo',FullC:'Full Body C — Corpo Todo',
+  UpperA:'Upper A — Peito/Costas/Braços',LowerA:'Lower A — Quadríceps/Panturrilha',
+  UpperB:'Upper B — Ombro/Costas/Braços',LowerB:'Lower B — Posterior/Glúteo',
+  Push:'Push — Peito/Ombro/Tríceps',Pull:'Pull — Costas/Bíceps',Legs:'Legs — Pernas Completo',
+  'Peito+Triceps':'Peito + Tríceps','Costas+Biceps':'Costas + Bíceps',Pernas:'Pernas — Quadríceps/Glúteo',
+  'Ombro+Core':'Ombro + Core',PosteriorPant:'Posterior + Panturrilha'
+};
+
+// Grupos musculares por tipo de treino (com nº de exercícios)
+const RD_ESTRUTURA={
+  FuncA:[['Corpo Todo',2],['Core',2],['Glúteo',1],['Ombro',1]],
+  FuncB:[['Quadríceps',1],['Costas',1],['Core',2],['Pliometria',1],['Cardio',1]],
+  FuncC:[['Posterior',1],['Peito',1],['Core',1],['Mobilidade',2]],
+  HIIT:[['Cardio',3],['Corpo Todo',2],['Core',1]],
+  FullA:[['Peito',1],['Costas',1],['Quadríceps',1],['Ombro',1],['Core',1]],
+  FullB:[['Costas',1],['Peito',1],['Posterior',1],['Glúteo',1],['Core',1]],
+  FullC:[['Quadríceps',1],['Peito',1],['Costas',1],['Bíceps',1],['Tríceps',1]],
+  UpperA:[['Peito',2],['Costas',2],['Bíceps',1],['Tríceps',1]],
+  LowerA:[['Quadríceps',2],['Glúteo',1],['Panturrilha',1],['Core',1]],
+  UpperB:[['Ombro',2],['Costas',2],['Tríceps',1],['Bíceps',1]],
+  LowerB:[['Posterior',2],['Glúteo',2],['Panturrilha',1],['Core',1]],
+  Push:[['Peito',3],['Ombro',2],['Tríceps',2]],
+  Pull:[['Costas',3],['Ombro Posterior',1],['Bíceps',2]],
+  Legs:[['Quadríceps',2],['Posterior',2],['Glúteo',1],['Panturrilha',1]],
+  'Peito+Triceps':[['Peito',4],['Tríceps',3]],
+  'Costas+Biceps':[['Costas',4],['Bíceps',3]],
+  Pernas:[['Quadríceps',3],['Glúteo',2],['Panturrilha',2]],
+  'Ombro+Core':[['Ombro',3],['Ombro Posterior',1],['Core',3]],
+  PosteriorPant:[['Posterior',3],['Glúteo',2],['Panturrilha',2]]
+};
+
+// ─── 3. SELEÇÃO DE EXERCÍCIOS (lesões + ambiente + variação) ───
+const RD_CONTRA={
+  // Joelho: impacto, flexão profunda sob carga, pliometria, unilateral extremo
+  joelho:/agachamento livre|agachamento frontal|hack|leg press|extensora|avanço|passada|búlgaro|sissy|step-?up|burpee|salto|jump|pliom|box|skater|pistol|thruster|wall ball|cossack|corrida estacion|sprint|escada|stair|corda|skipping|afundo/i,
+  // Lombar: flexão de coluna sob carga, extensão lombar, balísticos de quadril
+  lombar:/terra|stiff|good morning|remada curvada|agachamento livre|agachamento frontal|extensão lombar|superman|kettlebell swing|swing|snatch|clean|turkish|slam ball|wall ball|thruster|windshield|toes to bar|hanging leg|roda abdominal|ab wheel|landmine rotation/i,
+  // Ombro: elevação acima da cabeça, sustentação overhead, impacto no manguito
+  ombro:/desenvolvimento|arnold|elevação frontal|elevação lateral|supino inclinado|remada alta|flexão|barra fixa|dips|paralelas|snatch|turkish|overhead|thruster|wall ball|slam ball|battle rope|escápula push|l-sit|toes to bar|hanging|pliom|crab walk|bear crawl/i
+};
+const RD_EQUIP={
+  completa:null, // tudo liberado
+  basica:/halteres|barra|banco|peso corporal|livre|el[áa]stico|m[áa]quina/i,
+  casa_equip:/halteres|peso corporal|el[áa]stico|banco|livre|kettlebell/i,
+  casa_livre:/peso corporal|livre|el[áa]stico/i,
+  rua:/peso corporal|livre/i
+};
+
+function RD_pool(grupo,p){
+  const contra=[];
+  if(p.lesoes.joelho)contra.push(RD_CONTRA.joelho);
+  if(p.lesoes.lombar)contra.push(RD_CONTRA.lombar);
+  if(p.lesoes.ombro)contra.push(RD_CONTRA.ombro);
+  const eq=RD_EQUIP[p.ambiente];
+  const g=grupo.toLowerCase();
+  return EXERCISE_BANK.filter(e=>{
+    if(!e.muscle)return false;
+    if(!e.muscle.toLowerCase().includes(g))return false;
+    if(contra.some(rx=>rx.test(e.name)))return false;      // lesão contraindica
+    if(eq&&!eq.test(e.equipment||''))return false;          // equipamento indisponível
+    return true;
   });
-  const pick=(m,n)=>safe(m).slice(0,n).map(e=>({id:e.id,sets:3,reps:'12',load:'Moderada',rest:75,obs:'Execute com controle. Priorize a técnica.'}));
-  const days=dias<=2
-    ?{'Treino Full Body':[...pick('Peito',1),...pick('Costas',1),...pick('Quadríceps',1),...pick('Ombro',1),...pick('Core',1)]}
-    :{'Treino A — Peito/Ombro/Tríceps':[...pick('Peito',2),...pick('Ombro',1),...pick('Tríceps',2)],
-      'Treino B — Costas/Bíceps':[...pick('Costas',2),...pick('Bíceps',2),...pick('Core',1)],
-      'Treino C — Pernas':[...pick('Quadríceps',2),...pick('Posterior',1),...pick('Glúteo',1),...pick('Panturrilha',1)]};
-  const sem={fase:'Adaptação — foco na técnica',days};
-  const gym={};for(let s=1;s<=8;s++)gym['Semana '+s]=JSON.parse(JSON.stringify(sem));
-  users[email].aiPlan={gym,run:{}};users[email].trainApproved=true;users[email].usouFallback=true;
-  DB.set('fq_users',users);if(sb)syncU(users[email]).catch(()=>{});
+}
+
+// Rotação por semana: varia exercícios (evita adaptação e monotonia)
+function RD_escolhe(grupo,n,p,semana,excluir){
+  let pool=RD_pool(grupo,p);
+  // Fallback 1: relaxa o grupo, MAS mantém equipamento e lesões (nunca prescreve o que o aluno não pode fazer)
+  if(!pool.length){
+    const eq=RD_EQUIP[p.ambiente];
+    const contra=[];
+    if(p.lesoes.joelho)contra.push(RD_CONTRA.joelho);
+    if(p.lesoes.lombar)contra.push(RD_CONTRA.lombar);
+    if(p.lesoes.ombro)contra.push(RD_CONTRA.ombro);
+    pool=EXERCISE_BANK.filter(e=>{
+      if(eq&&!eq.test(e.equipment||''))return false;
+      if(contra.some(rx=>rx.test(e.name)))return false;
+      return true;
+    });
+  }
+  if(!pool.length)return [];
+  const off=Math.floor((semana-1)/2)%Math.max(1,pool.length); // troca a cada 2 semanas
+  const out=[];
+  const usados=new Set(excluir||[]);
+  for(let i=0;i<pool.length&&out.length<n;i++){
+    const e=pool[(off+i)%pool.length];
+    if(usados.has(e.id))continue; // nunca repete exercício no mesmo treino
+    usados.add(e.id);out.push(e);
+  }
+  return out;
+}
+
+// ─── 4. PERIODIZAÇÃO ONDULATÓRIA + DELOAD CONDICIONAL ───
+function RD_deloadSemanas(p){
+  // Avançado e intermediário: deload nas semanas 4 e 8
+  if(p.nivel==='avancado')return [4,8];
+  if(p.nivel==='intermediario')return [8];
+  // Iniciante/destreinado: sem deload (o volume já é baixo)
+  return [];
+}
+
+function RD_prescricao(p,semana,ehDeload){
+  // Ondulatória: cada bloco de 2 semanas oscila volume × intensidade
+  const bloco=Math.ceil(semana/2); // 1..4
+  const O=p.objetivo;
+  let sets,reps,rpe,rest,fase,carga;
+
+  if(ehDeload){
+    return {sets:2,reps:'12',rpe:'5-6',rest:60,carga:'Leve (50-60% do habitual)',
+      fase:'⚡ DELOAD — Recuperação Ativa (volume -40%, carga -30%)'};
+  }
+
+  if(O==='hipertrofia'){
+    const tab=[
+      {sets:3,reps:'12-15',rpe:'7',rest:75,carga:'Moderada (60-70% 1RM)',fase:'Acumulação — Volume e Técnica'},
+      {sets:4,reps:'8-12',rpe:'8',rest:90,carga:'Moderada-Alta (70-80% 1RM)',fase:'Intensificação — Sobrecarga Progressiva'},
+      {sets:4,reps:'6-10',rpe:'8-9',rest:105,carga:'Alta (75-85% 1RM)',fase:'Realização — Cargas Máximas'},
+      {sets:5,reps:'8-12',rpe:'9',rest:90,carga:'Alta (75-85% 1RM)',fase:'Pico — Volume Máximo'}
+    ];
+    ({sets,reps,rpe,rest,carga,fase}=tab[bloco-1]||tab[0]);
+  }else if(O==='forca'){
+    const tab=[
+      {sets:4,reps:'6',rpe:'7',rest:150,carga:'Moderada (70-75% 1RM)',fase:'Base de Força — Padrões Motores'},
+      {sets:5,reps:'5',rpe:'8',rest:180,carga:'Alta (80-85% 1RM)',fase:'Força Máxima — Neural'},
+      {sets:5,reps:'3',rpe:'9',rest:210,carga:'Muito Alta (85-92% 1RM)',fase:'Pico Neural — Cargas Altas'},
+      {sets:4,reps:'5',rpe:'8-9',rest:180,carga:'Alta (82-88% 1RM)',fase:'Consolidação de Força'}
+    ];
+    ({sets,reps,rpe,rest,carga,fase}=tab[bloco-1]||tab[0]);
+  }else if(O==='emagrecimento'){
+    const tab=[
+      {sets:3,reps:'15',rpe:'7',rest:45,carga:'Moderada (55-65% 1RM)',fase:'Metabólico — Densidade Alta'},
+      {sets:4,reps:'12-15',rpe:'8',rest:40,carga:'Moderada (60-70% 1RM)',fase:'Circuito Metabólico — Queima'},
+      {sets:4,reps:'10-12',rpe:'8',rest:45,carga:'Moderada-Alta (65-75% 1RM)',fase:'Força + Metabólico'},
+      {sets:4,reps:'12-15',rpe:'8-9',rest:40,carga:'Moderada (60-70% 1RM)',fase:'Pico Metabólico'}
+    ];
+    ({sets,reps,rpe,rest,carga,fase}=tab[bloco-1]||tab[0]);
+  }else if(O==='resistencia'){
+    const tab=[
+      {sets:3,reps:'15-20',rpe:'6-7',rest:45,carga:'Leve-Moderada (50-60% 1RM)',fase:'Base de Resistência'},
+      {sets:3,reps:'15-20',rpe:'7-8',rest:40,carga:'Moderada (55-65% 1RM)',fase:'Resistência Muscular'},
+      {sets:4,reps:'20',rpe:'8',rest:35,carga:'Moderada (55-65% 1RM)',fase:'Resistência Avançada'},
+      {sets:4,reps:'15-20',rpe:'8',rest:40,carga:'Moderada (60-70% 1RM)',fase:'Pico de Resistência'}
+    ];
+    ({sets,reps,rpe,rest,carga,fase}=tab[bloco-1]||tab[0]);
+  }else{ // saúde
+    const tab=[
+      {sets:2,reps:'12-15',rpe:'6',rest:60,carga:'Leve (50-60% 1RM)',fase:'Adaptação — Aprendendo o Movimento'},
+      {sets:3,reps:'12',rpe:'7',rest:60,carga:'Moderada (60-70% 1RM)',fase:'Condicionamento Geral'},
+      {sets:3,reps:'10-12',rpe:'7-8',rest:75,carga:'Moderada (60-70% 1RM)',fase:'Força Funcional'},
+      {sets:3,reps:'12',rpe:'7',rest:60,carga:'Moderada (60-70% 1RM)',fase:'Manutenção e Hábito'}
+    ];
+    ({sets,reps,rpe,rest,carga,fase}=tab[bloco-1]||tab[0]);
+  }
+
+  // Ajuste por recuperação (sono ruim/estresse/idade reduzem volume)
+  if(p.recup<0.75)sets=Math.max(2,sets-1);
+  // Duração curta: corta 1 série
+  if(p.dur<=30)sets=Math.max(2,sets-1);
+
+  return {sets,reps,rpe,rest,carga,fase};
+}
+
+
+// ─── BLOCOS COMPLEMENTARES: aquecimento, ativação e finalizador ───
+const RD_AQUECIMENTO={
+  geral:['e152','e144'],           // gato-vaca + polichinelo
+  lower:['e152','e163','e155'],    // mobilidade + ativação glúteo + flexores
+  upper:['e153','e169','e166'],    // torácica + escápula + manguito
+  corrida:['e160','e154','e163']   // panturrilha + quadril + glúteo
+};
+const RD_FINALIZADOR={
+  // Cada lista inclui opções de peso corporal — o filtro de equipamento escolhe as viáveis
+  emagrecimento:['e113','e143','e146','e145','e096','e097'], // rope, burpee box, corda, corrida alta, mountain, burpee
+  resistencia:['e146','e149','e144','e145'],
+  hipertrofia:['e133','e135','e137'],          // core estabilizador (peso corporal)
+  forca:['e134','e171','e133'],                // pallof, farmer, prancha toque
+  funcional:['e121','e137','e133','e134'],     // bear crawl, hollow, prancha, pallof
+  saude:['e136','e135','e161']                 // bird dog, dead bug, criança
+};
+const RD_MOBILIDADE_FIM=['e161','e162','e157','e160'];
+
+function RD_bloco(ids,p,tipo,semana,excluir){
+  const byId=Object.fromEntries(EXERCISE_BANK.map(e=>[e.id,e]));
+  const contra=[];
+  if(p.lesoes.joelho)contra.push(RD_CONTRA.joelho);
+  if(p.lesoes.lombar)contra.push(RD_CONTRA.lombar);
+  if(p.lesoes.ombro)contra.push(RD_CONTRA.ombro);
+  const eq=RD_EQUIP[p.ambiente];
+  const usados=new Set(excluir||[]);
+  return ids.map(id=>byId[id]).filter(e=>{
+    if(!e)return false;
+    if(usados.has(e.id))return false;                 // já está no treino
+    if(contra.some(rx=>rx.test(e.name)))return false;
+    if(eq&&!eq.test(e.equipment||''))return false;
+    return true;
+  }).map(e=>({
+    id:e.id,
+    sets:tipo==='aquec'?1:2,
+    reps:tipo==='aquec'?'30-45s':(tipo==='final'?'40s':'30s'),
+    load:tipo==='aquec'?'Sem carga — preparação':'Peso corporal / leve',
+    rest:tipo==='aquec'?20:45,
+    obs:(tipo==='aquec'?'🔥 AQUECIMENTO — ':(tipo==='final'?'💥 FINALIZADOR — ':'🧘 MOBILIDADE — '))+(e.obs||'')
+  }));
+}
+
+// ─── 5. MOTOR PRINCIPAL — monta as 8 semanas ───
+function RD_gerarGym(p){
+  const divisao=RD_divisao(p);
+  const deloads=RD_deloadSemanas(p);
+  const gym={};
+
+  for(let s=1;s<=8;s++){
+    const ehDeload=deloads.includes(s);
+    const presc=RD_prescricao(p,s,ehDeload);
+    const days={};
+
+    divisao.forEach((tipo,di)=>{
+      const estrutura=RD_ESTRUTURA[tipo]||RD_ESTRUTURA.FullA;
+      const exs=[];
+
+      // ── BLOCO 1: AQUECIMENTO ESPECÍFICO (sempre) ──
+      const ehLower=/Lower|Legs|Pernas|Posterior/i.test(tipo);
+      const ehUpper=/Upper|Push|Pull|Peito|Costas|Ombro/i.test(tipo);
+      const aq=ehLower?RD_AQUECIMENTO.lower:(ehUpper?RD_AQUECIMENTO.upper:RD_AQUECIMENTO.geral);
+      let blocoAq=RD_bloco(aq,p,'aquec',s,[]);
+      if(!blocoAq.length)blocoAq=RD_bloco(['e152','e161','e136'],p,'aquec',s,[]);
+      blocoAq.slice(0,3).forEach(e=>exs.push(e));
+
+      // ── BLOCO 2: TREINO PRINCIPAL ──
+      const jaUsados=exs.map(x=>x.id); // evita repetir o que já entrou no aquecimento
+      estrutura.forEach(([grupo,qtd])=>{
+        const temFoco=p.foco.some(f=>grupo.toLowerCase().includes(f)||f.includes(grupo.toLowerCase()));
+        const n=temFoco&&!ehDeload?qtd+1:qtd;
+        RD_escolhe(grupo,n,p,s+di,jaUsados).forEach((e)=>{
+          jaUsados.push(e.id);
+          const composto=/supino|agachamento|terra|remada|desenvolvimento|puxada|barra fixa|leg press|stiff|thruster/i.test(e.name);
+          const pliom=/salto|jump|pliom|box|skater/i.test(e.name);
+          const cardio=/cardio|sprint|corda|rope|bike|remo|esteira|el[íi]ptico|escada/i.test(e.name+' '+(e.muscle||''));
+          const isometria=/isometri|hold|wall sit|pausa|l-sit/i.test(e.name);
+          let sets=presc.sets,reps=presc.reps,rest=presc.rest,load=presc.carga;
+          if(pliom){sets=Math.min(4,presc.sets);reps='6-8 (explosivo)';rest=presc.rest+30;load='Peso corporal — foco na potência';}
+          else if(cardio){
+            const ehDiaHIIT=/HIIT/i.test(tipo);
+            sets=ehDiaHIIT?1:2;
+            reps=ehDiaHIIT?'8 rounds (30s forte / 90s leve)':'40-60s (esforço alto)';
+            rest=ehDiaHIIT?0:60;
+            load=ehDiaHIIT?'Intensidade máxima nos 30s':'Ritmo forte e sustentável';
+          }
+          else if(isometria){reps='20-40s (segure)';rest=60;load='Sustentação máxima com técnica';}
+          else if(composto)rest=presc.rest+15;
+          exs.push({id:e.id,sets,reps,load,rest,obs:`RPE ${presc.rpe}. ${e.obs||'Execute com controle total.'}`});
+        });
+      });
+
+      // ── BLOCO 3: FINALIZADOR METABÓLICO (não no deload) ──
+      if(!ehDeload&&p.dur>=45){
+        const fin=RD_FINALIZADOR[p.objetivo]||RD_FINALIZADOR.saude;
+        const usados=exs.map(x=>x.id);
+        const rot=[...fin.slice((s+di)%fin.length),...fin.slice(0,(s+di)%fin.length)];
+        let bloco=RD_bloco(rot,p,'final',s,usados).slice(0,1);
+        if(!bloco.length)bloco=RD_bloco(['e135','e136','e161','e137'],p,'final',s,usados).slice(0,1);
+        bloco.forEach(e=>exs.push(e));
+      }
+
+      // ── BLOCO 4: MOBILIDADE FINAL (sempre — recuperação) ──
+      const usadosM=exs.map(x=>x.id);
+      const off=(s+di)%RD_MOBILIDADE_FIM.length;
+      const mobRot=[...RD_MOBILIDADE_FIM.slice(off),...RD_MOBILIDADE_FIM.slice(0,off)];
+      RD_bloco(mobRot,p,'mob',s,usadosM).slice(0,1).forEach(e=>exs.push(e));
+
+      days[RD_NOMES[tipo]||tipo]=exs;
+    });
+
+    gym['Semana '+s]={fase:presc.fase,days};
+  }
+  return gym;
+}
+
+// ─── 6. MOTOR DE CORRIDA (zonas de FC reais + progressão) ───
+function RD_gerarRun(p){
+  if(!p.corrida)return {};
+  const fc=p.fcMax;
+  // Karvonen (FC de reserva) — zonas reais de treino, não % simples da FCmáx
+  const fcRep=p.nivel==='avancado'?55:p.nivel==='intermediario'?62:70;
+  const res=fc-fcRep;
+  const z=(lo,hi)=>`${Math.round(fcRep+res*lo)}-${Math.round(fcRep+res*hi)}bpm`;
+  const Z1=z(.50,.60),Z2=z(.60,.70),Z3=z(.70,.80),Z4=z(.80,.90),Z5=z(.90,1.0);
+
+  // Pace base estimado pelo nível
+  const paceMap={destreinado:8.5,iniciante:7.5,intermediario:6.5,avancado:5.5};
+  const base=paceMap[p.nivel]||7.0;
+  const fmt=(m)=>{const min=Math.floor(m);const seg=Math.round((m-min)*60);return `${min}:${String(seg).padStart(2,'0')}/km`;};
+  const paceLeve=fmt(base+0.75),paceMod=fmt(base),paceForte=fmt(base-0.5),paceTiro=fmt(base-1.0);
+
+  // Meta e volume por objetivo
+  const metas={'5k':5,'10k':10,meia:21,maratona:42,pace:10};
+  const alvo=metas[p.corrida]||10;
+  const run={};
+  const deloads=RD_deloadSemanas(p);
+
+  for(let s=1;s<=8;s++){
+    const ehDeload=deloads.includes(s);
+    const prog=s/8;
+    // Longão progride até 80% da meta na semana 7 (tapering na 8)
+    // Ponto de partida realista pelo nível + pico da preparação
+    const iniMap={destreinado:3,iniciante:4,intermediario:6,avancado:8};
+    const ini=Math.min(iniMap[p.nivel]||4,alvo*0.5);
+    // Provas curtas (5/10k): semana 8 é a PROVA (distância cheia).
+    // Provas longas (21/42k): pico de treino ~75% do alvo (a prova real vem depois do ciclo).
+    const pico=alvo<=10?alvo:Math.round(alvo*0.75);
+    let longao;
+    if(s===8){
+      longao=pico; // semana 8 = PROVA/PICO — nunca reduz, é o grande dia
+    }else{
+      // Progressão linear de ini → pico ao longo das 7 primeiras semanas
+      longao=Math.round((ini+(pico-ini)*((s-1)/7))*10)/10;
+      if(ehDeload)longao=Math.round(longao*0.6*10)/10; // deload de meio de ciclo reduz
+    }
+    longao=Math.max(3,longao);
+
+    const sessions=[];
+    // Sessão 1: base aeróbica (sempre)
+    sessions.push({
+      day:'Ter',type:'Rodagem Leve (Base Aeróbica)',
+      dist:Math.max(3,Math.min(10,Math.round(longao*0.5)))+' km',pace:paceLeve,fc:'Z2 '+Z2,
+      dur:'~'+Math.round(Math.max(3,Math.min(10,longao*0.5))*(base+0.75))+' min',
+      estrutura:'Aquecimento 5min caminhada → corrida contínua em ritmo conversacional → 5min desaceleração',
+      tip:'Se não consegue conversar enquanto corre, está rápido demais. Z2 constrói sua base.'
+    });
+    // Sessão 2: qualidade (varia por semana e nível)
+    if(!ehDeload||s===8){
+      if(s%3===1){
+        sessions.push({day:'Qui',type:'Intervalado (VO2máx)',
+          dist:'6 × 400m',pace:paceTiro,fc:'Z4-Z5 '+Z4,
+          dur:'~35 min',estrutura:'Aquecimento 10min → 6× (400m forte + 200m trote) → 10min soltura',
+          tip:'Os tiros elevam seu VO2máx. Recuperação ativa entre eles — não pare completamente.'});
+      }else if(s%3===2){
+        sessions.push({day:'Qui',type:'Tempo Run (Limiar)',
+          dist:Math.round(longao*0.45)+' km',pace:paceForte,fc:'Z3-Z4 '+Z3,
+          dur:'~30 min',estrutura:'Aquecimento 10min → 20min em ritmo "confortavelmente difícil" → 10min soltura',
+          tip:'Ritmo de limiar: você consegue falar 2-3 palavras, não uma frase. É aqui que a velocidade de prova nasce.'});
+      }else{
+        sessions.push({day:'Qui',type:'Fartlek (Ritmo Variado)',
+          dist:Math.round(longao*0.5)+' km',pace:paceMod,fc:'Z2-Z4 '+Z3,
+          dur:'~30 min',estrutura:'Alterne livremente: 2min forte / 2min leve, durante toda a corrida',
+          tip:'Fartlek é brincar com o ritmo. Sem cronômetro rígido — use referências (até aquele poste).'});
+      }
+    }
+    // Sessão 3: longão (o mais importante)
+    sessions.push({
+      day:'Dom',type:s===8?'🏁 PROVA / META':'Longão (Resistência)',
+      dist:longao+' km',pace:paceLeve,fc:'Z1-Z2 '+Z2,
+      dur:'~'+Math.round(longao*(base+0.75))+' min',
+      estrutura:s===8?'É o grande dia. Ritmo constante, hidrate a cada 15-20min, aproveite a chegada!':'Ritmo conversacional do início ao fim. Devagar. Muito devagar. Isso é o segredo.',
+      tip:s===8?`Você treinou 8 semanas para isso. ${alvo}km é seu. Confie no processo.`:'80% do seu volume deve ser leve (Z1-Z2). É contraintuitivo, mas é assim que se fica mais rápido.'
+    });
+
+    const metaTxt=s===8
+      ?(alvo<=10?`🏁 Semana da PROVA: ${alvo}km — o grande dia!`:`🏁 Pico da preparação: ${pico}km — pronto para ${alvo}km!`)
+      :(ehDeload?'⚡ Deload — recuperar para crescer'
+      :`Base aeróbica + qualidade · Longão ${longao}km`);
+    run['Semana '+s]={meta:metaTxt,sessions};
+  }
+  return run;
+}
+
+// ─── 7. FUNÇÃO PÚBLICA — substitui o fallback antigo ───
+function gerarTreinoFallback(email,an){
+  const users=DB.get('fq_users')||{};
+  if(!users[email])return;
+  try{
+    const p=RD_perfil(an||{});
+    const gym=RD_gerarGym(p);
+    const run=RD_gerarRun(p);
+    users[email].aiPlan={gym,run};
+    users[email].fcMax=p.fcMax;
+    users[email].motorRD=true; // marca que veio do Motor Rennan Dias
+    users[email].trainApproved=true;
+    DB.set('fq_users',users);
+    if(typeof sb!=='undefined'&&sb&&typeof syncU==='function')syncU(users[email]).catch(()=>{});
+  }catch(e){
+    console.error('Motor RD erro:',e);
+    // Último recurso: plano padrão do app
+    users[email].aiPlan={gym:DG,run:DR};
+    users[email].trainApproved=true;
+    DB.set('fq_users',users);
+  }
 }
 
 async function genAI(email,an){
