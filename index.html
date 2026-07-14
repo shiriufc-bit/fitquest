@@ -725,13 +725,30 @@ textarea.fi{resize:vertical;min-height:80px;}
 .lugar-badge{display:inline-flex;align-items:center;gap:5px;background:var(--s2);border:1px solid var(--b);border-radius:20px;padding:5px 10px;font-size:11px;font-weight:700;margin:0 5px 5px 0}
 .lugar-badge.on{background:rgba(243,156,18,.12);border-color:rgba(243,156,18,.35);color:#f39c12}
 
+
+@keyframes confFall{0%{transform:translateY(-10px) rotate(0deg);opacity:1}100%{transform:translateY(110vh) rotate(360deg);opacity:0}}
+.conf-piece{position:fixed;top:-10px;width:8px;height:8px;z-index:9999;pointer-events:none;animation:confFall linear forwards}
+
+
+.trilha-wrap{background:var(--s);border:1px solid var(--b);border-radius:14px;padding:16px;margin:0 20px 12px}
+.trilha-track{display:flex;align-items:center;gap:4px;overflow-x:auto;padding:8px 2px 12px;scrollbar-width:none}
+.trilha-track::-webkit-scrollbar{display:none}
+.trilha-node{display:flex;flex-direction:column;align-items:center;gap:4px;flex-shrink:0;min-width:52px}
+.trilha-circ{width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:17px;border:2px solid var(--b);background:var(--s2)}
+.trilha-circ.done{background:linear-gradient(135deg,var(--r),#ff6b35);border-color:var(--r)}
+.trilha-circ.atual{border-color:#f39c12;box-shadow:0 0 0 3px rgba(243,156,18,.2);animation:trilhaPulse 1.8s infinite}
+@keyframes trilhaPulse{0%,100%{box-shadow:0 0 0 3px rgba(243,156,18,.2)}50%{box-shadow:0 0 0 6px rgba(243,156,18,.08)}}
+.trilha-line{width:20px;height:2px;background:var(--b);flex-shrink:0;margin-top:-16px}
+.trilha-line.done{background:var(--r)}
+.trilha-lbl{font-size:8px;color:var(--mu);text-align:center;font-weight:700;max-width:52px;line-height:1.2}
+
 </style>
 </head>
 <body>
 
 <!-- SPLASH -->
 <div id="sc-splash" class="screen active">
-  <div id="fq-version-badge" style="position:absolute;bottom:8px;right:12px;font-size:9px;color:#333;font-weight:700;z-index:5">v59</div>
+  <div id="fq-version-badge" style="position:absolute;bottom:8px;right:12px;font-size:9px;color:#333;font-weight:700;z-index:5">v60</div>
   <img src="https://images.unsplash.com/photo-1517836357463-d25dfeac3438?w=800&q=80" alt="Fitness" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center top;filter:brightness(.35);z-index:0"/>
   <div class="splash-glow"></div>
   <div class="splash-noise"></div>
@@ -1723,6 +1740,17 @@ textarea.fi{resize:vertical;min-height:80px;}
         </div>
       </div>
 
+
+      <!-- Trilha de conquistas -->
+      <div class="trilha-wrap">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:2px">
+          <div style="font-size:13px;font-weight:800">🗺️ Sua jornada</div>
+          <div style="font-size:10px;color:var(--mu)" id="trilha-titulo-atual">—</div>
+        </div>
+        <div style="font-size:10px;color:var(--mu);margin-bottom:6px">Baseado no seu XP total acumulado</div>
+        <div class="trilha-track" id="trilha-track"></div>
+      </div>
+
       <!-- Seus locais — mapa + conquistas fundidos numa lista só -->
       <div class="mapa-wrap">
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:2px">
@@ -2200,7 +2228,7 @@ textarea.fi{resize:vertical;min-height:80px;}
 
 <script>
 // ══ SUPABASE ══
-const FQ_VERSION='v59';console.log('%cFitQuest '+FQ_VERSION,'color:#e50914;font-weight:bold;font-size:14px');
+const FQ_VERSION='v60';console.log('%cFitQuest '+FQ_VERSION,'color:#e50914;font-weight:bold;font-size:14px');
 // ══ PROXY DE IA (Cloudflare Worker) ══
 // Quando preenchido, a IA real funciona em produção com a chave protegida no servidor.
 // Deixe '' para usar o plano local (fallback). Ex: 'https://fitquest-ai.SEU-USUARIO.workers.dev'
@@ -4065,7 +4093,7 @@ function loadApp(email){
   BADGES.forEach(b=>{if(b.c(u)&&!u.badges.includes(b.id))u.badges.push(b.id);});
   DB.set('fq_users',users);
   // Nav
-  document.getElementById('streak-val').textContent=u.streak||1;
+  document.getElementById('streak-val').textContent=(u.streak||1)+streakFlame(u.streak||1);
   // Home profile card
   const homeName=document.getElementById('home-name');if(homeName)homeName.textContent=u.name||'Atleta';
   updateAvatarDisplays(u);
@@ -4074,7 +4102,7 @@ function loadApp(email){
   // XP
   const xpN=(u.level||1)*1000;
   const lvEl=document.getElementById('app-lv');if(lvEl)lvEl.textContent=u.level||1;
-  const stEl=document.getElementById('app-st');if(stEl)stEl.textContent=u.streak||1;
+  const stEl=document.getElementById('app-st');if(stEl)stEl.textContent=(u.streak||1)+streakFlame(u.streak||1);
   const coEl=document.getElementById('app-co');if(coEl)coEl.textContent=u.coins||0;
   const xpEl=document.getElementById('app-xp');if(xpEl)xpEl.textContent=(u.xp||0).toLocaleString()+' XP';
   const xpnEl=document.getElementById('app-xpn');if(xpnEl)xpnEl.textContent=xpN.toLocaleString()+' XP';
@@ -4149,7 +4177,7 @@ function renderPerfil(u){
   // Stats
   const ptEl=document.getElementById('perfil-treinos');if(ptEl)ptEl.textContent=u.stats?.treinos||0;
   const pkEl=document.getElementById('perfil-km');if(pkEl)pkEl.textContent=u.stats?.distancia||0;
-  const psEl=document.getElementById('perfil-streak');if(psEl)psEl.textContent=u.streak||1;
+  const psEl=document.getElementById('perfil-streak');if(psEl)psEl.textContent=(u.streak||1)+streakFlame(u.streak||1);
   // Level/XP
   const plEl=document.getElementById('perfil-lv');if(plEl)plEl.textContent=u.level||1;
   const pcEl=document.getElementById('perfil-coins');if(pcEl)pcEl.textContent=u.coins||0;
@@ -4310,6 +4338,16 @@ function chkSet(w,d,ei,si,total,rest,lk){
   const row=document.getElementById(`sr-${ei}-${si}`);if(row)row.classList.add('done');
   if(si<total-1)startTimer(rest);
 }
+
+// ── Chama de streak escalonada (feedback visual crescente) ──
+function streakFlame(dias){
+  if(dias>=100)return ' 🔥🔥🔥';
+  if(dias>=30)return ' 🔥🔥';
+  if(dias>=7)return ' 🔥';
+  if(dias>=3)return ' ✨';
+  return '';
+}
+
 function atualizarStreak(u){
   const hoje=new Date();hoje.setHours(0,0,0,0);
   const hojeStr=hoje.toDateString();
@@ -4330,7 +4368,8 @@ function atualizarStreak(u){
   if(!u.melhorStreak||u.streak>u.melhorStreak)u.melhorStreak=u.streak;
   // Marco redondo → aparece no mural (evita spam: só em números "cheios")
   if([7,14,21,30,50,60,100,150,200,365].includes(u.streak)){
-    try{registrarEventoComunidade('streak',{nome:u.name,dias:u.streak});}catch(e){}
+    try{registrarEventoComunidade('streak',{nome:u.name,dias:u.streak,titulo:tituloAtual(u)?.emoji});}catch(e){}
+    try{dispararConfete(24);}catch(e){}
   }
 }
 
@@ -4340,13 +4379,13 @@ function completeWk(w,d){
   if(!u.gymDone)u.gymDone={};u.gymDone[dk]=true;
   u.stats.treinos=(u.stats.treinos||0)+1;u.xp=(u.xp||0)+80;u.coins=(u.coins||0)+15;
   atualizarStreak(u);
-  try{registrarEventoComunidade(u,'treino',{nome:d});}catch(e){}
+  try{registrarEventoComunidade('treino',{nome:u.name,nome_treino:d,titulo:tituloAtual(u)?.emoji});}catch(e){}
   const P=getGP(u);const exs=P[w].days[d];
   if(!u.workoutHistory)u.workoutHistory=[];
   u.workoutHistory.push({week:w,day:d,date:new Date().toLocaleDateString('pt-BR'),exercises:exs.map(e=>{const ex=getExById(e.id);return{name:ex?.name||e.id,load:u.loadHistory?.[`${w}_${d}_${e.id}`]||''};})});
   const allDays=Object.keys(P[w].days);const tw=Object.keys(P).length;
   if(allDays.every(dd=>u.gymDone[`${w}_${dd}`])){const wn=parseInt(w.split(' ')[1]);if(wn===(u.gymWeek||1)&&(u.gymWeek||1)<tw){u.gymWeek=(u.gymWeek||1)+1;u.xp+=200;u.coins+=50;u.stats.semanas++;}}
-  if((u.xp||0)>=(u.level||1)*1000){u.level=(u.level||1)+1;u.xp=0;setTimeout(()=>fqToast('🎉 Subiu para o Nível '+(u.level||1)+'!','ok',5000),200);}
+  if((u.xp||0)>=(u.level||1)*1000){u.level=(u.level||1)+1;u.xp=0;setTimeout(()=>fqToast('🎉 Subiu para o Nível '+(u.level||1)+'!','ok',5000),200);try{dispararConfete(40);}catch(e){}}
   DB.set('fq_users',users);loadApp(email);switchTab('gym',document.querySelectorAll('.nbtn')[1]);
 }
 
@@ -4376,10 +4415,10 @@ function markRun(w,i){
   if(!isNaN(km))u.stats.distancia=Math.round(((u.stats.distancia||0)+km)*10)/10;
   u.xp=(u.xp||0)+60;u.coins=(u.coins||0)+10;
   atualizarStreak(u);
-  try{registrarEventoComunidade(u,'corrida',{km:isNaN(km)?0:km});}catch(e){}
+  try{registrarEventoComunidade('treino',{nome:u.name,nome_treino:'Corrida ('+(isNaN(km)?'':km+'km')+')',titulo:tituloAtual(u)?.emoji});}catch(e){}
   const tot=R[w].sessions.length;const tw=Object.keys(R).length;
   if([...Array(tot).keys()].every(j=>u.runDone[`run_${w}_${j}`])){const wn=parseInt(w.split(' ')[1]);if(wn===(u.runWeek||1)&&(u.runWeek||1)<tw){u.runWeek=(u.runWeek||1)+1;u.xp+=150;u.coins+=30;}}
-  if((u.xp||0)>=(u.level||1)*1000){u.level=(u.level||1)+1;u.xp=0;}
+  if((u.xp||0)>=(u.level||1)*1000){u.level=(u.level||1)+1;u.xp=0;setTimeout(()=>fqToast('🎉 Subiu para o Nível '+(u.level||1)+'!','ok',5000),200);try{dispararConfete(40);}catch(e){}}
   DB.set('fq_users',users);loadApp(email);switchTab('run',document.querySelectorAll('.nbtn')[2]);
 }
 
@@ -4394,7 +4433,8 @@ function logPR(){
   const val=prompt('Resultado (ex: 90kg, 24:30):');if(!val)return;
   if(!u.prs)u.prs=[];u.prs.push({exercise:ex,value:val,date:new Date().toLocaleDateString('pt-BR',{day:'2-digit',month:'2-digit'}),icon:'⭐'});
   u.xp=(u.xp||0)+100;u.coins=(u.coins||0)+20;DB.set('fq_users',users);
-  try{registrarEventoComunidade('pr',{nome:u.name,ex:ex});}catch(e){}
+  try{registrarEventoComunidade('pr',{nome:u.name,ex:ex,titulo:tituloAtual(u)?.emoji});}catch(e){}
+  try{dispararConfete(36);}catch(e){}
   loadApp(email);
 }
 
@@ -7016,21 +7056,24 @@ function registrarEventoComunidade(tipo,dados){
   DB.set('fq_com_eventos',ev.slice(0,50)); // guarda os 50 mais recentes
 }
 
-function darKudos(idx){
+const REACOES_DISPONIVEIS=['👏','🔥','💪','😮'];
+function darReacao(idx,emoji){
   const ev=DB.get('fq_com_eventos')||[];
   if(!ev[idx])return;
-  const meus=DB.get('fq_meus_kudos')||[];
+  const meus=DB.get('fq_minhas_reacoes')||{};
   const chave=ev[idx].ts+'_'+idx;
-  if(meus.includes(chave)){fqToast('Você já apoiou 👏','warn');return;}
-  ev[idx].kudos=(ev[idx].kudos||0)+1;
-  meus.push(chave);
-  DB.set('fq_com_eventos',ev);DB.set('fq_meus_kudos',meus);
-  // Quem dá kudos ganha XP também (incentiva a interação positiva)
+  if(meus[chave]){fqToast('Você já reagiu a este momento','warn');return;}
+  if(!ev[idx].reacoes)ev[idx].reacoes={};
+  ev[idx].reacoes[emoji]=(ev[idx].reacoes[emoji]||0)+1;
+  meus[chave]=emoji;
+  DB.set('fq_com_eventos',ev);DB.set('fq_minhas_reacoes',meus);
   const email=DB.get('fq_cur');const users=DB.get('fq_users')||{};
   if(users[email]){users[email].xp=(users[email].xp||0)+5;DB.set('fq_users',users);}
-  fqToast('👏 Kudos enviado! +5 XP','ok');
+  fqToast(emoji+' Reação enviada! +5 XP','ok');
   renderMural();
 }
+// Compatibilidade: manter darKudos como atalho para 👏 (caso chamado de algum lugar antigo)
+function darKudos(idx){darReacao(idx,'👏');}
 
 // ─── BADGES DE EXPLORAÇÃO ───
 const BADGES_LUGAR=[
@@ -7106,6 +7149,7 @@ function renderComunidade(){
   renderMapaPessoal(u);
   renderBadgesLugar(u);
   renderMural();
+  renderTrilha(u);
 }
 
 function renderMapaPessoal(u){
@@ -7140,7 +7184,7 @@ function renderBadgesLugar(u){
 
 function renderMural(){
   const ev=DB.get('fq_com_eventos')||[];
-  const meus=DB.get('fq_meus_kudos')||[];
+  const minhas=DB.get('fq_minhas_reacoes')||{};
   const el=document.getElementById('mural-lista');
   if(!el)return;
   if(!ev.length){
@@ -7157,25 +7201,106 @@ function renderMural(){
   };
   el.innerHTML=ev.slice(0,10).map((e,i)=>{
     const chave=e.ts+'_'+i;
-    const jaDei=meus.includes(chave);
-    const primeiroNome=(e.nome||'Atleta').split(' ')[0];
+    const minhaReacao=minhas[chave]||null;
+    const primeiroNome=(e.nome||'Atleta').split(' ')[0];const tituloTag=e.titulo?e.titulo+' ':'';
     const ini=primeiroNome[0]?primeiroNome[0].toUpperCase():'A';
     let texto='';
     if(e.tipo==='pr')texto=`bateu um novo recorde: <strong>${e.ex}</strong> ⭐`;
     else if(e.tipo==='treino')texto=`completou o treino <strong>${e.nome_treino||'de hoje'}</strong> 💪`;
     else if(e.tipo==='streak')texto=`está com <strong>${e.dias} dias</strong> de sequência 🔥`;
     else texto='está treinando 💪';
+    const reacoes=e.reacoes||{};
+    const botoes=REACOES_DISPONIVEIS.map(emj=>{
+      const cnt=reacoes[emj]||0;
+      const ativo=minhaReacao===emj;
+      if(cnt===0&&!ativo)return ''; // só mostra reação com contagem OU se foi a escolhida (evita poluir)
+      return `<button class="kudos-btn${ativo?' done':''}" onclick="darReacao(${i},'${emj}')" style="margin-right:5px">${emj} ${cnt||''}</button>`;
+    }).join('');
+    // Se ninguém reagiu ainda, mostra os 4 botões pequenos para incentivar o primeiro toque
+    const botoesFinal = botoes.trim() ? botoes : REACOES_DISPONIVEIS.map(emj=>`<button class="kudos-btn" onclick="darReacao(${i},'${emj}')" style="margin-right:5px">${emj}</button>`).join('');
     return `<div class="mural-item">
       <div class="mural-head">
         <div class="mural-av">${ini}</div>
         <div style="flex:1">
-          <div style="font-size:12px"><strong>${primeiroNome}</strong> ${texto}</div>
+          <div style="font-size:12px">${tituloTag}<strong>${primeiroNome}</strong> ${texto}</div>
           <div style="font-size:10px;color:var(--mu)">${tempo(e.ts)}</div>
         </div>
       </div>
-      <button class="kudos-btn${jaDei?' done':''}" onclick="darKudos(${i})">👏 ${e.kudos||0}</button>
+      <div style="display:flex;flex-wrap:wrap;gap:0">${botoesFinal}</div>
     </div>`;
   }).join('');
+}
+
+
+// ── Confete: micro-celebração ao completar algo (PR, desafio, nível, badge) ──
+function dispararConfete(qtd=28){
+  const cores=['#e50914','#ff6b35','#f39c12','#2ecc71','#3498db'];
+  for(let i=0;i<qtd;i++){
+    const p=document.createElement('div');
+    p.className='conf-piece';
+    p.style.left=Math.random()*100+'vw';
+    p.style.background=cores[i%cores.length];
+    p.style.animationDuration=(1.8+Math.random()*1.2)+'s';
+    p.style.animationDelay=(Math.random()*0.3)+'s';
+    if(Math.random()>.5)p.style.borderRadius='50%';
+    document.body.appendChild(p);
+    setTimeout(()=>p.remove(),3200);
+  }
+}
+
+
+// ── Títulos desbloqueáveis (baseados em stats já sincronizados — sem infra nova) ──
+const TITULOS=[
+  {id:'lenda',emoji:'👑',nome:'Lenda',cond:u=>(u.melhorStreak||0)>=100},
+  {id:'guerreiro',emoji:'⚔️',nome:'Guerreiro',cond:u=>(u.melhorStreak||0)>=30},
+  {id:'maratonista',emoji:'🏃',nome:'Maratonista',cond:u=>(u.stats?.distancia||0)>=100},
+  {id:'ferro',emoji:'🏋️',nome:'Fera do Ferro',cond:u=>(u.stats?.treinos||0)>=100},
+  {id:'veterano',emoji:'🎖️',nome:'Veterano',cond:u=>(u.stats?.treinos||0)>=50},
+  {id:'consistente',emoji:'📅',nome:'Consistente',cond:u=>(u.melhorStreak||0)>=7},
+  {id:'novato',emoji:'🌱',nome:'Novato Dedicado',cond:u=>(u.stats?.treinos||0)>=1},
+];
+function tituloAtual(u){
+  const t=TITULOS.find(x=>x.cond(u));
+  return t||null;
+}
+
+
+// ── Trilha de conquistas: jornada visual baseada em XP total acumulado ──
+const TRILHA_ESTACOES=[
+  {xp:0,emoji:'🌱',nome:'Início'},
+  {xp:500,emoji:'🐣',nome:'1os Passos'},
+  {xp:1500,emoji:'💪',nome:'Pegando Ritmo'},
+  {xp:3000,emoji:'🔥',nome:'Constância'},
+  {xp:5000,emoji:'⚡',nome:'Em Ascensão'},
+  {xp:8000,emoji:'🏋️',nome:'Forte de Vdd'},
+  {xp:12000,emoji:'⚔️',nome:'Guerreiro'},
+  {xp:18000,emoji:'🚀',nome:'Imparável'},
+  {xp:25000,emoji:'👑',nome:'Lenda'},
+];
+function xpTotalAcumulado(u){
+  return Math.max(0,((u.level||1)-1)*1000+(u.xp||0));
+}
+function renderTrilha(u){
+  const el=document.getElementById('trilha-track');
+  if(!el)return;
+  const total=xpTotalAcumulado(u);
+  let atualIdx=0;
+  TRILHA_ESTACOES.forEach((e,i)=>{if(total>=e.xp)atualIdx=i;});
+  document.getElementById('trilha-titulo-atual').textContent=TRILHA_ESTACOES[atualIdx].nome;
+  el.innerHTML=TRILHA_ESTACOES.map((e,i)=>{
+    const done=total>=e.xp;
+    const atual=i===atualIdx;
+    const linha=i>0?`<div class="trilha-line${TRILHA_ESTACOES[i-1].xp<=total?' done':''}"></div>`:'';
+    return linha+`<div class="trilha-node">
+      <div class="trilha-circ${done?' done':''}${atual?' atual':''}">${e.emoji}</div>
+      <div class="trilha-lbl">${e.nome}</div>
+    </div>`;
+  }).join('');
+  // Auto-scroll até a estação atual (se o navegador suportar)
+  setTimeout(()=>{
+    const nodes=el.querySelectorAll('.trilha-node');
+    if(nodes[atualIdx]&&nodes[atualIdx].scrollIntoView)nodes[atualIdx].scrollIntoView({inline:'center',block:'nearest'});
+  },50);
 }
 
 </script>
