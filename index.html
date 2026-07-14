@@ -742,13 +742,50 @@ textarea.fi{resize:vertical;min-height:80px;}
 .trilha-line.done{background:var(--r)}
 .trilha-lbl{font-size:8px;color:var(--mu);text-align:center;font-weight:700;max-width:52px;line-height:1.2}
 
+
+/* ══════════════════════════════════════════════════════
+   POLIMENTO NETFLIX — feedback tátil, scroll-snap, transições
+   Aditivo: não remove nem reescreve nenhuma regra existente.
+   ══════════════════════════════════════════════════════ */
+
+/* Feedback tátil em TODO card clicável — a assinatura mais Netflix que existe */
+.cw-card,.bcard,.gym-card,.mural-item,.local-row,.desafio-card,.trilha-node,
+.ex-btn,.checkin-btn,.kudos-btn,.lugar-badge,.season-card,.store-card,
+.prcard,.badge-item,.rank-row,.consult-plan,.evo-card,.leaderboard-row{
+  transition:transform .15s cubic-bezier(.4,0,.2,1),box-shadow .15s ease;
+  -webkit-tap-highlight-color:transparent;
+}
+.cw-card:active,.bcard:active,.gym-card:active,.mural-item:active,.local-row:active,
+.desafio-card:active,.ex-btn:active,.checkin-btn:active,.kudos-btn:active,
+.lugar-badge:active,.store-card:active,.prcard:active,.badge-item:active,
+.rank-row:active,.consult-plan:active{
+  transform:scale(.96);
+}
+@media (hover:hover){
+  .cw-card:hover{transform:translateY(-4px) scale(1.02);box-shadow:0 12px 24px rgba(0,0,0,.5);z-index:2;position:relative}
+  .bcard:hover,.store-card:hover{transform:translateY(-2px);box-shadow:0 8px 16px rgba(0,0,0,.4)}
+}
+
+/* Scroll-snap nos carrosséis — a rolagem "encaixa" nos cards, como na Netflix */
+.carousel{scroll-snap-type:x proximate;-webkit-overflow-scrolling:touch}
+.cw-card{scroll-snap-align:start}
+
+/* Transição suave ao trocar de aba — evita o corte seco entre telas */
+.tp.active{animation:tpFadeIn .28s cubic-bezier(.4,0,.2,1)}
+@keyframes tpFadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+@media (prefers-reduced-motion:reduce){.tp.active{animation:none}}
+
+/* Botões primários também ganham resposta tátil consistente */
+.btn-p,.btn-cw-play,.checkin-btn{-webkit-tap-highlight-color:transparent}
+.btn-p:active,.btn-cw-play:active{transform:scale(.97)}
+
 </style>
 </head>
 <body>
 
 <!-- SPLASH -->
 <div id="sc-splash" class="screen active">
-  <div id="fq-version-badge" style="position:absolute;bottom:8px;right:12px;font-size:9px;color:#333;font-weight:700;z-index:5">v60</div>
+  <div id="fq-version-badge" style="position:absolute;bottom:8px;right:12px;font-size:9px;color:#333;font-weight:700;z-index:5">v61</div>
   <img src="https://images.unsplash.com/photo-1517836357463-d25dfeac3438?w=800&q=80" alt="Fitness" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center top;filter:brightness(.35);z-index:0"/>
   <div class="splash-glow"></div>
   <div class="splash-noise"></div>
@@ -2228,7 +2265,7 @@ textarea.fi{resize:vertical;min-height:80px;}
 
 <script>
 // ══ SUPABASE ══
-const FQ_VERSION='v60';console.log('%cFitQuest '+FQ_VERSION,'color:#e50914;font-weight:bold;font-size:14px');
+const FQ_VERSION='v61';console.log('%cFitQuest '+FQ_VERSION,'color:#e50914;font-weight:bold;font-size:14px');
 // ══ PROXY DE IA (Cloudflare Worker) ══
 // Quando preenchido, a IA real funciona em produção com a chave protegida no servidor.
 // Deixe '' para usar o plano local (fallback). Ex: 'https://fitquest-ai.SEU-USUARIO.workers.dev'
@@ -4258,11 +4295,11 @@ function renderRankingFull(u,email,users){
       </div>`;
     }).join('');
   }
-  document.getElementById('ranking-full').innerHTML=uniq.slice(3).map((r,i)=>{const p=i+4;return `<div style="background:${r.isMe?'rgba(229,9,20,.08)':'var(--s)'};border:1px solid ${r.isMe?'rgba(229,9,20,.25)':'var(--b)'};border-radius:8px;padding:12px 14px;display:flex;align-items:center;gap:12px;margin:0 20px 8px">
-    <div style="width:26px;text-align:center;font-size:13px;font-weight:800;color:var(--mu)">#${p}</div>
-    <div style="width:36px;height:36px;border-radius:6px;background:${r.isMe?'var(--r)':'var(--s2)'};display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:900;color:#fff;flex-shrink:0">${r.name?r.name[0].toUpperCase():'?'}</div>
-    <div style="flex:1"><div style="font-size:12px;font-weight:700;color:${r.isMe?'var(--r)':'var(--t)'}">${r.name}${r.isMe?' <span style="font-size:9px;color:var(--mu)">(você)</span>':''}</div><div style="font-size:10px;color:var(--mu)">Nível ${r.level}</div></div>
-    <div style="text-align:right"><div style="font-size:13px;font-weight:800;color:${r.isMe?'var(--r)':'var(--t)'}">${(r.xp||0).toLocaleString()}</div><div style="font-size:9px;color:var(--mu)">XP</div></div>
+  document.getElementById('ranking-full').innerHTML=uniq.slice(3).map((r,i)=>{const p=i+4;return `<div class="rank-row" style="background:${r.isMe?'rgba(229,9,20,.08)':'var(--s)'};border:1px solid ${r.isMe?'rgba(229,9,20,.25)':'var(--b)'};border-radius:8px;padding:10px 14px;display:flex;align-items:center;gap:2px;margin:0 20px 8px;overflow:hidden">
+    <div style="width:38px;text-align:center;font-size:30px;font-weight:900;font-style:italic;line-height:1;color:${r.isMe?'var(--r)':'transparent'};-webkit-text-stroke:1.4px ${r.isMe?'var(--r)':'var(--b2)'};flex-shrink:0;letter-spacing:-2px">${p}</div>
+    <div style="width:36px;height:36px;border-radius:6px;background:${r.isMe?'var(--r)':'var(--s2)'};display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:900;color:#fff;flex-shrink:0;margin-right:10px">${r.name?r.name[0].toUpperCase():'?'}</div>
+    <div style="flex:1;min-width:0"><div style="font-size:12px;font-weight:700;color:${r.isMe?'var(--r)':'var(--t)'};overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${r.name}${r.isMe?' <span style="font-size:9px;color:var(--mu)">(você)</span>':''}</div><div style="font-size:10px;color:var(--mu)">Nível ${r.level}</div></div>
+    <div style="text-align:right;flex-shrink:0"><div style="font-size:13px;font-weight:800;color:${r.isMe?'var(--r)':'var(--t)'}">${(r.xp||0).toLocaleString()}</div><div style="font-size:9px;color:var(--mu)">XP</div></div>
   </div>`;}).join('');
 }
 
