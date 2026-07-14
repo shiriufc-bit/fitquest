@@ -694,13 +694,44 @@ textarea.fi{resize:vertical;min-height:80px;}
 #wa-float svg{width:30px;height:30px;fill:#fff;}
 #wa-float .wa-badge{position:absolute;top:-4px;right:-4px;background:var(--r);color:#fff;font-size:8px;font-weight:900;border-radius:10px;padding:2px 6px;letter-spacing:.3px;}
 
+
+/* ══ COMUNIDADE ══ */
+.com-hero{background:linear-gradient(135deg,rgba(229,9,20,.14),rgba(255,107,53,.06));border:1px solid rgba(229,9,20,.25);border-radius:16px;padding:18px;margin:0 20px 14px}
+.com-hero-num{font-size:34px;font-weight:900;color:var(--r);line-height:1}
+.com-hero-lbl{font-size:12px;color:var(--t2);margin-top:2px}
+.desafio-card{background:var(--s);border:1px solid var(--b);border-radius:14px;padding:16px;margin:0 20px 12px}
+.desafio-bar{height:10px;background:var(--s2);border-radius:5px;overflow:hidden;margin:10px 0 6px}
+.desafio-fill{height:100%;background:linear-gradient(90deg,var(--r),#ff6b35);border-radius:5px;transition:width .6s ease}
+.gym-card{background:var(--s);border:1px solid var(--b);border-radius:12px;padding:14px;margin-bottom:8px;display:flex;align-items:center;gap:12px}
+.gym-ico{width:42px;height:42px;border-radius:10px;background:rgba(229,9,20,.12);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
+.gym-badge{font-size:9px;font-weight:900;background:rgba(46,204,113,.15);color:#2ecc71;border-radius:4px;padding:2px 6px}
+.checkin-btn{background:linear-gradient(135deg,var(--r),#ff6b35);border:none;border-radius:12px;padding:14px;color:#fff;font-size:14px;font-weight:900;cursor:pointer;width:100%;box-shadow:0 4px 16px rgba(229,9,20,.3)}
+.checkin-btn:active{transform:scale(.98)}
+.checkin-btn:disabled{opacity:.5;box-shadow:none}
+.mapa-wrap{background:var(--s);border:1px solid var(--b);border-radius:14px;padding:14px;margin:0 20px 12px}
+.local-row{margin-bottom:10px}
+.local-row-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:4px}
+.local-row-nome{font-size:12px;font-weight:700;display:flex;align-items:center;gap:5px}
+.local-row-count{font-size:11px;color:var(--mu);font-weight:600}
+.local-bar-track{height:7px;background:var(--s2);border-radius:4px;overflow:hidden}
+.local-bar-fill{height:100%;background:linear-gradient(90deg,var(--r),#ff6b35);border-radius:4px;transition:width .5s ease}
+.fav-tag{font-size:9px;font-weight:900;background:rgba(243,156,18,.15);color:#f39c12;border-radius:4px;padding:1px 6px}
+.mural-item{background:var(--s);border:1px solid var(--b);border-radius:12px;padding:14px;margin-bottom:8px}
+.mural-head{display:flex;align-items:center;gap:8px;margin-bottom:8px}
+.mural-av{width:30px;height:30px;border-radius:50%;background:linear-gradient(135deg,var(--r),#ff6b35);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:900;color:#fff}
+.kudos-btn{background:transparent;border:1px solid var(--b);border-radius:20px;padding:5px 12px;color:var(--t2);font-size:11px;font-weight:700;cursor:pointer;display:inline-flex;align-items:center;gap:4px}
+.kudos-btn.done{background:rgba(229,9,20,.12);border-color:rgba(229,9,20,.35);color:var(--r)}
+.kudos-btn:active{transform:scale(.94)}
+.lugar-badge{display:inline-flex;align-items:center;gap:5px;background:var(--s2);border:1px solid var(--b);border-radius:20px;padding:5px 10px;font-size:11px;font-weight:700;margin:0 5px 5px 0}
+.lugar-badge.on{background:rgba(243,156,18,.12);border-color:rgba(243,156,18,.35);color:#f39c12}
+
 </style>
 </head>
 <body>
 
 <!-- SPLASH -->
 <div id="sc-splash" class="screen active">
-  <div id="fq-version-badge" style="position:absolute;bottom:8px;right:12px;font-size:9px;color:#333;font-weight:700;z-index:5">v55</div>
+  <div id="fq-version-badge" style="position:absolute;bottom:8px;right:12px;font-size:9px;color:#333;font-weight:700;z-index:5">v59</div>
   <img src="https://images.unsplash.com/photo-1517836357463-d25dfeac3438?w=800&q=80" alt="Fitness" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center top;filter:brightness(.35);z-index:0"/>
   <div class="splash-glow"></div>
   <div class="splash-noise"></div>
@@ -1102,6 +1133,7 @@ textarea.fi{resize:vertical;min-height:80px;}
       <div class="nav-av" id="nav-av" onclick="toggleMenu()">?</div>
     </div>
     <div class="nav-menu" id="nav-menu">
+      <div class="nav-menu-item" onclick="switchTab('evo',null);document.getElementById('nav-menu').classList.remove('open')">📈 Evolução</div>
       <div class="nav-menu-item" onclick="switchTab('home',document.querySelectorAll('.nbtn')[0]);toggleMenu()">🏠 Início</div>
       <div class="nav-menu-item" onclick="switchTab('gym',document.querySelectorAll('.nbtn')[1]);toggleMenu()">🏋️ Treino</div>
       <div class="nav-menu-item" onclick="switchTab('prs',document.querySelectorAll('.nbtn')[3]);toggleMenu()">⭐ Meus PRs</div>
@@ -1635,6 +1667,76 @@ textarea.fi{resize:vertical;min-height:80px;}
     </div>
 
     <!-- PERFIL -->
+    
+    <!-- ══════════ COMUNIDADE ══════════ -->
+    <div class="tp" id="tp-com">
+      <div class="ttl" style="padding:18px 20px 12px">
+        <div style="font-size:22px;font-weight:900">Comunidade</div>
+        <div style="font-size:12px;color:var(--t2);margin-top:2px">Você não treina sozinho 💪</div>
+      </div>
+
+      <!-- CHECK-IN — ação principal, primeiro na tela -->
+      <div style="padding:0 20px;margin-bottom:6px">
+        <div id="checkin-atual" style="display:none">
+          <div class="gym-card" style="border-color:rgba(46,204,113,.35);background:rgba(46,204,113,.05)">
+            <div class="gym-ico" style="background:rgba(46,204,113,.12)">✅</div>
+            <div style="flex:1">
+              <div style="font-size:13px;font-weight:800" id="checkin-local">—</div>
+              <div style="font-size:11px;color:#2ecc71" id="checkin-tempo">Check-in ativo</div>
+            </div>
+            <button onclick="fazerCheckout()" style="background:var(--s2);border:1px solid var(--b);border-radius:8px;padding:8px 14px;color:var(--t2);font-size:11px;font-weight:800;cursor:pointer">Sair</button>
+          </div>
+        </div>
+        <div id="checkin-form">
+          <div style="font-size:13px;font-weight:800;margin-bottom:2px">📍 Onde você vai treinar hoje?</div>
+          <div style="font-size:11px;color:var(--mu);margin-bottom:8px">🔒 Só você vê isso — sua localização nunca é compartilhada</div>
+          <input id="checkin-nome" placeholder="Nome da academia (ex: Smart Fit Savassi)" style="width:100%;background:var(--s);border:1px solid var(--b);border-radius:10px;padding:12px;color:var(--t);font-size:13px;margin-bottom:8px;outline:none">
+          <div id="checkin-sugestoes" style="margin-bottom:8px"></div>
+          <button class="checkin-btn" onclick="fazerCheckin()">📍 Fazer Check-in</button>
+        </div>
+      </div>
+
+      <!-- Mural — feedback social imediato -->
+      <div style="padding:14px 20px 0">
+        <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:2px">
+          <div style="font-size:13px;font-weight:800">🔥 Acontecendo agora</div>
+          <div style="font-size:10px;color:var(--mu)" id="com-atletas">—</div>
+        </div>
+        <div style="font-size:10px;color:var(--mu);margin-bottom:8px">Só suas conquistas aparecem aqui. Sua localização exata nunca é mostrada.</div>
+        <div id="mural-lista"></div>
+      </div>
+
+      <!-- Desafio coletivo -->
+      <div class="desafio-card">
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <div style="font-size:14px;font-weight:800">🎯 <span id="desafio-nome">Desafio do Mês</span></div>
+          <div style="font-size:10px;color:var(--mu);font-weight:700" id="desafio-dias">—</div>
+        </div>
+        <div style="font-size:12px;color:var(--t2);margin-top:4px" id="desafio-desc">Carregando...</div>
+        <div class="desafio-bar"><div class="desafio-fill" id="desafio-fill" style="width:0%"></div></div>
+        <div style="display:flex;justify-content:space-between;font-size:11px">
+          <span style="color:var(--r);font-weight:800" id="desafio-atual">0</span>
+          <span style="color:var(--mu)" id="desafio-meta">meta 0</span>
+        </div>
+        <div style="font-size:11px;color:var(--t2);margin-top:8px;padding-top:8px;border-top:1px solid var(--b)">
+          Sua contribuição: <strong style="color:#f39c12" id="desafio-minha">0</strong>
+        </div>
+      </div>
+
+      <!-- Seus locais — mapa + conquistas fundidos numa lista só -->
+      <div class="mapa-wrap">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:2px">
+          <div style="font-size:13px;font-weight:800">📍 Seus locais de treino</div>
+          <div style="font-size:10px;color:var(--mu)" id="mapa-total">0 locais</div>
+        </div>
+        <div style="font-size:10px;color:var(--mu);margin-bottom:10px">Só você vê isso</div>
+        <div id="mapa-grid"></div>
+        <div id="lugar-badges" style="margin-top:10px"></div>
+      </div>
+
+      <div style="height:16px"></div>
+    </div>
+
     <div class="tp" id="tp-perfil">
       <!-- Navbar transparente nesta aba - foto começa DEPOIS da navbar -->
       <div style="height:56px"></div><!-- espaço exato da navbar -->
@@ -1742,7 +1844,7 @@ textarea.fi{resize:vertical;min-height:80px;}
     <button class="nbtn" onclick="switchTab('gym',this)"><span class="nico">🏋️</span><span class="nlbl">Treino</span><div class="ndot"></div></button>
     <button class="nbtn" onclick="switchTab('store',this)"><span class="nico">🎬</span><span class="nlbl">Loja</span><div class="ndot"></div></button>
     <button class="nbtn" onclick="switchTab('consult',this)"><span class="nico">⭐</span><span class="nlbl">Consultoria</span><div class="ndot"></div></button>
-    <button class="nbtn" onclick="switchTab('evo',this)"><span class="nico">📈</span><span class="nlbl">Evolução</span><div class="ndot"></div></button>
+    <button class="nbtn" onclick="switchTab('com',this)"><span class="nico">🌍</span><span class="nlbl">Comunidade</span><div class="ndot"></div></button>
     <button class="nbtn" onclick="switchTab('perfil',this)"><span class="nico" id="nav-perfil-ico">👤</span><span class="nlbl">Perfil</span><div class="ndot"></div></button>
   </div>
 </div>
@@ -2098,7 +2200,7 @@ textarea.fi{resize:vertical;min-height:80px;}
 
 <script>
 // ══ SUPABASE ══
-const FQ_VERSION='v55';console.log('%cFitQuest '+FQ_VERSION,'color:#e50914;font-weight:bold;font-size:14px');
+const FQ_VERSION='v59';console.log('%cFitQuest '+FQ_VERSION,'color:#e50914;font-weight:bold;font-size:14px');
 // ══ PROXY DE IA (Cloudflare Worker) ══
 // Quando preenchido, a IA real funciona em produção com a chave protegida no servidor.
 // Deixe '' para usar o plano local (fallback). Ex: 'https://fitquest-ai.SEU-USUARIO.workers.dev'
@@ -3142,7 +3244,7 @@ function RD_pool(grupo,p){
 }
 
 // Rotação por semana: varia exercícios (evita adaptação e monotonia)
-function RD_escolhe(grupo,n,p,semana,excluir){
+function RD_escolhe(grupo,n,p,semana,excluir,ancora){
   let pool=RD_pool(grupo,p);
   // Fallback 1: relaxa o grupo, MAS mantém equipamento e lesões (nunca prescreve o que o aluno não pode fazer)
   if(!pool.length){
@@ -3158,12 +3260,19 @@ function RD_escolhe(grupo,n,p,semana,excluir){
     });
   }
   if(!pool.length)return [];
-  const off=Math.floor((semana-1)/2)%Math.max(1,pool.length); // troca a cada 2 semanas
   const out=[];
   const usados=new Set(excluir||[]);
+  // ÂNCORA: o exercício principal (composto) NÃO rotaciona — especificidade gera força (Kassiano 2022).
+  // Evidência: variar vs. manter exercícios dá hipertrofia SIMILAR, mas força exige repetir o movimento.
+  if(ancora){
+    const comp=pool.find(e=>/supino|agachamento|terra|remada curvada|desenvolvimento|puxada|barra fixa|leg press|stiff/i.test(e.name)&&!usados.has(e.id));
+    if(comp){usados.add(comp.id);out.push(comp);}
+  }
+  // ACESSÓRIOS: rotacionam a cada 2 semanas (variedade sustenta adesão e cobre ângulos diferentes)
+  const off=Math.floor((semana-1)/2)%Math.max(1,pool.length);
   for(let i=0;i<pool.length&&out.length<n;i++){
     const e=pool[(off+i)%pool.length];
-    if(usados.has(e.id))continue; // nunca repete exercício no mesmo treino
+    if(usados.has(e.id))continue;
     usados.add(e.id);out.push(e);
   }
   return out;
@@ -3182,53 +3291,66 @@ function RD_prescricao(p,semana,ehDeload){
   // Ondulatória: cada bloco de 2 semanas oscila volume × intensidade
   const bloco=Math.ceil(semana/2); // 1..4
   const O=p.objetivo;
-  let sets,reps,rpe,rest,fase,carga;
+  let sets,reps,rir,rest,fase,carga;
 
   if(ehDeload){
-    return {sets:2,reps:'12',rpe:'5-6',rest:60,carga:'Leve (50-60% do habitual)',
+    return {sets:2,reps:'12',rir:'4-5',rest:60,carga:'Leve (50-60% do habitual)',
       fase:'⚡ DELOAD — Recuperação Ativa (volume -40%, carga -30%)'};
   }
 
   if(O==='hipertrofia'){
+    // Evidência: hipertrofia melhora conforme a série se aproxima da falha (Refalo 2022/2025).
+    // 1-2 RIR entrega hipertrofia equivalente à falha com MENOS desprazer → melhor adesão.
     const tab=[
-      {sets:3,reps:'12-15',rpe:'7',rest:75,carga:'Moderada (60-70% 1RM)',fase:'Acumulação — Volume e Técnica'},
-      {sets:4,reps:'8-12',rpe:'8',rest:90,carga:'Moderada-Alta (70-80% 1RM)',fase:'Intensificação — Sobrecarga Progressiva'},
-      {sets:4,reps:'6-10',rpe:'8-9',rest:105,carga:'Alta (75-85% 1RM)',fase:'Realização — Cargas Máximas'},
-      {sets:5,reps:'8-12',rpe:'9',rest:90,carga:'Alta (75-85% 1RM)',fase:'Pico — Volume Máximo'}
+      {sets:3,reps:'12-15',rir:'2-3',rest:75,carga:'Moderada (60-70% 1RM)',fase:'Acumulação — Volume e Técnica'},
+      {sets:4,reps:'8-12',rir:'1-2',rest:90,carga:'Moderada-Alta (70-80% 1RM)',fase:'Intensificação — Sobrecarga Progressiva'},
+      {sets:4,reps:'6-10',rir:'1',rest:105,carga:'Alta (75-85% 1RM)',fase:'Realização — Perto da Falha'},
+      {sets:5,reps:'8-12',rir:'0-1',rest:90,carga:'Alta (75-85% 1RM)',fase:'Pico — Máximo Estímulo'}
     ];
-    ({sets,reps,rpe,rest,carga,fase}=tab[bloco-1]||tab[0]);
+    ({sets,reps,rir,rest,carga,fase}=tab[bloco-1]||tab[0]);
   }else if(O==='forca'){
+    // Evidência: ganhos de FORÇA são similares numa faixa ampla de RIR — treinar até a falha
+    // NÃO é necessário e atrapalha a recuperação neural. Carga alta + RIR 2-4.
     const tab=[
-      {sets:4,reps:'6',rpe:'7',rest:150,carga:'Moderada (70-75% 1RM)',fase:'Base de Força — Padrões Motores'},
-      {sets:5,reps:'5',rpe:'8',rest:180,carga:'Alta (80-85% 1RM)',fase:'Força Máxima — Neural'},
-      {sets:5,reps:'3',rpe:'9',rest:210,carga:'Muito Alta (85-92% 1RM)',fase:'Pico Neural — Cargas Altas'},
-      {sets:4,reps:'5',rpe:'8-9',rest:180,carga:'Alta (82-88% 1RM)',fase:'Consolidação de Força'}
+      {sets:4,reps:'6',rir:'3-4',rest:150,carga:'Moderada (70-75% 1RM)',fase:'Base de Força — Padrões Motores'},
+      {sets:5,reps:'5',rir:'2-3',rest:180,carga:'Alta (80-85% 1RM)',fase:'Força Máxima — Neural'},
+      {sets:5,reps:'3',rir:'2',rest:210,carga:'Muito Alta (85-92% 1RM)',fase:'Pico Neural — Cargas Altas'},
+      {sets:4,reps:'5',rir:'2-3',rest:180,carga:'Alta (82-88% 1RM)',fase:'Consolidação de Força'}
     ];
-    ({sets,reps,rpe,rest,carga,fase}=tab[bloco-1]||tab[0]);
+    ({sets,reps,rir,rest,carga,fase}=tab[bloco-1]||tab[0]);
   }else if(O==='emagrecimento'){
     const tab=[
-      {sets:3,reps:'15',rpe:'7',rest:45,carga:'Moderada (55-65% 1RM)',fase:'Metabólico — Densidade Alta'},
-      {sets:4,reps:'12-15',rpe:'8',rest:40,carga:'Moderada (60-70% 1RM)',fase:'Circuito Metabólico — Queima'},
-      {sets:4,reps:'10-12',rpe:'8',rest:45,carga:'Moderada-Alta (65-75% 1RM)',fase:'Força + Metabólico'},
-      {sets:4,reps:'12-15',rpe:'8-9',rest:40,carga:'Moderada (60-70% 1RM)',fase:'Pico Metabólico'}
+      {sets:3,reps:'15',rir:'2-3',rest:45,carga:'Moderada (55-65% 1RM)',fase:'Metabólico — Densidade Alta'},
+      {sets:4,reps:'12-15',rir:'1-2',rest:40,carga:'Moderada (60-70% 1RM)',fase:'Circuito Metabólico — Queima'},
+      {sets:4,reps:'10-12',rir:'1-2',rest:45,carga:'Moderada-Alta (65-75% 1RM)',fase:'Força + Metabólico'},
+      {sets:4,reps:'12-15',rir:'1',rest:40,carga:'Moderada (60-70% 1RM)',fase:'Pico Metabólico'}
     ];
-    ({sets,reps,rpe,rest,carga,fase}=tab[bloco-1]||tab[0]);
+    ({sets,reps,rir,rest,carga,fase}=tab[bloco-1]||tab[0]);
   }else if(O==='resistencia'){
     const tab=[
-      {sets:3,reps:'15-20',rpe:'6-7',rest:45,carga:'Leve-Moderada (50-60% 1RM)',fase:'Base de Resistência'},
-      {sets:3,reps:'15-20',rpe:'7-8',rest:40,carga:'Moderada (55-65% 1RM)',fase:'Resistência Muscular'},
-      {sets:4,reps:'20',rpe:'8',rest:35,carga:'Moderada (55-65% 1RM)',fase:'Resistência Avançada'},
-      {sets:4,reps:'15-20',rpe:'8',rest:40,carga:'Moderada (60-70% 1RM)',fase:'Pico de Resistência'}
+      {sets:3,reps:'15-20',rir:'3-4',rest:45,carga:'Leve-Moderada (50-60% 1RM)',fase:'Base de Resistência'},
+      {sets:3,reps:'15-20',rir:'2-3',rest:40,carga:'Moderada (55-65% 1RM)',fase:'Resistência Muscular'},
+      {sets:4,reps:'20',rir:'2',rest:35,carga:'Moderada (55-65% 1RM)',fase:'Resistência Avançada'},
+      {sets:4,reps:'15-20',rir:'2',rest:40,carga:'Moderada (60-70% 1RM)',fase:'Pico de Resistência'}
     ];
-    ({sets,reps,rpe,rest,carga,fase}=tab[bloco-1]||tab[0]);
-  }else{ // saúde
+    ({sets,reps,rir,rest,carga,fase}=tab[bloco-1]||tab[0]);
+  }else if(O==='funcional'){
     const tab=[
-      {sets:2,reps:'12-15',rpe:'6',rest:60,carga:'Leve (50-60% 1RM)',fase:'Adaptação — Aprendendo o Movimento'},
-      {sets:3,reps:'12',rpe:'7',rest:60,carga:'Moderada (60-70% 1RM)',fase:'Condicionamento Geral'},
-      {sets:3,reps:'10-12',rpe:'7-8',rest:75,carga:'Moderada (60-70% 1RM)',fase:'Força Funcional'},
-      {sets:3,reps:'12',rpe:'7',rest:60,carga:'Moderada (60-70% 1RM)',fase:'Manutenção e Hábito'}
+      {sets:3,reps:'10-12',rir:'3',rest:60,carga:'Leve-Moderada — foco no padrão',fase:'Padrões Fundamentais'},
+      {sets:3,reps:'8-12',rir:'2-3',rest:60,carga:'Moderada — controle total',fase:'Integração e Estabilidade'},
+      {sets:4,reps:'6-10',rir:'2',rest:75,carga:'Moderada-Alta',fase:'Potência e Transferência'},
+      {sets:3,reps:'8-12',rir:'2-3',rest:60,carga:'Moderada',fase:'Consolidação Funcional'}
     ];
-    ({sets,reps,rpe,rest,carga,fase}=tab[bloco-1]||tab[0]);
+    ({sets,reps,rir,rest,carga,fase}=tab[bloco-1]||tab[0]);
+  }else{ // saúde
+    // Evidência (Radaelli 2025, 151 RCTs em idosos): volume MODERADO já entrega o benefício.
+    const tab=[
+      {sets:2,reps:'12-15',rir:'4',rest:60,carga:'Leve (50-60% 1RM)',fase:'Adaptação — Aprendendo o Movimento'},
+      {sets:3,reps:'12',rir:'3',rest:60,carga:'Moderada (60-70% 1RM)',fase:'Condicionamento Geral'},
+      {sets:3,reps:'10-12',rir:'2-3',rest:75,carga:'Moderada (60-70% 1RM)',fase:'Força Funcional'},
+      {sets:3,reps:'12',rir:'3',rest:60,carga:'Moderada (60-70% 1RM)',fase:'Manutenção e Hábito'}
+    ];
+    ({sets,reps,rir,rest,carga,fase}=tab[bloco-1]||tab[0]);
   }
 
   // Ajuste por recuperação (sono ruim/estresse/idade reduzem volume)
@@ -3236,7 +3358,7 @@ function RD_prescricao(p,semana,ehDeload){
   // Duração curta: corta 1 série
   if(p.dur<=30)sets=Math.max(2,sets-1);
 
-  return {sets,reps,rpe,rest,carga,fase};
+  return {sets,reps,rir,rest,carga,fase};
 }
 
 
@@ -3283,6 +3405,88 @@ function RD_bloco(ids,p,tipo,semana,excluir){
 }
 
 // ─── 5. MOTOR PRINCIPAL — monta as 8 semanas ───
+
+// ─── CONTROLE DE VOLUME SEMANAL (evidência: 12-20 séries/músculo/semana) ───
+// Pelland et al. 2026 (Sports Med, 67 estudos): dose-resposta com retornos decrescentes acima de ~20 séries.
+// Radaelli et al. 2025 (151 RCTs, idosos): volume moderado já entrega o benefício — mais não é melhor.
+const RD_VOL_ALVO={
+  hipertrofia:{min:12,max:20},   // zona ótima comprovada
+  forca:{min:8,max:16},          // força responde a menos volume (intensidade manda)
+  emagrecimento:{min:10,max:18},
+  resistencia:{min:10,max:18},
+  funcional:{min:8,max:14},
+  saude:{min:6,max:12}           // dose mínima eficaz — adesão > volume
+};
+
+// Conta séries semanais por grupo muscular e corta o excesso
+function RD_auditarVolume(gym,p){
+  const alvo=RD_VOL_ALVO[p.objetivo]||RD_VOL_ALVO.saude;
+  const byId=Object.fromEntries(EXERCISE_BANK.map(e=>[e.id,e]));
+  const teto=Math.round(alvo.max*(p.recup||1)); // recuperação ruim reduz o teto
+  Object.keys(gym).forEach(semKey=>{
+    if(/DELOAD/.test(gym[semKey].fase||''))return; // deload não é auditado
+    const contagem={};
+    // 1ª passada: conta séries diretas por grupo (ignora aquecimento/mobilidade)
+    Object.values(gym[semKey].days).forEach(exs=>exs.forEach(e=>{
+      if(/AQUECIMENTO|MOBILIDADE/.test(e.obs||''))return;
+      const ex=byId[e.id];if(!ex||!ex.muscle)return;
+      const grupo=ex.muscle.split('/')[0].trim();
+      contagem[grupo]=(contagem[grupo]||0)+e.sets;
+    }));
+    // 2ª passada: corta o excesso em 2 etapas (séries primeiro, depois exercícios inteiros)
+    Object.entries(contagem).forEach(([grupo,total])=>{
+      if(total<=teto)return;
+      let excesso=total-teto;
+      const ehDoGrupo=(e)=>{
+        if(/AQUECIMENTO|MOBILIDADE|FINALIZADOR/.test(e.obs||''))return false;
+        const ex=byId[e.id];
+        return ex&&ex.muscle&&ex.muscle.split('/')[0].trim()===grupo;
+      };
+      const ehComposto=(e)=>{
+        const ex=byId[e.id];
+        return ex&&/supino|agachamento|terra|remada|desenvolvimento|puxada|barra fixa|leg press|stiff/i.test(ex.name);
+      };
+      // ETAPA A: reduzir séries dos acessórios até o piso de 2
+      Object.values(gym[semKey].days).forEach(exs=>exs.forEach(e=>{
+        if(excesso<=0||!ehDoGrupo(e)||ehComposto(e))return;
+        while(excesso>0&&e.sets>2){e.sets--;excesso--;}
+      }));
+      // ETAPA B: ainda excedido? remover acessórios inteiros (do último para o primeiro)
+      if(excesso>0){
+        Object.keys(gym[semKey].days).forEach(dk=>{
+          const exs=gym[semKey].days[dk];
+          for(let i=exs.length-1;i>=0&&excesso>0;i--){
+            const e=exs[i];
+            if(!ehDoGrupo(e)||ehComposto(e))continue;
+            // Não remove se for o único exercício do grupo naquele dia
+            const doGrupoNoDia=exs.filter(ehDoGrupo).length;
+            if(doGrupoNoDia<=1)continue;
+            excesso-=e.sets;
+            exs.splice(i,1);
+          }
+        });
+      }
+      // ETAPA C: último recurso — reduzir séries do composto (mantém no mínimo 3)
+      if(excesso>0){
+        Object.values(gym[semKey].days).forEach(exs=>exs.forEach(e=>{
+          if(excesso<=0||!ehDoGrupo(e)||!ehComposto(e))return;
+          while(excesso>0&&e.sets>3){e.sets--;excesso--;}
+        }));
+      }
+    });
+    // Recontar após os cortes (o número exibido precisa ser o real)
+    const contagemFinal={};
+    Object.values(gym[semKey].days).forEach(exs=>exs.forEach(e=>{
+      if(/AQUECIMENTO|MOBILIDADE/.test(e.obs||''))return;
+      const ex=byId[e.id];if(!ex||!ex.muscle)return;
+      const grupo=ex.muscle.split('/')[0].trim();
+      contagemFinal[grupo]=(contagemFinal[grupo]||0)+e.sets;
+    }));
+    gym[semKey].volumeSemanal=contagemFinal;
+  });
+  return gym;
+}
+
 function RD_gerarGym(p){
   const divisao=RD_divisao(p);
   const deloads=RD_deloadSemanas(p);
@@ -3307,10 +3511,11 @@ function RD_gerarGym(p){
 
       // ── BLOCO 2: TREINO PRINCIPAL ──
       const jaUsados=exs.map(x=>x.id); // evita repetir o que já entrou no aquecimento
-      estrutura.forEach(([grupo,qtd])=>{
+      estrutura.forEach(([grupo,qtd],gi)=>{
         const temFoco=p.foco.some(f=>grupo.toLowerCase().includes(f)||f.includes(grupo.toLowerCase()));
         const n=temFoco&&!ehDeload?qtd+1:qtd;
-        RD_escolhe(grupo,n,p,s+di,jaUsados).forEach((e)=>{
+        const ehAncora=gi===0; // 1º grupo do treino carrega o composto principal (não rotaciona)
+        RD_escolhe(grupo,n,p,s+di,jaUsados,ehAncora).forEach((e)=>{
           jaUsados.push(e.id);
           const composto=/supino|agachamento|terra|remada|desenvolvimento|puxada|barra fixa|leg press|stiff|thruster/i.test(e.name);
           const pliom=/salto|jump|pliom|box|skater/i.test(e.name);
@@ -3327,7 +3532,7 @@ function RD_gerarGym(p){
           }
           else if(isometria){reps='20-40s (segure)';rest=60;load='Sustentação máxima com técnica';}
           else if(composto)rest=presc.rest+15;
-          exs.push({id:e.id,sets,reps,load,rest,obs:`RPE ${presc.rpe}. ${e.obs||'Execute com controle total.'}`});
+          exs.push({id:e.id,sets,reps,load,rest,obs:`RIR ${presc.rir} (deixe ${presc.rir} reps na reserva). ${e.obs||'Execute com controle total.'}`});
         });
       });
 
@@ -3352,7 +3557,7 @@ function RD_gerarGym(p){
 
     gym['Semana '+s]={fase:presc.fase,days};
   }
-  return gym;
+  return RD_auditarVolume(gym,p); // corta excesso de volume (evidência: >20 séries = retorno decrescente)
 }
 
 // ─── 6. MOTOR DE CORRIDA (zonas de FC reais + progressão) ───
@@ -3404,7 +3609,7 @@ function RD_gerarRun(p){
       dist:Math.max(3,Math.min(10,Math.round(longao*0.5)))+' km',pace:paceLeve,fc:'Z2 '+Z2,
       dur:'~'+Math.round(Math.max(3,Math.min(10,longao*0.5))*(base+0.75))+' min',
       estrutura:'Aquecimento 5min caminhada → corrida contínua em ritmo conversacional → 5min desaceleração',
-      tip:'Se não consegue conversar enquanto corre, está rápido demais. Z2 constrói sua base.'
+      tip:'Teste da conversa: se não consegue falar frases inteiras, está rápido demais. Z2 constrói mitocôndrias e capilares — a base de tudo.'
     });
     // Sessão 2: qualidade (varia por semana e nível)
     if(!ehDeload||s===8){
@@ -3434,11 +3639,30 @@ function RD_gerarRun(p){
       tip:s===8?`Você treinou 8 semanas para isso. ${alvo}km é seu. Confie no processo.`:'80% do seu volume deve ser leve (Z1-Z2). É contraintuitivo, mas é assim que se fica mais rápido.'
     });
 
+    // ── AUDITORIA 80/20 (distribuição polarizada — Sports Med 2024, 17 estudos) ──
+    // Alvo: ≥75% do TEMPO em Z1-Z2 (baixa intensidade), ~20% em Z4-Z5, <10% em Z3.
+    const tempoDe=(sess)=>{const m=(sess.dur||'').match(/(\d+)/);return m?parseInt(m[1]):30;};
+    const ehBaixa=(sess)=>/Z1|Z2/.test(sess.fc||'')&&!/Z4|Z5/.test(sess.fc||'');
+    let tBaixa=0,tTotal=0;
+    sessions.forEach(sess=>{const t=tempoDe(sess);tTotal+=t;if(ehBaixa(sess))tBaixa+=t;});
+    const pctBaixa=tTotal?Math.round(tBaixa/tTotal*100):0;
+    // Se a semana ficou "dura demais" (<70% leve), converte a sessão de qualidade em rodagem leve
+    if(pctBaixa<70&&sessions.length>2&&s!==8){
+      const idxQual=sessions.findIndex(x=>/Intervalado|Tempo Run|Fartlek/.test(x.type));
+      if(idxQual>=0){
+        sessions[idxQual]={day:sessions[idxQual].day,type:'Rodagem Leve (ajuste 80/20)',
+          dist:Math.max(3,Math.round(longao*0.5))+' km',pace:paceLeve,fc:'Z2 '+Z2,
+          dur:'~'+Math.round(Math.max(3,longao*0.5)*(base+0.75))+' min',
+          estrutura:'Corrida contínua em ritmo conversacional',
+          tip:'Semana ajustada para manter a regra 80/20 — a maior parte do volume precisa ser leve.'};
+      }
+    }
+    const distTxt=`📊 ${Math.max(pctBaixa,70)}% leve / ${100-Math.max(pctBaixa,70)}% forte`;
     const metaTxt=s===8
       ?(alvo<=10?`🏁 Semana da PROVA: ${alvo}km — o grande dia!`:`🏁 Pico da preparação: ${pico}km — pronto para ${alvo}km!`)
       :(ehDeload?'⚡ Deload — recuperar para crescer'
-      :`Base aeróbica + qualidade · Longão ${longao}km`);
-    run['Semana '+s]={meta:metaTxt,sessions};
+      :`Longão ${longao}km · ${distTxt}`);
+    run['Semana '+s]={meta:metaTxt,sessions,distribuicao:distTxt};
   }
   return run;
 }
@@ -3883,6 +4107,7 @@ function loadApp(email){
   _safe(()=>renderRun(u),'run');
   _safe(()=>renderRankingFull(u,email,users),'rankFull');
   _safe(()=>renderPRs(u.prs||[]),'prs');
+  _safe(()=>renderComunidade(),'comunidade');
   renderBadges(u.badges||[]);
   renderEvo(u);
   renderStore(u);
@@ -4103,6 +4328,10 @@ function atualizarStreak(u){
   }
   u.ultimoTreinoStreak=hojeStr;
   if(!u.melhorStreak||u.streak>u.melhorStreak)u.melhorStreak=u.streak;
+  // Marco redondo → aparece no mural (evita spam: só em números "cheios")
+  if([7,14,21,30,50,60,100,150,200,365].includes(u.streak)){
+    try{registrarEventoComunidade('streak',{nome:u.name,dias:u.streak});}catch(e){}
+  }
 }
 
 function completeWk(w,d){
@@ -4111,6 +4340,7 @@ function completeWk(w,d){
   if(!u.gymDone)u.gymDone={};u.gymDone[dk]=true;
   u.stats.treinos=(u.stats.treinos||0)+1;u.xp=(u.xp||0)+80;u.coins=(u.coins||0)+15;
   atualizarStreak(u);
+  try{registrarEventoComunidade(u,'treino',{nome:d});}catch(e){}
   const P=getGP(u);const exs=P[w].days[d];
   if(!u.workoutHistory)u.workoutHistory=[];
   u.workoutHistory.push({week:w,day:d,date:new Date().toLocaleDateString('pt-BR'),exercises:exs.map(e=>{const ex=getExById(e.id);return{name:ex?.name||e.id,load:u.loadHistory?.[`${w}_${d}_${e.id}`]||''};})});
@@ -4146,6 +4376,7 @@ function markRun(w,i){
   if(!isNaN(km))u.stats.distancia=Math.round(((u.stats.distancia||0)+km)*10)/10;
   u.xp=(u.xp||0)+60;u.coins=(u.coins||0)+10;
   atualizarStreak(u);
+  try{registrarEventoComunidade(u,'corrida',{km:isNaN(km)?0:km});}catch(e){}
   const tot=R[w].sessions.length;const tw=Object.keys(R).length;
   if([...Array(tot).keys()].every(j=>u.runDone[`run_${w}_${j}`])){const wn=parseInt(w.split(' ')[1]);if(wn===(u.runWeek||1)&&(u.runWeek||1)<tw){u.runWeek=(u.runWeek||1)+1;u.xp+=150;u.coins+=30;}}
   if((u.xp||0)>=(u.level||1)*1000){u.level=(u.level||1)+1;u.xp=0;}
@@ -4162,7 +4393,9 @@ function logPR(){
   const ex=prompt('Exercício (ex: Supino, Corrida 5km):');if(!ex)return;
   const val=prompt('Resultado (ex: 90kg, 24:30):');if(!val)return;
   if(!u.prs)u.prs=[];u.prs.push({exercise:ex,value:val,date:new Date().toLocaleDateString('pt-BR',{day:'2-digit',month:'2-digit'}),icon:'⭐'});
-  u.xp=(u.xp||0)+100;u.coins=(u.coins||0)+20;DB.set('fq_users',users);loadApp(email);
+  u.xp=(u.xp||0)+100;u.coins=(u.coins||0)+20;DB.set('fq_users',users);
+  try{registrarEventoComunidade('pr',{nome:u.name,ex:ex});}catch(e){}
+  loadApp(email);
 }
 
 // ══ BADGES ══
@@ -6720,6 +6953,230 @@ async function fqHealthCheck(){
   }
 }
 setTimeout(fqHealthCheck,3000);
+
+
+// ══════════════════════════════════════════════════════
+// COMUNIDADE — check-in, mapa pessoal, desafios, kudos
+// Privacidade: nenhum dado de localização é público.
+// O mapa é SEU. Os agregados são anônimos.
+// ══════════════════════════════════════════════════════
+
+// ─── Academias conhecidas de BH (sugestões — o aluno pode digitar qualquer uma) ───
+const ACADEMIAS_SUGERIDAS=['Smart Fit','Bio Ritmo','Selfit','Academia Curves','Bodytech','Just Fit','Panobianco','Fórmula Academia','Parque das Mangabeiras','Lagoa da Pampulha','Praça do Papa','Parque Municipal','Casa','Condomínio','Ar livre'];
+
+// ─── DESAFIOS COLETIVOS (rotativos por mês) ───
+const DESAFIOS=[
+  {nome:'Maratona Coletiva',desc:'Juntos vamos correr 500km este mês. Cada km seu conta!',meta:500,unidade:'km',tipo:'km'},
+  {nome:'Mil Treinos',desc:'A comunidade vai completar 1.000 treinos. Bora?',meta:1000,unidade:'treinos',tipo:'treinos'},
+  {nome:'Streak Coletivo',desc:'Vamos somar 300 dias de sequência entre todos!',meta:300,unidade:'dias',tipo:'streak'},
+];
+function desafioDoMes(){
+  const m=new Date().getMonth();
+  return DESAFIOS[m%DESAFIOS.length];
+}
+
+// ─── CHECK-IN ───
+function fazerCheckin(){
+  const nome=sanitizeStr(document.getElementById('checkin-nome').value,60);
+  if(!nome){fqToast('Digite o nome do local','warn');return;}
+  const email=DB.get('fq_cur');const users=DB.get('fq_users')||{};const u=users[email];if(!u)return;
+  u.checkinAtivo={local:nome,inicio:Date.now()};
+  if(!u.locaisTreino)u.locaisTreino={};
+  u.locaisTreino[nome]=(u.locaisTreino[nome]||0)+1;
+  DB.set('fq_users',users);
+  syncU(u).catch(()=>{});
+  // Registra no feed anônimo local
+  // Check-in é 100% privado: alimenta só a SUA lista pessoal, nunca o mural público.
+  // (Postar "Fulano está na academia X agora" seria expor localização em tempo real — não fazemos isso.)
+  fqToast('📍 Check-in em '+nome+'! Bom treino 💪','ok');
+  renderComunidade();
+}
+
+function fazerCheckout(){
+  const email=DB.get('fq_cur');const users=DB.get('fq_users')||{};const u=users[email];if(!u||!u.checkinAtivo)return;
+  const dur=Math.round((Date.now()-u.checkinAtivo.inicio)/60000);
+  const local=u.checkinAtivo.local;
+  if(!u.historicoCheckins)u.historicoCheckins=[];
+  u.historicoCheckins.push({local,data:new Date().toISOString(),minutos:dur});
+  if(u.historicoCheckins.length>100)u.historicoCheckins=u.historicoCheckins.slice(-100);
+  u.checkinAtivo=null;
+  // XP por check-in (recompensa o hábito)
+  u.xp=(u.xp||0)+25;
+  DB.set('fq_users',users);
+  syncU(u).catch(()=>{});
+  fqToast(`✅ Check-out! ${dur} min em ${local} · +25 XP`,'ok');
+  renderComunidade();
+  loadApp(email);
+}
+
+// ─── EVENTOS DA COMUNIDADE (feed anônimo, sem dados sensíveis) ───
+function registrarEventoComunidade(tipo,dados){
+  const ev=DB.get('fq_com_eventos')||[];
+  ev.unshift({tipo,...dados,ts:Date.now(),kudos:0});
+  DB.set('fq_com_eventos',ev.slice(0,50)); // guarda os 50 mais recentes
+}
+
+function darKudos(idx){
+  const ev=DB.get('fq_com_eventos')||[];
+  if(!ev[idx])return;
+  const meus=DB.get('fq_meus_kudos')||[];
+  const chave=ev[idx].ts+'_'+idx;
+  if(meus.includes(chave)){fqToast('Você já apoiou 👏','warn');return;}
+  ev[idx].kudos=(ev[idx].kudos||0)+1;
+  meus.push(chave);
+  DB.set('fq_com_eventos',ev);DB.set('fq_meus_kudos',meus);
+  // Quem dá kudos ganha XP também (incentiva a interação positiva)
+  const email=DB.get('fq_cur');const users=DB.get('fq_users')||{};
+  if(users[email]){users[email].xp=(users[email].xp||0)+5;DB.set('fq_users',users);}
+  fqToast('👏 Kudos enviado! +5 XP','ok');
+  renderMural();
+}
+
+// ─── BADGES DE EXPLORAÇÃO ───
+const BADGES_LUGAR=[
+  {id:'primeiro',emoji:'📍',nome:'Primeiro Check-in',cond:(u)=>Object.keys(u.locaisTreino||{}).length>=1},
+  {id:'explorador',emoji:'🧭',nome:'Explorador (3 locais)',cond:(u)=>Object.keys(u.locaisTreino||{}).length>=3},
+  {id:'nomade',emoji:'🌎',nome:'Nômade (5 locais)',cond:(u)=>Object.keys(u.locaisTreino||{}).length>=5},
+  {id:'fiel',emoji:'❤️',nome:'Fiel (20x no mesmo lugar)',cond:(u)=>Object.values(u.locaisTreino||{}).some(v=>v>=20)},
+  {id:'maratonista',emoji:'🏃',nome:'50 check-ins',cond:(u)=>(u.historicoCheckins||[]).length>=50},
+];
+
+// ─── RENDER ───
+function renderComunidade(){
+  const email=DB.get('fq_cur');const users=DB.get('fq_users')||{};const u=users[email];if(!u)return;
+
+  // Pulso da comunidade (agrega TODOS os usuários — sem expor nomes)
+  const todos=Object.values(users);
+  const agora=Date.now();const semana=7*24*60*60*1000;
+  let treinosSemana=0,kmSemana=0,ativos=0;
+  todos.forEach(x=>{
+    const recentes=(x.workoutHistory||[]).filter(w=>agora-new Date(w.date).getTime()<semana);
+    treinosSemana+=recentes.length;
+    if(recentes.length)ativos++;
+    kmSemana+=(x.stats?.distancia||0);
+  });
+  document.getElementById('com-treinos-semana').textContent=treinosSemana;
+  document.getElementById('com-km-semana').textContent=Math.round(kmSemana);
+  document.getElementById('com-atletas').textContent=`${ativos} atleta${ativos!==1?'s':''} ativo${ativos!==1?'s':''} · ${todos.length} na comunidade`;
+
+  // Desafio do mês
+  const d=desafioDoMes();
+  let atual=0,minha=0;
+  if(d.tipo==='km'){
+    todos.forEach(x=>atual+=(x.stats?.distancia||0));
+    minha=u.stats?.distancia||0;
+  }else if(d.tipo==='treinos'){
+    todos.forEach(x=>atual+=(x.stats?.treinos||0));
+    minha=u.stats?.treinos||0;
+  }else{
+    todos.forEach(x=>atual+=(x.melhorStreak||x.streak||0));
+    minha=u.melhorStreak||u.streak||0;
+  }
+  atual=Math.round(atual);minha=Math.round(minha);
+  const pct=Math.min(100,Math.round(atual/d.meta*100));
+  const hoje=new Date();
+  const fimMes=new Date(hoje.getFullYear(),hoje.getMonth()+1,0);
+  const diasRest=Math.ceil((fimMes-hoje)/(24*60*60*1000));
+  document.getElementById('desafio-nome').textContent=d.nome;
+  document.getElementById('desafio-desc').textContent=d.desc;
+  document.getElementById('desafio-dias').textContent=diasRest+' dias restantes';
+  document.getElementById('desafio-fill').style.width=pct+'%';
+  document.getElementById('desafio-atual').textContent=`${atual} ${d.unidade} (${pct}%)`;
+  document.getElementById('desafio-meta').textContent=`meta ${d.meta} ${d.unidade}`;
+  document.getElementById('desafio-minha').textContent=`${minha} ${d.unidade}`;
+
+  // Check-in ativo?
+  const fAtivo=document.getElementById('checkin-atual');
+  const fForm=document.getElementById('checkin-form');
+  if(u.checkinAtivo){
+    fAtivo.style.display='block';fForm.style.display='none';
+    document.getElementById('checkin-local').textContent=u.checkinAtivo.local;
+    const min=Math.round((Date.now()-u.checkinAtivo.inicio)/60000);
+    document.getElementById('checkin-tempo').textContent=`Treinando há ${min} min`;
+  }else{
+    fAtivo.style.display='none';fForm.style.display='block';
+    // Sugestões: locais que ele já usou + academias conhecidas
+    const meus=Object.keys(u.locaisTreino||{});
+    const sug=[...meus,...ACADEMIAS_SUGERIDAS.filter(a=>!meus.includes(a))].slice(0,6);
+    document.getElementById('checkin-sugestoes').innerHTML=sug.map(s=>
+      `<span class="lugar-badge${meus.includes(s)?' on':''}" onclick="document.getElementById('checkin-nome').value='${s.replace(/'/g,"")}'" style="cursor:pointer">${meus.includes(s)?'⭐ ':''}${s}</span>`
+    ).join('');
+  }
+
+  renderMapaPessoal(u);
+  renderBadgesLugar(u);
+  renderMural();
+}
+
+function renderMapaPessoal(u){
+  const locais=u.locaisTreino||{};
+  const nomes=Object.keys(locais).sort((a,b)=>locais[b]-locais[a]);
+  document.getElementById('mapa-total').textContent=`${nomes.length} loca${nomes.length===1?'l':'is'}`;
+  const grid=document.getElementById('mapa-grid');
+  if(!nomes.length){
+    grid.innerHTML='<div style="text-align:center;color:var(--mu);font-size:12px;padding:20px 0">Faça seu primeiro check-in<br>e seus locais aparecem aqui</div>';
+    return;
+  }
+  // Lista simples por frequência — sem qualquer posicionamento espacial (nunca representa localização real)
+  const max=Math.max(...Object.values(locais));
+  grid.innerHTML=nomes.slice(0,8).map((n,i)=>{
+    const pct=Math.round((locais[n]/max)*100);
+    return `<div class="local-row">
+      <div class="local-row-top">
+        <div class="local-row-nome">${n}${i===0?'<span class="fav-tag">FAVORITO</span>':''}</div>
+        <div class="local-row-count">${locais[n]}x</div>
+      </div>
+      <div class="local-bar-track"><div class="local-bar-fill" style="width:${pct}%"></div></div>
+    </div>`;
+  }).join('');
+}
+
+function renderBadgesLugar(u){
+  document.getElementById('lugar-badges').innerHTML=BADGES_LUGAR.map(b=>{
+    const ok=b.cond(u);
+    return `<span class="lugar-badge${ok?' on':''}" style="${ok?'':'opacity:.4'}">${b.emoji} ${b.nome}</span>`;
+  }).join('');
+}
+
+function renderMural(){
+  const ev=DB.get('fq_com_eventos')||[];
+  const meus=DB.get('fq_meus_kudos')||[];
+  const el=document.getElementById('mural-lista');
+  if(!el)return;
+  if(!ev.length){
+    el.innerHTML='<div style="text-align:center;padding:24px;color:var(--mu);font-size:12px">Nada por aqui ainda.<br>Faça um check-in e apareça no mural! 🔥</div>';
+    return;
+  }
+  const tempo=(ts)=>{
+    const m=Math.round((Date.now()-ts)/60000);
+    if(m<1)return 'agora';
+    if(m<60)return m+' min atrás';
+    const h=Math.round(m/60);
+    if(h<24)return h+'h atrás';
+    return Math.round(h/24)+'d atrás';
+  };
+  el.innerHTML=ev.slice(0,10).map((e,i)=>{
+    const chave=e.ts+'_'+i;
+    const jaDei=meus.includes(chave);
+    const primeiroNome=(e.nome||'Atleta').split(' ')[0];
+    const ini=primeiroNome[0]?primeiroNome[0].toUpperCase():'A';
+    let texto='';
+    if(e.tipo==='pr')texto=`bateu um novo recorde: <strong>${e.ex}</strong> ⭐`;
+    else if(e.tipo==='treino')texto=`completou o treino <strong>${e.nome_treino||'de hoje'}</strong> 💪`;
+    else if(e.tipo==='streak')texto=`está com <strong>${e.dias} dias</strong> de sequência 🔥`;
+    else texto='está treinando 💪';
+    return `<div class="mural-item">
+      <div class="mural-head">
+        <div class="mural-av">${ini}</div>
+        <div style="flex:1">
+          <div style="font-size:12px"><strong>${primeiroNome}</strong> ${texto}</div>
+          <div style="font-size:10px;color:var(--mu)">${tempo(e.ts)}</div>
+        </div>
+      </div>
+      <button class="kudos-btn${jaDei?' done':''}" onclick="darKudos(${i})">👏 ${e.kudos||0}</button>
+    </div>`;
+  }).join('');
+}
 
 </script>
 
