@@ -24,59 +24,14 @@ const EBOOK_FILES = {
   nutrition:   'ebook-nutricao-performance.pdf',
 };
 
-function openEbook(programId) {
-  const file = EBOOK_FILES[programId];
-  if (!file) { fqToast('📕 E-Book ainda não disponível.','warn'); return; }
-  
-  // Get program title for the topbar
-  const p = CATALOG.find(c => c.id === programId);
-  const title = p ? p.title : 'E-Book FitQuest';
-  document.getElementById('ebook-title-bar').textContent = title;
-  
-  // Show modal with loading state
-  const modal = document.getElementById('modal-ebook');
-  const frame = document.getElementById('ebook-frame');
-  const loading = document.getElementById('ebook-loading');
-  
-  modal.classList.add('open');
-  frame.style.display = 'none';
-  loading.style.display = 'flex';
-  document.body.style.overflow = 'hidden';
-  
-  // Build PDF URL - GitHub Pages root
-  const baseUrl = window.location.origin + window.location.pathname
-    .split('/').slice(0,-1).join('/');
-  const pdfUrl = baseUrl + '/' + file;
-  
-  // Try iframe first, fallback to Google Docs viewer for mobile compatibility
-  const googleViewer = 'https://docs.google.com/viewer?embedded=true&url=' + encodeURIComponent(pdfUrl);
-  frame.src = googleViewer;
-}
-
-function ebookLoaded() {
-  document.getElementById('ebook-frame').style.display = 'block';
-  document.getElementById('ebook-loading').style.display = 'none';
-}
-
 function closeEbook() {
   const modal = document.getElementById('modal-ebook');
-  const frame = document.getElementById('ebook-frame');
   modal.classList.remove('open');
-  frame.src = '';
   document.body.style.overflow = '';
+  EB_ATUAL = null;
 }
 
-function abrirEbookDireto() {
-  const frame = document.getElementById('ebook-frame');
-  if (!frame.src) return;
-  // Extract original PDF URL from Google viewer URL
-  const match = frame.src.match(/url=([^&]+)/);
-  if (match) {
-    window.open(decodeURIComponent(match[1]), '_blank');
-  } else {
-    window.open(frame.src, '_blank');
-  }
-}
+
 
 // ── PACOTE COMPLETO DE EBOOKS ──
 async function comprarPacoteEbooks() {
@@ -101,6 +56,8 @@ function liberarPacoteEbooks(u) {
 }
 </script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" onerror="console.warn('Supabase CDN failed')"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js" onerror="console.warn('jsPDF CDN failed')"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js" onerror="console.warn('jsPDF-AutoTable CDN failed')"></script>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
 :root{
@@ -779,13 +736,63 @@ textarea.fi{resize:vertical;min-height:80px;}
 .btn-p,.btn-cw-play,.checkin-btn{-webkit-tap-highlight-color:transparent}
 .btn-p:active,.btn-cw-play:active{transform:scale(.97)}
 
+
+/* ══ LEITOR DE EBOOK IN-APP ══ */
+.eb-cover{padding:32px 24px 24px;text-align:center;background:linear-gradient(180deg,var(--eb-cor,#e50914)22,transparent 60%)}
+.eb-cover-emoji{font-size:56px;margin-bottom:12px;filter:drop-shadow(0 4px 12px rgba(0,0,0,.4))}
+.eb-cover-title{font-size:24px;font-weight:900;line-height:1.15;margin-bottom:4px}
+.eb-cover-sub{font-size:13px;color:var(--eb-cor,#e50914);font-weight:800;margin-bottom:10px}
+.eb-cover-tagline{font-size:11px;color:var(--mu);margin-bottom:18px;line-height:1.6}
+.eb-perfil-card{background:var(--s);border:1px solid var(--b);border-radius:12px;padding:16px;margin:0 20px 16px;text-align:left}
+.eb-perfil-titulo{font-size:11px;color:var(--mu);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px;font-weight:800}
+.eb-perfil-saudacao{font-size:15px;font-weight:800;margin-bottom:12px}
+.eb-chips{display:flex;flex-wrap:wrap;gap:6px}
+.eb-chip{background:var(--s2);border:1px solid var(--b);border-radius:20px;padding:5px 12px;font-size:11px;font-weight:700;color:var(--t2)}
+.eb-chip.warn{background:rgba(243,156,18,.12);border-color:rgba(243,156,18,.35);color:#f39c12}
+.eb-start-btn{background:var(--eb-cor,#e50914);border:none;border-radius:10px;padding:14px;color:#fff;font-size:14px;font-weight:900;width:calc(100% - 40px);margin:0 20px;cursor:pointer}
+.eb-toc{padding:0 20px;margin-top:20px}
+.eb-toc-item{display:flex;align-items:center;gap:12px;background:var(--s);border:1px solid var(--b);border-radius:10px;padding:12px 14px;margin-bottom:8px;cursor:pointer}
+.eb-toc-num{width:28px;height:28px;border-radius:50%;background:var(--eb-cor,#e50914);color:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:900;flex-shrink:0}
+.eb-toc-titulo{font-size:13px;font-weight:700;flex:1}
+.eb-toc-check{color:#2ecc71;font-size:16px}
+
+.eb-cap-hdr{padding:16px 20px 12px;position:sticky;top:0;background:var(--bg);z-index:5;border-bottom:1px solid var(--b)}
+.eb-cap-progress{height:3px;background:var(--s2);border-radius:2px;overflow:hidden;margin-bottom:10px}
+.eb-cap-progress-fill{height:100%;background:var(--eb-cor,#e50914);transition:width .3s ease}
+.eb-cap-eyebrow{font-size:10px;color:var(--eb-cor,#e50914);font-weight:800;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:4px}
+.eb-cap-titulo{font-size:19px;font-weight:900}
+
+.eb-body{padding:16px 20px 100px}
+.eb-subtitulo{font-size:15px;font-weight:800;margin:20px 0 8px;color:var(--t)}
+.eb-texto{font-size:13.5px;line-height:1.7;color:var(--t2);margin-bottom:12px}
+.eb-estudo{background:linear-gradient(135deg,rgba(46,204,113,.08),rgba(46,204,113,.02));border-left:3px solid #2ecc71;border-radius:0 10px 10px 0;padding:12px 14px;margin:14px 0}
+.eb-estudo-fonte{font-size:11px;font-weight:800;color:#2ecc71;margin-bottom:5px}
+.eb-estudo-texto{font-size:12.5px;line-height:1.6;color:var(--t2)}
+.eb-bloco{background:var(--eb-cor,#e50914);color:#fff;font-size:12px;font-weight:800;padding:8px 14px;border-radius:8px;margin:18px 0 10px}
+.eb-lista{margin:12px 0;padding-left:0;list-style:none}
+.eb-lista li{font-size:13px;line-height:1.65;color:var(--t2);margin-bottom:10px;padding-left:20px;position:relative}
+.eb-lista li::before{content:"●";position:absolute;left:0;color:var(--eb-cor,#e50914);font-size:9px;top:6px}
+.eb-tabela-wrap{overflow-x:auto;margin:14px 0;border-radius:10px;border:1px solid var(--b)}
+.eb-tabela{width:100%;border-collapse:collapse;font-size:11.5px}
+.eb-tabela th{background:var(--eb-cor,#e50914);color:#fff;padding:8px 10px;text-align:left;font-weight:800;white-space:nowrap}
+.eb-tabela td{padding:8px 10px;border-top:1px solid var(--b);color:var(--t2);white-space:nowrap}
+.eb-tabela tr:nth-child(even) td{background:var(--s)}
+.eb-tabela-titulo{font-size:12px;font-weight:800;color:var(--t);margin:16px 0 6px}
+.eb-tabela-aviso{background:rgba(243,156,18,.1) !important;color:#f39c12 !important;font-weight:700}
+.eb-tabela-pr{font-size:9.5px;color:#2ecc71;display:block;margin-top:2px}
+
+.eb-nav{position:fixed;bottom:0;left:0;right:0;background:rgba(10,10,10,.97);backdrop-filter:blur(20px);border-top:1px solid var(--b);padding:12px 20px;display:flex;gap:10px;z-index:10}
+.eb-nav-btn{flex:1;background:var(--s2);border:1px solid var(--b);border-radius:10px;padding:12px;color:var(--t);font-size:13px;font-weight:800;cursor:pointer;text-align:center}
+.eb-nav-btn.primary{background:var(--eb-cor,#e50914);border-color:var(--eb-cor,#e50914);color:#fff}
+.eb-nav-btn:disabled{opacity:.3;cursor:default}
+
 </style>
 </head>
 <body>
 
 <!-- SPLASH -->
 <div id="sc-splash" class="screen active">
-  <div id="fq-version-badge" style="position:absolute;bottom:8px;right:12px;font-size:9px;color:#333;font-weight:700;z-index:5">v61</div>
+  <div id="fq-version-badge" style="position:absolute;bottom:8px;right:12px;font-size:9px;color:#333;font-weight:700;z-index:5">v65</div>
   <img src="https://images.unsplash.com/photo-1517836357463-d25dfeac3438?w=800&q=80" alt="Fitness" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center top;filter:brightness(.35);z-index:0"/>
   <div class="splash-glow"></div>
   <div class="splash-noise"></div>
@@ -874,13 +881,7 @@ textarea.fi{resize:vertical;min-height:80px;}
           <label class="ro"><input type="radio" name="tempo" value="Avançado (2+ anos)">Avançado<br><small>2+ anos</small></label>
         </div>
       </div>
-      <div class="fg"><label class="fl">Modalidade de interesse</label>
-        <div class="rg" id="rg-modal">
-          <label class="ro"><input type="radio" name="modal" value="Musculação">💪 Só musculação</label>
-          <label class="ro"><input type="radio" name="modal" value="Corrida">🏃 Só corrida</label>
-          <label class="ro"><input type="radio" name="modal" value="Ambos">⚡ Ambos</label>
-        </div>
-      </div>
+      
       <div class="fg"><label class="fl">Dias disponíveis por semana</label>
         <div class="rg" id="rg-dias">
           <label class="ro"><input type="radio" name="dias" value="2x">2x</label>
@@ -907,14 +908,7 @@ textarea.fi{resize:vertical;min-height:80px;}
           <label class="ro"><input type="radio" name="local" value="Rua/Pista">🛤️ Rua/Pista</label>
         </div>
       </div>
-      <div class="fg"><label class="fl">Período preferido para treinar</label>
-        <div class="rg" id="rg-periodo">
-          <label class="ro"><input type="radio" name="periodo" value="Manhã">🌅 Manhã</label>
-          <label class="ro"><input type="radio" name="periodo" value="Tarde">☀️ Tarde</label>
-          <label class="ro"><input type="radio" name="periodo" value="Noite">🌙 Noite</label>
-          <label class="ro"><input type="radio" name="periodo" value="Indiferente">🔄 Indiferente</label>
-        </div>
-      </div>
+      
     </div>
   </div>
 
@@ -935,18 +929,7 @@ textarea.fi{resize:vertical;min-height:80px;}
           <label class="co"><input type="checkbox" value="Reduzir estresse e ansiedade"><span class="cb"></span>🧠 Reduzir estresse e ansiedade</label>
         </div>
       </div>
-      <div class="fg"><label class="fl">Objetivo secundário</label>
-        <select class="fi" id="a-obj2">
-          <option value="">Selecionar (opcional)</option>
-          <option>Melhorar postura</option>
-          <option>Reduzir estresse</option>
-          <option>Ganhar mais disposição</option>
-          <option>Melhorar sono</option>
-          <option>Controlar diabetes/pressão</option>
-          <option>Estética (glúteos, abdômen...)</option>
-          <option>Preparar para evento específico</option>
-        </select>
-      </div>
+      
       <div class="fg"><label class="fl">Meta de corrida <span style="font-weight:400;color:var(--mu)">(pode marcar mais de uma)</span></label>
         <div class="cg" id="cg-mc">
           <label class="co"><input type="checkbox" value="Não pratico corrida"><span class="cb"></span>🚫 Não pratico corrida</label>
@@ -1046,17 +1029,8 @@ textarea.fi{resize:vertical;min-height:80px;}
           <label class="ro"><input type="radio" name="dortempo" value="Mais de 1 ano">+1 ano</label>
         </div>
       </div>
-      <div class="fg"><label class="fl">Já fez fisioterapia ou tratamento para essa lesão?</label>
-        <div class="rg" id="rg-fisio">
-          <label class="ro"><input type="radio" name="fisio" value="Não tenho lesão">Sem lesão</label>
-          <label class="ro"><input type="radio" name="fisio" value="Não fiz tratamento">Não fiz</label>
-          <label class="ro"><input type="radio" name="fisio" value="Fiz e melhorei">Fiz, melhorei</label>
-          <label class="ro"><input type="radio" name="fisio" value="Estou em tratamento">Em tratamento</label>
-        </div>
-      </div>
-      <div class="fg"><label class="fl">Detalhes da lesão / O que piora / O que melhora</label>
-        <textarea class="fi" id="a-lesao-det" placeholder="Ex: Dor no joelho direito ao subir escadas. Piora ao agachar. Melhora com repouso. Diagnóstico: condromalácia grau 2..."></textarea>
-      </div>
+      
+      
     </div>
   </div>
 
@@ -1115,14 +1089,7 @@ textarea.fi{resize:vertical;min-height:80px;}
           <label class="ro"><input type="radio" name="sono" value="Mais de 8h">Mais de 8h</label>
         </div>
       </div>
-      <div class="fg"><label class="fl">Qualidade do sono</label>
-        <div class="rg" id="rg-qualson">
-          <label class="ro"><input type="radio" name="qualson" value="Muito ruim (acordo cansado)">😴 Muito ruim</label>
-          <label class="ro"><input type="radio" name="qualson" value="Regular">😐 Regular</label>
-          <label class="ro"><input type="radio" name="qualson" value="Bom">😊 Bom</label>
-          <label class="ro"><input type="radio" name="qualson" value="Ótimo (acordo descansado)">🌟 Ótimo</label>
-        </div>
-      </div>
+      
       <div class="fg"><label class="fl">Nível de estresse diário</label>
         <div class="rg" id="rg-stress">
           <label class="ro"><input type="radio" name="stress" value="Baixo">😌 Baixo</label>
@@ -1139,25 +1106,9 @@ textarea.fi{resize:vertical;min-height:80px;}
           <label class="ro"><input type="radio" name="alim" value="Ótima (acompanhamento nutricional)">🤩 Ótima</label>
         </div>
       </div>
-      <div class="fg"><label class="fl">Ingesta hídrica diária</label>
-        <div class="rg" id="rg-agua">
-          <label class="ro"><input type="radio" name="agua" value="Menos de 1L">Menos de 1L</label>
-          <label class="ro"><input type="radio" name="agua" value="1-2L">1–2L</label>
-          <label class="ro"><input type="radio" name="agua" value="2-3L">2–3L</label>
-          <label class="ro"><input type="radio" name="agua" value="Mais de 3L">Mais de 3L</label>
-        </div>
-      </div>
-      <div class="fg"><label class="fl">Fuma ou consome álcool regularmente?</label>
-        <div class="cg" id="cg-habitos">
-          <label class="co"><input type="checkbox" value="Fumante"><span class="cb"></span>🚬 Fumante</label>
-          <label class="co"><input type="checkbox" value="Álcool frequente (3+ vezes por semana)"><span class="cb"></span>🍺 Álcool frequente (3+x/semana)</label>
-          <label class="co"><input type="checkbox" value="Álcool social (1-2x por semana)"><span class="cb"></span>🍷 Álcool social (1–2x/semana)</label>
-          <label class="co"><input type="checkbox" value="Nenhum dos anteriores"><span class="cb"></span>✅ Nenhum</label>
-        </div>
-      </div>
-      <div class="fg"><label class="fl">Observações adicionais para o personal</label>
-        <textarea class="fi" id="a-obs" placeholder="Alguma informação importante que não foi perguntada? Limitação de tempo específica, preferências de exercício, medo de algum movimento, expectativas..." rows="3"></textarea>
-      </div>
+      
+      
+      
     </div>
   </div>
 
@@ -1603,17 +1554,17 @@ textarea.fi{resize:vertical;min-height:80px;}
         <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:22px">
           <div onclick="selConsultPlan('Mensal',this)" class="consult-plan" style="background:#111;border:2px solid var(--b);border-radius:12px;padding:14px;display:flex;align-items:center;justify-content:space-between;cursor:pointer">
             <div><div style="font-size:14px;font-weight:800">Plano Mensal</div><div style="font-size:10px;color:var(--t2)">Flexível · renove quando quiser</div></div>
-            <div style="font-size:18px">→</div>
+            <div style="text-align:right"><div style="font-size:16px;font-weight:900;color:#fff">R$197</div><div style="font-size:9px;color:var(--t2)">/mês</div></div>
           </div>
           <div onclick="selConsultPlan('Semestral',this)" class="consult-plan" style="background:linear-gradient(135deg,rgba(243,156,18,.1),#111);border:2px solid rgba(243,156,18,.4);border-radius:12px;padding:14px;display:flex;align-items:center;justify-content:space-between;cursor:pointer;position:relative">
             <div style="position:absolute;top:-8px;right:12px;background:#f39c12;color:#000;border-radius:4px;padding:2px 8px;font-size:8px;font-weight:900;letter-spacing:.5px">MAIS ESCOLHIDO</div>
-            <div><div style="font-size:14px;font-weight:800">Plano Semestral</div><div style="font-size:10px;color:var(--t2)">6 meses · melhor custo-benefício</div></div>
-            <div style="font-size:18px">→</div>
+            <div><div style="font-size:14px;font-weight:800">Plano Semestral</div><div style="font-size:10px;color:var(--t2)">6x de R$166 · economize 16%</div></div>
+            <div style="text-align:right"><div style="font-size:16px;font-weight:900;color:#f39c12">R$997</div><div style="font-size:9px;color:var(--t2)">à vista</div></div>
           </div>
           <div onclick="selConsultPlan('Anual',this)" class="consult-plan" style="background:linear-gradient(135deg,rgba(46,204,113,.1),#111);border:2px solid rgba(46,204,113,.3);border-radius:12px;padding:14px;display:flex;align-items:center;justify-content:space-between;cursor:pointer;position:relative">
             <div style="position:absolute;top:-8px;right:12px;background:#2ecc71;color:#000;border-radius:4px;padding:2px 8px;font-size:8px;font-weight:900;letter-spacing:.5px">MELHOR PREÇO</div>
-            <div><div style="font-size:14px;font-weight:800">Plano Anual</div><div style="font-size:10px;color:var(--t2)">12 meses · melhor custo-benefício</div></div>
-            <div style="font-size:18px">→</div>
+            <div><div style="font-size:14px;font-weight:800">Plano Anual</div><div style="font-size:10px;color:var(--t2)">12x de R$141 · economize 28%</div></div>
+            <div style="text-align:right"><div style="font-size:16px;font-weight:900;color:#2ecc71">R$1.697</div><div style="font-size:9px;color:var(--t2)">à vista</div></div>
           </div>
         </div>
 
@@ -1970,8 +1921,9 @@ textarea.fi{resize:vertical;min-height:80px;}
     <div class="adm-panel" id="adm-students">
       <div style="padding-top:12px">
         <!-- Search -->
-        <div class="adm-search">
-          <input id="adm-search-input" placeholder="Buscar aluno por nome ou e-mail..." oninput="admSearch(this.value)"/>
+        <div class="adm-search" style="display:flex;gap:8px;align-items:center">
+          <input id="adm-search-input" placeholder="Buscar aluno por nome ou e-mail..." oninput="admSearch(this.value)" style="flex:1"/>
+          <button onclick="openCriarAluno()" style="background:var(--r);border:none;border-radius:8px;padding:10px 14px;color:#fff;font-size:12px;font-weight:800;cursor:pointer;white-space:nowrap">+ Aluno</button>
         </div>
         <!-- Filters -->
         <div class="adm-filter" style="padding-top:10px">
@@ -2265,7 +2217,7 @@ textarea.fi{resize:vertical;min-height:80px;}
 
 <script>
 // ══ SUPABASE ══
-const FQ_VERSION='v61';console.log('%cFitQuest '+FQ_VERSION,'color:#e50914;font-weight:bold;font-size:14px');
+const FQ_VERSION='v65';console.log('%cFitQuest '+FQ_VERSION,'color:#e50914;font-weight:bold;font-size:14px');
 // ══ PROXY DE IA (Cloudflare Worker) ══
 // Quando preenchido, a IA real funciona em produção com a chave protegida no servidor.
 // Deixe '' para usar o plano local (fallback). Ex: 'https://fitquest-ai.SEU-USUARIO.workers.dev'
@@ -3053,15 +3005,13 @@ async function submitAnam(){
     nasc:gv('a-nasc'),sexo:gv('a-sexo'),peso:gv('a-peso'),altura:gv('a-altura'),
     prof:gv('a-prof'),fone:gv('a-fone'),atvTrab:gr('atvtrab'),
     // Etapa 2 - Estrutura
-    tempo:gr('tempo'),modal:gr('modal'),dias:gr('dias'),dur:gr('dur'),
-    local:gr('local'),periodo:gr('periodo'),
+    tempo:gr('tempo'),dias:gr('dias'),dur:gr('dur'),local:gr('local'),
     // Etapa 3 - Objetivos
-    obj:gc('cg-obj'),obj2:gv('a-obj2'),mc:gc('cg-mc'),prazo:gr('prazo'),motiv:gv('a-motiv'),
+    obj:gc('cg-obj'),mc:gc('cg-mc'),prazo:gr('prazo'),motiv:gv('a-motiv'),
     // Etapa 4 - Saúde
     saude:gc('cg-saude'),med:gr('med'),medDesc:gv('a-med'),cir:gv('a-cir'),ativo:gr('ativo'),
     // Etapa 5 - Lesões (CRÍTICO para adaptação de treino)
     lesoes:gc('cg-lesoes'),dorInt:gr('dorint'),dorTempo:gr('dortempo'),
-    fisio:gr('fisio'),lesaoDet:gv('a-lesao-det'),
     // Flags especiais de lesão para IA
     temJoelho:gc('cg-lesoes').some(l=>l.includes('Joelho')),
     temLombar:gc('cg-lesoes').some(l=>l.includes('Lombar')||l.includes('Hérnia')),
@@ -3069,9 +3019,7 @@ async function submitAnam(){
     // Etapa 6 - Composição
     biotipo:gr('biotipo'),gordura:gr('gordura'),foco:gc('cg-foco'),supl:gc('cg-supl'),
     // Etapa 7 - Estilo de vida
-    sono:gr('sono'),qualSono:gr('qualson'),stress:gr('stress'),
-    alim:gr('alim'),agua:gr('agua'),habitos:gc('cg-habitos'),
-    obs:gv('a-obs'),
+    sono:gr('sono'),stress:gr('stress'),alim:gr('alim'),
     at:new Date().toISOString()
   };
   users[email].anamnese=an;users[email].anamneseDone=true;users[email].xp=100;users[email].coins=50;
@@ -4621,6 +4569,23 @@ async function admDelLead(idx){
   admRenderLeads();
 }
 
+
+function admAlertaSaude(an){
+  if(!an) return '';
+  const condicoes=(an.saude||[]).filter(s=>s&&!/nenhuma/i.test(s));
+  const temMed=an.med==='Sim';
+  const temCir=an.cir&&an.cir.trim().length>0;
+  if(!condicoes.length&&!temMed&&!temCir) return '';
+  const itens=[];
+  if(condicoes.length) itens.push(`<div>🩺 <strong>Condições:</strong> ${condicoes.join(', ')}</div>`);
+  if(temMed) itens.push(`<div>💊 <strong>Medicamentos:</strong> ${an.medDesc||'não especificado'}</div>`);
+  if(temCir) itens.push(`<div>🔪 <strong>Cirurgias:</strong> ${an.cir}</div>`);
+  return `<div style="margin:0 14px 10px;padding:10px 12px;background:rgba(243,156,18,.1);border:1px solid rgba(243,156,18,.35);border-radius:8px">
+    <div style="font-size:10px;font-weight:800;color:#f39c12;margin-bottom:5px;text-transform:uppercase;letter-spacing:.5px">⚠️ Atenção — dados de saúde do aluno</div>
+    <div style="font-size:11px;color:#e8b566;line-height:1.6">${itens.join('')}</div>
+  </div>`;
+}
+
 function admStudentCard(u, compact=false){
   const purchases=u.purchases||[];
   const ebookCount=u.pacoteEbooks?10:purchases.length;
@@ -4657,13 +4622,16 @@ function admStudentCard(u, compact=false){
       <div style="font-size:9px;color:var(--mu)">🎯 Semana ${u.gymWeek||1}</div>
       <div style="font-size:9px;color:var(--mu)">📅 ${lastSeen}</div>
     </div>`:''}
+    <!-- Alerta de saúde — condições, medicamentos e cirurgias (antes invisível para o admin) -->
+    ${admAlertaSaude(u.anamnese)}
     <!-- Actions -->
     <div class="st-actions">
       ${!u.trainApproved?`<button class="st-btn approve" onclick="admApprove('${u.email}')">✅ Liberar</button>`:''}
       ${u.trainApproved?`<button class="st-btn revoke" onclick="admRevoke('${u.email}')">🚫 Revogar</button>`:''}
       <button class="st-btn edit" onclick="openEditSt('${u.email}')">✏️ Editar</button>
+      <button class="st-btn" onclick="admResetSenha('${u.email}')" style="background:rgba(52,152,219,.12);color:#3498db;border:1px solid rgba(52,152,219,.3)">🔑 Redefinir senha</button>
       <button class="st-btn anam" onclick="openAnam('${u.email}')">📋 Anamnese</button>
-      <button class="st-btn ebook" onclick="admGiveAllEbooks('${u.email}')">📚 Liberar E-Books</button>
+      <button class="st-btn ebook" onclick="openEbooksAdmin('${u.email}')">📚 E-Books</button>
       <button class="st-btn del" onclick="admDel('${u.email}')">🗑️</button>
     </div>
   </div>`;
@@ -6123,8 +6091,65 @@ async function admGrantProgram(email, programId){
   const st=(window.ADM_CACHE||[]).find(a=>a.email===email);
   const atual=st?(st.purchases||[]):((users[email]&&users[email].purchases)||[]);
   const novas=[...new Set([...atual,programId])];
-  if(users[email]){users[email].purchases=novas;DB.set('fq_users',users);}
+  if(users[email]){users[email].purchases=novas;users[email].pacoteEbooks=novas.length>=10;DB.set('fq_users',users);}
   if(sb) await sb.from('alunos').update({purchases:novas,pacote_ebooks:novas.length>=10}).eq('email',email);
+  if(window.ADM_CACHE){const s=window.ADM_CACHE.find(a=>a.email===email);if(s){s.purchases=novas;s.pacoteEbooks=novas.length>=10;}}
+}
+
+async function admRevokeProgram(email, programId){
+  const users = DB.get('fq_users')||{};
+  const st=(window.ADM_CACHE||[]).find(a=>a.email===email);
+  const atual=st?(st.purchases||[]):((users[email]&&users[email].purchases)||[]);
+  const novas=atual.filter(p=>p!==programId);
+  if(users[email]){users[email].purchases=novas;users[email].pacoteEbooks=false;DB.set('fq_users',users);}
+  if(sb) await sb.from('alunos').update({purchases:novas,pacote_ebooks:false}).eq('email',email);
+  if(window.ADM_CACHE){const s=window.ADM_CACHE.find(a=>a.email===email);if(s){s.purchases=novas;s.pacoteEbooks=false;}}
+}
+
+const ADM_EBOOK_TITULOS={
+  hypertrophy:'Hipertrofia Máxima', elderly:'Treino 60+', pregnancy:'Gravidez Ativa',
+  disabled:'Movimento Livre', fatburn:'Emagrecimento Total', running10k:'Do Zero ao 10km',
+  posture:'Postura e Mobilidade', stress:'Treino Anti-Estresse', technique:'Técnica Perfeita',
+  nutrition:'Nutrição para Performance'
+};
+
+function openEbooksAdmin(email){
+  const users = DB.get('fq_users')||{};
+  const st=(window.ADM_CACHE||[]).find(a=>a.email===email) || users[email];
+  if(!st){fqToast('Aluno não encontrado','warn');return;}
+  const purchases = st.purchases||[];
+  document.getElementById('modal-ebooksadm-name').textContent = '📚 E-Books — ' + (st.name||email);
+  document.getElementById('modal-ebooksadm-content').innerHTML = `
+    <div style="font-size:11px;color:var(--mu);margin-bottom:12px">Toque para liberar ou trancar cada e-book individualmente</div>
+    ${Object.entries(ADM_EBOOK_TITULOS).map(([id,titulo])=>{
+      const on = purchases.includes(id);
+      return `<div style="display:flex;align-items:center;justify-content:space-between;background:var(--s);border:1px solid var(--b);border-radius:10px;padding:12px 14px;margin-bottom:8px">
+        <div style="font-size:12.5px;font-weight:700">${titulo}</div>
+        <button onclick="admToggleEbook('${email}','${id}',this)" data-on="${on}" style="width:46px;height:26px;border-radius:14px;border:none;cursor:pointer;position:relative;background:${on?'#2ecc71':'var(--s2)'};transition:background .2s">
+          <div style="position:absolute;top:2px;left:${on?'22px':'2px'};width:22px;height:22px;border-radius:50%;background:#fff;transition:left .2s"></div>
+        </button>
+      </div>`;
+    }).join('')}
+    <button class="btn-p" style="margin-top:8px" onclick="admGiveAllEbooks('${email}');closeEbooksAdmin();">📚 Liberar todos de uma vez</button>
+  `;
+  document.getElementById('modal-ebooksadm').classList.add('open');
+}
+
+async function admToggleEbook(email, programId, btn){
+  const isOn = btn.getAttribute('data-on')==='true';
+  btn.disabled=true;
+  if(isOn) await admRevokeProgram(email, programId);
+  else await admGrantProgram(email, programId);
+  btn.setAttribute('data-on', (!isOn).toString());
+  btn.style.background = !isOn ? '#2ecc71' : 'var(--s2)';
+  btn.querySelector('div').style.left = !isOn ? '22px' : '2px';
+  btn.disabled=false;
+  fqToast(!isOn ? '✅ E-book liberado' : '🔒 E-book trancado', 'ok');
+}
+
+function closeEbooksAdmin(){
+  closeModal('modal-ebooksadm');
+  loadAdmin();
 }
 
 // ══ PROGRAM INTAKE — PERSONALIZAÇÃO COM IA ══
@@ -6864,7 +6889,9 @@ function enviarConsultoria() {
   DB.set('fq_consult_leads', leads);
   if (sb) { try { sb.from('consultoria_leads').insert({ nome, telefone: fone, objetivo: obj, modalidade: consultModal, plano: consultPlan, criado_em: new Date().toISOString() }).then(()=>{}).catch(()=>{}); } catch(e) {} }
   const modalLabel = consultModal === 'musculacao' ? 'Musculação' : 'Corrida';
-  const msg = `Olá Rennan! Quero começar a consultoria.%0A%0A*Nome:* ${encodeURIComponent(nome)}%0A*WhatsApp:* ${encodeURIComponent(fone)}%0A*Modalidade:* ${encodeURIComponent(modalLabel)}%0A*Plano:* ${encodeURIComponent(consultPlan)}%0A*Objetivo:* ${encodeURIComponent(obj || 'A definir')}`;
+  const PRECOS_PLANO = {Mensal:'R$197/mês', Semestral:'R$997 (6x R$166)', Anual:'R$1.697 (12x R$141)'};
+  const planoComPreco = consultPlan + (PRECOS_PLANO[consultPlan] ? ' — ' + PRECOS_PLANO[consultPlan] : '');
+  const msg = `Olá Rennan! Quero começar a consultoria.%0A%0A*Nome:* ${encodeURIComponent(nome)}%0A*WhatsApp:* ${encodeURIComponent(fone)}%0A*Modalidade:* ${encodeURIComponent(modalLabel)}%0A*Plano:* ${encodeURIComponent(planoComPreco)}%0A*Objetivo:* ${encodeURIComponent(obj || 'A definir')}`;
   window.open(`https://wa.me/5531995250330?text=${msg}`, '_blank');
 }
 // ── ADMIN: VER O APP COMO ALUNO (usa o próprio perfil autenticado do Rennan) ──
@@ -7340,23 +7367,419 @@ function renderTrilha(u){
   },50);
 }
 
+const EBOOKS_CONTENT = {"hypertrophy":{"titulo":"Hipertrofia Máxima","subtitulo":"12 Semanas","tagline":"Periodização Científica · Schoenfeld 2024 · Técnicas Avançadas","desc":"O programa definitivo para ganho de massa muscular. Periodização ondulatória em 3 blocos progressivos, baseada nas pesquisas mais recentes de Schoenfeld, NSCA e ISSN.","emoji":"💪","cor":"#e50914","questionario":[{"pergunta":"Como você descreveria seu nível de treino?","opcoes":["Iniciante (menos de 6 meses)","Intermediario (6 meses a 2 anos)","Avancado (mais de 2 anos)","Elite (mais de 5 anos)"]},{"pergunta":"Qual e seu maior obstaculo para ganhar massa?","opcoes":["Não consigo comer o suficiente","Não sei como periodizar","Fico estagnado no mesmo peso","Falta de consistência"]},{"pergunta":"Quantos dias por semana consegue treinar?","opcoes":["3 dias","4 dias","5 dias","6 dias"]},{"pergunta":"Qual e seu objetivo em 12 semanas?","opcoes":["Ganhar 2 a 3kg de massa","Ganhar 3 a 5kg de massa","Recomposição corporal","Melhorar definição"]},{"pergunta":"Você ja usou tecnicas avancadas?","opcoes":["Nunca usei drop-set ou rest-pause","Ja usei ocasionalmente","Uso regularmente","Sou experiente com tecnicas avancadas"]}],"capitulos":[{"numero":1,"titulo":"A Ciência da Hipertrofia","secoes":[{"tipo":"subtitulo","texto":"1.1 Por Que Você Parou de Crescer"},{"tipo":"texto","corpo":"Seu músculo se adapta ao estímulo em 2 a 4 semanas. Depois disso, o mesmo treino não produz mais resultado. Isso tem nome: platô de adaptação. A solução é a Periodização em Blocos — dividir 12 semanas em 3 fases com objetivos distintos que se potencializam."},{"tipo":"estudo","fonte":"British Journal of Sports Medicine (2023) — 178 estudos","texto":"Sobrecarga progressiva estruturada é a variável mais importante para hipertrofia. Programas com periodização planejada produziram 40% mais ganhos musculares do que treinos sem progressão sistemática."},{"tipo":"subtitulo","texto":"1.2 Volume, Frequência e Intensidade"},{"tipo":"estudo","fonte":"PubMed (2024) — 67 estudos, 2.058 participantes","texto":"Cada serie adicional por semana gera em media 0,24% mais hipertrofia. Volume otimo: 10 a 20 series por grupo muscular por semana. Este programa opera em 12 series (Bloco 1), 16 (Bloco 2) e 20 nas semanas de pico (Bloco 3). RPE: RPE 7 = poderia fazer mais 3 reps. RPE 8 = mais 2. RPE 9 = mais 1. Para hipertrofia: zona ideal RPE 7-9. Bloco 1: RPE 7-8. Bloco 2: RPE 8-9. Bloco 3: RPE 9-10."}]},{"numero":2,"titulo":"Programa Completo 12 Semanas","secoes":[{"tipo":"texto","corpo":"Divisão ABCDE | 5 dias/semana | Frequência 2x por músculo"},{"tipo":"bloco_titulo","texto":"BLOCO 1 (Semanas 1-4) — Acumulação"},{"tipo":"tabela","titulo":"TREINO A — Peito + Tríceps","colunas":["Exercício","Series","Reps","Descanso","RPE"],"linhas":[["Supino reto barra","4","12","120s","7"],["Supino inclinado halteres","3","12","90s","7"],["Crucifixo no banco","3","15","60s","7"],["Peck deck","3","15","60s","8"],["Tríceps pulley","3","15","60s","7"],["Tríceps testa barra W","3","12","60s","7"]]},{"tipo":"tabela","titulo":"TREINO B — Costas + Bíceps","colunas":["Exercício","Series","Reps","Descanso","RPE"],"linhas":[["Puxada alta fechada","4","12","120s","7"],["Remada curvada barra","4","12","120s","8"],["Remada unilateral","3","12","90s","7"],["Pullover halteres","2","15","60s","7"],["Rosca direta barra","3","12","60s","7"],["Rosca alternada","3","12","60s","7"]]},{"tipo":"tabela","titulo":"TREINO C — Pernas (Quad/Glúteo)","colunas":["Exercício","Series","Reps","Descanso","RPE"],"linhas":[["Agachamento livre","4","12","150s","7"],["Leg press 45","4","12","120s","8"],["Hack squat","3","12","120s","7"],["Cadeira extensora","3","15","75s","8"],["Hip thrust barra","4","12","120s","8"],["Panturrilha em pe","4","15","60s","8"]]},{"tipo":"tabela","titulo":"TREINO D — Ombros + Core","colunas":["Exercício","Series","Reps","Descanso","RPE"],"linhas":[["Desenvolvimento halteres","4","12","120s","7"]]},{"tipo":"texto","corpo":"Elevação lateral 4 15 60s 8 Elevação frontal alternada 3 12 60s 7 Prancha frontal 3 40s 60s -- Abdominal crunch 3 20 60s 8"},{"tipo":"tabela","titulo":"TREINO E — Posterior + Panturrilha","colunas":["Exercício","Series","Reps","Descanso","RPE"],"linhas":[["Stiff barra","4","12","120s","7"],["Mesa flexora","4","12","90s","8"],["Hip thrust (glúteo)","3","15","75s","8"],["Extensão lombar 45","3","15","75s","7"],["Panturrilha sentado","4","20","60s","8"]]},{"tipo":"bloco_titulo","texto":"BLOCO 2 (Semanas 5-8): Intensificação | RPE 8-9 | 6-10 reps"},{"tipo":"texto","corpo":"Aumentar cargas 10-15% vs Bloco 1. Redução de reps para 6-10. Introdução de PAUSA de 2 segundos no estiramento máximo nos exercícios compostos."},{"tipo":"bloco_titulo","texto":"BLOCO 3 (Semanas 9-12): Realização | RPE 9-10 | Tecnicas Avancadas"},{"tipo":"texto","corpo":"Volume máximo (20 series/músculo nas semanas 9-11). Drop-set na última serie dos isolados. Rest-pause nos compostos. Semana 12: deload completo (-40% volume). DELOAD (Semanas 4 e 8): -40% volume, -30% carga, RPE max 6. O músculo cresce durante a supercompensação pos-deload — não pule!"}]},{"numero":3,"titulo":"Tecnicas Avancadas","secoes":[{"tipo":"estudo","fonte":"Sports Medicine 2024 — Androulakis-Korakakis et al.","texto":"Amplitude de movimento completa gera hipertrofia 2,3x maior no femoral distal vs amplitude parcial. A fase excentrica lenta (3-4s) ativa mecanoreceptores que disparam a via mTORC1 — principal via de síntese proteica muscular. Drop-set Após a falha, reduza 20-30% da carga e continue. Sem pausa. Máximo 2 reduções. Use apenas na última serie de exercícios isolados nas semanas 9-11. Rest-Pause Após a falha, descanse 10-15 segundos e continue por mais 3-5 reps. Repita 2-3 vezes. Use nos compostos nas semanas 9-11. Excentrico Lento 3 segundos descendo em TODOS os exercícios. Muda tudo — mais tempo sob tensão, mais recrutamento de fibras, mais hipertrofia."}]},{"numero":4,"titulo":"Nutrição para Hipertrofia","secoes":[{"tipo":"estudo","fonte":"ISSN Position Stand (2022)","texto":"1,6 a 2,2g de proteína por kg/dia em 4-5 refeições. Superavit calorico de 200-300 kcal/dia. Carboidrato: 4-6g/kg/dia. Creatina: 3-5g/dia — suplemento mais estudado da historia. Suplementos com evidência: Creatina (essencial, +5-15% forca), Whey (conveniência proteica), Cafeina (200-400mg pre-treino, +3-11% performance). O resto e marketing. \"Você não constroi músculo na academia. Você constroi com o que come e como descansa. O treino apenas cria o estímulo.\" — Rennan Dias Rennan Dias Personal Trainer | CREF | FitQuest Assessoria Esportiva"}]}]},"elderly":{"titulo":"Treino 60+","subtitulo":"Força, Equilíbrio e Vitalidade","tagline":"8 Semanas · ACSM 2024 · Sarcopenia e Prevenção de Quedas","desc":"Programa completo e seguro para pessoas acima de 60 anos. Baseado nas diretrizes do ACSM e pesquisas sobre sarcopenia.","emoji":"⭐","cor":"#16a085","questionario":[{"pergunta":"Qual é a sua faixa etaria atual?","opcoes":["60 a 65 anos","66 a 72 anos","73 a 80 anos","Acima de 80 anos"]},{"pergunta":"Como você descreveria sua atividade física atual?","opcoes":["Sedentário (raramente me movo além do necessario)","Levemente ativo (caminhadas leves ocasionais)","Moderadamente ativo (atividade 2-3x/semana)","Ativo (treino regularmente ha mais de 6 meses)"]},{"pergunta":"Você sente dor ou limitação em alguma região?","opcoes":["Joelho(s)","Coluna lombar","Ombro(s)","Quadril","Tornozelo/pe","Não sinto dor em nenhuma região"]},{"pergunta":"Você ja sofreu alguma queda nos últimos 12 meses?","opcoes":["Não","Sim, uma vez","Sim, mais de uma vez","Tive medo de cair, mas não cai"]},{"pergunta":"Qual e seu principal objetivo?","opcoes":["Ganhar forca e independência no dia a dia","Melhorar equilibrio e prevenir quedas","Reduzir dores articulares e melhorar mobilidade","Manter-me ativo e saudável por mais anos"]},{"pergunta":"Você faz uso de medicamento continuo?","opcoes":["Não","Sim, para pressão ou coração","Sim, para diabetes","Sim, para ossos (osteoporose)","Sim, outros"]}],"capitulos":[{"numero":1,"titulo":"A Ciência do Envelhecimento Ativo","secoes":[{"tipo":"subtitulo","texto":"1.1 Sarcopenia — A Ameaca Silenciosa"},{"tipo":"texto","corpo":"A sarcopenia é a perda progressiva de massa muscular associada ao envelhecimento. Afeta 10% a 40% das pessoas acima de 60 anos e causa quedas, perda de independência e mortalidade precoce. O que poucos sabem: ela não e inevitável. O músculo esqueletico mantém plasticidade ao longo de toda a vida."},{"tipo":"estudo","fonte":"Journal of Clinical Medicine (2024) — 11 RCTs, 792","texto":"participantes Programas de treinamento resistido de 8 a 24 semanas produziram melhorias significativas em forca de preensão, velocidade de marcha, massa muscular e controle postural — inclusive em participantes acima de 80 anos. A perda muscular e silenciosa: 3% a 8% por decada após os 30 anos, acelerando para 10% a 15% por decada após os 50. Uma pessoa de 70 anos pode ter perdido até 40% da massa muscular que tinha aos 30 — sem nunca perceber."},{"tipo":"subtitulo","texto":"1.2 A Epidemia de Quedas"},{"tipo":"texto","corpo":"1 em cada 3 idosos cai pelo menos uma vez por ano. As quedas são a principal causa de lesões graves e internações em pessoas acima de 65 anos no Brasil. Uma fratura de quadril está associada a mortalidade de 20% a 30% no primeiro ano."},{"tipo":"estudo","fonte":"NIH/PMC (2024) — Revisão de 155 estudos","texto":"Exercícios de equilibrio e forca melhoram controle postural, estabilidade da marcha e coordenação neuromuscular. Programas multicomponentes reduzem risco de quedas em até 40% em idosos de alto risco. A prevenção de quedas é o investimento mais importante que um idoso pode fazer na sua saúde. Uma queda pode significar a perda definitiva da independência."},{"tipo":"subtitulo","texto":"1.3 Exercício e Saúde Cognitiva"},{"tipo":"texto","corpo":"O exercício físico regular em idosos melhora memória de trabalho, função executiva e velocidade de processamento cognitivo via BDNF — fator neutrofico derivado do cerebro. Pesquisas da Unifesp (2025) associam exercício resistido regular a prevenção do Alzheimer."},{"tipo":"estudo","fonte":"Frontiers in Aging (2024)","texto":""},{"tipo":"texto","corpo":"Programas combinados de forca e exercício aeróbico produziram benefícios cognitivos superiores a modalidades isoladas, com efeitos mensuraveis em apenas 6 semanas de treino consistente."}]},{"numero":2,"titulo":"Principios do Treino para 60+","secoes":[{"tipo":"texto","corpo":"Articulações mais velhas precisam de mais tempo para se preparar. O aquecimento neste programa tem duração mínima de 12 minutos. Idosos também apresentam resistência anabolica — a proteína precisa ser distribuida em 3 a 4 refeições para maximizar a síntese proteica."},{"tipo":"estudo","fonte":"Epidemiology and Health (2024)","texto":"A combinação de treinamento resistido + suplementação proteica e significativamente mais eficaz do que o exercício isolado. Meta proteica para 60+: 1,2 a 1,6g por kg de peso corporal por dia. Capitulo 3: Programa de Treino 8 Semanas"},{"tipo":"bloco_titulo","texto":"BLOCO 1 (Semanas 1-2): Ativação e Adaptação — RPE 5-6"},{"tipo":"texto","corpo":"Treino A — Membros Inferiores + Equilibrio Agachamento na cadeira (sentar/levantar) 3 10 90s 5-6 Elevação de calcanhar em pe 3 15 60s 5 Ponte glutea no chão 3 12 60s 5-6 Avanco estático (apoio na parede) 3 8/lado 90s 5 Equilibrio unipodal (apoio na parede) 3 20s 45s -- Marcha estacionaria com elevação de joelho 2 20 60s 4-5 Treino B — Membros Superiores + Core Remada com elástico sentado 3 12 75s 5-6 Press de ombro com halteres leves 3 10 75s 5 Rosca direta com halteres leves 3 12 60s 5 Extensão de tríceps com elástico 3 12 60s 5 Prancha no antebraco (joelhos no chão) 3 20s 60s -- Rotação de tronco sentado 2 10/lado 45s 4"},{"tipo":"bloco_titulo","texto":"BLOCO 2 (Semanas 3-4): Forca Funcional — RPE 6-7"},{"tipo":"texto","corpo":"Treino A — Funcional"},{"tipo":"texto","corpo":"Step-up em degrau baixo 3 10/lado 90s 6 Agachamento com peso leve 3 12 90s 6-7 Elevação de calcanhar com carga 3 15 60s 6 Equilibrio unipodal sem apoio 3 15s 45s -- Caminhada com peso (bolsas leves 5-10m) 3 30s 60s 5-6 Rotação de tronco com bastão 3 10/lado 45s 5"},{"tipo":"bloco_titulo","texto":"BLOCO 3 (Semanas 5-6): Equilibrio e Coordenação — RPE 6-7"},{"tipo":"tabela","titulo":"Principios do Treino para 60+","colunas":["Exercício","Series","Reps","Descanso","RPE"],"linhas":[["Equilibrio em superficie instável (toalha dobrada)","3","20s","60s","--"],["Step lateral com elástico","3","12/lado","75s","6"],["Caminhada em linha reta (calcanhar-ponta)","3","10m","45s","--"],["Tai Chi simplificado (peso ant/post)","2","5min","--","4"]]},{"tipo":"texto","corpo":"SEGURANCA: Sempre tenha um apoio proximo nos exercícios de equilibrio. Seguranca em primeiro lugar — sem exceção! Treino B — Equilibrio Dinâmico Squat parcial com resistência 3 12 90s 6-7 Rotação de ombro com bastão 2 10/lado 45s 4-5"},{"tipo":"bloco_titulo","texto":"BLOCO 4 (Semanas 7-8): Manutenção e Hábito"},{"tipo":"texto","corpo":"Volume reduzido em 20%, intensidade mantida. O objetivo e consolidar os ganhos e estabelecer o hábito de longo prazo. O treino mais importante é o que você vai continuar fazendo pelo resto da vida."}]},{"numero":4,"titulo":"Nutrição para Longevidade","secoes":[{"tipo":"texto","corpo":"Vitamina D, cálcio e proteína são os tres nutrientes mais criticos para idosos que treinam. A deficiência de vitamina D está associada a fraqueza muscular, risco de queda aumentado e osteoporose. Peso Meta Mínima (1,2g/kg) Meta Ideal (1,6g/kg) 50 kg 60g/dia 80g/dia 60 kg 72g/dia 96g/dia 70 kg 84g/dia 112g/dia 80 kg 96g/dia 128g/dia \"O objetivo do treino após os 60 não e parecer jovem. E sentir-se capaz, independente e cheio de vida por mais décadas.\" — Rennan Dias Rennan Dias Personal Trainer | CREF | FitQuest Assessoria Esportiva rennandias.com.br"}]}]},"pregnancy":{"titulo":"Gravidez Ativa","subtitulo":"Exercício Seguro por Trimestre","tagline":"Por Trimestre · Diretrizes ACOG 2024 · Pós-Parto Incluído","desc":"Guia completo e seguro para gestantes que querem se manter ativas. Baseado nas diretrizes atualizadas do ACOG (2024).","emoji":"🤰","cor":"#e91e8c","questionario":[{"pergunta":"Em que trimestre da sua gravidez você está?","opcoes":["1 Trimestre (até 13a semana)","2 Trimestre (14a a 27a semana)","3 Trimestre (28a semana em diante)","Pos-parto (quero me recuperar)"]},{"pergunta":"Você praticava exercícios antes de engravidar?","opcoes":["Não praticava nenhuma atividade","Caminhava ou fazia atividades leves","Treinava regularmente 3x ou mais por semana","Era atleta ou praticava esportes de alta intensidade"]},{"pergunta":"Você ja recebeu liberação médica para se exercitar?","opcoes":["Sim, liberação sem restrições","Sim, com restrições específicas","Ainda não consultei meu médico","Médico recomendou repouso ou restrição"]},{"pergunta":"Você experiência algum desses sintomas?","opcoes":["Enjoos e nauseas intensas","Fadiga extrema","Inchaco nos pes","Pressão arterial elevada","Dores pelvicas ou lombares","Não experimento nenhum desses sintomas"]},{"pergunta":"Qual é o seu maior receio sobre exercitar-se na gravidez?","opcoes":["Medo de machucar o bebê","Não sei quais exercícios são seguros","Falta de energia","Não tenho receios — estou animada para treinar!"]}],"capitulos":[{"numero":1,"titulo":"A Ciência do Exercício na Gravidez","secoes":[{"tipo":"subtitulo","texto":"1.1 O que o ACOG Recomenda em 2024"},{"tipo":"texto","corpo":"O American College of Obstetricians and Gynecologists (ACOG) publicou em setembro de 2024 diretrizes claras: mulheres com gravidez saudável devem praticar pelo menos 150 minutos de exercício aeróbico moderado por semana. Exercícios de forca também são encorajados."},{"tipo":"estudo","fonte":"ACOG Committee Opinion — Setembro 2024","texto":"Exercícios aerobicos e de forca devem ser encorajados antes, durante e após a gravidez. Os benefícios superam amplamente os riscos em gestações saudaveis. Mulheres que ja treinavam intensamente podem manter suas atividades com monitoramento adequado. IMPORTANTE: Sempre obtenha liberação do seu obstetra antes de iniciar exercícios durante a gravidez. Este ebook e educativo, não substitui orientação médica."},{"tipo":"subtitulo","texto":"1.2 Benefícios para Mae e Bebê"},{"tipo":"texto","corpo":"Benefício para a Mae Benefício para o Bebê Redução do risco de diabetes gestacional Peso adequado ao nascer Menor risco de hipertensão Frequência cardiaca em repouso mais baixa Controle do ganho de peso Melhor tolerância ao estresse do parto Menos risco de parto cesareo Melhor neurodesenvolvimento Recuperação pos-parto mais rápida Bebes mais calmos e com melhor sono"}]},{"numero":2,"titulo":"Programa Por Trimestre","secoes":[{"tipo":"subtitulo","texto":"2.1 Primeiro Trimestre — Adaptação (Semanas 1-13)"},{"tipo":"tabela","titulo":"Programa Por Trimestre","colunas":["Exercício de Kegel","3","15 rep","30s","--"],"linhas":[["Ponte glutea","3","12","75s","5"],["Prancha modificada (joelhos)","3","20s","60s","--"]]},{"tipo":"texto","corpo":"O 1 trimestre e marcado por nauseas, fadiga e grandes mudancas hormonais. O objetivo e manter atividade leve a moderada. Evite superaquecimento — temperatura corporal elevada pode afetar o desenvolvimento embrionario. Dica: Se você está com nausea, prefira treinar de manhã cedo, com estomago levemente cheio. Bolachas de água e sal 30 min antes podem ajudar. Treino 1 Trimestre — 3x por semana Caminhada moderada 1 20-30min -- 4-5 Agachamento goblet peso leve 3 12 90s 5-6 Remada com elástico 3 12 75s 5-6"},{"tipo":"subtitulo","texto":"2.2 Segundo Trimestre — Fortalecimento (Semanas 14-27)"},{"tipo":"texto","corpo":"O 2 trimestre é o melhor período para se exercitar. A energia volta, os enjoos diminuem é a barriga ainda não interfere no movimento. Momento ideal para fortalecer core, glúteos e membros inferiores."},{"tipo":"estudo","fonte":"PMC/NIH (2024) — Revisão de RCTs sobre exercício na","texto":"gestação O 2 trimestre tem maior seguranca e efetividade para exercícios de fortalecimento. Gestantes que treinaram apresentaram menor incidência de dor lombar e melhor capacidade funcional no parto. Treino 2 Trimestre — 3-4x por semana"},{"tipo":"texto","corpo":"Agachamento com halteres 4 12 90s 6-7 Remada unilateral no banco 4 12/lado 90s 6-7 Press de ombro sentada 3 12 75s 6 Elevação pelvica com peso 4 12 90s 6-7 Adutora com elástico 3 15 60s 6"},{"tipo":"texto","corpo":"Kegel progressivo (8s contração) 3 12 rep 30s --"},{"tipo":"subtitulo","texto":"2.3 Terceiro Trimestre — Manutenção (Semanas 28+)"},{"tipo":"texto","corpo":"Evitar exercícios em posição supina — podem comprimir a veia cava inferior. Prioridade para equilibrio, respiração e preparação para o parto. Reduza a intensidade conforme a data prevista se aproximar."}]},{"numero":3,"titulo":"O Assoalho Pelvico","secoes":[{"tipo":"texto","corpo":"O assoalho pelvico sustenta útero, bexiga e intestino durante toda a gravidez. Mulheres que o fortalecem tem partos mais curtos, menos risco de incontinência e recuperação pos-parto significativamente mais rápida. Protocolo de Kegel — Semanas 1-4: contraia 5s, relaxe 10s, 10x por 3x/dia. Semanas 5-8: contraia 8s, relaxe 12s, 12x por 3x/dia. Pos-parto: reinicie com 3s assim que possível. Capitulo 4: Recuperação Pos-Parto O retorno ao exercício deve ser gradual. Sem prazo fixo — depende do tipo de parto e de como você se sente."},{"tipo":"lista","itens":["Semana 1-2: Caminhadas curtas (5-10 min) e Kegel leve","Semana 3-4: Caminhadas de 15-20 min e exercícios respiratorios","Semana 5-6: Se liberada pelo médico, atividades de baixo impacto","Semana 7-8: Retorno progressivo ao treino de forca com cargas muito leves","Após 3 meses: Avaliação de diastase abdominal antes de retomar core Lembre-se: cada corpo tem seu tempo. Compare-se apenas com você mesma de ontem — nunca com antes da gravidez. Rennan Dias Personal Trainer | CREF | FitQuest Assessoria Esportiva rennandias.com.br"]}]}]},"disabled":{"titulo":"Movimento Livre","subtitulo":"Exercício Adaptado para PcD","tagline":"Para Todos os Tipos de Deficiência · WHO 2020 · ACSM 2022","desc":"Programa inclusivo baseado nas diretrizes da WHO (2020), ACSM (2022) e American Heart Association para pessoas com deficiência física.","emoji":"♿","cor":"#2ecc71","questionario":[{"pergunta":"Qual é o tipo de deficiência ou limitação que você possui?","opcoes":["Cadeirante (uso cadeira de rodas permanentemente)","Amputação (membro amputado)","Deficiência visual (baixa visão ou cegueira)","Limitação motora (paralisia parcial, hemiplegia)","Doenca neuromuscular ou outra condição"]},{"pergunta":"Como você descreveria sua capacidade física atual?","opcoes":["Muito limitado (poucos movimentos independentes)","Parcialmente independente (faco coisas com adaptação)","Bastante independente (limitação específica, alta autonomia)"]},{"pergunta":"Qual é o seu principal objetivo?","opcoes":["Ganhar forca e resistência muscular","Melhorar independência no dia a dia","Controlar o peso e composição corporal","Saúde cardiovascular e energia","Bem-estar mental e humor"]},{"pergunta":"Quais equipamentos você tem acesso?","opcoes":["Academia adaptada com equipamentos","Casa com halteres e/ou faixas elasticas","Apenas meu corpo é uma cadeira","Outros recursos"]},{"pergunta":"Você ja praticou alguma atividade física regularmente?","opcoes":["Não, e a primeira vez","Sim, mas ha muito tempo parei","Sim, treino ocasionalmente","Sim, treino regularmente mas quero estrutura"]}],"capitulos":[{"numero":1,"titulo":"A Ciência do Exercício Adaptado","secoes":[{"tipo":"subtitulo","texto":"1.1 O Mito da Incapacidade no Esporte"},{"tipo":"texto","corpo":"A crença de que pessoas com deficiência não podem treinar intensamente é um mito ultrapassado. Estudos com atletas paralímpicos demonstram que o treinamento resistido adaptado produz ganhos comparaveis aos de atletas olimpicos convencionais. O músculo não sabe se a pessoa e cadeirante — ele responde ao estímulo mecanico da mesma forma."},{"tipo":"estudo","fonte":"WHO Physical Activity Guidelines (2020) e ACSM (2022)","texto":"Pessoas com deficiência física tem as mesmas capacidades de adaptação ao exercício. As diretrizes internacionais recomendam 150 a 300 minutos de atividade aeróbica moderada e 2 sessões de forca por semana — com adaptações adequadas ao tipo de deficiência."},{"tipo":"subtitulo","texto":"1.2 Benefícios Específicos"},{"tipo":"texto","corpo":"Para cadeirantes: treinamento de membros superiores é essencial. Usuarios de cadeira de rodas realizam em media 1.000 a 3.000 propulsões por dia — sem forca e resistência, o resultado e síndrome do manguito rotador, tendinite e dor crônica. Para amputados: a assimetria muscular causada pela ausência de um membro cria compensações que sobrecarregam articulações do lado oposto. O fortalecimento do membro residual e do contralateral corrige esse desequilibrio."},{"tipo":"estudo","fonte":"American Heart Association — Exercício e PcD","texto":"Pessoas com deficiência física tem risco cardiovascular significativamente maior que a população geral. Programas de 8 a 12 semanas de exercício aeróbico adaptado reduzem pressão arterial, melhoram perfil lipidico e aumentam VO2 máximo. Revisões sistematicas confirmam redução de 40% nos sintomas de depressão e ansiedade."}]},{"numero":2,"titulo":"Os 3 Níveis de Adaptação","secoes":[{"tipo":"texto","corpo":"NÍVEL 1 (Verde): Adaptação máxima — movimentos modificados para limitação severa. Foco em ativação e controle motor. NÍVEL 2 (Dourado): Adaptação moderada — progressão com resistência leve a moderada. Inclui uso de equipamentos adaptados. NÍVEL 3 (Vermelho): Alta performance — versão de máximo desafio. Resultados comparaveis a população geral. Capitulo 3: Programa de Treino 8 Semanas"},{"tipo":"subtitulo","texto":"3.1 Programa para Cadeirante"},{"tipo":"texto","corpo":"Treino A — Forca e Resistência (Cadeirante) Press de ombro com halteres sentado 3 12 90s 6-7 Remada com elástico (ancora na porta) 4 12 90s 7 Rosca direta (bíceps) 3 12 75s 6-7 Extensão de tríceps com elástico 3 12 75s 6-7 Rotação lateral de ombro (manguito) 3 15 60s 5-6 Respiração diafragmatica + core 3 10 rep 60s --"},{"tipo":"subtitulo","texto":"3.2 Programa para Amputação de Membro Inferior"},{"tipo":"texto","corpo":"Treino B — Equilibrio e Simetria Agachamento unilateral assistido 3 10 90s 6-7 Hip thrust bilateral 4 12 90s 7 Press de ombro bilateral 3 12 90s 6-7 Remada curvada com halteres 4 10 90s 7 Trabalho de membro residual (extensão ativa) 3 15 60s 5 Equilibrio em superficies variadas 3 20s 60s --"},{"tipo":"subtitulo","texto":"3.3 Treino Sem Equipamento — Apenas Corpo e Cadeira"},{"tipo":"texto","corpo":"Treino C — Acessibilidade Máxima Flexão de braco na parede ou mesa 3 10 90s 5-6 Elevação de quadril da cadeira (dip) 3 8 90s 6 Rotação de ombro com peso do braco 3 15/lado 60s 4 Ativação de core (postura isométrica) 3 20s 45s 5 Mobilização cervical e torácica 2 10 rep 45s 3 Compressão isométrica de joelho 3 10s 45s 5"}]},{"numero":4,"titulo":"Saúde Mental e Movimento","secoes":[{"tipo":"texto","corpo":"Um dos benefícios mais poderosos do exercício adaptado é o impacto na saúde mental. A percepção de competência e autonomia que vêm com a melhora física cria um ciclo positivo. Quanto mais você treina, mais capaz se sente — e mais você treina."},{"tipo":"estudo","fonte":"Revisão Sistemática — Exercício Adaptado e Saúde Mental","texto":"(2024) Programas de exercício adaptado reduzem sintomas de depressão e ansiedade em PcD em até 40% após 8 a 12 semanas. O benefício e independente do tipo de deficiência ou nível de funcionalidade inicial. \"Movimento e para todos. Sua deficiência define os limites do exercício — não os limites do que você pode conquistar.\" — Rennan Dias Rennan Dias Personal Trainer | CREF | FitQuest Assessoria Esportiva rennandias.com.br"}]}]},"fatburn":{"titulo":"Emagrecimento Total","subtitulo":"12 Semanas","tagline":"Musculação + HIIT · Ciência da Perda de Gordura · Preservação de Músculo","desc":"O programa definitivo para perda de gordura com preservação de massa muscular. Musculação metabólica + HIIT baseados em evidências recentes.","emoji":"🔥","cor":"#f39c12","questionario":[{"pergunta":"Qual e seu historico de tentativas de emagrecimento?","opcoes":["E minha primeira tentativa seria","Ja tentei mas abandonei","Emagreci mas voltou o peso (efeito sanfona)","Perdi algum peso mas travei no platô"]},{"pergunta":"Qual e seu maior obstaculo para emagrecer?","opcoes":["Alimentação (dificuldade de manter a dieta)","Falta de tempo para treinar","Cansaco e estresse cronicos","Falta de consistência (comeco bem mas não mantenho)"]},{"pergunta":"Quantos dias por semana você consegue treinar?","opcoes":["2 a 3 dias","4 dias","5 dias","Mais de 5 dias"]},{"pergunta":"Você tem alguma restrição alimentar ou de saúde?","opcoes":["Vegetariano ou vegano","Intolerância ao gluten","Diabetes ou pre-diabetes","Nenhuma restrição"]},{"pergunta":"Qual e sua meta de emagrecimento?","opcoes":["Perder até 5kg","Perder 5 a 10kg","Perder mais de 10kg","Recomposição corporal (perder gordura e ganhar músculo)"]}],"capitulos":[{"numero":1,"titulo":"A Ciência do Emagrecimento","secoes":[{"tipo":"subtitulo","texto":"1.1 O Erro do Cardio Isolado"},{"tipo":"texto","corpo":"Durante décadas, a recomendação para emagrecer era: faca cardio. Longo, lento e em jejum. O resultado? Perda de músculo junto com gordura, metabolismo desacelerado e efeito sanfona inevitável. A ciência evoluiu."},{"tipo":"estudo","fonte":"Scientific Reports/Nature — Abril 2024","texto":"Comparação direta entre HIIT e cardio continuo isocalorico. EPOC foi 23% maior após HIIT (66,2 kcal vs 53,9 kcal). A taxa de oxidação lipidica durante o EPOC foi 33% maior no grupo HIIT — o corpo queima proporcionalmente mais gordura nas horas após o treino intenso."},{"tipo":"subtitulo","texto":"1.2 EPOC — A Queima que Continua Dormindo"},{"tipo":"texto","corpo":"EPOC (Excess Post-Exercise Oxygen Consumption) e o aumento do gasto calorico que persiste após"},{"tipo":"lista","itens":["exercício intenso. O corpo precisa de mais energia para restaurar homeostase: repor fosfatos de alta energia, eliminar lactato, reduzir temperatura e restaurar função hormonal. Estudo: PMC (2025) — HIIT vs Cardio Moderado (mesmo gasto calorico) EPOC foi quase o dobro nos protocolos de alta intensidade, com elevação de metabolismo sustentada por 30 a 60 minutos pos-exercício. A mesma quantidade de calorias queimadas no HIIT gera muito mais queima de gordura no total. 1 kg de músculo queima 13 a 15 kcal em repouso por dia. 1 kg de gordura queima apenas 4 kcal. Mais músculo = mais queima 24 horas por dia, dormindo inclusive."]},{"tipo":"subtitulo","texto":"1.3 Deficit Calorico Inteligente"},{"tipo":"texto","corpo":"Deficit ideal para preservar músculo enquanto perde gordura: 300 a 500 kcal/dia. Com 4 treinos por semana (musculação + HIIT), o deficit semanal fica entre 1.600 e 2.400 kcal — sem restrição alimentar drastica."},{"tipo":"estudo","fonte":"ACSM Position Stand — Exercício e Emagrecimento","texto":"Treinamento resistido combinado com cardio e superior ao cardio isolado para emagrecimento sustentável. Preserva massa muscular e mantém o metabolismo basal elevado durante a restrição calorica."}]},{"numero":2,"titulo":"Programa 12 Semanas","secoes":[{"tipo":"bloco_titulo","texto":"BLOCO 1 (Semanas 1-3): Ativação Metabólica — RPE 7"},{"tipo":"tabela","titulo":"Programa 12 Semanas","colunas":["Exercício","Series","Reps","Descanso","RPE"],"linhas":[["Agachamento livre","4","15","60s","7"],["Leg press 45","3","15","60s","7"],["Avanco alternado com halteres","3","12/lado","60s","7"],["Stiff com halteres","3","15","60s","7"],["Panturrilha em pe","3","20","45s","7"]]},{"tipo":"tabela","titulo":"Programa 12 Semanas","colunas":["Exercício","Series","Reps","Descanso","RPE"],"linhas":[["Supino reto com halteres","4","15","60s","7"],["Remada curvada com barra","4","15","75s","7"],["Press de ombro em pe","3","12","60s","7"],["Rosca direta alternada","3","12/lado","60s","7"],["Tríceps pulley","3","15","60s","7"]]},{"tipo":"texto","corpo":"Treino A — Circuito Metabólico Inferior HIIT Polichinelo 30s ON/15s OFF 1 x8 rodadas 2min 8-9 Treino B — Circuito Metabólico Superior HIIT Burpee 20s ON/10s OFF 1 x8 rodadas 2min 8-9"},{"tipo":"bloco_titulo","texto":"BLOCO 2 (Semanas 4-6): HIIT Progressivo — RPE 8"},{"tipo":"tabela","titulo":"Programa 12 Semanas","colunas":["Exercício","Series","Reps","Descanso","RPE"],"linhas":[["Agachamento + Press ombro (superset)","4","12+12","90s","8"],["Remada + Avanco (superset)","4","12+12/lado","90s","8"]]},{"tipo":"texto","corpo":"Treino C — Full Body Metabólico (Supersets) Elevação lateral + Abdução (superset) 3 15+15 60s 7-8 Stiff + Curl de isquiotibial 3 12+12 75s 7-8 Tabata: Squat jump + Mountain climber 1 20s/10s x8 2min 9"},{"tipo":"bloco_titulo","texto":"BLOCO 3 (Semanas 7-12): Aceleração e Definição — RPE 8-9"},{"tipo":"texto","corpo":"Treino D — Alta Intensidade com Drop-set"},{"tipo":"texto","corpo":"Leg press (drop-set na última serie) 4 12+drop 90s 8-9 Puxada fechada (drop-set) 4 10+drop 90s 8-9 Desenvolvimento (drop-set) 3 10+drop 90s 8 Stiff pesado 4 10 120s 8-9 Tabata completo 20/10 x 8 rodadas 1 4 minutos 2min 9-10"}]},{"numero":3,"titulo":"Nutrição para Emagrecimento","secoes":[{"tipo":"texto","corpo":"A nutrição é o complemento essencial. Sem deficit calorico, nenhum programa de exercício emagrece sozinho."},{"tipo":"lista","itens":["Proteína em todas as refeições (1,6 a 2,0g/kg/dia) — protege o músculo durante o deficit","Carboidratos no pre e pos-treino — garante energia e recuperação adequada","Não corte gorduras boas (abacate, azeite, castanhas) — regulam hormonios do emagrecimento","Beba 35ml de água por kg de peso corporal — desidratação sabota o metabolismo","Durma 7-8 horas — privação de sono aumenta cortisol e fome em 24%","Coma devagar — o cerebro leva 20 min para receber sinal de saciedade \"Emagrecimento sustentável não e sobre restrição máxima — e sobre o máximo que você consegue manter por mais tempo.\" — Rennan Dias Rennan Dias Personal Trainer | CREF | FitQuest Assessoria Esportiva rennandias.com.br"]}]}]},"running10k":{"titulo":"Do Zero ao 10km","subtitulo":"8 Semanas","tagline":"Para Iniciantes Absolutos · Método Run/Walk · Guia Nutricional do Corredor","desc":"Saia do zero e complete seu primeiro 10km em 8 semanas. Programa periodizado com base no método Run/Walk do Dr. Jeff Galloway.","emoji":"🏃","cor":"#ff6b35","questionario":[{"pergunta":"Como está sua corrida hoje?","opcoes":["Não consigo correr 1 minuto seguido","Consigo correr 5 a 10 minutos","Ja corro 2 a 3km sem parar","Ja corro 5km mas quero chegar ao 10km"]},{"pergunta":"Você ja teve lesão relacionada a corrida?","opcoes":["Dor no joelho","Canelite (dor na frente da perna)","Fascite plantar (dor no calcanhar)","Banda iliotibial (dor lateral no joelho)","Nunca tive lesão de corrida"]},{"pergunta":"Qual e seu objetivo com a corrida?","opcoes":["Completar meu primeiro 10km (cruzar a linha de chegada)","Completar em menos de 1 hora","Saúde e condicionamento físico geral","Tenho prova marcada e preciso me preparar"]},{"pergunta":"Quantos dias pode treinar?","opcoes":["2 dias","3 dias","4 dias","5 ou mais dias"]},{"pergunta":"Onde vai treinar?","opcoes":["Rua ou calcada","Parque ou pista de corrida","Esteira em academia","Combinação de ambientes"]}],"capitulos":[{"numero":1,"titulo":"O que Acontece com Seu Corpo","secoes":[{"tipo":"subtitulo","texto":"1.1 Adaptações Cardiovasculares"},{"tipo":"texto","corpo":"O coração é um músculo — e responde ao treinamento. Com a corrida regular, o ventrículo esquerdo aumenta seu volume, permitindo bombear mais sangue a cada batida. Em apenas 8 semanas consistentes: frequência cardiaca em repouso cai 3 a 8 bpm, VO2 máximo aumenta 15 a 25%, pressão arterial reduz 5 a 8 mmHg."},{"tipo":"estudo","fonte":"American Heart Association — Corrida e Saúde","texto":"Cardiovascular 150 minutos de exercício aeróbico moderado por semana reduzem risco cardiovascular em 35%, AVC em 25%, e mortalidade por todas as causas em 30%. Exatamente o que este programa entrega em 8 semanas."},{"tipo":"subtitulo","texto":"1.2 Por que a Maioria Desiste — e Como Evitar"},{"tipo":"texto","corpo":"O erro número 1 de iniciantes: comecar rápido demais. A empolgação das primeiras semanas leva a treinos muito intensos, que causam dor excessiva, lesões e desmotivação. O tecido conjuntivo (tendões, ligamentos) demora semanas a meses para se adaptar — muito mais que o músculo."},{"tipo":"estudo","fonte":"Dr. Jeff Galloway — Método Run/Walk (Validado pela Medicina","texto":"Esportiva) Intercalar períodos de corrida com caminhada permite que o sistema cardiovascular e os tendões se adaptem sem sobrecarga. Redução de até 60% no risco de lesões por sobrecarga comparado ao treino continuo."},{"tipo":"subtitulo","texto":"1.3 Prevenção das 4 Lesões Mais Comuns"},{"tipo":"texto","corpo":"Lesão Causa Principal Prevenção Canelite Aumento brusco de volume Progressão max. 10%/semana Fascite plantar Calcado inadequado + arco fraco Tenis adequado + exercícios de pe Joelho do corredor Fraqueza do glúteo medio Fortalecer quadril antes de progredir Banda iliotibial Volume excessivo Descanso adequado + mobilidade de quadril"}]},{"numero":2,"titulo":"Programa 8 Semanas Completo","secoes":[{"tipo":"tabela","titulo":"Programa 8 Semanas Completo","colunas":["Semana","Sessão","Protocolo Run/Walk","Distância Est."],"linhas":[["Sem 1","S1+S2","1min correr / 2min caminhar x 8","~2,5km"],["Sem 1","S3","1min correr / 2min caminhar x 10","~3km"],["Sem 2","S1+S2","2min correr / 2min caminhar x 8","~3,2km"],["Sem 2","S3","2min correr / 2min caminhar x 10","~4km"],["Sem 3","S1+S2","5min correr / 1min caminhar x 4","~4,5km"],["Sem 3","S3","Corrida continua leve 25 min","~4km"],["Sem 4","S1+S2","8min correr / 1min caminhar x 3","~5km"]]},{"tipo":"texto","corpo":"Sem 4 S3 (Long Run) Corrida continua 30 min ~5km Sem 5 S1+S2 15min correr / 1min caminhar x 2 ~5,5km Sem 5 S3 (Long Run) 35 min ritmo leve ~6km Sem 6 S1 Intervalados: 400m rápido x 5 ~5km Sem 6 S3 (Long Run) 40 min ritmo leve ~7km Sem 7 S1 Fartlek 30 min (varia ritmo) ~5,5km Sem 7 S3 (Long Run) 8km — prova simulada 8km Sem 8 S1 Corrida leve 20 min (tapering) ~3km Sem 8 PROVA 10KM — VOCÊ VAI CONSEGUIR! 10km O objetivo não é o tempo — e cruzar a linha de chegada. Qualquer ritmo é um triunfo!"}]},{"numero":3,"titulo":"Nutrição para Corredores","secoes":[{"tipo":"texto","corpo":"A corrida é um esporte de energia. Carboidratos são o combustível principal. Corredores que cortam carboidratos ficam lentos, cansados e com risco aumentado de lesão."},{"tipo":"lista","itens":["Pre-treino (1-2h antes): 30 a 60g de carbo fácil digestão (banana, pão, aveia)","Pre-treino leve (30 min antes): gel de carboidrato se corrida acima de 45 min","Pos-treino: proteína + carboidrato para recuperação (whey + banana ou frango + arroz)","Durante corridas acima de 45 min: 150 a 200ml de água a cada 15 a 20 min","Corridas acima de 75 min: incluir eletrólitos (sódio, potássio) para prevenir cãibras Estudo: ACSM — Hidratação e Performance Aeróbica Perda de apenas 2% do peso corporal em água reduz a performance aeróbica em 10 a 20%. Para um corredor de 70kg, são apenas 1,4 litros de suor — menos de 2 horas em dia quente. \"Você não corre para ser o mais rápido. Você corre para ser mais do que era ontem.\" — Rennan Dias Rennan Dias Personal Trainer | CREF | FitQuest Assessoria Esportiva rennandias.com.br"]}]}]},"posture":{"titulo":"Postura e Mobilidade","subtitulo":"6 Semanas","tagline":"Corrija Dores Crônicas · Fisioterapia Preventiva · Para Todos os Níveis","desc":"Corrija sua postura, elimine dores crônicas e ganhe mobilidade com exercícios baseados em fisioterapia e biomecânica.","emoji":"🧘","cor":"#3498db","questionario":[{"pergunta":"Onde você sente dor ou desconforto com mais frequência?","opcoes":["Lombar (costas baixas)","Cervical (pescoco e nuca)","Entre as escapulas","Ombros","Quadril","Não sinto dor — quero prevenir"]},{"pergunta":"Qual e sua rotina principal?","opcoes":["Trabalho sentado o dia todo (home office ou escritorio)","Muito tempo no celular ou computador","Trabalho físico ou em pe por longas horas","Combinação de tudo isso"]},{"pergunta":"Você ja fez fisioterapia para dores posturais?","opcoes":["Nunca fiz fisioterapia","Fiz e melhorei, mas a dor voltou","Fiz e estou bem, quero manutenção","Nunca fiz mas tenho diagnóstico médico"]},{"pergunta":"Ha quanto tempo você sente essas dores?","opcoes":["Menos de 3 meses (recente)","3 a 12 meses","Mais de 1 ano","Ha anos — e crônico"]},{"pergunta":"Você prática alguma atividade física regularmente?","opcoes":["Não prático nada","Caminhadas ocasionais","Academia ou esporte 2x ou mais por semana","Treino intenso regularmente"]}],"capitulos":[{"numero":1,"titulo":"A Epidemia das Dores Posturais","secoes":[{"tipo":"subtitulo","texto":"1.1 Os Números que Impressionam"},{"tipo":"texto","corpo":"A dor lombar é a principal causa de incapacidade no mundo. Afetava 619 milhões de pessoas em 2020 — com projeção de 843 milhões até 2050. No Brasil, e a segunda maior causa de afastamento do trabalho. A causa mais prevalente hoje não e esforco físico excessivo: e sedentarismo e postura estatica prolongada."},{"tipo":"estudo","fonte":"OMS Global Burden of Disease 2020","texto":"619 milhões de pessoas afetadas por dor lombar globalmente. 80% dos brasileiros terão pelo menos um episodio significativo de dor lombar ao longo da vida. A pandemia de trabalho remoto acelerou está epidemia em 40%."},{"tipo":"subtitulo","texto":"1.2 Síndrome do Cruzamento — O Desequilibrio do Seculo XXI"},{"tipo":"texto","corpo":"O fisioterapeuta Vladimir Janda descreveu a Síndrome do Cruzamento Superior: músculos do peito e pescoco anterior ficam encurtados e hiperativos. Músculos das costas superiores e profundos do pescoco ficam alongados e inibidos. Resultado da Síndrome do Cruzamento: ombros arredondados, pescoco projetado para frente, cifose torácica exagerada. Isso reduz a capacidade pulmonar em até 30% e causa dores de cabeca tensionais por compressão dos nervos cervicais."},{"tipo":"subtitulo","texto":"1.3 Mobilidade vs Flexibilidade"},{"tipo":"texto","corpo":"Flexibilidade e amplitude passiva — você consegue ser levado até certa posição por forca externa. Mobilidade e amplitude ativa — você consegue alcancar e controlar essa posição com seus próprios músculos. Mobilidade protege articulações. Flexibilidade sem mobilidade e instabilidade."}]},{"numero":2,"titulo":"Protocolo de Emergência no Trabalho","secoes":[{"tipo":"texto","corpo":"Micro-pausas de exercício de 2 a 5 minutos a cada hora reduzem dor cervical e lombar em até 45% após 4 semanas. São apenas 3 exercícios que qualquer pessoa consegue fazer sem sair da cadeira."},{"tipo":"lista","itens":["CHIN TUCK (retracão cervical): empurre o queixo levemente para tras. Segure 5s, repita 10x. Ativa os flexores profundos do pescoco e descomprime as vertebras cervicais.","HIP HINGE (dobradica do quadril): em pe, incline o tronco para frente mantendo coluna neutra. 10 repetições. Reativa glúteos e isquiotibiais.","ROTAÇÃO TORÁCICA sentado: cruze os bracos no peito e gire o tronco para cada lado. 10x cada. Recupera a mobilidade da coluna torácica."]},{"tipo":"texto","corpo":"Capitulo 3: Programa 6 Semanas"},{"tipo":"bloco_titulo","texto":"BLOCO 1 (Semanas 1-2): Liberação e Ativação"},{"tipo":"tabela","titulo":"Protocolo de Emergência no Trabalho","colunas":["Exercício","Series","Reps","Descanso","RPE"],"linhas":[["Foam roller na coluna torácica","1","60s","--","--"],["Rotação torácica no chão","3","10/lado","45s","--"],["Chin tuck progressivo (5s)","3","10 rep","30s","--"],["Retracão escapular (isométrico)","3","12","60s","5"],["Rotação externa de ombro (elástico)","3","15","45s","5"],["Alongamento de flexores de quadril","2","30s/lado","30s","--"]]},{"tipo":"tabela","titulo":"Protocolo de Emergência no Trabalho","colunas":["Exercício","Series","Reps","Descanso","RPE"],"linhas":[["Remada com elástico (foco nas escapulas)","4","15","60s","6"]]},{"tipo":"texto","corpo":"Treino A — Liberação Miofascial + Ativação Postural Treino B — Fortalecimento Postural Superman (extensão de tronco) 3 12 60s 5-6 Bird-dog (quadrupede) 3 10/lado 60s -- Prancha frontal 3 25s 60s -- Hip hinge com bastão 3 12 60s 5 Stretching cervical ativo 2 10/lado 30s --"},{"tipo":"bloco_titulo","texto":"BLOCO 2 (Semanas 3-4): Correção Ativa"},{"tipo":"texto","corpo":"Treino C — Mobilidade Funcional Integrada"},{"tipo":"tabela","titulo":"Protocolo de Emergência no Trabalho","colunas":["Exercício","Series","Reps","Descanso","RPE"],"linhas":[["Squat para abertura torácica","3","10","90s","6"]]},{"tipo":"texto","corpo":"Remada unilateral + rotacão de tronco 3 10/lado 75s 6-7 Dead bug (core e respiração) 3 10/lado 60s -- Prancha lateral 3 20s/lado 60s -- Abertura de quadril (90/90 stretch) 3 30s/lado 45s -- Desenvolvimento com rotacão externa 3 12 75s 5-6"},{"tipo":"bloco_titulo","texto":"BLOCO 3 (Semanas 5-6): Manutenção e Hábito"},{"tipo":"tabela","titulo":"Protocolo de Emergência no Trabalho","colunas":["Exercício","Series","Reps","Descanso","RPE"],"linhas":[["Chin tuck + retracão escapular","2","10+10","30s","--"],["Bird-dog","2","8/lado","30s","--"],["Prancha frontal","2","30s","45s","--"],["Rotacão torácica no chão","2","10/lado","30s","--"],["Hip hinge com bastão","2","12","30s","5"],["Alongamento global da cadeia posterior","1","2 min","--","--"]]},{"tipo":"texto","corpo":"Consolidamos os padrões posturais e estabelecemos a rotina de manutenção. 15 minutos por dia e suficiente para manter os resultados conquistados pelo resto da vida. Treino D — Rotina Diaria de Manutenção (15 min) \"Postura perfeita não existe. Postura consciente — que você consegue manter por horas com menos esforco — e o objetivo real.\" — Rennan Dias Rennan Dias Personal Trainer | CREF | FitQuest Assessoria Esportiva rennandias.com.br"}]}]},"stress":{"titulo":"Treino Anti-Estresse","subtitulo":"4 Semanas","tagline":"Cortisol · Ansiedade · Sono · 44 RCTs Analisados","desc":"Combine exercício físico, respiração e mindfulness para reduzir cortisol e ansiedade. Baseado em meta-análise do Sports/MDPI (2025).","emoji":"🧠","cor":"#5b6ee1","questionario":[{"pergunta":"Como você descreveria seu nível de estresse atual?","opcoes":["Estresse leve (tenso as vezes, consigo descansar)","Estresse moderado (tenso com frequência, sono afetado)","Estresse alto (tenso quase sempre, exaustão frequente)","Estresse muito alto (possível burnout, exaustão constante)"]},{"pergunta":"Como está a qualidade do seu sono?","opcoes":["Durmo bem (7 a 8 horas com qualidade)","Durmo pouco (menos de 6 horas por noite)","Durmo mas não descanso (acordo cansado)","Insônia frequente (dificuldade para dormir ou manter o sono)"]},{"pergunta":"O que mais te atrai neste programa?","opcoes":["Tecnicas de respiração (controle imediato da ansiedade)","Yoga e mobilidade (corpo e mente em equilibrio)","Cardio leve e meditativo (movimento que acalma)","Tudo equilibrado — abordagem completa"]},{"pergunta":"Com que frequência você sente ansiedade?","opcoes":["Raramente","As vezes (em situações específicas)","Frequentemente (maioria dos dias)","Quase sempre ou constantemente"]},{"pergunta":"Você ja tentou alguma prática de redução de estresse?","opcoes":["Não, e minha primeira vez","Meditação ou mindfulness","Yoga ou pilates","Terapia ou psicologia","Ja tentei mas não consegui manter a rotina"]}],"capitulos":[{"numero":1,"titulo":"A Ciência do Estresse","secoes":[{"tipo":"subtitulo","texto":"1.1 O Cortisol — Amigo ou Inimigo?"},{"tipo":"texto","corpo":"O cortisol é o hormônio do estresse. Em doses corretas, e essencial: nos da energia pela manhã, ajuda na recuperação pos-treino e regula o sistema imunologico. O problema é o cortisol cronicamente elevado — o Estado permanente de alerta do mundo moderno. Cortisol crônico causa: acumulo de gordura abdominal, perda de massa muscular, comprometimento da memória, insonia, irritabilidade e imunidade baixa. O exercício CERTO é a ferramenta mais poderosa para regular o cortisol."},{"tipo":"estudo","fonte":"Sports/MDPI — Meta-analise (Novembro 2025) — 44 Ensaios","texto":"Clínicos Randomizados"},{"tipo":"texto","corpo":"estresse (SMD=0,90), ansiedade (SMD=0,74) e depressão (SMD=0,54). Yoga demonstrou o maior efeito sobre o cortisol (SMD=-0,59), seguido por qigong. IMPORTANTE: HIIT tende a AUMENTAR cortisol — contraindicado para estresse crônico."},{"tipo":"subtitulo","texto":"1.2 A Dose Exata de Exercício para Ansiedade"},{"tipo":"estudo","fonte":"PMC (2023) — Meta-analise com 1.351 participantes (12","texto":"estudos) Sessões de 30 a 40 minutos tiveram o efeito mais pronunciado na redução de ansiedade (SMD=-1,29) e depressão (SMD=-1,76), superando sessões mais curtas e mais longas. Frequência ideal: 3 a 5 vezes por semana."},{"tipo":"subtitulo","texto":"1.3 Respiração como Medicina"},{"tipo":"texto","corpo":"O nervo vago — o freio do sistema nervoso simpatico — pode ser ativado voluntariamente através da respiração longa e controlada. A fase expiratoria estendida induz o estado parassimpatico, reduzindo frequência cardiaca e pressão arterial em segundos. Tecnica 4-7-8: inspire em 4 segundos, segure em 7, expire lentamente em 8. Repita 4 ciclos. Estudos de biofeedback mostram ativação do nervo vago em menos de 2 minutos."}]},{"numero":2,"titulo":"Programa 4 Semanas","secoes":[{"tipo":"tabela","titulo":"Programa 4 Semanas","colunas":["Exercício","Series","Reps","Descanso","RPE"],"linhas":[["Respiração diafragmatica — tecnica 4-7-8","1","10 ciclos","--","--"]]},{"tipo":"tabela","titulo":"Programa 4 Semanas","colunas":["Exercício","Series","Reps","Descanso","RPE"],"linhas":[["Respiração coherente (5s dentro, 5s fora)","1","3 min","--","--"]]},{"tipo":"tabela","titulo":"Programa 4 Semanas","colunas":["Exercício","Series","Reps","Descanso","RPE"],"linhas":[["Respiração ativante suave (kapalabhati leve)","1","2 min","--","--"]]},{"tipo":"texto","corpo":"Treino Semana 1 — 5x por semana (30 min) Caminhada consciente (sem celular) 1 15 min -- 3-4 Yoga: Postura da crianca (balasana) 3 30s 30s -- Yoga: Gato-vaca (cat-cow) 3 10 rep 30s -- Rotação torácica no chão 3 8/lado 30s -- Respiração final (4-7-8) 1 5 ciclos -- -- Treino Semana 2 — 5x por semana (35 min) Saudação ao sol modificada 2 5 sequências 2min 4-5 Postura da arvore (equilibrio) 3 20s/lado 30s -- Guerreiro I e II 2 30s/postura/lado 60s 4-5 Postura da pomba (abertura de quadril) 2 45s/lado 45s -- Meditação de escaneamento corporal 1 5 min -- -- Treino Semana 3 — 5x por semana (35 min) Caminhada rápida consciente 1 20 min -- 5-6 Sequência de yoga para fechamento 1 10 min -- 3-4 Meditação focada na respiração 1 5 min -- -- Combinamos todas as tecnicas em uma rotina diaria sustentável. O objetivo: 20 minutos conscientes todos os dias. Isso você vai carregar para o resto da vida."},{"tipo":"texto","corpo":"O treino mais importante é o que você consegue manter. 20 minutos diarios valem infinitamente mais do que 2 horas de vez em quando."}]},{"numero":3,"titulo":"O Ciclo Estresse-Sono","secoes":[{"tipo":"texto","corpo":"Estresse crônico eleva cortisol a noite — quando deveria estar no nível mais baixo. Isso atrasa o início do sono, reduz o sono profundo (fase N3) e cria um ciclo vicioso: menos sono, mais cortisol, mais estresse."},{"tipo":"estudo","fonte":"Journal of Sleep Research — Meta-analise sobre exercício e","texto":"sono"},{"tipo":"texto","corpo":"adormecer em 13 minutos e aumenta o sono profundo (N3). Treinos intensos dentro de 3 horas antes de dormir podem atrasar o sono — prefira atividades leves a noite. Protocolo do Sono: evitar treino intenso 3h antes de dormir. Tecnica 4-7-8 na cama. Temperatura do quarto entre 16-19 graus. Sem telas 30 minutos antes. \"O descanso não e recompensa para quem trabalhou duro. E parte do trabalho.\" — Rennan Dias Rennan Dias Personal Trainer | CREF | FitQuest Assessoria Esportiva rennandias.com.br"}]}]},"technique":{"titulo":"Técnica Perfeita","subtitulo":"Os 7 Padrões de Movimento","tagline":"Biomecânica Aplicada · Sports Medicine 2024 · NSCA FMS","desc":"Domine a técnica dos exercícios fundamentais e multiplique seus resultados enquanto protege suas articulações.","emoji":"🎯","cor":"#9b59b6","questionario":[{"pergunta":"Qual e seu nível de experiência com musculação?","opcoes":["Iniciante (menos de 6 meses)","Intermediario (6 meses a 2 anos)","Avancado (mais de 2 anos de treino consistente)"]},{"pergunta":"Qual exercício você tem mais dificuldade em executar corretamente?","opcoes":["Agachamento livre","Levantamento terra (deadlift)","Supino reto","Puxada/remada (costas)","Desenvolvimento (ombros)","Não sei avaliar minha própria tecnica"]},{"pergunta":"Você ja sofreu lesão por tecnica incorreta?","opcoes":["Não, nunca me machuquei","Sim, lesão leve (dor muscular ou articular)","Sim, lesão moderada (precisei parar de treinar)","Sim, lesão grave (cirurgia ou fisioterapia longa)"]},{"pergunta":"Você treinaria com uma carga menor se garantisse tecnica perfeita?","opcoes":["Sim, sem duvida — tecnica primeiro","Talvez, mas é difícil resistir ao ego","Não — prefiro carga máxima mesmo com tecnica imperfeita"]},{"pergunta":"Você ja teve orientação profissional sobre tecnica?","opcoes":["Não, aprendi vendo videos ou imitando outros na academia","Sim, um personal me ensinou no início","Sim, tenho acompanhamento regular de personal trainer"]}],"capitulos":[{"numero":1,"titulo":"A Ciência da Tecnica","secoes":[{"tipo":"subtitulo","texto":"1.1 Por que Tecnica Importa Mais que Carga"},{"tipo":"texto","corpo":"Existe um conflito permanente nas academias: carga vs tecnica. A maioria escolhe carga. A ciência é clara sobre quem está errado."},{"tipo":"estudo","fonte":"Sports Medicine 2024 — Androulakis-Korakakis et al.","texto":"Amplitude de movimento completa gerou hipertrofia significativamente maior que amplitude parcial — mesmo com cargas menores. O grupo que treinou com amplitude completa ganhou 2,3 vezes mais massa muscular no femoral distal comparado ao grupo de amplitude parcial. Tecnicamente correto supera tecnicamente pesado. O motivo biomecanico: o estiramento muscular máximo ativa mecanoreceptores que disparam a via mTORC1 — a principal via de síntese proteica. Repetir o movimento em amplitude reduzida e como pagar academia para fazer metade do trabalho."},{"tipo":"estudo","fonte":"NSCA — Functional Movement Screen (FMS)","texto":"Os 7 padrões fundamentais de movimento — agachamento, avanco, rotação, extensão de quadril, estabilização de nucleo, empurrão e puxão — devem ser dominados antes de adicionar carga significativa. Disfunções não tratadas causam compensações que levam a lesão."},{"tipo":"subtitulo","texto":"1.2 Os 7 Padrões de Movimento Fundamentais"},{"tipo":"texto","corpo":"Padrão Exercícios Principais Músculo Principal Agachamento Squat, Goblet squat, Hack squat Quadriceps + Glúteo Avanco Lunge, Step-up, Split squat Quadriceps + Glúteo Empurrão horizontal Supino, Crossover, Flexão Peitoral + Tríceps Puxão horizontal Remada, Seated row Costas + Bíceps Empurrão vertical Desenvolvimento, Arnold press Ombros + Tríceps Puxão vertical Puxada, Pull-up, Lat pulldown Latissimo + Bíceps Extensão de quadril Deadlift, Stiff, Hip thrust Posterior + Glúteo"}]},{"numero":2,"titulo":"Os 3 Exercícios Mais Importantes","secoes":[{"tipo":"subtitulo","texto":"2.1 Agachamento Livre — O Rei dos Exercícios"},{"tipo":"texto","corpo":"O agachamento livre ativa mais grupos musculares simultaneamente do que qualquer outro exercício: quadriceps, hamstrings, glúteos, core, eretores da coluna e até o trapezio. Mas e também o exercício mais frequentemente mal executado. Erros mais comuns e suas consequências:"},{"tipo":"lista","itens":["Valgo dinâmico (joelhos caindo para dentro): sobrecarga no ligamento cruzado anterior, risco de lesão. Causa: fraqueza do glúteo medio. Correção: fortalecimento do glúteo medio antes de progredir.","Inclinação excessiva do tronco para frente: transfere carga da perna para a lombar. Causa: tornozelo pouco flexível ou femur longo. Correção: elevar o calcanhar levemente ou trabalhar mobilidade de tornozelo.","Medio agachamento (sem descer até a paralela): reduz ativação de glúteo em 40%. Cause: falta de mobilidade de quadril e tornozelo. Correção: trabalho de mobilidade antes de cada sessão. CHECKLIST DO AGACHAMENTO PERFEITO: pes na largura dos ombros (ou levemente mais), pontas para fora 15-30 graus. Descer até a paralela ou abaixo. Joelhos alinhados com os dedos dos pes. Core ativo (respire fundo antes de descer). Olhar levemente para frente-acima."]},{"tipo":"subtitulo","texto":"2.2 Supino Reto — Tecnica que Salva Ombros"},{"tipo":"texto","corpo":"O supino é o exercício mais perigoso para ombros quando mal executado. A síndrome do impacto subacromial — dor no ombro ao elevar o braco — afeta até 40% dos praticantes de musculação de longa data. Quase sempre e consequência de tecnica inadequada no supino."},{"tipo":"lista","itens":["ERRO: cotovelos a 90 graus do corpo (em cruz). Comprime o manguito rotador. CORREÇÃO: cotovelos a 45-75 graus do tronco.","ERRO: ombros elevados e protraidos. Desativa o peitoral e sobrecarrega o ombro. CORREÇÃO: retrair e deprimir as escapulas antes de descer a barra.","ERRO: descer a barra na garganta ou alto no peito. CORREÇÃO: descer no nível do mamilo ou levemente abaixo.","ERRO: tirar o quadril do banco. Perde a base de apoio é o arco natural da coluna lombar."]},{"tipo":"subtitulo","texto":"2.3 Levantamento Terra — A Cadeia Posterior Completa"},{"tipo":"texto","corpo":"O deadlift ativa a cadeia posterior completa: isquiotibiais, glúteos, eretores da coluna, trapezio, romboides e core. E o exercício com maior produção de forca absoluta — e por isso, o mais perigoso quando executado incorretamente. REGRA DE OURO DO DEADLIFT: a barra deve tocar as pernas durante todo"},{"tipo":"lista","itens":["movimento. Se afastar da perna = lombar assumiu o trabalho que e do glúteo. Isso causa hernia de disco."]}]},{"numero":3,"titulo":"Conexão Mente-Músculo","secoes":[{"tipo":"texto","corpo":"A conexão mente-músculo é a capacidade de direcionar conscientemente a contração para o músculo-alvo. Não e apenas psicologia — e neurociência."},{"tipo":"estudo","fonte":"Estudos de EMG (eletromiografia) — Revisão 2024","texto":"O foco atencional no músculo-alvo aumenta sua ativação em 22% a 32% — mensurado por EMG. Para glúteos e músculo latissimo do dorso, músculos dificeis de sentir, esse efeito e ainda mais pronunciado. Pensar no músculo enquanto o trabalha literalmente aumenta seu crescimento."},{"tipo":"lista","itens":["Pre-ativação: antes da serie pesada, faca 1 serie leve focando 100% na contração do músculo alvo — sem peso nenhum se necessario.","Velocidade controlada: fase excentrica (descida) em 3 segundos — o tempo faz você sentir o músculo.","Conexão no pico: aperte o músculo no ponto de maior contração e segure 1 segundo.","Foco interno: durante a serie, pense \"eu estou contraindo o peitoral\" — não \"eu estou empurrando a barra\". \"Tecnica não e limitação — e amplificação. Quem tem tecnica faz mais com menos.\" — Rennan Dias Rennan Dias Personal Trainer | CREF | FitQuest Assessoria Esportiva rennandias.com.br"]}]}]},"nutrition":{"titulo":"Nutrição para Performance","subtitulo":"Guia Completo","tagline":"ISSN 2022 · Timing Nutricional · Suplementação com Evidências","desc":"O guia definitivo de nutrição esportiva baseado nas recomendações da International Society of Sports Nutrition (ISSN 2022).","emoji":"🥗","cor":"#27ae60","questionario":[{"pergunta":"Qual e seu principal objetivo nutricional?","opcoes":["Ganhar massa muscular (hipertrofia)","Perder gordura (emagrecimento)","Melhorar performance esportiva","Recomposição corporal (ganhar músculo e perder gordura ao mesmo tempo)"]},{"pergunta":"Como você avalia sua alimentação atual?","opcoes":["Muito ruim (como de forma desorganizada e irregular)","Regular (como bem as vezes, mal outras vezes)","Boa (como de forma razoável mas sem planejamento)","Muito boa (como de forma estruturada e consistente)"]},{"pergunta":"Você ja seguiu algum protocolo nutricional?","opcoes":["Nunca segui nenhum protocolo específico","Ja tentei dieta low-carb ou cetogenica","Ja tentei restrição calorica (cutting)","Ja tentei ganho de massa (bulk)","Ja segui orientação de nutricionista esportivo"]},{"pergunta":"Qual é a sua maior dificuldade com a alimentação?","opcoes":["Não ter tempo para preparar refeições saudaveis","Dificuldade de controlar os porções","Comer bem durante a semana mas errar nos finais de semana","Não saber o que e ou não e saudável de fato"]},{"pergunta":"Você faz uso de suplementos?","opcoes":["Não uso nenhum suplemento","Uso whey protein","Uso creatina","Uso varios suplementos","Nunca soube quais suplementos realmente funcionam"]}],"capitulos":[{"numero":1,"titulo":"Os Macronutrientes — A Base de Tudo","secoes":[{"tipo":"subtitulo","texto":"1.1 Proteína — O Tijolo do Músculo"},{"tipo":"texto","corpo":"A proteína é o macronutriente mais importante para qualquer praticante de exercícios. Ela é o substrato para a síntese proteica muscular — o processo de construção e reparação das fibras musculares danificadas pelo treino."},{"tipo":"estudo","fonte":"ISSN Position Stand (2022) — Proteína e Exercício","texto":"Para maximizar a hipertrofia muscular: 1,6 a 2,2g de proteína por kg de peso corporal por dia. Distribuir em 3 a 5 refeições ao longo do dia, com 30 a 40g por refeição para maximizar a resposta anabolica. O escore de qualidade proteica importa: fontes animais (DIAAS acima de 1,0) são superiores para síntese muscular. Existe um teto de síntese proteica por refeição — em torno de 30 a 40g aproveitada pelo músculo de uma vez. Consumir 100g de proteína em uma refeição não e mais eficiente que 35g distribuidos adequadamente. Melhores fontes de proteína por qualidade (escore DIAAS): Alimento Proteína/100g Escore DIAAS Custo-benefício Whey protein 80-90g 1,25 Excelente Leite integral 3,4g 1,22 Muito bom Ovos inteiros 13g 1,13 Excelente Frango (peito) 31g 1,08 Excelente Tilapia/Salmão 25g 1,00 Muito bom Feijão + arroz ~9g 0,85 combinado Bom Proteína de ervilha 80g (po) 0,82 Bom (vegano)"},{"tipo":"subtitulo","texto":"1.2 Carboidratos — Combustível e Estrategia"},{"tipo":"texto","corpo":"O carboidrato é o principal combustível para exercícios de alta intensidade. O glicogenio muscular — a forma de armazenamento do carboidrato no músculo — e o substrato energetico preferencial durante treinos de musculação e cardio de alta intensidade."},{"tipo":"estudo","fonte":"Pesquisas ACSM sobre Carboidratos e Performance","texto":"Redução de 50% no glicogenio muscular prejudica a performance em exercícios de forca em 15 a 35%. Cortar carboidratos antes de treinar é o equivalente a tentar correr com metade do tanque de gasolina."},{"tipo":"texto","corpo":"Recomendação de carboidrato para praticantes de musculação: 4 a 6g/kg/dia. Pre-treino: 30 a 60g de carbo 1-2h antes. Pos-treino: 30 a 50g de carbo rápido para reidratar o glicogenio."},{"tipo":"subtitulo","texto":"1.3 Gorduras — O Macronutriente Esquecido"},{"tipo":"texto","corpo":"As gorduras são essenciais para a produção hormonal (incluindo testosterona), absorção de vitaminas liposoluveis (A, D, E, K) e saúde articular. Dietas com menos de 20% das calorias vindas de gorduras comprometem os níveis de testosterona é o desempenho esportivo."}]},{"numero":2,"titulo":"Timing Nutricional — Quando Comer","secoes":[{"tipo":"texto","corpo":"Importa"},{"tipo":"estudo","fonte":"Schoenfeld & Aragon (2018) — Revisão sobre Timing","texto":"Nutricional A \"janela anabolica\" de 30 minutos após o treino foi amplamente exagerada. O que realmente importa é a ingestão proteica total do dia é a distribuição adequada entre 3 a 5 refeições. No entanto, para praticantes em jejum ou com longos intervalos entre refeições, a proteína pos-treino ainda tem relevância. O que realmente importa no timing:"},{"tipo":"lista","itens":["Pre-treino (1-2h antes): carboidrato de medio indice glicemico + proteína. Evitar gordura em excesso (retarda esvaziamento gastrico).","Imediatamente pre-treino (30 min): se em jejum, 20g de proteína de rápida absorção (whey) garante aminoacidos circulantes durante o treino.","Pos-treino (até 2h): 30-40g de proteína + 30-50g de carbo. A janela anabolica e mais larga do que se pensava — não ha emergência.","Antes de dormir: 30-40g de caseina (cotagge, iogurte grego, leite) sustenta a síntese proteica durante o sono.","Distribuição geral: 3 a 5 refeições com proteína. Nunca mais de 5-6h sem proteína."]}]},{"numero":3,"titulo":"Suplementação — O que Realmente","secoes":[{"tipo":"texto","corpo":"Funciona A industria de suplementos movimenta bilhões. A maioria dos produtos não tem evidência científica robusta. Aqui está o que a ciência realmente diz: Suplemento Evidência Dose Veredicto Creatina monoidratada Mais de 500 ECRs 3-5g/dia FUNCIONA — use Whey protein Forte 1,6-2,2g/kg/dia total FUNCIONA — conveniência Cafeina Forte 200-400mg pre-treino FUNCIONA — use Beta-alanina Moderada 4-6g/dia (dividido) FUNCIONA — formigamento normal BCAAs Fraca Desnecessario se proteinaNÃO ok NECESSARIO Glutamina Fraca para hipertrofiaPode ajudar imunidade OPCIONAL CLA Muito fraca Não demonstrado NÃO COMPRE Testosterona booster Nenhuma N/A NÃO COMPRE Colageno hidrolisado Moderada para articulações 10-15g pos-treino OPCIONAL MÍNIMO NECESSARIO E MÁXIMO EFICIENTE: creatina 5g/dia + proteína adequada pela dieta + cafeina antes do treino. Todo o resto e opcional ou ineficaz."}]},{"numero":4,"titulo":"Cardapios Modelo","secoes":[{"tipo":"texto","corpo":"Cardapio para Hipertrofia — 80kg, 3.000 kcal/dia Refeição Alimentos Prot Carbo Gord Cafe da manhã 7h 3 ovos + 2 fatias pão integral + 1 banana 24g 50g 15g Pre-treino 11h 1 scoop whey + 1 batata doce media 25g 40g 2g Almoco 13h 200g frango + 150g arroz + salada 50g 50g 8g Pos-treino 16h 1 scoop whey + 1 banana + mel 25g 35g 2g Jantar 19h 200g tilapia + 150g batata doce + legumes 44g 35g 6g Ceia 21h 200g cottage + 30g castanhas 28g 5g 15g TOTAL 196g 215g 48g \"Você não constroi um corpo na academia. Você constroi com o que coloca no prato depois.\" — Rennan Dias Rennan Dias Personal Trainer | CREF | FitQuest Assessoria Esportiva rennandias.com.br"}]}]}};
+
+// ══════════════════════════════════════════════════════
+// MOTOR DE EBOOKS PERSONALIZADOS
+// Um conteúdo, dois renderizadores (leitor in-app + PDF),
+// personalização real usando o perfil já sincronizado do aluno.
+// ══════════════════════════════════════════════════════
+
+function personalizarEbook(u){
+  const an = u.anamnese||{};
+  const nome = (u.name||'Aluno').split(' ')[0];
+  const t=(an.tempo||'').toLowerCase();
+  let nivel='Iniciante';
+  if(t.includes('avan'))nivel='Avançado';
+  else if(t.includes('intermedi'))nivel='Intermediário';
+  else if(t.includes('nunca'))nivel='Destreinado';
+  const objetivo=(an.obj||[])[0]||'Saúde geral';
+  const lesoes=[];
+  if(an.temJoelho)lesoes.push('joelho');
+  if(an.temLombar)lesoes.push('lombar');
+  if(an.temOmbro)lesoes.push('ombro');
+  const peso=an.peso?parseFloat(an.peso):null;
+  const prs=u.prs||[];
+  return {nome,nivel,objetivo,lesoes,peso,prs,dias:an.dias||'—'};
+}
+
+// Acha um PR relevante pelo nome do exercício (match por primeira palavra-chave)
+function prParaExercicio(perfil,nomeExercicio){
+  if(!perfil.prs||!perfil.prs.length)return null;
+  const chave=(nomeExercicio||'').toLowerCase().split(' ')[0];
+  return perfil.prs.find(p=>p.exercise&&p.exercise.toLowerCase().includes(chave))||null;
+}
+
+// Filtra/anota linhas de tabela contraindicadas pela lesão do aluno (reusa padrões do Motor Rennan Dias)
+function anotarLinhaTabela(perfil,linha){
+  const nome=(linha[0]||'').toLowerCase();
+  let aviso=null;
+  if(perfil.lesoes.includes('joelho')&&/agachamento livre|hack squat|leg press|extensora|avanço|salto/i.test(nome))
+    aviso='⚠️ Substitua — você indicou lesão de joelho';
+  else if(perfil.lesoes.includes('lombar')&&/terra|stiff|remada curvada|extensão lombar/i.test(nome))
+    aviso='⚠️ Substitua — você indicou lesão lombar';
+  else if(perfil.lesoes.includes('ombro')&&/desenvolvimento|elevação lateral|elevação frontal/i.test(nome))
+    aviso='⚠️ Ajuste amplitude — você indicou lesão de ombro';
+  return {linha, aviso}; // objeto explícito — nunca corrompe o array original
+}
+
+
+// ══════════════════════════════════════════════════════
+// RENDERIZADOR DO LEITOR IN-APP
+// ══════════════════════════════════════════════════════
+
+let EB_ATUAL = null; // {key, book, perfil, capIndex}
+
+function openEbook(programId){
+  const file = EBOOKS_CONTENT[programId];
+  const u = getU ? getU() : null;
+  if(!file || !u){ fqToast('📕 E-Book ainda não disponível.','warn'); return; }
+
+  const p = CATALOG.find(cc => cc.id === programId);
+  document.getElementById('ebook-title-bar').textContent = p ? p.title : file.titulo;
+
+  const modal = document.getElementById('modal-ebook');
+  modal.classList.add('open');
+  document.body.style.overflow = 'hidden';
+
+  const perfil = personalizarEbook(u);
+  const users = DB.get('fq_users')||{};
+  const progresso = (users[u.email]&&users[u.email].ebooksProgresso&&users[u.email].ebooksProgresso[programId])||0;
+
+  EB_ATUAL = {key: programId, book: file, perfil, capIndex: -1}; // -1 = capa
+  document.documentElement.style.setProperty('--eb-cor-atual', file.cor);
+  ebRenderCapa(progresso);
+}
+
+function ebSalvarProgresso(idx){
+  const email = DB.get('fq_cur'); const users = DB.get('fq_users')||{};
+  const u = users[email]; if(!u) return;
+  if(!u.ebooksProgresso) u.ebooksProgresso = {};
+  const atual = u.ebooksProgresso[EB_ATUAL.key]||0;
+  u.ebooksProgresso[EB_ATUAL.key] = Math.max(atual, idx);
+  DB.set('fq_users', users);
+  if(typeof syncU==='function') syncU(u).catch(()=>{});
+}
+
+function ebRenderCapa(progresso){
+  const {book, perfil} = EB_ATUAL;
+  const el = document.getElementById('eb-reader-container');
+  el.style.setProperty('--eb-cor', book.cor);
+  const chipsLesao = perfil.lesoes.length
+    ? perfil.lesoes.map(l=>`<span class="eb-chip warn">⚠️ ${l}</span>`).join('')
+    : '';
+  el.innerHTML = `
+    <div class="eb-cover" style="--eb-cor:${book.cor}">
+      <div class="eb-cover-emoji">${book.emoji}</div>
+      <div class="eb-cover-title">${book.titulo}</div>
+      <div class="eb-cover-sub">${book.subtitulo}</div>
+      <div class="eb-cover-tagline">${book.tagline}</div>
+    </div>
+    <div class="eb-perfil-card">
+      <div class="eb-perfil-titulo">✨ Personalizado para você</div>
+      <div class="eb-perfil-saudacao">Preparado especialmente para ${perfil.nome}</div>
+      <div class="eb-chips">
+        <span class="eb-chip">📊 Nível: ${perfil.nivel}</span>
+        <span class="eb-chip">🎯 ${perfil.objetivo}</span>
+        ${perfil.peso?`<span class="eb-chip">⚖️ ${perfil.peso}kg</span>`:''}
+        ${chipsLesao}
+      </div>
+    </div>
+    <button class="eb-start-btn" style="--eb-cor:${book.cor}" onclick="ebIrCapitulo(${progresso>0?progresso:0})">
+      ${progresso>0?'📖 Continuar de onde parou':'📖 Começar Leitura'}
+    </button>
+    <div class="eb-toc">
+      <div class="eb-perfil-titulo" style="margin:20px 0 10px">Sumário</div>
+      ${book.capitulos.map((cap,i)=>`
+        <div class="eb-toc-item" onclick="ebIrCapitulo(${i})">
+          <div class="eb-toc-num" style="background:${book.cor}">${i+1}</div>
+          <div class="eb-toc-titulo">${cap.titulo}</div>
+          ${progresso>i?'<div class="eb-toc-check">✓</div>':''}
+        </div>`).join('')}
+    </div>
+    <div style="height:24px"></div>
+  `;
+  el.scrollTop = 0;
+}
+
+function ebRenderSecao(sec, perfil){
+  switch(sec.tipo){
+    case 'subtitulo':
+      return `<div class="eb-subtitulo">${sec.texto}</div>`;
+    case 'texto':
+      return `<div class="eb-texto">${sec.corpo}</div>`;
+    case 'estudo':
+      return `<div class="eb-estudo"><div class="eb-estudo-fonte">🔬 ${sec.fonte}</div><div class="eb-estudo-texto">${sec.texto}</div></div>`;
+    case 'bloco_titulo':
+      return `<div class="eb-bloco">${sec.texto}</div>`;
+    case 'lista':
+      return `<ul class="eb-lista">${sec.itens.map(it=>`<li>${it}</li>`).join('')}</ul>`;
+    case 'tabela':{
+      const anotadas = sec.linhas.map(l=>anotarLinhaTabela(perfil,l));
+      const cols = sec.colunas.length?sec.colunas:['Exercício','Séries','Reps','Descanso','RPE'];
+      return `<div class="eb-tabela-titulo">${sec.titulo}</div>
+        <div class="eb-tabela-wrap"><table class="eb-tabela">
+          <thead><tr>${cols.map(cc=>`<th>${cc}</th>`).join('')}</tr></thead>
+          <tbody>${anotadas.map(({linha,aviso})=>{
+            const pr = prParaExercicio(perfil, linha[0]);
+            return `<tr>${linha.slice(0,cols.length).map((v,ci)=>`<td class="${aviso&&ci===0?'eb-tabela-aviso':''}">${v}${ci===0&&aviso?'<br><span style="font-size:9px">'+aviso+'</span>':''}${ci===0&&pr?`<span class="eb-tabela-pr">✓ Seu recorde: ${pr.value}</span>`:''}</td>`).join('')}</tr>`;
+          }).join('')}</tbody>
+        </table></div>`;
+    }
+    default: return '';
+  }
+}
+
+function ebIrCapitulo(idx){
+  const {book, perfil} = EB_ATUAL;
+  if(idx<0||idx>=book.capitulos.length)return;
+  EB_ATUAL.capIndex = idx;
+  ebSalvarProgresso(idx+1);
+  const cap = book.capitulos[idx];
+  const pct = Math.round(((idx+1)/book.capitulos.length)*100);
+  const el = document.getElementById('eb-reader-container');
+  el.innerHTML = `
+    <div class="eb-cap-hdr">
+      <div class="eb-cap-progress"><div class="eb-cap-progress-fill" style="width:${pct}%;background:${book.cor}"></div></div>
+      <div class="eb-cap-eyebrow" style="color:${book.cor}">Capítulo ${idx+1} de ${book.capitulos.length}</div>
+      <div class="eb-cap-titulo">${cap.titulo}</div>
+    </div>
+    <div class="eb-body">
+      ${cap.secoes.map(s=>ebRenderSecao(s,perfil)).join('')}
+    </div>
+    <div class="eb-nav">
+      <button class="eb-nav-btn" ${idx===0?'disabled':''} onclick="ebIrCapitulo(${idx-1})">← Anterior</button>
+      ${idx<book.capitulos.length-1
+        ? `<button class="eb-nav-btn primary" style="background:${book.cor};border-color:${book.cor}" onclick="ebIrCapitulo(${idx+1})">Próximo →</button>`
+        : `<button class="eb-nav-btn primary" style="background:${book.cor};border-color:${book.cor}" onclick="ebRenderCapa(${book.capitulos.length})">✓ Concluir</button>`}
+    </div>
+  `;
+  el.scrollTop = 0;
+}
+
+
+// ══════════════════════════════════════════════════════
+// GERADOR DE PDF PERSONALIZADO (jsPDF + autoTable)
+// ══════════════════════════════════════════════════════
+
+function ebHexToRgb(hex){
+  hex = hex.replace('#','');
+  return [parseInt(hex.substring(0,2),16), parseInt(hex.substring(2,4),16), parseInt(hex.substring(4,6),16)];
+}
+
+async function baixarEbookPDF(){
+  if(!EB_ATUAL){ fqToast('Abra um e-book primeiro','warn'); return; }
+  if(typeof window.jspdf === 'undefined'){ fqToast('Gerador de PDF indisponível — verifique sua conexão e tente novamente.','warn'); return; }
+
+  fqToast('Gerando seu PDF personalizado...','ok');
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF({unit:'mm', format:'a4'});
+  const { book, perfil } = EB_ATUAL;
+  const W = 210, H = 297;
+  const [r,g,b] = ebHexToRgb(book.cor);
+
+  // ── CAPA ──
+  doc.setFillColor(10,10,10); doc.rect(0,0,W,H,'F');
+  doc.setFillColor(r,g,b); doc.rect(0,0,W,4,'F');
+  doc.setTextColor(255,255,255); doc.setFont('helvetica','bold'); doc.setFontSize(26);
+  const titleLines = doc.splitTextToSize(book.titulo.toUpperCase(), 160);
+  doc.text(titleLines, W/2, 85, {align:'center'});
+  let capY = 85 + titleLines.length*11;
+  doc.setFontSize(13); doc.setTextColor(r,g,b);
+  doc.text(book.subtitulo, W/2, capY, {align:'center'});
+  capY += 10;
+  doc.setFontSize(9); doc.setTextColor(180,180,180); doc.setFont('helvetica','normal');
+  const taglineLines = doc.splitTextToSize(book.tagline, 140);
+  doc.text(taglineLines, W/2, capY, {align:'center'});
+
+  doc.setDrawColor(r,g,b); doc.setLineWidth(0.6);
+  doc.roundedRect(25, 155, W-50, 42, 3, 3);
+  doc.setTextColor(255,255,255); doc.setFontSize(12); doc.setFont('helvetica','bold');
+  doc.text('Preparado especialmente para ' + perfil.nome, W/2, 168, {align:'center'});
+  doc.setFontSize(9); doc.setFont('helvetica','normal'); doc.setTextColor(210,210,210);
+  let infoLine = 'Nível: ' + perfil.nivel + '   |   Objetivo: ' + perfil.objetivo;
+  if(perfil.peso) infoLine += '   |   ' + perfil.peso + 'kg';
+  doc.text(infoLine, W/2, 178, {align:'center'});
+  if(perfil.lesoes.length){
+    doc.setTextColor(243,156,18);
+    doc.text('Atenção — lesão considerada: ' + perfil.lesoes.join(', '), W/2, 186, {align:'center'});
+  }
+
+  doc.setFontSize(10); doc.setTextColor(150,150,150); doc.setFont('helvetica','normal');
+  doc.text('Rennan Dias — Personal Trainer | CREF', W/2, 265, {align:'center'});
+  doc.setFontSize(8);
+  doc.text('FitQuest — rennandias.com.br', W/2, 278, {align:'center'});
+
+  // ── CAPÍTULOS ──
+  book.capitulos.forEach((cap, ci) => {
+    doc.addPage();
+    let y = 26;
+    doc.setFillColor(r,g,b); doc.rect(0,0,W,16,'F');
+    doc.setTextColor(255,255,255); doc.setFont('helvetica','bold'); doc.setFontSize(12);
+    doc.text('CAPÍTULO ' + (ci+1) + ': ' + cap.titulo.toUpperCase(), 15, 10.5);
+
+    cap.secoes.forEach(sec => {
+      if(y > 268){ doc.addPage(); y = 20; }
+      if(sec.tipo === 'subtitulo'){
+        doc.setFont('helvetica','bold'); doc.setFontSize(11.5); doc.setTextColor(r,g,b);
+        const lines = doc.splitTextToSize(sec.texto, 180);
+        doc.text(lines, 15, y); y += lines.length*6 + 3;
+      } else if(sec.tipo === 'texto'){
+        doc.setFont('helvetica','normal'); doc.setFontSize(9.5); doc.setTextColor(60,60,60);
+        const lines = doc.splitTextToSize(sec.corpo, 180);
+        lines.forEach(line => { if(y>278){doc.addPage();y=20;} doc.text(line, 15, y); y += 5; });
+        y += 4;
+      } else if(sec.tipo === 'estudo'){
+        const lines = doc.splitTextToSize(sec.texto, 165);
+        const boxH = 11 + lines.length*4.3;
+        if(y + boxH > 280){ doc.addPage(); y = 20; }
+        doc.setFillColor(233,250,240); doc.setDrawColor(46,204,113); doc.setLineWidth(0.7);
+        doc.roundedRect(15, y, 180, boxH, 2, 2, 'FD');
+        doc.setFont('helvetica','bold'); doc.setFontSize(8); doc.setTextColor(24,120,68);
+        doc.text('ESTUDO: ' + sec.fonte, 19, y+6);
+        doc.setFont('helvetica','normal'); doc.setFontSize(8.3); doc.setTextColor(60,60,60);
+        doc.text(lines, 19, y+11);
+        y += boxH + 6;
+      } else if(sec.tipo === 'bloco_titulo'){
+        if(y+10>280){doc.addPage();y=20;}
+        doc.setFillColor(r,g,b); doc.rect(15, y-4.5, 180, 8, 'F');
+        doc.setFont('helvetica','bold'); doc.setFontSize(9); doc.setTextColor(255,255,255);
+        doc.text(sec.texto, 19, y+0.5); y += 12;
+      } else if(sec.tipo === 'lista'){
+        doc.setFont('helvetica','normal'); doc.setFontSize(9); doc.setTextColor(60,60,60);
+        sec.itens.forEach(item => {
+          const lines = doc.splitTextToSize('•  ' + item, 175);
+          lines.forEach(line=>{ if(y>278){doc.addPage();y=20;} doc.text(line, 17, y); y += 4.8; });
+          y += 2;
+        });
+        y += 3;
+      } else if(sec.tipo === 'tabela'){
+        if(sec.titulo){
+          if(y > 262){ doc.addPage(); y = 20; }
+          doc.setFont('helvetica','bold'); doc.setFontSize(9.5); doc.setTextColor(r,g,b);
+          doc.text(sec.titulo, 15, y); y += 5;
+        }
+        const cols = sec.colunas.length ? sec.colunas : ['Exercício','Séries','Reps','Descanso','RPE'];
+        const anotadas = sec.linhas.map(l => anotarLinhaTabela(perfil, l));
+        doc.autoTable({
+          startY: y,
+          head: [cols],
+          body: anotadas.map(a => a.linha.slice(0, cols.length)),
+          theme: 'striped',
+          headStyles: {fillColor:[r,g,b], textColor:[255,255,255], fontSize:8, fontStyle:'bold'},
+          bodyStyles: {fontSize:8, textColor:[60,60,60]},
+          alternateRowStyles: {fillColor:[245,245,245]},
+          margin: {left:15, right:15},
+          didParseCell: function(data){
+            if(data.section==='body' && data.column.index===0){
+              const a = anotadas[data.row.index];
+              if(a && a.aviso){
+                data.cell.styles.fillColor=[255,243,224];
+                data.cell.styles.textColor=[180,110,0];
+              }
+            }
+          }
+        });
+        y = doc.lastAutoTable.finalY + 8;
+      }
+    });
+
+    doc.setFont('helvetica','normal'); doc.setFontSize(7); doc.setTextColor(150,150,150);
+    doc.text('FitQuest — Rennan Dias Assessoria Esportiva · rennandias.com.br', W/2, 292, {align:'center'});
+  });
+
+  const safeName = (perfil.nome||'Aluno').replace(/[^\w]/g,'');
+  const safeTitle = (book.titulo||'Ebook').replace(/[^\w]/g,'-');
+  doc.save('FitQuest-' + safeTitle + '-' + safeName + '.pdf');
+  fqToast('📄 PDF personalizado baixado!','ok');
+}
+
+
+// ══ ADMIN: CRIAR ALUNO MANUALMENTE ══
+function openCriarAluno(){
+  document.getElementById('ca-nome').value='';
+  document.getElementById('ca-email').value='';
+  document.getElementById('ca-senha').value='';
+  document.getElementById('modal-criar-aluno').classList.add('open');
+}
+
+async function admCriarAluno(){
+  const nome = sanitizeStr(document.getElementById('ca-nome').value, 80);
+  const email = document.getElementById('ca-email').value.trim().toLowerCase();
+  const senha = document.getElementById('ca-senha').value;
+  if(!nome||!email||!senha){ fqToast('Preencha nome, e-mail e senha.','warn'); return; }
+  if(senha.length<6){ fqToast('Senha mínimo 6 caracteres.','warn'); return; }
+  if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){ fqToast('E-mail inválido.','warn'); return; }
+  if(!sb){ fqToast('Sem conexão com o servidor.','warn'); return; }
+
+  const btn=document.getElementById('btn-criar-aluno'); btn.disabled=true; btn.textContent='Criando...';
+  try{
+    const{data,error}=await sb.auth.signUp({email,password:senha,options:{data:{nome}}});
+    if(error){
+      fqToast(/already|registered/i.test(error.message)?'Este e-mail já está cadastrado.':'Erro: '+error.message,'warn');
+      return;
+    }
+    const u = novoPerfilLocal(data.user.id, nome, email);
+    await sb.from('alunos').upsert(userToRow(u), {onConflict:'id'});
+
+    // Proteção: signUp NUNCA deve trocar a sessão ativa do admin.
+    // Se por algum motivo isso acontecer (confirmação de e-mail desativada no projeto),
+    // desloga a sessão nova e avisa o admin a logar de novo — evita ficar "preso" como o aluno novo.
+    if(data.session){
+      await sb.auth.signOut();
+      fqToast('Aluno criado! Por segurança, faça login novamente no admin.','ok');
+      closeModal('modal-criar-aluno');
+      DB.del('fq_cur');
+      show('sc-splash');
+      return;
+    }
+
+    const users=DB.get('fq_users')||{}; users[email]=u; DB.set('fq_users',users);
+    fqToast('✅ Aluno criado! Ele recebeu um e-mail de confirmação — avise que a senha inicial é a que você definiu.','ok');
+    closeModal('modal-criar-aluno');
+    await loadAdmin();
+  }catch(e){
+    console.error('Criar aluno:',e);
+    fqToast('Erro ao criar aluno: '+(e?.message||'tente novamente'),'warn');
+  }finally{
+    btn.disabled=false; btn.textContent='Criar aluno';
+  }
+}
+
+// ══ ADMIN: RESET DE SENHA (nunca vemos a senha — só disparamos o link) ══
+async function admResetSenha(email){
+  if(!sb){ fqToast('Sem conexão com o servidor.','warn'); return; }
+  if(!await fqConfirm('Redefinir senha', `Enviar link de redefinição de senha para ${email}?`, 'Enviar', '🔑')) return;
+  try{
+    const{error}=await sb.auth.resetPasswordForEmail(email);
+    if(error){ fqToast('Erro: '+error.message,'warn'); return; }
+    fqToast('📧 Link de redefinição enviado para '+email,'ok');
+  }catch(e){
+    fqToast('Erro ao enviar redefinição.','warn');
+  }
+}
+
 </script>
 
 <!-- ══ EBOOK VIEWER MODAL ══ -->
-<div id="modal-ebook">
+<div <!-- ══ MODAL CRIAR ALUNO ══ -->
+<div class="modal-ov" id="modal-criar-aluno"><div class="modal-bx">
+  <div class="modal-t"><span>➕ Novo Aluno</span><button class="modal-cl" onclick="closeModal('modal-criar-aluno')">✕</button></div>
+  <div style="padding:4px 0">
+    <div class="fg"><label class="fl">Nome completo</label><input class="fi" type="text" id="ca-nome" placeholder="Ex: Maria Silva"/></div>
+    <div class="fg"><label class="fl">E-mail</label><input class="fi" type="email" id="ca-email" placeholder="maria@email.com"/></div>
+    <div class="fg"><label class="fl">Senha inicial</label><input class="fi" type="text" id="ca-senha" placeholder="Mínimo 6 caracteres"/></div>
+    <div style="font-size:10.5px;color:var(--mu);margin:6px 0 14px;line-height:1.5">O aluno recebe e-mail de confirmação. Avise a ele qual senha você definiu — ele pode trocá-la depois.</div>
+    <button class="btn-p" id="btn-criar-aluno" onclick="admCriarAluno()">Criar aluno</button>
+  </div>
+</div></div>
+
+<!-- ══ MODAL E-BOOKS ADMIN (toggle individual) ══ -->
+<div class="modal-ov" id="modal-ebooksadm"><div class="modal-bx">
+  <div class="modal-t"><span id="modal-ebooksadm-name">📚 E-Books</span><button class="modal-cl" onclick="closeEbooksAdmin()">✕</button></div>
+  <div id="modal-ebooksadm-content" style="max-height:70vh;overflow-y:auto"></div>
+</div></div>
+
+id="modal-ebook">
   <div class="ebook-topbar">
     <div class="ebook-logo"><span>FIT</span>QUEST</div>
     <div class="ebook-title-bar" id="ebook-title-bar">E-Book Premium</div>
     <div style="display:flex;gap:6px">
-      <button id="ebook-open-btn" onclick="abrirEbookDireto()" style="background:rgba(255,255,255,.1);border:none;border-radius:6px;color:#fff;font-size:11px;font-weight:700;padding:6px 12px;cursor:pointer">↗ Abrir</button>
+      <button id="ebook-open-btn" onclick="baixarEbookPDF()" style="background:rgba(255,255,255,.1);border:none;border-radius:6px;color:#fff;font-size:11px;font-weight:700;padding:6px 12px;cursor:pointer">⬇ Baixar PDF</button>
       <button class="ebook-close" onclick="closeEbook()">✕ Fechar</button>
     </div>
   </div>
-  <div class="ebook-loading" id="ebook-loading">
-    <div class="spinner"></div>
-    <div style="font-size:13px">Carregando seu e-book...</div>
-  </div>
-  <iframe id="ebook-frame" style="display:none" onload="ebookLoaded()"></iframe>
+  <div id="eb-reader-container" style="height:calc(100vh - 52px);overflow-y:auto;background:var(--bg)"></div>
 </div>
 
 <!-- ══ WHATSAPP FLUTUANTE ══ -->
