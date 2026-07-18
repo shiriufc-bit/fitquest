@@ -792,7 +792,7 @@ textarea.fi{resize:vertical;min-height:80px;}
 
 <!-- SPLASH -->
 <div id="sc-splash" class="screen active">
-  <div id="fq-version-badge" style="position:absolute;bottom:8px;right:12px;font-size:9px;color:#333;font-weight:700;z-index:5">v65</div>
+  <div id="fq-version-badge" style="position:absolute;bottom:8px;right:12px;font-size:9px;color:#333;font-weight:700;z-index:5">v69</div>
   <img src="https://images.unsplash.com/photo-1517836357463-d25dfeac3438?w=800&q=80" alt="Fitness" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center top;filter:brightness(.35);z-index:0"/>
   <div class="splash-glow"></div>
   <div class="splash-noise"></div>
@@ -2217,7 +2217,7 @@ textarea.fi{resize:vertical;min-height:80px;}
 
 <script>
 // ══ SUPABASE ══
-const FQ_VERSION='v65';console.log('%cFitQuest '+FQ_VERSION,'color:#e50914;font-weight:bold;font-size:14px');
+const FQ_VERSION='v69';console.log('%cFitQuest '+FQ_VERSION,'color:#e50914;font-weight:bold;font-size:14px');
 // ══ PROXY DE IA (Cloudflare Worker) ══
 // Quando preenchido, a IA real funciona em produção com a chave protegida no servidor.
 // Deixe '' para usar o plano local (fallback). Ex: 'https://fitquest-ai.SEU-USUARIO.workers.dev'
@@ -4185,6 +4185,27 @@ function renderPerfil(u){
 }
 
 // ══ EXERCISE IMAGES BY MUSCLE GROUP ══
+
+// ══ VÍDEOS DE DEMONSTRAÇÃO DOS EXERCÍCIOS ══
+// Lista cresce conforme os arquivos do pacote licenciado são processados e adicionados
+// à pasta /exercicios do repositório. Fallback automático pro emoji+foto quando ausente.
+const EXERCICIOS_COM_VIDEO = new Set(['e001','e003','e008','e014','e017','e051','e055','e121']);
+function fallbackExVideo(videoEl, exId, emoji, name, muscle){
+  const thumb = videoEl.closest('.ep-thumb');
+  if(!thumb) return;
+  const badge = document.getElementById('ep-badge-'+exId);
+  if(badge) badge.remove();
+  thumb.innerHTML = `
+    <img src="${getExImg(muscle)}" alt="${name}" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;filter:brightness(.4)"/>
+    <div style="position:relative;z-index:1;display:flex;flex-direction:column;align-items:center;gap:6px">
+      <div style="font-size:44px;line-height:1;filter:drop-shadow(0 2px 8px rgba(0,0,0,.8))">${emoji}</div>
+      <div style="font-size:13px;font-weight:800;text-shadow:0 2px 8px rgba(0,0,0,.8)">${name}</div>
+      <div style="font-size:10px;color:var(--r);font-weight:700;background:rgba(229,9,20,.15);padding:3px 10px;border-radius:4px;border:1px solid rgba(229,9,20,.3)">${muscle}</div>
+    </div>`;
+}
+
+function temVideoDemo(exId){ return EXERCICIOS_COM_VIDEO.has(exId); }
+
 function getExImg(muscle){
   const m = (muscle||'').toLowerCase();
   if(m.includes('peito'))         return 'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=400&q=80';
@@ -4295,12 +4316,19 @@ function renderGymDay(w,d,u){
       </div>
       <div class="ep-body">
         <div class="ep-thumb" style="position:relative;overflow:hidden">
+          ${temVideoDemo(ex.id) ? `
+          <video src="exercicios/${ex.id}.mp4" autoplay loop muted playsinline
+            style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover"
+            onerror="fallbackExVideo(this,'${ex.id}','${(ex.emoji||'🏋️').replace(/'/g,"")}','${ex.name.replace(/'/g,"")}','${ex.muscle.replace(/'/g,"")}')"></video>
+          <div id="ep-badge-${ex.id}" style="position:absolute;bottom:6px;right:8px;z-index:2;font-size:8px;font-weight:800;background:rgba(0,0,0,.6);color:#fff;padding:2px 7px;border-radius:4px;letter-spacing:.5px">DEMONSTRAÇÃO</div>
+          ` : `
           <img src="${getExImg(ex.muscle)}" alt="${ex.name}" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;filter:brightness(.4)"/>
           <div style="position:relative;z-index:1;display:flex;flex-direction:column;align-items:center;gap:6px">
             <div style="font-size:44px;line-height:1;filter:drop-shadow(0 2px 8px rgba(0,0,0,.8))">${ex.emoji||'🏋️'}</div>
             <div style="font-size:13px;font-weight:800;text-shadow:0 2px 8px rgba(0,0,0,.8)">${ex.name}</div>
             <div style="font-size:10px;color:var(--r);font-weight:700;background:rgba(229,9,20,.15);padding:3px 10px;border-radius:4px;border:1px solid rgba(229,9,20,.3)">${ex.muscle}</div>
           </div>
+          `}
         </div>
         <div class="ep-obs">💡 ${ex.obs}</div>
         <table class="sets-tbl">
