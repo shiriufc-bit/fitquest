@@ -792,7 +792,7 @@ textarea.fi{resize:vertical;min-height:80px;}
 
 <!-- SPLASH -->
 <div id="sc-splash" class="screen active">
-  <div id="fq-version-badge" style="position:absolute;bottom:8px;right:12px;font-size:9px;color:#333;font-weight:700;z-index:5">v69</div>
+  <div id="fq-version-badge" style="position:absolute;bottom:8px;right:12px;font-size:9px;color:#333;font-weight:700;z-index:5">v68</div>
   <img src="https://images.unsplash.com/photo-1517836357463-d25dfeac3438?w=800&q=80" alt="Fitness" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center top;filter:brightness(.35);z-index:0"/>
   <div class="splash-glow"></div>
   <div class="splash-noise"></div>
@@ -2217,7 +2217,7 @@ textarea.fi{resize:vertical;min-height:80px;}
 
 <script>
 // ══ SUPABASE ══
-const FQ_VERSION='v69';console.log('%cFitQuest '+FQ_VERSION,'color:#e50914;font-weight:bold;font-size:14px');
+const FQ_VERSION='v68';console.log('%cFitQuest '+FQ_VERSION,'color:#e50914;font-weight:bold;font-size:14px');
 // ══ PROXY DE IA (Cloudflare Worker) ══
 // Quando preenchido, a IA real funciona em produção com a chave protegida no servidor.
 // Deixe '' para usar o plano local (fallback). Ex: 'https://fitquest-ai.SEU-USUARIO.workers.dev'
@@ -4188,7 +4188,7 @@ function renderPerfil(u){
 
 // ══ VÍDEOS DE DEMONSTRAÇÃO DOS EXERCÍCIOS ══
 // Lista cresce conforme os arquivos do pacote licenciado são processados e adicionados
-// à pasta /exercicios do repositório. Fallback automático pro emoji+foto quando ausente.
+// à RAIZ do repositório (ex: e001.mp4 ao lado do index.html). Fallback automático pro emoji+foto quando ausente.
 const EXERCICIOS_COM_VIDEO = new Set(['e001','e003','e008','e014','e017','e051','e055','e121']);
 function fallbackExVideo(videoEl, exId, emoji, name, muscle){
   const thumb = videoEl.closest('.ep-thumb');
@@ -4317,7 +4317,7 @@ function renderGymDay(w,d,u){
       <div class="ep-body">
         <div class="ep-thumb" style="position:relative;overflow:hidden">
           ${temVideoDemo(ex.id) ? `
-          <video src="exercicios/${ex.id}.mp4" autoplay loop muted playsinline
+          <video src="${ex.id}.mp4" autoplay loop muted playsinline
             style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover"
             onerror="fallbackExVideo(this,'${ex.id}','${(ex.emoji||'🏋️').replace(/'/g,"")}','${ex.name.replace(/'/g,"")}','${ex.muscle.replace(/'/g,"")}')"></video>
           <div id="ep-badge-${ex.id}" style="position:absolute;bottom:6px;right:8px;z-index:2;font-size:8px;font-weight:800;background:rgba(0,0,0,.6);color:#fff;padding:2px 7px;border-radius:4px;letter-spacing:.5px">DEMONSTRAÇÃO</div>
@@ -7798,7 +7798,7 @@ async function admResetSenha(email){
   <div id="modal-ebooksadm-content" style="max-height:70vh;overflow-y:auto"></div>
 </div></div>
 
-id="modal-ebook">
+<div id="modal-ebook">
   <div class="ebook-topbar">
     <div class="ebook-logo"><span>FIT</span>QUEST</div>
     <div class="ebook-title-bar" id="ebook-title-bar">E-Book Premium</div>
