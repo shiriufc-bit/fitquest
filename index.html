@@ -792,7 +792,7 @@ textarea.fi{resize:vertical;min-height:80px;}
 
 <!-- SPLASH -->
 <div id="sc-splash" class="screen active">
-  <div id="fq-version-badge" style="position:absolute;bottom:8px;right:12px;font-size:9px;color:#333;font-weight:700;z-index:5">v68</div>
+  <div id="fq-version-badge" style="position:absolute;bottom:8px;right:12px;font-size:9px;color:#333;font-weight:700;z-index:5">v70</div>
   <img src="https://images.unsplash.com/photo-1517836357463-d25dfeac3438?w=800&q=80" alt="Fitness" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center top;filter:brightness(.35);z-index:0"/>
   <div class="splash-glow"></div>
   <div class="splash-noise"></div>
@@ -2217,7 +2217,7 @@ textarea.fi{resize:vertical;min-height:80px;}
 
 <script>
 // ══ SUPABASE ══
-const FQ_VERSION='v68';console.log('%cFitQuest '+FQ_VERSION,'color:#e50914;font-weight:bold;font-size:14px');
+const FQ_VERSION='v70';console.log('%cFitQuest '+FQ_VERSION,'color:#e50914;font-weight:bold;font-size:14px');
 // ══ PROXY DE IA (Cloudflare Worker) ══
 // Quando preenchido, a IA real funciona em produção com a chave protegida no servidor.
 // Deixe '' para usar o plano local (fallback). Ex: 'https://fitquest-ai.SEU-USUARIO.workers.dev'
@@ -3583,103 +3583,205 @@ function RD_gerarRun(p){
   const z=(lo,hi)=>`${Math.round(fcRep+res*lo)}-${Math.round(fcRep+res*hi)}bpm`;
   const Z1=z(.50,.60),Z2=z(.60,.70),Z3=z(.70,.80),Z4=z(.80,.90),Z5=z(.90,1.0);
 
-  // Pace base estimado pelo nível
+  // Pace base estimado pelo nível (min/km) — evolui ao longo do bloco
   const paceMap={destreinado:8.5,iniciante:7.5,intermediario:6.5,avancado:5.5};
-  const base=paceMap[p.nivel]||7.0;
+  const baseInicial=paceMap[p.nivel]||7.0;
   const fmt=(m)=>{const min=Math.floor(m);const seg=Math.round((m-min)*60);return `${min}:${String(seg).padStart(2,'0')}/km`;};
-  const paceLeve=fmt(base+0.75),paceMod=fmt(base),paceForte=fmt(base-0.5),paceTiro=fmt(base-1.0);
 
-  // Meta e volume por objetivo
+  // Evolução de pace: melhora ~4% do inicio ao fim do bloco (ganho real de aerobic efficiency em 8 semanas)
+  const paceNaSemana=(s)=>baseInicial*(1-0.04*((s-1)/7));
+
   const metas={'5k':5,'10k':10,meia:21,maratona:42,pace:10};
   const alvo=metas[p.corrida]||10;
-  const run={};
   const deloads=RD_deloadSemanas(p);
 
+  // Dias de corrida por semana — escalado pela disponibilidade, mas limitado por segurança
+  // (mais de 4 corridas/semana só faz sentido pra avançado com base construída)
+  const diasDisp=p.dias||3;
+  let nSessoes=2; // Leve + Longão (mínimo seguro)
+  if(diasDisp>=4)nSessoes=3; // + 1 sessão de qualidade
+  if(diasDisp>=5&&p.nivel!=='destreinado'&&p.nivel!=='iniciante')nSessoes=4; // + 1 leve extra
+
+  // Volume inicial seguro por nível
+  const iniMap={destreinado:3,iniciante:4,intermediario:6,avancado:8};
+  const ini=Math.min(iniMap[p.nivel]||4,alvo*0.5);
+  const pico=alvo<=10?alvo:Math.round(alvo*0.75); // provas longas: pico de treino é 75% da meta
+
+  // ── PROGRESSÃO DE VOLUME TOTAL RESPEITANDO A REGRA DOS 10% ──
+  // Constrói a sequência de volume semanal TOTAL (não só o longão) semana a semana,
+  // nunca subindo mais que 10% em relação à semana anterior (exceto deload, que sempre reduz).
+  const volumeTotalIni=ini*2.2; // long freq baixa nas primeiras semanas: total ≈ 2.2x o longão
+  const volumeTotalPico=pico*2.6; // mais sessões de qualidade no pico: total ≈ 2.6x o longão
+  let volumesSemana=[volumeTotalIni];
+  for(let s=2;s<=7;s++){
+    const alvoLinear=volumeTotalIni+(volumeTotalPico-volumeTotalIni)*((s-1)/6);
+    const tetoDez=volumesSemana[s-2]*1.10; // nunca mais que +10% da semana anterior
+    volumesSemana.push(Math.min(alvoLinear,tetoDez));
+  }
+  volumesSemana.push(volumeTotalPico); // semana 8 = pico/prova, sem teto de 10% (é o dia da prova)
+
+  const run={};
+  let volumeRealAnterior=null; // rastreia a soma real de km da semana anterior (regra dos 10%)
   for(let s=1;s<=8;s++){
     const ehDeload=deloads.includes(s);
-    const prog=s/8;
-    // Longão progride até 80% da meta na semana 7 (tapering na 8)
-    // Ponto de partida realista pelo nível + pico da preparação
-    const iniMap={destreinado:3,iniciante:4,intermediario:6,avancado:8};
-    const ini=Math.min(iniMap[p.nivel]||4,alvo*0.5);
-    // Provas curtas (5/10k): semana 8 é a PROVA (distância cheia).
-    // Provas longas (21/42k): pico de treino ~75% do alvo (a prova real vem depois do ciclo).
-    const pico=alvo<=10?alvo:Math.round(alvo*0.75);
-    let longao;
-    if(s===8){
-      longao=pico; // semana 8 = PROVA/PICO — nunca reduz, é o grande dia
-    }else{
-      // Progressão linear de ini → pico ao longo das 7 primeiras semanas
-      longao=Math.round((ini+(pico-ini)*((s-1)/7))*10)/10;
-      if(ehDeload)longao=Math.round(longao*0.6*10)/10; // deload de meio de ciclo reduz
-    }
+    const pace=paceNaSemana(s);
+    const paceLeve=fmt(pace+0.9),paceMod=fmt(pace+0.15),paceForte=fmt(pace-0.55),paceTiro=fmt(pace-1.15);
+
+    let volumeSemana=volumesSemana[s-1];
+    if(ehDeload)volumeSemana*=0.6; // deload reduz o volume total, não só o longão
+    if(s===8)volumeSemana=pico*(nSessoes>=3?1.35:1.15); // semana do pico: garante o longão = pico
+
+    // Longão sempre a maior fatia do volume da semana
+    let longao=s===8?pico:Math.round(volumeSemana*(nSessoes===2?0.55:0.42)*10)/10;
     longao=Math.max(3,longao);
 
     const sessions=[];
-    // Sessão 1: base aeróbica (sempre)
+    const dias4=['Ter','Qui','Sex','Dom'];
+
+    // ── Monta segmentos por minuto (o que estava faltando) ──
+    const segAquec=(min,ritmo)=>({label:'Aquecimento',min,ref:ritmo});
+    const segDesac=(min)=>({label:'Desaceleração',min,ref:'Trote bem leve / caminhada · Z1 '+Z1});
+
+    // Sessão 1: rodagem leve — sempre presente
+    const durLeve=Math.round(Math.max(3,Math.min(10,longao*0.5))*(pace+0.9));
     sessions.push({
-      day:'Ter',type:'Rodagem Leve (Base Aeróbica)',
-      dist:Math.max(3,Math.min(10,Math.round(longao*0.5)))+' km',pace:paceLeve,fc:'Z2 '+Z2,
-      dur:'~'+Math.round(Math.max(3,Math.min(10,longao*0.5))*(base+0.75))+' min',
-      estrutura:'Aquecimento 5min caminhada → corrida contínua em ritmo conversacional → 5min desaceleração',
-      tip:'Teste da conversa: se não consegue falar frases inteiras, está rápido demais. Z2 constrói mitocôndrias e capilares — a base de tudo.'
-    });
-    // Sessão 2: qualidade (varia por semana e nível)
-    if(!ehDeload||s===8){
-      if(s%3===1){
-        sessions.push({day:'Qui',type:'Intervalado (VO2máx)',
-          dist:'6 × 400m',pace:paceTiro,fc:'Z4-Z5 '+Z4,
-          dur:'~35 min',estrutura:'Aquecimento 10min → 6× (400m forte + 200m trote) → 10min soltura',
-          tip:'Os tiros elevam seu VO2máx. Recuperação ativa entre eles — não pare completamente.'});
-      }else if(s%3===2){
-        sessions.push({day:'Qui',type:'Tempo Run (Limiar)',
-          dist:Math.round(longao*0.45)+' km',pace:paceForte,fc:'Z3-Z4 '+Z3,
-          dur:'~30 min',estrutura:'Aquecimento 10min → 20min em ritmo "confortavelmente difícil" → 10min soltura',
-          tip:'Ritmo de limiar: você consegue falar 2-3 palavras, não uma frase. É aqui que a velocidade de prova nasce.'});
-      }else{
-        sessions.push({day:'Qui',type:'Fartlek (Ritmo Variado)',
-          dist:Math.round(longao*0.5)+' km',pace:paceMod,fc:'Z2-Z4 '+Z3,
-          dur:'~30 min',estrutura:'Alterne livremente: 2min forte / 2min leve, durante toda a corrida',
-          tip:'Fartlek é brincar com o ritmo. Sem cronômetro rígido — use referências (até aquele poste).'});
-      }
-    }
-    // Sessão 3: longão (o mais importante)
-    sessions.push({
-      day:'Dom',type:s===8?'🏁 PROVA / META':'Longão (Resistência)',
-      dist:longao+' km',pace:paceLeve,fc:'Z1-Z2 '+Z2,
-      dur:'~'+Math.round(longao*(base+0.75))+' min',
-      estrutura:s===8?'É o grande dia. Ritmo constante, hidrate a cada 15-20min, aproveite a chegada!':'Ritmo conversacional do início ao fim. Devagar. Muito devagar. Isso é o segredo.',
-      tip:s===8?`Você treinou 8 semanas para isso. ${alvo}km é seu. Confie no processo.`:'80% do seu volume deve ser leve (Z1-Z2). É contraintuitivo, mas é assim que se fica mais rápido.'
+      day:dias4[0],type:'Rodagem Leve (Base Aeróbica)',
+      dist:Math.max(3,Math.min(10,Math.round(longao*0.5)))+' km',
+      distKm:Math.max(3,Math.min(10,Math.round(longao*0.5))),
+      pace:paceLeve,fc:'Z2 '+Z2,dur:'~'+durLeve+' min',
+      segmentos:[
+        segAquec(5,'Trote bem leve, sem pressa · Z1 '+Z1),
+        {label:'Ritmo contínuo',min:durLeve-10,ref:paceLeve+' · Z2 '+Z2},
+        segDesac(5)
+      ],
+      tip:'Teste da conversa: se não consegue falar frases inteiras, está rápido demais. Z2 constrói a base.'
     });
 
-    // ── AUDITORIA 80/20 (distribuição polarizada — Sports Med 2024, 17 estudos) ──
-    // Alvo: ≥75% do TEMPO em Z1-Z2 (baixa intensidade), ~20% em Z4-Z5, <10% em Z3.
-    const tempoDe=(sess)=>{const m=(sess.dur||'').match(/(\d+)/);return m?parseInt(m[1]):30;};
-    const ehBaixa=(sess)=>/Z1|Z2/.test(sess.fc||'')&&!/Z4|Z5/.test(sess.fc||'');
-    let tBaixa=0,tTotal=0;
-    sessions.forEach(sess=>{const t=tempoDe(sess);tTotal+=t;if(ehBaixa(sess))tBaixa+=t;});
-    const pctBaixa=tTotal?Math.round(tBaixa/tTotal*100):0;
-    // Se a semana ficou "dura demais" (<70% leve), converte a sessão de qualidade em rodagem leve
-    if(pctBaixa<70&&sessions.length>2&&s!==8){
-      const idxQual=sessions.findIndex(x=>/Intervalado|Tempo Run|Fartlek/.test(x.type));
-      if(idxQual>=0){
-        sessions[idxQual]={day:sessions[idxQual].day,type:'Rodagem Leve (ajuste 80/20)',
-          dist:Math.max(3,Math.round(longao*0.5))+' km',pace:paceLeve,fc:'Z2 '+Z2,
-          dur:'~'+Math.round(Math.max(3,longao*0.5)*(base+0.75))+' min',
-          estrutura:'Corrida contínua em ritmo conversacional',
-          tip:'Semana ajustada para manter a regra 80/20 — a maior parte do volume precisa ser leve.'};
+    // Sessão 2 (se houver): qualidade — rotaciona, mas NUNCA é cancelada, só ajustada em duração
+    if(nSessoes>=3){
+      const cicloIdx=(s-1)%3;
+      if(cicloIdx===0){
+        const tiros=ehDeload?4:(3+Math.min(4,Math.floor((s-1)/2)));
+        sessions.push({
+          day:dias4[1],type:'Intervalado (VO2máx)',
+          dist:tiros+' × 400m',distKm:Math.round(tiros*0.6*10)/10,tiros,pace:paceTiro,fc:'Z4-Z5 '+Z4,
+          dur:'~'+(20+tiros*2)+' min',
+          segmentos:[
+            segAquec(10,'Trote leve + 3 tiros de 20s progressivos'),
+            {label:tiros+'× (400m forte + 200m trote)',min:tiros*3,ref:paceTiro+' · Z4-Z5 '+Z4},
+            segDesac(8)
+          ],
+          tip:'Os tiros elevam seu VO2máx. Recuperação em trote, nunca parada — mantém o corpo em movimento.'
+        });
+      }else if(cicloIdx===1){
+        const durTempo=15+Math.min(10,s*1.5);
+        sessions.push({
+          day:dias4[1],type:'Tempo Run (Limiar)',
+          dist:Math.round(durTempo/pace*10)/10+' km',distKm:Math.round(durTempo/pace*10)/10,pace:paceForte,fc:'Z3-Z4 '+Z3,
+          dur:'~'+Math.round(durTempo+18)+' min',
+          segmentos:[
+            segAquec(10,'Trote leve, preparando o corpo · Z1-Z2 '+Z1),
+            {label:'Ritmo de limiar (tempo)',min:Math.round(durTempo),ref:paceForte+' · Z3-Z4 '+Z3},
+            segDesac(8)
+          ],
+          tip:'Ritmo de limiar: você fala 2-3 palavras, não uma frase inteira. É aqui que a velocidade de prova nasce.'
+        });
+      }else{
+        const durFartlek=20+Math.min(10,s);
+        sessions.push({
+          day:dias4[1],type:'Fartlek (Ritmo Variado)',
+          dist:Math.round(durFartlek/pace*10)/10+' km',distKm:Math.round(durFartlek/pace*10)/10,pace:paceMod,fc:'Z2-Z4 '+Z3,
+          dur:'~'+(durFartlek+16)+' min',
+          segmentos:[
+            segAquec(8,'Trote leve · Z1 '+Z1),
+            {label:'Blocos de 2min forte / 2min leve',min:durFartlek,ref:'Alternado · Z2-Z4 '+Z3},
+            segDesac(8)
+          ],
+          tip:'Fartlek é brincar com o ritmo — use referências (até aquele poste) em vez de cronômetro rígido.'
+        });
       }
     }
-    const distTxt=`📊 ${Math.max(pctBaixa,70)}% leve / ${100-Math.max(pctBaixa,70)}% forte`;
+
+    // Sessão 3 extra (se 4+ sessões): mais uma leve, mantém volume sem elevar risco
+    if(nSessoes>=4){
+      const durLeve2=Math.round(4*(pace+0.9));
+      sessions.push({
+        day:dias4[2],type:'Rodagem Leve (Regenerativa)',
+        dist:'4 km',distKm:4,pace:paceLeve,fc:'Z1-Z2 '+Z1,dur:'~'+durLeve2+' min',
+        segmentos:[
+          segAquec(5,'Trote bem leve · Z1 '+Z1),
+          {label:'Ritmo regenerativo',min:durLeve2-8,ref:paceLeve+' · Z1-Z2 '+Z1},
+          segDesac(3)
+        ],
+        tip:'Corrida regenerativa: o objetivo é circular o sangue, não treinar. Se sentir cansaço, encurte.'
+      });
+    }
+
+    // Última sessão: sempre o longão (ou a prova, na semana 8)
+    const durLongao=Math.round(longao*(pace+0.9));
+    sessions.push({
+      day:'Dom',type:s===8?'🏁 PROVA / META':'Longão (Resistência)',
+      dist:longao+' km',distKm:longao,pace:paceLeve,fc:'Z1-Z2 '+Z2,dur:'~'+durLongao+' min',
+      segmentos: s===8 ? [
+        {label:'Largada — ritmo controlado',min:Math.round(durLongao*0.15),ref:paceLeve+' · não saia rápido demais!'},
+        {label:'Ritmo de prova',min:Math.round(durLongao*0.70),ref:paceMod+' · mantenha constante'},
+        {label:'Reta final',min:Math.round(durLongao*0.15),ref:'O que tiver — comemore!'}
+      ] : [
+        segAquec(5,'Caminhada rápida → trote · Z1 '+Z1),
+        {label:'Ritmo conversacional constante',min:durLongao-10,ref:paceLeve+' · Z1-Z2 '+Z2},
+        segDesac(5)
+      ],
+      tip:s===8?`Você treinou 8 semanas pra isso. ${alvo}km é seu. Confie no processo.`
+         :'Regra dos 10%: nunca aumente o longão mais que 10% da semana anterior. Este plano já respeita isso pra você.'
+    });
+
+    // ── Regra dos 10%: escala a semana INTEIRA se a soma real (distKm) crescer demais ──
+    if(!ehDeload && s!==1 && s!==8 && volumeRealAnterior!==null){
+      const somaAtual=sessions.reduce((a,x)=>a+(x.distKm||0),0);
+      const crescimento=(somaAtual-volumeRealAnterior)/volumeRealAnterior;
+      if(crescimento>0.10){
+        const fator=(volumeRealAnterior*1.10)/somaAtual;
+        sessions.forEach(sess=>{
+          if(sess.tiros){ // sessão de tiros: reduz REPS (não faz sentido "5.3 tiros")
+            const novosTiros=Math.max(3,Math.round(sess.tiros*fator));
+            sess.tiros=novosTiros;sess.dist=novosTiros+' × 400m';sess.distKm=Math.round(novosTiros*0.6*10)/10;
+            sess.dur='~'+(20+novosTiros*2)+' min';
+            if(sess.segmentos)sess.segmentos[1]={label:novosTiros+'× (400m forte + 200m trote)',min:novosTiros*3,ref:sess.segmentos[1].ref};
+          }else if(sess.distKm){
+            const novaDist=Math.max(2,Math.round(sess.distKm*fator*10)/10);
+            sess.dist=novaDist+' km';sess.distKm=novaDist;
+            const paceNum=parseFloat(sess.pace);
+            if(!isNaN(paceNum))sess.dur='~'+Math.round(novaDist*(paceNum+1))+' min';
+            if(sess.segmentos){
+              const totalMinOrig=sess.segmentos.reduce((a,g)=>a+g.min,0);
+              const diff=totalMinOrig-Math.round(totalMinOrig*fator);
+              const meioIdx=Math.floor(sess.segmentos.length/2);
+              sess.segmentos[meioIdx].min=Math.max(5,sess.segmentos[meioIdx].min-diff);
+            }
+          }
+        });
+        const sessLongao=sessions.find(x=>/Longão/.test(x.type));
+        if(sessLongao)longao=sessLongao.distKm;
+      }
+    }
+    volumeRealAnterior=sessions.reduce((a,x)=>a+(x.distKm||0),0);
+
+    // ── Distribuição real 80/20 (calculada de verdade, sem piso artificial) ──
+    const tempoDe=(sess)=>sess.segmentos?sess.segmentos.reduce((a,g)=>a+g.min,0):30;
+    const ehBaixa=(sess)=>/Leve|Longão|PROVA/i.test(sess.type);
+    let tBaixa=0,tTotal=0;
+    sessions.forEach(sess=>{const t=tempoDe(sess);tTotal+=t;if(ehBaixa(sess))tBaixa+=t;});
+    const pctBaixa=tTotal?Math.round(tBaixa/tTotal*100):100;
+    const distTxt=`📊 ${pctBaixa}% leve / ${100-pctBaixa}% forte`;
+
     const metaTxt=s===8
       ?(alvo<=10?`🏁 Semana da PROVA: ${alvo}km — o grande dia!`:`🏁 Pico da preparação: ${pico}km — pronto para ${alvo}km!`)
-      :(ehDeload?'⚡ Deload — recuperar para crescer'
+      :(ehDeload?'⚡ Deload — recuperar para crescer · '+distTxt
       :`Longão ${longao}km · ${distTxt}`);
     run['Semana '+s]={meta:metaTxt,sessions,distribuicao:distTxt};
   }
   return run;
 }
-
 // ─── 7. FUNÇÃO PÚBLICA — substitui o fallback antigo ───
 function gerarTreinoFallback(email,an){
   const users=DB.get('fq_users')||{};
@@ -4188,7 +4290,7 @@ function renderPerfil(u){
 
 // ══ VÍDEOS DE DEMONSTRAÇÃO DOS EXERCÍCIOS ══
 // Lista cresce conforme os arquivos do pacote licenciado são processados e adicionados
-// à RAIZ do repositório (ex: e001.mp4 ao lado do index.html). Fallback automático pro emoji+foto quando ausente.
+// à pasta /exercicios do repositório. Fallback automático pro emoji+foto quando ausente.
 const EXERCICIOS_COM_VIDEO = new Set(['e001','e003','e008','e014','e017','e051','e055','e121']);
 function fallbackExVideo(videoEl, exId, emoji, name, muscle){
   const thumb = videoEl.closest('.ep-thumb');
@@ -4317,7 +4419,7 @@ function renderGymDay(w,d,u){
       <div class="ep-body">
         <div class="ep-thumb" style="position:relative;overflow:hidden">
           ${temVideoDemo(ex.id) ? `
-          <video src="${ex.id}.mp4" autoplay loop muted playsinline
+          <video src="exercicios/${ex.id}.mp4" autoplay loop muted playsinline
             style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover"
             onerror="fallbackExVideo(this,'${ex.id}','${(ex.emoji||'🏋️').replace(/'/g,"")}','${ex.name.replace(/'/g,"")}','${ex.muscle.replace(/'/g,"")}')"></video>
           <div id="ep-badge-${ex.id}" style="position:absolute;bottom:6px;right:8px;z-index:2;font-size:8px;font-weight:800;background:rgba(0,0,0,.6);color:#fff;padding:2px 7px;border-radius:4px;letter-spacing:.5px">DEMONSTRAÇÃO</div>
@@ -4418,7 +4520,7 @@ function renderRunWeek(w,u){
   const R=getRP(u);const prog=R[w];
   document.getElementById('run-sessions').innerHTML=prog.sessions.map((s,i)=>{
     const dk=`run_${w}_${i}`;const dn=u.runDone&&u.runDone[dk];
-    return `<div class="rs-card ${dn?'done':''}"><div class="rs-hd"><div class="rs-ic">🏃</div><div><div class="rs-title">${s.day} — ${s.type}</div><div class="rs-sub">${dn?'✅ Concluída':'Pendente'}</div></div></div><div class="run-mets"><div class="rm"><div class="rm-l">Distância</div><div class="rm-v">${s.dist}</div></div><div class="rm"><div class="rm-l">Pace</div><div class="rm-v" style="font-size:10px">${s.pace}</div></div><div class="rm"><div class="rm-l">Duração</div><div class="rm-v">${s.dur}</div></div></div><div class="run-tip">💡 ${s.tip}</div><button class="btn-run" style="background:${dn?'rgba(46,204,113,.08)':'rgba(229,9,20,.08)'};border:1px solid ${dn?'rgba(46,204,113,.2)':'rgba(229,9,20,.15)'};color:${dn?'#2ecc71':'var(--r)'}" onclick="markRun('${w}',${i})">${dn?'✅ Concluída!':'▶ Marcar como feita'}</button></div>`;
+    return `<div class="rs-card ${dn?'done':''}"><div class="rs-hd"><div class="rs-ic">🏃</div><div><div class="rs-title">${s.day} — ${s.type}</div><div class="rs-sub">${dn?'✅ Concluída':'Pendente'}</div></div></div><div class="run-mets"><div class="rm"><div class="rm-l">Distância</div><div class="rm-v">${s.dist}</div></div><div class="rm"><div class="rm-l">Pace</div><div class="rm-v" style="font-size:10px">${s.pace}</div></div><div class="rm"><div class="rm-l">Duração</div><div class="rm-v">${s.dur}</div></div></div>${s.segmentos?`<div style="margin-bottom:12px">${s.segmentos.map((g,gi)=>`<div style="display:flex;align-items:center;gap:10px;padding:8px 10px;background:rgba(255,255,255,.03);border-left:2px solid ${gi===Math.floor(s.segmentos.length/2)?'var(--r)':'rgba(255,255,255,.15)'};border-radius:0 6px 6px 0;margin-bottom:4px"><div style="font-size:14px;font-weight:900;color:var(--r);min-width:38px">${g.min}min</div><div style="flex:1"><div style="font-size:11.5px;font-weight:700">${g.label}</div><div style="font-size:10px;color:var(--t2)">${g.ref}</div></div></div>`).join('')}</div>`:''}<div class="run-tip">💡 ${s.tip}</div><button class="btn-run" style="background:${dn?'rgba(46,204,113,.08)':'rgba(229,9,20,.08)'};border:1px solid ${dn?'rgba(46,204,113,.2)':'rgba(229,9,20,.15)'};color:${dn?'#2ecc71':'var(--r)'}" onclick="markRun('${w}',${i})">${dn?'✅ Concluída!':'▶ Marcar como feita'}</button></div>`;
   }).join('');
 }
 function markRun(w,i){
@@ -7798,7 +7900,7 @@ async function admResetSenha(email){
   <div id="modal-ebooksadm-content" style="max-height:70vh;overflow-y:auto"></div>
 </div></div>
 
-<div id="modal-ebook">
+id="modal-ebook">
   <div class="ebook-topbar">
     <div class="ebook-logo"><span>FIT</span>QUEST</div>
     <div class="ebook-title-bar" id="ebook-title-bar">E-Book Premium</div>
