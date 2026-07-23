@@ -792,7 +792,7 @@ textarea.fi{resize:vertical;min-height:80px;}
 
 <!-- SPLASH -->
 <div id="sc-splash" class="screen active">
-  <div id="fq-version-badge" style="position:absolute;bottom:8px;right:12px;font-size:9px;color:#333;font-weight:700;z-index:5">v73</div>
+  <div id="fq-version-badge" style="position:absolute;bottom:8px;right:12px;font-size:9px;color:#333;font-weight:700;z-index:5">v74</div>
   <img src="https://images.unsplash.com/photo-1517836357463-d25dfeac3438?w=800&q=80" alt="Fitness" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center top;filter:brightness(.35);z-index:0"/>
   <div class="splash-glow"></div>
   <div class="splash-noise"></div>
@@ -2237,7 +2237,7 @@ textarea.fi{resize:vertical;min-height:80px;}
 
 <script>
 // ══ SUPABASE ══
-const FQ_VERSION='v73';console.log('%cFitQuest '+FQ_VERSION,'color:#e50914;font-weight:bold;font-size:14px');
+const FQ_VERSION='v74';console.log('%cFitQuest '+FQ_VERSION,'color:#e50914;font-weight:bold;font-size:14px');
 // ══ PROXY DE IA (Cloudflare Worker) ══
 // Quando preenchido, a IA real funciona em produção com a chave protegida no servidor.
 // Deixe '' para usar o plano local (fallback). Ex: 'https://fitquest-ai.SEU-USUARIO.workers.dev'
@@ -3796,11 +3796,14 @@ function RD_parseTreino(codigo,testPace){
     return segs;
   }
 
-  // Padrão G2: run/walk geral "Xmin/km ... Ncorrendo X Mcaminhando"
-  m=principal.match(/(\d+(?:[.,]\d+)?)\s*(KM|MIN)[:\s-]*.*?(\d+(?:[.,]\d+)?)\s*(M|'|MIN)\s*(?:CORRIDA(?:\s*LEVE)?|CORRENDO)\s*X\s*(\d+(?:[.,]\d+)?)\s*(M|'|"|MIN)\s*CAMIN/);
+  // Padrão G2: run/walk geral, bem permissivo — não depende de achar a palavra exata
+  // CORRENDO/CORRIDA/FORTE, só precisa de 2 distâncias/tempos separados por X ou + com
+  // "CAMIN" depois (cobre "CORRENDO LEVE", "MAIS FORTE", "DE CORRIDA", etc.)
+  m=principal.match(/(\d+(?:[.,]\d+)?)\s*(KM|MIN)[:\s-]*.*?(\d+(?:[.,]\d+)?)\s*(M|KM|'|MIN)[^X+\d]*?(?:X|\+)\s*(\d+(?:[.,]\d+)?)\s*(M|KM|'|"|MIN)[^.]*?CAMIN/);
   if(m){
     let [,total,tu,run,ru,walk,wu]=m;
     total=parseFloat(total.replace(',','.'));run=parseFloat(run.replace(',','.'));walk=parseFloat(walk.replace(',','.'));
+    if(ru==='KM')run*=1000; if(wu==='KM')walk*=1000; // normaliza tudo pra metros
     if(tu==='KM'){
       const cicloKm=(run+walk)/1000;const nCiclos=Math.max(1,Math.round(total/cicloKm));
       const minRun=RD_distParaMin(run/1000,'Z2',testPace),minWalk=(walk/1000)*9.5;
@@ -3838,6 +3841,27 @@ function RD_parseTreino(codigo,testPace){
     const km=parseFloat(m[1].replace(',','.'));
     segs.push({label:`Prova — ${km}km`,min:Math.round(RD_distParaMin(km,'Z3',testPace)),zona:'Z3',
       ref:'Ritmo de prova — o que o corpo permitir no dia'});
+    return segs;
+  }
+
+  // Caso especial: "Xkm CORRENDO + Y' PARADO + Zkm CORRENDO" (corrida interrompida por parada)
+  m=principal.match(/(\d+(?:[.,]\d+)?)\s*KM\s*CORRENDO\s*\+\s*(\d+(?:[.,]\d+)?)\s*'\s*PARADO\s*\+\s*(\d+(?:[.,]\d+)?)\s*KM\s*CORRENDO/);
+  if(m){
+    const [,d1,pausa,d2]=m.map(x=>x?parseFloat(x.replace(',','.')):x);
+    segs.push({label:`${d1}km contínuos`,min:Math.round(RD_distParaMin(d1,'Z2',testPace)),zona:'Z2',
+      ref:`${RD_fmtPace(testPace/RD_ZONA_PCT.Z2)} · Z2 (Leve)`});
+    segs.push({label:`Pausa de ${pausa}min`,min:Math.round(pausa),zona:'Z1',ref:'Parado, recuperando'});
+    segs.push({label:`${d2}km contínuos`,min:Math.round(RD_distParaMin(d2,'Z2',testPace)),zona:'Z2',
+      ref:`${RD_fmtPace(testPace/RD_ZONA_PCT.Z2)} · Z2 (Leve)`});
+    return segs;
+  }
+
+  // Caso especial: prosa livre "Xkm correndo, caminhe quando precisar"
+  m=principal.match(/(\d+(?:[.,]\d+)?)\s*KM\s*CORRENDO.*?CAMINHAR/);
+  if(m){
+    const km=parseFloat(m[1].replace(',','.'));
+    segs.push({label:`${km}km — corra o máximo possível`,min:Math.round(RD_distParaMin(km,'Z2',testPace)),zona:'Z2',
+      ref:`${RD_fmtPace(testPace/RD_ZONA_PCT.Z2)} · Z2 (Leve) — caminhe 1min sempre que precisar, sem culpa`});
     return segs;
   }
 
