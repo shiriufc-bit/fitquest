@@ -792,7 +792,7 @@ textarea.fi{resize:vertical;min-height:80px;}
 
 <!-- SPLASH -->
 <div id="sc-splash" class="screen active">
-  <div id="fq-version-badge" style="position:absolute;bottom:8px;right:12px;font-size:9px;color:#333;font-weight:700;z-index:5">v70</div>
+  <div id="fq-version-badge" style="position:absolute;bottom:8px;right:12px;font-size:9px;color:#333;font-weight:700;z-index:5">v73</div>
   <img src="https://images.unsplash.com/photo-1517836357463-d25dfeac3438?w=800&q=80" alt="Fitness" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center top;filter:brightness(.35);z-index:0"/>
   <div class="splash-glow"></div>
   <div class="splash-noise"></div>
@@ -881,6 +881,12 @@ textarea.fi{resize:vertical;min-height:80px;}
           <label class="ro"><input type="radio" name="tempo" value="Avançado (2+ anos)">Avançado<br><small>2+ anos</small></label>
         </div>
       </div>
+      <div class="fg"><label class="fl">Carga aproximada no Supino (kg) <span style="font-weight:400;color:var(--mu)">(pode chutar, opcional)</span></label>
+        <input class="fi" type="number" id="a-cargasupino" placeholder="Ex: 40" min="0" max="400"/>
+      </div>
+      <div class="fg"><label class="fl">Carga aproximada no Agachamento (kg) <span style="font-weight:400;color:var(--mu)">(pode chutar, opcional)</span></label>
+        <input class="fi" type="number" id="a-cargaagacho" placeholder="Ex: 60" min="0" max="500"/>
+      </div>
       
       <div class="fg"><label class="fl">Dias disponíveis por semana</label>
         <div class="rg" id="rg-dias">
@@ -940,6 +946,17 @@ textarea.fi{resize:vertical;min-height:80px;}
           <label class="co"><input type="checkbox" value="Melhorar pace/velocidade"><span class="cb"></span>⚡ Melhorar pace / velocidade</label>
           <label class="co"><input type="checkbox" value="Correr sem dor ou lesão"><span class="cb"></span>🩺 Correr sem dor ou lesão</label>
         </div>
+      </div>
+      <div class="fg"><label class="fl">Se você pratica corrida, qual seu nível nela? <span style="font-weight:400;color:var(--mu)">(pode ser diferente do nível na musculação)</span></label>
+        <div class="rg" id="rg-nivelcorrida">
+          <label class="ro"><input type="radio" name="nivelcorrida" value="Não corro">Não corro</label>
+          <label class="ro"><input type="radio" name="nivelcorrida" value="Iniciante (0-6 meses)">Iniciante<br><small>0–6 meses</small></label>
+          <label class="ro"><input type="radio" name="nivelcorrida" value="Intermediário (6m-2 anos)">Intermediário<br><small>6m–2 anos</small></label>
+          <label class="ro"><input type="radio" name="nivelcorrida" value="Avançado (2+ anos)">Avançado<br><small>2+ anos</small></label>
+        </div>
+      </div>
+      <div class="fg"><label class="fl">Qual seu ritmo confortável atual de corrida? <span style="font-weight:400;color:var(--mu)">(opcional — deixe em branco se não sabe)</span></label>
+        <input class="fi" type="text" id="a-ritmoatual" placeholder="Ex: 6:30 (min por km)"/>
       </div>
       <div class="fg"><label class="fl">Prazo desejado para atingir o objetivo</label>
         <div class="rg" id="rg-prazo">
@@ -1063,6 +1080,9 @@ textarea.fi{resize:vertical;min-height:80px;}
           <label class="co"><input type="checkbox" value="Braços (bíceps e tríceps)"><span class="cb"></span>Braços (bíceps e tríceps)</label>
           <label class="co"><input type="checkbox" value="Corpo todo equilibrado"><span class="cb"></span>✅ Corpo todo equilibrado</label>
         </div>
+      </div>
+      <div class="fg"><label class="fl">Algum exercício que prefere evitar? <span style="font-weight:400;color:var(--mu)">(opcional, separe por vírgula)</span></label>
+        <input class="fi" type="text" id="a-evitar" placeholder="Ex: burpee, prancha, agachamento livre"/>
       </div>
       <div class="fg"><label class="fl">Suplementação atual</label>
         <div class="cg" id="cg-supl">
@@ -2217,7 +2237,7 @@ textarea.fi{resize:vertical;min-height:80px;}
 
 <script>
 // ══ SUPABASE ══
-const FQ_VERSION='v70';console.log('%cFitQuest '+FQ_VERSION,'color:#e50914;font-weight:bold;font-size:14px');
+const FQ_VERSION='v73';console.log('%cFitQuest '+FQ_VERSION,'color:#e50914;font-weight:bold;font-size:14px');
 // ══ PROXY DE IA (Cloudflare Worker) ══
 // Quando preenchido, a IA real funciona em produção com a chave protegida no servidor.
 // Deixe '' para usar o plano local (fallback). Ex: 'https://fitquest-ai.SEU-USUARIO.workers.dev'
@@ -2953,6 +2973,7 @@ async function doRegister(){
     await sb.from('alunos').upsert(userToRow(u),{onConflict:'id'});
     const users=DB.get('fq_users')||{};users[email]=u;DB.set('fq_users',users);DB.set('fq_cur',email);
     enviarEmailBoasVindas(name, email); // e-mail de boas-vindas (não bloqueia)
+    notificarAdminNovoAluno(name, email); // avisa você por e-mail (não bloqueia)
     if(u.isAdmin){await loadAdmin();show('sc-adm');return;}
     initAnam();show('sc-anam');
   }catch(e){
@@ -3006,8 +3027,10 @@ async function submitAnam(){
     prof:gv('a-prof'),fone:gv('a-fone'),atvTrab:gr('atvtrab'),
     // Etapa 2 - Estrutura
     tempo:gr('tempo'),dias:gr('dias'),dur:gr('dur'),local:gr('local'),
+    cargaSupino:gv('a-cargasupino'),cargaAgacho:gv('a-cargaagacho'),
     // Etapa 3 - Objetivos
     obj:gc('cg-obj'),mc:gc('cg-mc'),prazo:gr('prazo'),motiv:gv('a-motiv'),
+    nivelCorrida:gr('nivelcorrida'),ritmoAtual:gv('a-ritmoatual'),
     // Etapa 4 - Saúde
     saude:gc('cg-saude'),med:gr('med'),medDesc:gv('a-med'),cir:gv('a-cir'),ativo:gr('ativo'),
     // Etapa 5 - Lesões (CRÍTICO para adaptação de treino)
@@ -3018,6 +3041,7 @@ async function submitAnam(){
     temOmbro:gc('cg-lesoes').some(l=>l.includes('Ombro')),
     // Etapa 6 - Composição
     biotipo:gr('biotipo'),gordura:gr('gordura'),foco:gc('cg-foco'),supl:gc('cg-supl'),
+    evitar:gv('a-evitar'),
     // Etapa 7 - Estilo de vida
     sono:gr('sono'),stress:gr('stress'),alim:gr('alim'),
     at:new Date().toISOString()
@@ -3146,7 +3170,32 @@ function RD_perfil(an){
   // Prioridades musculares (o que o aluno quer focar)
   const foco=(an.foco||[]).map(f=>f.toLowerCase());
 
+  // Nível de corrida — pode ser diferente do nível de musculação (aluno avançado na
+  // academia pode ser iniciante correndo, ou vice-versa). Cai no nível geral se não respondido.
+  const tc=(an.nivelCorrida||'').toLowerCase();
+  let nivelCorrida=nivel; // fallback: usa o nivel geral se o aluno nao respondeu
+  if(tc.includes('iniciante'))nivelCorrida='iniciante';
+  else if(tc.includes('intermedi'))nivelCorrida='intermediario';
+  else if(tc.includes('avan'))nivelCorrida='avancado';
+  else if(tc.includes('não corro')||tc.includes('nao corro'))nivelCorrida=null;
+
+  // Ritmo atual real de corrida (min/km), se o aluno informou — substitui a estimativa por nível
+  let ritmoAtual=null;
+  if(an.ritmoAtual){
+    const m=String(an.ritmoAtual).match(/(\d+)[:\.](\d+)/);
+    if(m)ritmoAtual=parseInt(m[1])+parseInt(m[2])/60;
+    else{const m2=String(an.ritmoAtual).match(/(\d+(?:[.,]\d+)?)/);if(m2)ritmoAtual=parseFloat(m2[1].replace(',','.'));}
+  }
+
+  // Cargas de referência (kg) — usadas pra sugerir peso real em vez de só %1RM
+  const cargaSupino=parseFloat(an.cargaSupino)||null;
+  const cargaAgacho=parseFloat(an.cargaAgacho)||null;
+
+  // Exercícios que o aluno prefere evitar (por preferência, não por lesão)
+  const evitar=(an.evitar||'').toLowerCase().split(',').map(s=>s.trim()).filter(Boolean);
+
   return {nivel,dias,dur,objetivo,idade,fcMax,recup,ambiente,corrida,foco,
+    nivelCorrida,ritmoAtual,cargaSupino,cargaAgacho,evitar,
     lesoes:{joelho:!!an.temJoelho,lombar:!!an.temLombar,ombro:!!an.temOmbro},
     peso:parseFloat(an.peso)||75};
 }
@@ -3247,13 +3296,21 @@ function RD_pool(grupo,p){
   if(p.lesoes.ombro)contra.push(RD_CONTRA.ombro);
   const eq=RD_EQUIP[p.ambiente];
   const g=grupo.toLowerCase();
-  return EXERCISE_BANK.filter(e=>{
+  const evitar=p.evitar||[];
+  let filtrado=EXERCISE_BANK.filter(e=>{
     if(!e.muscle)return false;
     if(!e.muscle.toLowerCase().includes(g))return false;
     if(contra.some(rx=>rx.test(e.name)))return false;      // lesão contraindica
     if(eq&&!eq.test(e.equipment||''))return false;          // equipamento indisponível
     return true;
   });
+  // Preferência do aluno (não é contraindicação de segurança — se filtrar tudo, ignora a preferência
+  // pra não deixar o grupo muscular sem nenhum exercício disponível)
+  if(evitar.length){
+    const semEvitados=filtrado.filter(e=>!evitar.some(termo=>e.name.toLowerCase().includes(termo)));
+    if(semEvitados.length)filtrado=semEvitados;
+  }
+  return filtrado;
 }
 
 // Rotação por semana: varia exercícios (evita adaptação e monotonia)
@@ -3545,6 +3602,18 @@ function RD_gerarGym(p){
           }
           else if(isometria){reps='20-40s (segure)';rest=60;load='Sustentação máxima com técnica';}
           else if(composto)rest=presc.rest+15;
+          // Se o aluno informou carga de referência (supino/agachamento), converte a faixa
+          // de %1RM em kg reais e some ao lado do texto — muito mais acionável que só %
+          const ehSupinoRef=/supino/i.test(e.name), ehAgachoRef=/agachamento/i.test(e.name);
+          const refKg=ehSupinoRef?p.cargaSupino:(ehAgachoRef?p.cargaAgacho:null);
+          if(refKg&&typeof load==='string'){
+            const mPct=load.match(/(\d+)-(\d+)%/);
+            if(mPct){
+              const kgMin=Math.round(refKg*parseInt(mPct[1])/100);
+              const kgMax=Math.round(refKg*parseInt(mPct[2])/100);
+              load=load+` · ≈${kgMin}-${kgMax}kg`;
+            }
+          }
           exs.push({id:e.id,sets,reps,load,rest,obs:`RIR ${presc.rir} (deixe ${presc.rir} reps na reserva). ${e.obs||'Execute com controle total.'}`});
         });
       });
@@ -3574,212 +3643,343 @@ function RD_gerarGym(p){
 }
 
 // ─── 6. MOTOR DE CORRIDA (zonas de FC reais + progressão) ───
+const RD_TREINOS_DB={"CAM4":{"tipo":"CAMINHADA","aquecimento":"5 MIN CAMINHADA","principal":"4KM DE CAMINHADA EM Z1 (MUITO LEVE)","esfriamento":"5 MIN CAMINHADA"},"CAM40":{"tipo":"CAMINHADA","aquecimento":"NÃO","principal":"40 MINUTOS DE CAMINHADA EM Z1 (MUITO LEVE)","esfriamento":"NÃO"},"CAM45":{"tipo":"CAMINHADA","aquecimento":"NÃO","principal":"40 MINUTOS DE CAMINHADA EM Z1 (MUITO LEVE)","esfriamento":"NÃO"},"CAM5":{"tipo":"CAMINHADA","aquecimento":"5 MIN CAMINHADA","principal":"5KM DE CAMINHADA EM Z1 (MUITO LEVE)","esfriamento":"5 MIN CAMINHADA"},"CAM6":{"tipo":"CAMINHADA","aquecimento":"5 MIN CAMINHADA","principal":"5KM DE CAMINHADA EM Z1 (MUITO LEVE)","esfriamento":"5 MIN CAMINHADA"},"FAR10-1KMX1KM":{"tipo":"FARTLEK","aquecimento":"5 MIN TROTE","principal":"10KM INTERCALANDO 1KM FORTE(Z4) X 1KM LEVE(Z2)","esfriamento":"5 MIN TROTE"},"FAR10-400X400":{"tipo":"FARTLEK","aquecimento":"5 MIN TROTE","principal":"10KM INTERCALANDO 400M FORTE(Z4) X 400M LEVE(Z2)","esfriamento":"5 MIN TROTE"},"FAR10-500X500":{"tipo":"FARTLEK","aquecimento":"5 MIN TROTE","principal":"10KM INTERCALANDO 500M FORTE(Z4) X 500M LEVE(Z2)","esfriamento":"5 MIN TROTE"},"FAR10-600X400":{"tipo":"FARTLEK","aquecimento":"5 MIN TROTE","principal":"10KM INTERCALANDO 600M FORTE(Z4) X 400M LEVE(Z2)","esfriamento":"5 MIN TROTE"},"FAR10-700X300":{"tipo":"FARTLEK","aquecimento":"5 MIN TROTE","principal":"10KM INTERCALANDO 700M FORTE(Z4) X 300M LEVE(Z2)","esfriamento":"5 MIN TROTE"},"FAR12-1KMX1KM":{"tipo":"FARTLEK","aquecimento":"5 MIN TROTE","principal":"12KM INTERCALANDO 1KM FORTE(Z4) X 1KM LEVE(Z2)","esfriamento":"5 MIN TROTE"},"FAR12-2KMX1KM":{"tipo":"FARTLEK","aquecimento":"5 MIN TROTE","principal":"12KM INTERCALANDO 2KM FORTE(Z4) X 1KM LEVE(Z2)","esfriamento":"5 MIN TROTE"},"FAR12-3KMX3KM":{"tipo":"FARTLEK","aquecimento":"5 MIN TROTE","principal":"12KM INTERCALANDO 3KM FORTE(Z4) X 3KM LEVE(Z2)","esfriamento":"5 MIN TROTE"},"FAR12-500X500":{"tipo":"FARTLEK","aquecimento":"5 MIN TROTE","principal":"12KM INTERCALANDO 500M FORTE(Z4) X 500M LEVE(Z2)","esfriamento":"5 MIN TROTE"},"FAR12-600X600":{"tipo":"FARTLEK","aquecimento":"5 MIN TROTE","principal":"12KM INTERCALANDO 600M FORTE(Z4) X 600M LEVE(Z2)","esfriamento":"5 MIN TROTE"},"FAR6-300X300":{"tipo":"FARTLEK","aquecimento":"5 MIN TROTE","principal":"6KM INTERCALANDO 300M FORTE(Z4) X 300M LEVE(Z2)","esfriamento":"5 MIN TROTE"},"FAR6-400X200":{"tipo":"FARTLEK","aquecimento":"5 MIN TROTE","principal":"6KM INTERCALANDO 400M FORTE(Z4) X 200M LEVE(Z2)","esfriamento":"5 MIN TROTE"},"FAR6-400X400":{"tipo":"FARTLEK","aquecimento":"5 MIN TROTE","principal":"6KM INTERCALANDO 400M FORTE(Z4) X 400M LEVE(Z2)","esfriamento":"5 MIN TROTE"},"FAR6-500X500":{"tipo":"FARTLEK","aquecimento":"5 MIN TROTE","principal":"6KM INTERCALANDO 500M FORTE(Z4) X 500M LEVE(Z2)","esfriamento":"5 MIN TROTE"},"FAR6-600X600":{"tipo":"FARTLEK","aquecimento":"5 MIN TROTE","principal":"6KM INTERCALANDO 600M FORTE(Z4) X 600M LEVE(Z2)","esfriamento":"5 MIN TROTE"},"FAR7KM-2'X2'":{"tipo":"FARTLEK","aquecimento":"5 MIN TROTE","principal":"7KM INTERCALANDO 200M FORTE (Z4) X 200M LEVE (Z2)","esfriamento":"5 MIN TROTE"},"FAR8-400X400":{"tipo":"FARTLEK","aquecimento":"5 MIN TROTE","principal":"8KM INTERCALANDO 400M FORTE(Z4) X 400M LEVE(Z2)","esfriamento":"5 MIN TROTE"},"FAR8-500X300":{"tipo":"FARTLEK","aquecimento":"5 MIN TROTE","principal":"8KM INTERCALANDO 500M FORTE(Z4) X 300M LEVE(Z2)","esfriamento":"5 MIN TROTE"},"FAR8-500X500":{"tipo":"FARTLEK","aquecimento":"5 MIN TROTE","principal":"8KM INTERCALANDO 500M FORTE(Z4) X 500M LEVE(Z2)","esfriamento":"5 MIN TROTE"},"FAR8-600X200":{"tipo":"FARTLEK","aquecimento":"5 MIN TROTE","principal":"8KM INTERCALANDO 600M FORTE(Z4) X 200M LEVE(Z2)","esfriamento":"5 MIN TROTE"},"FAR8-800X800":{"tipo":"FARTLEK","aquecimento":"5 MIN TROTE","principal":"8KM INTERCALANDO 800M FORTE(Z4) X 800M LEVE(Z2)","esfriamento":"5 MIN TROTE"},"INI35-1'X1'":{"tipo":"INICIANTE","aquecimento":"5 MIN CAMINHADA","principal":"35 MIN: 1' CORRIDA LEVE X 1' CAMINHANDO","esfriamento":"5 MIN CAMINHANDO"},"INI40-3'X1'":{"tipo":"INICIANTE","aquecimento":"5 MIN CAMINHADA","principal":"40 MINUTOS INTERCALANDO 3' CORRENDO X 1' CAMINHANDO","esfriamento":"5 MIN CAMINHADA"},"INI45-1'X1'":{"tipo":"INICIANTE","aquecimento":"5 MIN CAMINHADA","principal":"45 MINUTOS INTERCALANDO 1' CORRENDO UM POUCO MAIS FORTE X 1' CAMINHANDO","esfriamento":"5 MIN CAMINHADA"},"INI4KM-200X200":{"tipo":"INICIANTE","aquecimento":"5 MIN CAMINHADA","principal":"4KM INTERCALANDO 200M CORRENDO LEVE X 200 M CAMINHANDO","esfriamento":"5 MIN CAMINHADA"},"INI4KM-300X200":{"tipo":"INICIANTE","aquecimento":"5 MIN CAMINHADA","principal":"4KM INTERCALANDO 300M CORRENDO X 200M CAMINHANDO","esfriamento":"5 MIN CAMINHANDO"},"INI50-4'X1'":{"tipo":"INICIANTE","aquecimento":"5 MIN CAMINHADA","principal":"50 MIN INTERCALANDO 4' CORRIDA X 1' CAMINHADA","esfriamento":"5 MIN CAMINHADA"},"INI5K-100X100|300X200":{"tipo":"INICIANTE","aquecimento":"5 MIN CAMINHADA","principal":"3KM - 100M CORRENDO x100M CAMINHANDO. 2 KM - 300M CORRENDO X 200M CAMINHANDO","esfriamento":"5 MIN CAMINHADA"},"INI5K-700MX300M":{"tipo":"INICIANTE","aquecimento":"5 MIN CAMINHADA","principal":"5KM INTERCALANDO 700 M CORRENDO X 300M CAMINHANDO","esfriamento":"5 MIN CAMINHADA"},"INI5KM-100FX100":{"tipo":"INICIANTE","aquecimento":"5 MIN CAMINHADA","principal":"5KM INTERCALANDO 100M FORTE X 100M CAMINHANDO","esfriamento":"5 MIN CAMINHADA"},"INI5KM-2,5KMX4' PARADO":{"tipo":"INICIANTE","aquecimento":"5 MIN CAMINHADA","principal":"2,5KM CORRENDO + 4 ' PARADO + 2,5KM CORRENDO","esfriamento":"5 MIN CAMINHADA"},"INI5KM-400X100":{"tipo":"INICIANTE","aquecimento":"5 MIN CAMINHADA","principal":"5KM INTERCALANDO 400M CORRIDA X 100M CAMINHADA","esfriamento":"5 MIN CAMINHADA"},"INI5KM-4'X1'":{"tipo":"INICIANTE","aquecimento":"5 MIN CAMINHADA","principal":"5KM INTERCALANDO 4' CORRIDA X 1' CAMINHADA","esfriamento":"5 MIN CAMINHADA"},"INI5KM-800X200":{"tipo":"INICIANTE","aquecimento":"5 MIN CAMINHADA","principal":"5KM INTERCALANDO 800M CORRENDO X 200M CAMINHANDO","esfriamento":"5 MIN CAMINHADA"},"INI5KM-900X100":{"tipo":"INICIANTE","aquecimento":"5 MIN CAMINHADA","principal":"5KM INTERCALANDO 900M DE CORRIDA X 100M DE CAMINHADA","esfriamento":"5 MIN CAMINHADA"},"INI5KM-TESTE":{"tipo":"INICIANTE","aquecimento":"5 MIN CAMINHADA","principal":"5KM CORRENDO, SEMPRE QUE PRECISAR CAMINHAR FAÇA POR 1'.","esfriamento":"5 MIN CAMINHADA"},"INI6K-400X200":{"tipo":"INICIANTE","aquecimento":"5 MIN CAMINHADA","principal":"6KM INTERCALANDO 400M CORRIDA X 200M CAMINHADA.","esfriamento":"5 MIN CAMINHADA"},"INI6KM-1800X200":{"tipo":"INICIANTE","aquecimento":"5 MIN CAMINHADA","principal":"6KM INTERCALANDO 1,8KM CORRENDO X 200M CAMINHANDO","esfriamento":"5 MIN CAMINHADA"},"INI6KM-1KMX200M":{"tipo":"INICIANTE","aquecimento":"5 MIN CAMINHADA","principal":"5 X (1KM CORRENDO X 200M CAMINHANDO)","esfriamento":"5MIN CAMINHADA"},"INI6KM-200FX200":{"tipo":"INICIANTE","aquecimento":"5 MIN CAMINHADA","principal":"6KM INTERCALANDO 200M CORRENDO MAIS FORTE X 200M CAMINHANDO","esfriamento":"5 MIN CAMINHADA"},"INI6KM-400F X 100":{"tipo":"INICIANTE","aquecimento":"5 MIN CAMINHADA","principal":"6KM INTERCALANDO 400M MAIS FORTE X 100M CAMINHANDO","esfriamento":"5MIN CAMINHADA"},"INI6KM-500X100":{"tipo":"INICIANTE","aquecimento":"5 MIN CAMINHADA","principal":"6KM INTERCALANDO 500M CORRENDO  X 100M CAMINHANDO","esfriamento":"5 MIN CAMINHANDO"},"INT10-1KMX2'":{"tipo":"INTERVALADO","aquecimento":"5 MIN TROTE","principal":"10 TIROS DE 1KM (Z5) x RECUPERAÇÃO 2 MINUTOS PARADO","esfriamento":"5 MIN TROTE"},"INT10-2KMX5'":{"tipo":"INTERVALADO","aquecimento":"5 MIN TROTE","principal":"5 TIROS DE 2KM (Z5) x RECUPERAÇÃO 5 MINUTOS PARADO","esfriamento":"5 MIN TROTE"},"INT10-300X200":{"tipo":"INTERVALADO","aquecimento":"1KM DE TROTE","principal":"10KM - TIROS DE 300M (Z5) x RECUPERAÇÃO DE 200M (Z1/Z2)","esfriamento":"5 MIN TROTE"},"INT10-400X100":{"tipo":"INTERVALADO","aquecimento":"1KM DE TROTE","principal":"10KM - TIROS DE 400M (Z5) x RECUPERAÇÃO DE 100M (Z1/Z2)","esfriamento":"5 MIN TROTE"},"INT10-700X300":{"tipo":"INTERVALADO","aquecimento":"1KM DE TROTE","principal":"10KM - TIROS DE 700M (Z5) x RECUPERAÇÃO DE 200M (Z1/Z2)","esfriamento":"5 MIN TROTE"},"INT10-800X200":{"tipo":"INTERVALADO","aquecimento":"1KM DE TROTE","principal":"10KM - TIROS DE 800M (Z5) x RECUPERAÇÃO DE 200M (Z1/Z2)","esfriamento":"5 MIN TROTE"},"INT40MIN-1'X1'":{"tipo":"INTERVALADO","aquecimento":"1KM DE TROTE","principal":"40 MIN - TIROS DE 1' (Z5) x RECUPERAÇÃO DE 1' (Z1/Z2)","esfriamento":"5 MIN TROTE"},"INT40MIN-2'X2'":{"tipo":"INTERVALADO","aquecimento":"1KM DE TROTE","principal":"40 MIN - TIROS DE 2' (Z5) x RECUPERAÇÃO DE 2' (Z1/Z2)","esfriamento":"5 MIN TROTE"},"INT40MIN-3'X2'":{"tipo":"INTERVALADO","aquecimento":"1KM DE TROTE","principal":"40 MIN - TIROS DE 3' (Z5) x RECUPERAÇÃO DE 2' (Z1/Z2)","esfriamento":"5 MIN TROTE"},"INT40MIN-4'X1'":{"tipo":"INTERVALADO","aquecimento":"1KM DE TROTE","principal":"40 MIN - TIROS DE 4' (Z5) x RECUPERAÇÃO DE 1' (Z1/Z2)","esfriamento":"5 MIN TROTE"},"INT6-100X100":{"tipo":"INTERVALADO","aquecimento":"5 MIN TROTE","principal":"6KM - TIROS DE 100M (Z5) x RECUPERAÇÃO DE 100M (Z1/Z2)","esfriamento":"5 MIN TROTE"},"INT6-200X200":{"tipo":"INTERVALADO","aquecimento":"5 MIN TROTE","principal":"6KM - TIROS DE 200M (Z5) x RECUPERAÇÃO DE 200M (Z1/Z2)","esfriamento":"5 MIN TROTE"},"INT6-2KMX5'":{"tipo":"INTERVALADO","aquecimento":"5 MIN TROTE","principal":"3 TIROS DE 2KM (Z5) x RECUPERAÇÃO 5 MINUTOS PARADO","esfriamento":"5 MIN TROTE"},"INT6-300X200":{"tipo":"INTERVALADO","aquecimento":"5 MIN TROTE","principal":"6KM - TIROS DE 300M (Z5) x RECUPERAÇÃO DE 200M (Z1/Z2)","esfriamento":"5 MIN TROTE"},"INT6-3KMX6'":{"tipo":"INTERVALADO","aquecimento":"5 MIN TROTE","principal":"2 TIROS DE 3KM (Z5) x RECUPERAÇÃO 6 MINUTOS PARADO","esfriamento":"5 MIN TROTE"},"INT6-400X1'":{"tipo":"INTERVALADO","aquecimento":"5 MIN TROTE","principal":"15 X TIROS DE 400M (Z5) X 1 MIN RECUPERANDO PARADO","esfriamento":"5 MIN TROTE"},"INT6-400X100":{"tipo":"INTERVALADO","aquecimento":"5 MIN TROTE","principal":"6KM - TIROS DE 400M (Z5) x RECUPERAÇÃO DE 100M (Z1/Z2)","esfriamento":"5 MIN TROTE"},"INT6-400X200":{"tipo":"INTERVALADO","aquecimento":"5 MIN TROTE","principal":"6KM - TIROS DE 400M (Z5) x RECUPERAÇÃO DE 200M (Z1/Z2)","esfriamento":"5 MIN TROTE"},"INT6-500X1'":{"tipo":"INTERVALADO","aquecimento":"5 MIN TROTE","principal":"12 X TIROS DE 500M (Z5) X 1 MIN RECUPERANDO PARADO","esfriamento":"5 MIN TROTE"},"INT6-500X100":{"tipo":"INTERVALADO","aquecimento":"5 MIN TROTE","principal":"6KM - TIROS DE 500M (Z5) x RECUPERAÇÃO DE 100M (Z1/Z2)","esfriamento":"5 MIN TROTE"},"INT7-100X100":{"tipo":"INTERVALADO","aquecimento":"5 MIN TROTE","principal":"7KM - TIROS DE 100M (Z5) x RECUPERAÇÃO DE 100M (Z1/Z2)","esfriamento":"5 MIN TROTE"},"INT7-1KMX2'":{"tipo":"INTERVALADO","aquecimento":"5 MIN TROTE","principal":"7 TIROS DE 1KM (Z5) x RECUPERAÇÃO 2 MINUTOS PARADO","esfriamento":"5 MIN TROTE"},"INT7-400X300":{"tipo":"INTERVALADO","aquecimento":"5 MIN TROTE","principal":"7KM - TIROS DE 400M (Z5) x RECUPERAÇÃO DE 300M (Z1/Z2)","esfriamento":"5 MIN TROTE"},"INT7-500X200":{"tipo":"INTERVALADO","aquecimento":"5 MIN TROTE","principal":"7KM - TIROS DE 500M (Z5) x RECUPERAÇÃO DE 200M (Z1/Z2)","esfriamento":"5 MIN TROTE"},"INT7-600X100":{"tipo":"INTERVALADO","aquecimento":"5 MIN TROTE","principal":"7KM - TIROS DE 600M (Z5) x RECUPERAÇÃO DE 100M (Z1/Z2)","esfriamento":"5 MIN TROTE"},"INT8-1KMX2'":{"tipo":"INTERVALADO","aquecimento":"5 MIN TROTE","principal":"8 TIROS DE 1KM (Z5) x RECUPERAÇÃO 2 MINUTOS PARADO","esfriamento":"5 MIN TROTE"},"INT8-200X200":{"tipo":"INTERVALADO","aquecimento":"1KM DE TROTE","principal":"8KM - TIROS DE 200M (Z5) x RECUPERAÇÃO DE 200M (Z1/Z2)","esfriamento":"5 MIN TROTE"},"INT8-2KMX5'":{"tipo":"INTERVALADO","aquecimento":"5 MIN TROTE","principal":"4 TIROS DE 2KM (Z5) x RECUPERAÇÃO 5 MINUTOS PARADO","esfriamento":"5 MIN TROTE"},"INT8-300X200":{"tipo":"INTERVALADO","aquecimento":"1KM DE TROTE","principal":"8KM - TIROS DE 300M (Z5) x RECUPERAÇÃO DE 200M (Z1/Z2)","esfriamento":"5 MIN TROTE"},"INT8-400X100":{"tipo":"INTERVALADO","aquecimento":"1KM DE TROTE","principal":"8KM - TIROS DE 400M (Z5) x RECUPERAÇÃO DE 100M (Z1/Z2)","esfriamento":"5 MIN TROTE"},"INT8-4KMX7'":{"tipo":"INTERVALADO","aquecimento":"5 MIN TROTE","principal":"2 TIROS DE 4KM (Z5) x RECUPERAÇÃO 7 MINUTOS PARADO","esfriamento":"5 MIN TROTE"},"INT8-600X200":{"tipo":"INTERVALADO","aquecimento":"1KM DE TROTE","principal":"8KM - TIROS DE 600M (Z5) x RECUPERAÇÃO DE 200M (Z1/Z2)","esfriamento":"5 MIN TROTE"},"INT9-1KMX2'":{"tipo":"INTERVALADO","aquecimento":"5 MIN TROTE","principal":"9 TIROS DE 1KM (Z5) x RECUPERAÇÃO 2 MINUTOS PARADO","esfriamento":"5 MIN TROTE"},"INT9-3KMX6'":{"tipo":"INTERVALADO","aquecimento":"5 MIN TROTE","principal":"3 TIROS DE 3KM (Z5) x RECUPERAÇÃO 6 MINUTOS PARADO","esfriamento":"5 MIN TROTE"},"LON16":{"tipo":"LONGO","aquecimento":"NÃO","principal":"RODAGEM DE 16KM ENTRE Z2 E Z3","esfriamento":"NÃO"},"LON17":{"tipo":"LONGO","aquecimento":"NÃO","principal":"RODAGEM DE 17KM ENTRE Z2 E Z3","esfriamento":"NÃO"},"LON18":{"tipo":"LONGO","aquecimento":"NÃO","principal":"RODAGEM DE 18KM ENTRE Z2 E Z3","esfriamento":"NÃO"},"LON19":{"tipo":"LONGO","aquecimento":"NÃO","principal":"RODAGEM DE 19KM ENTRE Z2 E Z3","esfriamento":"NÃO"},"LON20":{"tipo":"LONGO","aquecimento":"NÃO","principal":"RODAGEM DE 20KM ENTRE Z2 E Z3","esfriamento":"NÃO"},"LON21":{"tipo":"LONGO","aquecimento":"NÃO","principal":"RODAGEM DE 21KM ENTRE Z2 E Z3","esfriamento":"NÃO"},"LON22":{"tipo":"LONGO","aquecimento":"NÃO","principal":"RODAGEM DE 22KM ENTRE Z2 E Z3","esfriamento":"NÃO"},"LON23":{"tipo":"LONGO","aquecimento":"NÃO","principal":"RODAGEM DE 23KM ENTRE Z2 E Z3","esfriamento":"NÃO"},"LON24":{"tipo":"LONGO","aquecimento":"NÃO","principal":"RODAGEM DE 24KM ENTRE Z2 E Z3","esfriamento":"NÃO"},"LON25":{"tipo":"LONGO","aquecimento":"NÃO","principal":"RODAGEM DE 25KM ENTRE Z2 E Z3","esfriamento":"NÃO"},"LON26":{"tipo":"LONGO","aquecimento":"NÃO","principal":"RODAGEM DE 26KM ENTRE Z2 E Z3","esfriamento":"NÃO"},"LON27":{"tipo":"LONGO","aquecimento":"NÃO","principal":"RODAGEM DE 27KM ENTRE Z2 E Z3","esfriamento":"NÃO"},"LON28":{"tipo":"LONGO","aquecimento":"NÃO","principal":"RODAGEM DE 28KM ENTRE Z2 E Z3","esfriamento":"NÃO"},"LON29":{"tipo":"LONGO","aquecimento":"NÃO","principal":"RODAGEM DE 29KM ENTRE Z2 E Z3","esfriamento":"NÃO"},"LON30":{"tipo":"LONGO","aquecimento":"NÃO","principal":"RODAGEM DE 30KM ENTRE Z2 E Z3","esfriamento":"NÃO"},"LON31":{"tipo":"LONGO","aquecimento":"NÃO","principal":"RODAGEM DE 31KM ENTRE Z2 E Z3","esfriamento":"NÃO"},"LON32":{"tipo":"LONGO","aquecimento":"NÃO","principal":"RODAGEM DE 32KM ENTRE Z2 E Z3","esfriamento":"NÃO"},"LON33":{"tipo":"LONGO","aquecimento":"NÃO","principal":"RODAGEM DE 33KM ENTRE Z2 E Z3","esfriamento":"NÃO"},"LON34":{"tipo":"LONGO","aquecimento":"NÃO","principal":"RODAGEM DE 34KM ENTRE Z2 E Z3","esfriamento":"NÃO"},"LON35":{"tipo":"LONGO","aquecimento":"NÃO","principal":"RODAGEM DE 35KM ENTRE Z2 E Z3","esfriamento":"NÃO"},"LON36":{"tipo":"LONGO","aquecimento":"NÃO","principal":"RODAGEM DE 36KM ENTRE Z2 E Z3","esfriamento":"NÃO"},"LON37":{"tipo":"LONGO","aquecimento":"NÃO","principal":"RODAGEM DE 37KM ENTRE Z2 E Z3","esfriamento":"NÃO"},"MARAT":{"tipo":"PROVA","aquecimento":"5 MIN TROTE","principal":"42KM DE CORRIDA","esfriamento":"NÃO"},"MEIA":{"tipo":"PROVA","aquecimento":"NÃO","principal":"21KM DE CORRIDA","esfriamento":"NÃO"},"PIR7k - 2|1|1|1|2":{"tipo":"MISTO","aquecimento":"NÃO","principal":"2KM - LEVE (Z2) + 1KM MODERADO (Z3) + 1 KM FORTE (Z4) + 1KM MODERADO (Z3) + 1KM LEVE (Z2)","esfriamento":"5 MIN TROTE"},"PRO10-1KM":{"tipo":"PROGRESSIVO","aquecimento":"NÃO","principal":"10KM AUMENTANDO INTENSIDADE A CADA 1 KM","esfriamento":"5 MIN TROTE"},"PRO10-2KM":{"tipo":"PROGRESSIVO","aquecimento":"NÃO","principal":"10KM AUMENTANDO INTENSIDADE A CADA 2 KM","esfriamento":"5 MIN TROTE"},"PRO12-1KM":{"tipo":"PROGRESSIVO","aquecimento":"NÃO","principal":"12KM AUMENTANDO INTENSIDADE A CADA 1 KM","esfriamento":"5 MIN TROTE"},"PRO12-2KM":{"tipo":"PROGRESSIVO","aquecimento":"NÃO","principal":"12KM AUMENTANDO INTENSIDADE A CADA 2 KM","esfriamento":"5 MIN TROTE"},"PRO12-3KM":{"tipo":"PROGRESSIVO","aquecimento":"NÃO","principal":"12KM AUMENTANDO INTENSIDADE A CADA 3 KM","esfriamento":"5 MIN TROTE"},"PRO12-4KM":{"tipo":"PROGRESSIVO","aquecimento":"NÃO","principal":"12KM AUMENTANDO INTENSIDADE A CADA 4 KM","esfriamento":"5 MIN TROTE"},"PRO16-4KM":{"tipo":"PROGRESSIVO","aquecimento":"NÃO","principal":"16KM AUMENTANDO INTENSIDADE A CADA 4 KM","esfriamento":"5 MIN TROTE"},"PRO30-10|10|10":{"tipo":"PROGRESSIVO","aquecimento":"NÃO","principal":"10' LEVE (Z2) + 10' MODERADO (Z3) + 10' FORTE (Z4)","esfriamento":"5 MIN TROTE"},"PRO40-20|10|10":{"tipo":"PROGRESSIVO","aquecimento":"NÃO","principal":"20' LEVE (Z2) + 10' MODERADO (Z3) + 10' FORTE (Z4)","esfriamento":"5 MIN TROTE"},"PRO50-20|20|10":{"tipo":"PROGRESSIVO","aquecimento":"NÃO","principal":"20' LEVE (Z2) + 20' MODERADO (Z3) + 10' FORTE (Z4)","esfriamento":"5 MIN TROTE"},"PRO60-20|20|20":{"tipo":"PROGRESSIVO","aquecimento":"NÃO","principal":"20' LEVE (Z2) + 20' MODERADO (Z3) + 20' FORTE (Z4)","esfriamento":"5 MIN TROTE"},"PRO6-2KM":{"tipo":"PROGRESSIVO","aquecimento":"NÃO","principal":"6KM AUMENTANDO INTENSIDADE A CADA 2 KM","esfriamento":"5 MIN TROTE"},"PRO7-1KM":{"tipo":"PROGRESSIVO","aquecimento":"NÃO","principal":"7KM AUMENTANDO INTENSIDADE A CADA 1 KM","esfriamento":"5 MIN TROTE"},"PRO8-1KM":{"tipo":"PROGRESSIVO","aquecimento":"NÃO","principal":"8KM AUMENTANDO INTENSIDADE A CADA 1 KM","esfriamento":"5 MIN TROTE"},"PRO8-2KM":{"tipo":"PROGRESSIVO","aquecimento":"NÃO","principal":"8KM AUMENTANDO INTENSIDADE A CADA 2 KM","esfriamento":"5 MIN TROTE"},"PRO9-1KM":{"tipo":"PROGRESSIVO","aquecimento":"NÃO","principal":"9KM AUMENTANDO INTENSIDADE A CADA 1 KM","esfriamento":"5 MIN TROTE"},"PRO9-3KM":{"tipo":"PROGRESSIVO","aquecimento":"NÃO","principal":"9KM AUMENTANDO INTENSIDADE A CADA 3 KM","esfriamento":"5 MIN TROTE"},"PROVA10KM":{"tipo":"PROVA","aquecimento":"5 MIN TROTE","principal":"10KM DE CORRIDA","esfriamento":"NÃO"},"PROVA5KM":{"tipo":"PROVA","aquecimento":"5 MIN TROTE","principal":"5KM DE CORRIDA","esfriamento":"NÃO"},"RIT10KM":{"tipo":"RITMO","aquecimento":"5 MIN TROTE","principal":"10KM RITMO 5 A 7 SEGUNDOS MAIS RÁPIDO QUE Z3","esfriamento":"5 MIN TROTE"},"RIT14KM":{"tipo":"RITMO","aquecimento":"5 MIN TROTE","principal":"14KM 5 A 7 SEGUNDOS MAIS RÁPIDO QUE Z3","esfriamento":"5 MIN TROTE"},"RIT8KM":{"tipo":"RITMO","aquecimento":"5 MIN TROTE","principal":"8KM RITMO 5 A 7 SEGUNDOS MAIS RÁPIDO QUE Z3","esfriamento":"5 MIN TROTE"},"ROD10":{"tipo":"RODAGEM","aquecimento":"5 MIN TROTE","principal":"RODAGEM DE 10KM EM Z3 (MODERADO)","esfriamento":"5 MIN TROTE"},"ROD11":{"tipo":"RODAGEM","aquecimento":"5 MIN TROTE","principal":"RODAGEM DE 11KM EM Z3 (MODERADO)","esfriamento":"5 MIN TROTE"},"ROD12":{"tipo":"RODAGEM","aquecimento":"5 MIN TROTE","principal":"RODAGEM DE 12KM EM Z3 (MODERADO)","esfriamento":"5 MIN TROTE"},"ROD13":{"tipo":"RODAGEM","aquecimento":"5 MIN TROTE","principal":"RODAGEM DE 13KM EM Z3 (MODERADO)","esfriamento":"5 MIN TROTE"},"ROD14":{"tipo":"RODAGEM","aquecimento":"5 MIN TROTE","principal":"RODAGEM DE 14KM EM Z3 (MODERADO)","esfriamento":"5 MIN TROTE"},"ROD15":{"tipo":"RODAGEM","aquecimento":"5 MIN TROTE","principal":"RODAGEM DE 15KM EM Z3 (MODERADO)","esfriamento":"5 MIN TROTE"},"ROD5":{"tipo":"RODAGEM","aquecimento":"5 MIN TROTE","principal":"RODAGEM DE 5KM EM Z3 (MODERADO)","esfriamento":"5 MIN TROTE"},"ROD6":{"tipo":"RODAGEM","aquecimento":"5 MIN TROTE","principal":"RODAGEM DE 6KM EM Z3 (MODERADO)","esfriamento":"5 MIN TROTE"},"ROD7":{"tipo":"RODAGEM","aquecimento":"5 MIN TROTE","principal":"RODAGEM DE 7KM EM Z3 (MODERADO)","esfriamento":"5 MIN TROTE"},"ROD8":{"tipo":"RODAGEM","aquecimento":"5 MIN TROTE","principal":"RODAGEM DE 8KM EM Z3 (MODERADO)","esfriamento":"5 MIN TROTE"},"ROD9":{"tipo":"RODAGEM","aquecimento":"5 MIN TROTE","principal":"RODAGEM DE 9KM EM Z3 (MODERADO)","esfriamento":"5 MIN TROTE"},"TESTE":{"tipo":"TESTE","aquecimento":"5 MIN DE TROTE","principal":"CORRER 3.200 METROS MAIS RÁPIDO QUE CONSEGUIR","esfriamento":"1KM DE TROTE"},"TRO10KM":{"tipo":"TROTE","aquecimento":"NÃO","principal":"TROTE DE 10KM MINUTOS EM Z2 (LEVE)","esfriamento":"NÃO"},"TRO12KM":{"tipo":"TROTE","aquecimento":"NÃO","principal":"TROTE DE 12 KM EM Z2 (LEVE)","esfriamento":"NÃO"},"TRO30":{"tipo":"TROTE","aquecimento":"NÃO","principal":"TROTE DE 30 MINUTOS EM Z2 (LEVE)","esfriamento":"NÃO"},"TRO35":{"tipo":"TROTE","aquecimento":"NÃO","principal":"TROTE DE 35 MINUTOS EM Z2 (LEVE)","esfriamento":"NÃO"},"TRO40":{"tipo":"TROTE","aquecimento":"NÃO","principal":"TROTE DE 40 MINUTOS EM Z2 (LEVE)","esfriamento":"NÃO"},"TRO45":{"tipo":"TROTE","aquecimento":"NÃO","principal":"TROTE DE 45 MINUTOS EM Z2 (LEVE)","esfriamento":"NÃO"},"TRO50":{"tipo":"TROTE","aquecimento":"NÃO","principal":"TROTE DE 50 MINUTOS EM Z2 (LEVE)","esfriamento":"NÃO"},"TRO5KM":{"tipo":"TROTE","aquecimento":"NÃO","principal":"TROTE DE 5KM MINUTOS EM Z2 (LEVE)","esfriamento":"NÃO"},"TRO60":{"tipo":"TROTE","aquecimento":"NÃO","principal":"TROTE DE 60 MINUTOS EM Z2 (LEVE)","esfriamento":"NÃO"},"TRO6KM":{"tipo":"TROTE","aquecimento":"NÃO","principal":"TROTE DE 6KM MINUTOS EM Z2 (LEVE)","esfriamento":"NÃO"},"TRO70":{"tipo":"TROTE","aquecimento":"NÃO","principal":"TROTE DE 70 MINUTOS EM Z2 (LEVE)","esfriamento":"NÃO"},"TRO7KM":{"tipo":"TROTE","aquecimento":"NÃO","principal":"TROTE DE 7KM MINUTOS EM Z2 (LEVE)","esfriamento":"NÃO"},"TRO8KM":{"tipo":"TROTE","aquecimento":"NÃO","principal":"TROTE DE 8KM MINUTOS EM Z2 (LEVE)","esfriamento":"NÃO"}};
+const RD_PLANOS_CORRIDA={"ini5":{"1":[{"dia":"terça","codigo":"INI35-1'X1'"},{"dia":"quinta","codigo":"INI4KM-200X200"},{"dia":"sábado","codigo":"INI4KM-300X200"}],"2":[{"dia":"terça","codigo":"INI40-3'X1'"},{"dia":"quinta","codigo":"INI45-1'X1'"},{"dia":"sábado","codigo":"INI50-4'X1'"}],"3":[{"dia":"terça","codigo":"INI5KM-4'X1'"},{"dia":"quinta","codigo":"INI5K-100X100|300X200"},{"dia":"sábado","codigo":"INI6K-400X200"}],"4":[{"dia":"terça","codigo":"INI45-1'X1'"},{"dia":"quinta","codigo":"INI5K-700MX300M"},{"dia":"sábado","codigo":"INI5KM-100FX100"}],"5":[{"dia":"terça","codigo":"INI6KM-500X100"},{"dia":"quinta","codigo":"INI5KM-800X200"},{"dia":"sábado","codigo":"INI45-1'X1'"}],"6":[{"dia":"terça","codigo":"INI5KM-900X100"},{"dia":"quinta","codigo":"INI6KM-200FX200"},{"dia":"sábado","codigo":"INI6KM-1KMX200M"}],"7":[{"dia":"terça","codigo":"INI6KM-1800X200"},{"dia":"quinta","codigo":"INI45-1'X1'"},{"dia":"sábado","codigo":"INI5KM-2,5KMX4' PARADO"}],"8":[{"dia":"terça","codigo":"INI6KM-400F X 100"},{"dia":"quinta","codigo":"INI5KM-TESTE"},{"dia":"sábado","codigo":"PROVA5KM"}]},"ini10":{"1":[{"dia":"terça","codigo":"ROD5"},{"dia":"quinta","codigo":"FAR6-300X300"},{"dia":"sábado","codigo":"ROD6"}],"2":[{"dia":"terça","codigo":"PRO6-2KM"},{"dia":"quinta","codigo":"INT6-300X200"},{"dia":"sábado","codigo":"ROD7"}],"3":[{"dia":"terça","codigo":"TRO40"},{"dia":"quinta","codigo":"INT6-400X100"},{"dia":"sábado","codigo":"ROD7"}],"4":[{"dia":"terça","codigo":"FAR7KM-2'X2'"},{"dia":"quinta","codigo":"PRO7-1KM"},{"dia":"sábado","codigo":"ROD8"}],"5":[{"dia":"terça","codigo":"TRO50"},{"dia":"quinta","codigo":"FAR6-600X600"},{"dia":"sábado","codigo":"PRO40-20|10|10"}],"6":[{"dia":"terça","codigo":"ROD7"},{"dia":"quinta","codigo":"INT40MIN-3'X2'"},{"dia":"sábado","codigo":"PRO8-1KM"}],"7":[{"dia":"terça","codigo":"TRO6KM"},{"dia":"quinta","codigo":"INT7-1KMX2'"},{"dia":"sábado","codigo":"ROD9"}],"8":[{"dia":"terça","codigo":"ROD6"},{"dia":"quinta","codigo":"INT6-3KMX6'"},{"dia":"sábado","codigo":"ROD9"}],"9":[{"dia":"terça","codigo":"TRO50"},{"dia":"quinta","codigo":"INT40MIN-1'X1'"},{"dia":"sábado","codigo":"PRO50-20|20|10"}],"10":[{"dia":"terça","codigo":"FAR6-400X200"},{"dia":"quinta","codigo":"TRO35"},{"dia":"sábado","codigo":"PROVA10KM"}]},"ini21":{"1":[{"dia":"segunda","codigo":"ROD7"},{"dia":"quarta","codigo":"INT6-500X1'"},{"dia":"sexta","codigo":"PRO40-20|10|10"},{"dia":"domingo","codigo":"ROD9"}],"2":[{"dia":"segunda","codigo":"ROD6"},{"dia":"quarta","codigo":"INT40MIN-4'X1'"},{"dia":"sexta","codigo":"TRO7KM"},{"dia":"domingo","codigo":"ROD11"}],"3":[{"dia":"segunda","codigo":"ROD5"},{"dia":"quarta","codigo":"PRO7-1KM"},{"dia":"sexta","codigo":"FAR7KM-2'X2'"},{"dia":"domingo","codigo":"ROD12"}],"4":[{"dia":"segunda","codigo":"ROD7"},{"dia":"quarta","codigo":"INT8-300X200"},{"dia":"sexta","codigo":"PRO9-3KM"},{"dia":"domingo","codigo":"ROD10"}],"5":[{"dia":"segunda","codigo":"TRO40"},{"dia":"quarta","codigo":"FAR10-400X400"},{"dia":"sexta","codigo":"ROD8"},{"dia":"domingo","codigo":"RIT14KM"}],"6":[{"dia":"segunda","codigo":"ROD7"},{"dia":"quarta","codigo":"INT10-800X200"},{"dia":"sexta","codigo":"ROD11"},{"dia":"domingo","codigo":"PRO10-2KM"}],"7":[{"dia":"segunda","codigo":"TRO50"},{"dia":"quarta","codigo":"INT10-700X300"},{"dia":"sexta","codigo":"ROD6"},{"dia":"domingo","codigo":"LON16"}],"8":[{"dia":"segunda","codigo":"ROD6"},{"dia":"quarta","codigo":"TRO40"},{"dia":"sexta","codigo":"PRO60-20|20|20"},{"dia":"domingo","codigo":"FAR12-1KMX1KM"}],"9":[{"dia":"segunda","codigo":"ROD8"},{"dia":"quarta","codigo":"FAR6-400X200"},{"dia":"sexta","codigo":"ROD7"},{"dia":"domingo","codigo":"LON18"}],"10":[{"dia":"segunda","codigo":"TRO35"},{"dia":"quarta","codigo":"FAR8-500X500"},{"dia":"sexta","codigo":"ROD6"},{"dia":"domingo","codigo":"ROD14"}],"11":[{"dia":"segunda","codigo":"ROD6"},{"dia":"quarta","codigo":"FAR6-400X200"},{"dia":"sexta","codigo":"TRO40"},{"dia":"domingo","codigo":"FAR12-3KMX3KM"}],"12":[{"dia":"segunda","codigo":"TRO35"},{"dia":"quarta","codigo":"ROD10"},{"dia":"sexta","codigo":"TRO45"},{"dia":"domingo","codigo":"MEIA"}]},"ini42":{"1":[{"dia":"segunda","codigo":"ROD8"},{"dia":"terça","codigo":"FAR6-600X600"},{"dia":"quinta","codigo":"TRO45"},{"dia":"sábado","codigo":"ROD6"},{"dia":"domingo","codigo":"ROD13"}],"2":[{"dia":"segunda","codigo":"ROD6"},{"dia":"terça","codigo":"FAR7KM-2'X2'"},{"dia":"quinta","codigo":"INT40MIN-2'X2'"},{"dia":"sábado","codigo":"TRO35"},{"dia":"domingo","codigo":"ROD15"}],"3":[{"dia":"segunda","codigo":"TRO45"},{"dia":"terça","codigo":"ROD8"},{"dia":"quinta","codigo":"INT7-1KMX2'"},{"dia":"sábado","codigo":"PRO6-2KM"},{"dia":"domingo","codigo":"LON17"}],"4":[{"dia":"segunda","codigo":"ROD7"},{"dia":"terça","codigo":"PRO50-20|20|10"},{"dia":"quinta","codigo":"INT8-600X200"},{"dia":"sábado","codigo":"ROD5"},{"dia":"domingo","codigo":"LON19"}],"5":[{"dia":"segunda","codigo":"ROD6"},{"dia":"terça","codigo":"TRO40"},{"dia":"quinta","codigo":"INT8-2KMX5'"},{"dia":"sábado","codigo":"TRO35"},{"dia":"domingo","codigo":"LON23"}],"6":[{"dia":"segunda","codigo":"TRO50"},{"dia":"terça","codigo":"FAR8-600X200"},{"dia":"quinta","codigo":"INT8-300X200"},{"dia":"sábado","codigo":"ROD9"},{"dia":"domingo","codigo":"FAR12-500X500"}],"7":[{"dia":"segunda","codigo":"ROD9"},{"dia":"terça","codigo":"TRO30"},{"dia":"quinta","codigo":"INT40MIN-3'X2'"},{"dia":"sábado","codigo":"ROD6"},{"dia":"domingo","codigo":"LON26"}],"8":[{"dia":"segunda","codigo":"ROD5"},{"dia":"terça","codigo":"ROD8"},{"dia":"quinta","codigo":"INT7-500X200"},{"dia":"sábado","codigo":"ROD7"},{"dia":"domingo","codigo":"RIT14KM"}],"9":[{"dia":"segunda","codigo":"ROD5"},{"dia":"terça","codigo":"PRO8-2KM"},{"dia":"quinta","codigo":"FAR7KM-2'X2'"},{"dia":"sábado","codigo":"TRO30"},{"dia":"domingo","codigo":"LON29"}],"10":[{"dia":"segunda","codigo":"TRO5KM"},{"dia":"terça","codigo":"PRO50-20|20|10"},{"dia":"quinta","codigo":"INT7-1KMX2'"},{"dia":"sábado","codigo":"FAR10-500X500"},{"dia":"domingo","codigo":"RIT10KM"}],"11":[{"dia":"segunda","codigo":"ROD7"},{"dia":"terça","codigo":"ROD5"},{"dia":"quinta","codigo":"INT8-300X200"},{"dia":"sábado","codigo":"ROD6"},{"dia":"domingo","codigo":"LON32"}],"12":[{"dia":"segunda","codigo":"TRO30"},{"dia":"terça","codigo":"ROD6"},{"dia":"quinta","codigo":"INT10-700X300"},{"dia":"sábado","codigo":"PRO10-2KM"},{"dia":"domingo","codigo":"ROD12"}],"13":[{"dia":"segunda","codigo":"ROD6"},{"dia":"terça","codigo":"FAR6-400X400"},{"dia":"quinta","codigo":"PRO6-2KM"},{"dia":"sábado","codigo":"TRO35"},{"dia":"domingo","codigo":"LON35"}],"14":[{"dia":"segunda","codigo":"TRO30"},{"dia":"terça","codigo":"FAR7KM-2'X2'"},{"dia":"quinta","codigo":"ROD6"},{"dia":"sábado","codigo":"ROD7"},{"dia":"domingo","codigo":"PRO16-4KM"}],"15":[{"dia":"segunda","codigo":"ROD5"},{"dia":"terça","codigo":"FAR8-600X200"},{"dia":"quinta","codigo":"INT6-3KMX6'"},{"dia":"sábado","codigo":"RIT8KM"},{"dia":"domingo","codigo":"ROD12"}],"16":[{"dia":"segunda","codigo":"TRO40"},{"dia":"terça","codigo":"FAR6-400X400"},{"dia":"quinta","codigo":"ROD6"},{"dia":"sábado","codigo":"TRO30"},{"dia":"domingo","codigo":"MARAT"}]},"int5":{"1":[{"dia":"terça","codigo":"TRO40"},{"dia":"quinta","codigo":"FAR6-400X400"},{"dia":"sábado","codigo":"ROD8"}],"2":[{"dia":"terça","codigo":"PRO6-2KM"},{"dia":"quinta","codigo":"INT6-200X200"},{"dia":"sábado","codigo":"ROD9"}],"3":[{"dia":"terça","codigo":"ROD7"},{"dia":"quinta","codigo":"INT6-500X100"},{"dia":"sábado","codigo":"ROD10"}],"4":[{"dia":"terça","codigo":"TRO50"},{"dia":"quinta","codigo":"FAR7KM-2'X2'"},{"dia":"sábado","codigo":"PRO9-1KM"}],"5":[{"dia":"terça","codigo":"ROD8"},{"dia":"quinta","codigo":"INT40MIN-1'X1'"},{"dia":"sábado","codigo":"RIT8KM"}],"6":[{"dia":"terça","codigo":"PIR7k - 2|1|1|1|2"},{"dia":"quinta","codigo":"INT7-1KMX2'"},{"dia":"sábado","codigo":"ROD10"}],"7":[{"dia":"terça","codigo":"FAR8-500X300"},{"dia":"quinta","codigo":"INT6-400X200"},{"dia":"sábado","codigo":"PRO50-20|20|10"}],"8":[{"dia":"terça","codigo":"ROD8"},{"dia":"quinta","codigo":"TRO50"},{"dia":"sábado","codigo":"PROVA5KM"}]},"int10":{"1":[{"dia":"terça","codigo":"ROD8"},{"dia":"quinta","codigo":"FAR8-800X800"},{"dia":"sábado","codigo":"ROD10"}],"2":[{"dia":"terça","codigo":"TRO40"},{"dia":"quinta","codigo":"FAR7KM-2'X2'"},{"dia":"sábado","codigo":"PRO12-3KM"}],"3":[{"dia":"terça","codigo":"ROD7"},{"dia":"quinta","codigo":"INT8-1KMX2'"},{"dia":"sábado","codigo":"ROD12"}],"4":[{"dia":"terça","codigo":"FAR8-500X300"},{"dia":"quinta","codigo":"PIR7k - 2|1|1|1|2"},{"dia":"sábado","codigo":"ROD9"}],"5":[{"dia":"terça","codigo":"TRO40"},{"dia":"quinta","codigo":"INT8-2KMX5'"},{"dia":"sábado","codigo":"ROD15"}],"6":[{"dia":"terça","codigo":"ROD7"},{"dia":"quinta","codigo":"FAR8-400X400"},{"dia":"sábado","codigo":"PRO10-2KM"}],"7":[{"dia":"terça","codigo":"TRO5KM"},{"dia":"quinta","codigo":"INT6-100X100"},{"dia":"sábado","codigo":"FAR12-2KMX1KM"}],"8":[{"dia":"terça","codigo":"ROD10"},{"dia":"quinta","codigo":"INT10-800X200"},{"dia":"sábado","codigo":"LON16"}],"9":[{"dia":"terça","codigo":"TRO45"},{"dia":"quinta","codigo":"PRO50-20|20|10"},{"dia":"sábado","codigo":"ROD12"}],"10":[{"dia":"terça","codigo":"ROD5"},{"dia":"quinta","codigo":"TRO40"},{"dia":"sábado","codigo":"PROVA10KM"}]},"int21":{"1":[{"dia":"segunda","codigo":"ROD10"},{"dia":"quarta","codigo":"FAR8-800X800"},{"dia":"sexta","codigo":"PRO9-3KM"},{"dia":"domingo","codigo":"ROD12"}],"2":[{"dia":"segunda","codigo":"TRO50"},{"dia":"quarta","codigo":"INT10-800X200"},{"dia":"sexta","codigo":"PIR7k - 2|1|1|1|2"},{"dia":"domingo","codigo":"ROD10"}],"3":[{"dia":"segunda","codigo":"ROD9"},{"dia":"quarta","codigo":"INT7-1KMX2'"},{"dia":"sexta","codigo":"FAR10-600X400"},{"dia":"domingo","codigo":"FAR12-2KMX1KM"}],"4":[{"dia":"segunda","codigo":"TRO60"},{"dia":"quarta","codigo":"INT10-300X200"},{"dia":"sexta","codigo":"PRO12-2KM"},{"dia":"domingo","codigo":"ROD15"}],"5":[{"dia":"segunda","codigo":"ROD7"},{"dia":"quarta","codigo":"INT10-700X300"},{"dia":"sexta","codigo":"PRO12-3KM"},{"dia":"domingo","codigo":"LON17"}],"6":[{"dia":"segunda","codigo":"TRO40"},{"dia":"quarta","codigo":"FAR8-500X500"},{"dia":"sexta","codigo":"ROD10"},{"dia":"domingo","codigo":"ROD14"}],"7":[{"dia":"segunda","codigo":"ROD10"},{"dia":"quarta","codigo":"INT9-1KMX2'"},{"dia":"sexta","codigo":"PRO12-4KM"},{"dia":"domingo","codigo":"LON16"}],"8":[{"dia":"segunda","codigo":"ROD12"},{"dia":"quarta","codigo":"FAR12-3KMX3KM"},{"dia":"sexta","codigo":"TRO70"},{"dia":"domingo","codigo":"RIT14KM"}],"9":[{"dia":"segunda","codigo":"ROD13"},{"dia":"quarta","codigo":"FAR10-500X500"},{"dia":"sexta","codigo":"TRO50"},{"dia":"domingo","codigo":"LON19"}],"10":[{"dia":"segunda","codigo":"TRO40"},{"dia":"quarta","codigo":"FAR10-700X300"},{"dia":"sexta","codigo":"ROD13"},{"dia":"domingo","codigo":"ROD15"}],"11":[{"dia":"segunda","codigo":"TRO60"},{"dia":"quarta","codigo":"FAR8-400X400"},{"dia":"sexta","codigo":"PRO10-2KM"},{"dia":"domingo","codigo":"ROD12"}],"12":[{"dia":"segunda","codigo":"ROD8"},{"dia":"quarta","codigo":"PRO60-20|20|20"},{"dia":"sexta","codigo":"TRO50"},{"dia":"domingo","codigo":"MEIA"}]},"int42":{"1":[{"dia":"segunda","codigo":"TRO50"},{"dia":"terça","codigo":"FAR10-400X400"},{"dia":"quinta","codigo":"PRO10-2KM"},{"dia":"sábado","codigo":"ROD8"},{"dia":"domingo","codigo":"ROD15"}],"2":[{"dia":"segunda","codigo":"ROD10"},{"dia":"terça","codigo":"PRO12-2KM"},{"dia":"quinta","codigo":"INT10-800X200"},{"dia":"sábado","codigo":"ROD14"},{"dia":"domingo","codigo":"LON18"}],"3":[{"dia":"segunda","codigo":"TRO60"},{"dia":"terça","codigo":"ROD13"},{"dia":"quinta","codigo":"INT10-800X200"},{"dia":"sábado","codigo":"TRO60"},{"dia":"domingo","codigo":"LON24"}],"4":[{"dia":"segunda","codigo":"TRO50"},{"dia":"terça","codigo":"ROD15"},{"dia":"quinta","codigo":"INT8-1KMX2'"},{"dia":"sábado","codigo":"ROD10"},{"dia":"domingo","codigo":"LON17"}],"5":[{"dia":"segunda","codigo":"TRO70"},{"dia":"terça","codigo":"PRO12-4KM"},{"dia":"quinta","codigo":"FAR10-700X300"},{"dia":"sábado","codigo":"ROD13"},{"dia":"domingo","codigo":"LON18"}],"6":[{"dia":"segunda","codigo":"ROD15"},{"dia":"terça","codigo":"FAR12-1KMX1KM"},{"dia":"quinta","codigo":"INT8-4KMX7'"},{"dia":"sábado","codigo":"FAR12-500X500"},{"dia":"domingo","codigo":"LON22"}],"7":[{"dia":"segunda","codigo":"ROD15"},{"dia":"terça","codigo":"FAR8-800X800"},{"dia":"quinta","codigo":"PRO12-2KM"},{"dia":"sábado","codigo":"LON16"},{"dia":"domingo","codigo":"LON25"}],"8":[{"dia":"segunda","codigo":"TRO70"},{"dia":"terça","codigo":"PRO16-4KM"},{"dia":"quinta","codigo":"INT9-1KMX2'"},{"dia":"sábado","codigo":"ROD10"},{"dia":"domingo","codigo":"LON27"}],"9":[{"dia":"segunda","codigo":"ROD10"},{"dia":"terça","codigo":"ROD12"},{"dia":"quinta","codigo":"PRO7-1KM"},{"dia":"sábado","codigo":"TRO40"},{"dia":"domingo","codigo":"LON30"}],"10":[{"dia":"segunda","codigo":"TRO45"},{"dia":"terça","codigo":"PRO16-4KM"},{"dia":"quinta","codigo":"FAR10-500X500"},{"dia":"sábado","codigo":"ROD15"},{"dia":"domingo","codigo":"LON18"}],"11":[{"dia":"segunda","codigo":"ROD13"},{"dia":"terça","codigo":"RIT14KM"},{"dia":"quinta","codigo":"INT8-4KMX7'"},{"dia":"sábado","codigo":"TRO70"},{"dia":"domingo","codigo":"LON25"}],"12":[{"dia":"segunda","codigo":"ROD14"},{"dia":"terça","codigo":"TRO50"},{"dia":"quinta","codigo":"FAR12-1KMX1KM"},{"dia":"sábado","codigo":"TRO40"},{"dia":"domingo","codigo":"LON32"}],"13":[{"dia":"segunda","codigo":"ROD8"},{"dia":"terça","codigo":"PIR7k - 2|1|1|1|2"},{"dia":"quinta","codigo":"ROD10"},{"dia":"sábado","codigo":"TRO40"},{"dia":"domingo","codigo":"LON35"}],"14":[{"dia":"segunda","codigo":"ROD6"},{"dia":"terça","codigo":"FAR10-600X400"},{"dia":"quinta","codigo":"PRO9-3KM"},{"dia":"sábado","codigo":"ROD10"},{"dia":"domingo","codigo":"FAR12-1KMX1KM"}],"15":[{"dia":"segunda","codigo":"TRO70"},{"dia":"terça","codigo":"FAR10-700X300"},{"dia":"quinta","codigo":"INT10-800X200"},{"dia":"sábado","codigo":"ROD12"},{"dia":"domingo","codigo":"ROD14"}],"16":[{"dia":"segunda","codigo":"ROD8"},{"dia":"terça","codigo":"TRO50"},{"dia":"quinta","codigo":"ROD10"},{"dia":"sábado","codigo":"TRO35"},{"dia":"domingo","codigo":"MARAT"}]},"ava5":{"1":[{"dia":"segunda","codigo":"TRO50"},{"dia":"quarta","codigo":"FAR8-600X200"},{"dia":"sexta","codigo":"PRO7-1KM"},{"dia":"domingo","codigo":"ROD10"}],"2":[{"dia":"segunda","codigo":"PIR7k - 2|1|1|1|2"},{"dia":"quarta","codigo":"INT40MIN-2'X2'"},{"dia":"sexta","codigo":"ROD8"},{"dia":"domingo","codigo":"FAR12-500X500"}],"3":[{"dia":"segunda","codigo":"ROD10"},{"dia":"quarta","codigo":"FAR8-400X400"},{"dia":"sexta","codigo":"TRO45"},{"dia":"domingo","codigo":"ROD13"}],"4":[{"dia":"segunda","codigo":"ROD5"},{"dia":"quarta","codigo":"INT7-500X200"},{"dia":"sexta","codigo":"PRO8-2KM"},{"dia":"domingo","codigo":"ROD10"}],"5":[{"dia":"segunda","codigo":"TRO40"},{"dia":"quarta","codigo":"RIT8KM"},{"dia":"sexta","codigo":"INT7-1KMX2'"},{"dia":"domingo","codigo":"LON16"}],"6":[{"dia":"segunda","codigo":"ROD5"},{"dia":"quarta","codigo":"FAR6-300X300"},{"dia":"sexta","codigo":"TRO35"},{"dia":"domingo","codigo":"ROD12"}],"7":[{"dia":"segunda","codigo":"PRO30-10|10|10"},{"dia":"quarta","codigo":"INT10-700X300"},{"dia":"sexta","codigo":"TRO50"},{"dia":"domingo","codigo":"ROD9"}],"8":[{"dia":"segunda","codigo":"FAR6-500X500"},{"dia":"quarta","codigo":"ROD5"},{"dia":"sexta","codigo":"TRO35"},{"dia":"domingo","codigo":"PROVA5KM"}]},"ava10":{"1":[{"dia":"segunda","codigo":"ROD9"},{"dia":"quarta","codigo":"FAR10-500X500"},{"dia":"sexta","codigo":"PRO12-3KM"},{"dia":"domingo","codigo":"LON16"}],"2":[{"dia":"segunda","codigo":"TRO40"},{"dia":"quarta","codigo":"FAR8-600X200"},{"dia":"sexta","codigo":"PRO50-20|20|10"},{"dia":"domingo","codigo":"ROD12"}],"3":[{"dia":"segunda","codigo":"ROD7"},{"dia":"quarta","codigo":"INT8-200X200"},{"dia":"sexta","codigo":"PIR7k - 2|1|1|1|2"},{"dia":"domingo","codigo":"ROD10"}],"4":[{"dia":"segunda","codigo":"PRO9-3KM"},{"dia":"quarta","codigo":"INT7-1KMX2'"},{"dia":"sexta","codigo":"TRO40"},{"dia":"domingo","codigo":"ROD13"}],"5":[{"dia":"segunda","codigo":"TRO50"},{"dia":"quarta","codigo":"INT10-300X200"},{"dia":"sexta","codigo":"PRO10-2KM"},{"dia":"domingo","codigo":"ROD14"}],"6":[{"dia":"segunda","codigo":"ROD5"},{"dia":"quarta","codigo":"FAR12-500X500"},{"dia":"sexta","codigo":"TRO45"},{"dia":"domingo","codigo":"LON17"}],"7":[{"dia":"segunda","codigo":"TRO7KM"},{"dia":"quarta","codigo":"INT8-4KMX7'"},{"dia":"sexta","codigo":"FAR6-300X300"},{"dia":"domingo","codigo":"RIT10KM"}],"8":[{"dia":"segunda","codigo":"ROD8"},{"dia":"quarta","codigo":"PRO40-20|10|10"},{"dia":"sexta","codigo":"INT10-2KMX5'"},{"dia":"domingo","codigo":"ROD12"}],"9":[{"dia":"segunda","codigo":"TRO40"},{"dia":"quarta","codigo":"INT6-200X200"},{"dia":"sexta","codigo":"FAR10-400X400"},{"dia":"domingo","codigo":"ROD12"}],"10":[{"dia":"segunda","codigo":"ROD6"},{"dia":"quarta","codigo":"FAR7KM-2'X2'"},{"dia":"sexta","codigo":"TRO35"},{"dia":"domingo","codigo":"PROVA10KM"}]},"ava21":{"1":[{"dia":"segunda","codigo":"ROD8"},{"dia":"terça","codigo":"PRO10-1KM"},{"dia":"quarta","codigo":"TRO50"},{"dia":"sexta","codigo":"FAR10-400X400"},{"dia":"domingo","codigo":"ROD14"}],"2":[{"dia":"segunda","codigo":"TRO45"},{"dia":"terça","codigo":"FAR12-600X600"},{"dia":"quarta","codigo":"ROD10"},{"dia":"sexta","codigo":"INT10-800X200"},{"dia":"domingo","codigo":"LON16"}],"3":[{"dia":"segunda","codigo":"PRO60-20|20|20"},{"dia":"terça","codigo":"FAR8-500X300"},{"dia":"quarta","codigo":"PRO12-4KM"},{"dia":"sexta","codigo":"INT7-1KMX2'"},{"dia":"domingo","codigo":"ROD15"}],"4":[{"dia":"segunda","codigo":"TRO60"},{"dia":"terça","codigo":"PIR7k - 2|1|1|1|2"},{"dia":"quarta","codigo":"ROD8"},{"dia":"sexta","codigo":"INT9-1KMX2'"},{"dia":"domingo","codigo":"LON18"}],"5":[{"dia":"segunda","codigo":"TRO45"},{"dia":"terça","codigo":"ROD8"},{"dia":"quarta","codigo":"FAR12-2KMX1KM"},{"dia":"sexta","codigo":"INT6-3KMX6'"},{"dia":"domingo","codigo":"LON17"}],"6":[{"dia":"segunda","codigo":"ROD7"},{"dia":"terça","codigo":"FAR12-1KMX1KM"},{"dia":"quarta","codigo":"ROD12"},{"dia":"sexta","codigo":"INT40MIN-1'X1'"},{"dia":"domingo","codigo":"LON20"}],"7":[{"dia":"segunda","codigo":"TRO50"},{"dia":"terça","codigo":"PRO9-1KM"},{"dia":"quarta","codigo":"ROD7"},{"dia":"sexta","codigo":"INT6-2KMX5'"},{"dia":"domingo","codigo":"PRO16-4KM"}],"8":[{"dia":"segunda","codigo":"ROD9"},{"dia":"terça","codigo":"INT7-500X200"},{"dia":"quarta","codigo":"ROD8"},{"dia":"sexta","codigo":"PRO12-1KM"},{"dia":"domingo","codigo":"LON19"}],"9":[{"dia":"segunda","codigo":"ROD7"},{"dia":"terça","codigo":"FAR8-500X300"},{"dia":"quarta","codigo":"TRO40"},{"dia":"sexta","codigo":"INT9-3KMX6'"},{"dia":"domingo","codigo":"LON24"}],"10":[{"dia":"segunda","codigo":"TRO35"},{"dia":"terça","codigo":"RIT14KM"},{"dia":"quarta","codigo":"PRO60-20|20|20"},{"dia":"sexta","codigo":"ROD8"},{"dia":"domingo","codigo":"LON18"}],"11":[{"dia":"segunda","codigo":"ROD9"},{"dia":"terça","codigo":"FAR10-700X300"},{"dia":"quarta","codigo":"ROD8"},{"dia":"sexta","codigo":"INT40MIN-1'X1'"},{"dia":"domingo","codigo":"FAR12-1KMX1KM"}],"12":[{"dia":"segunda","codigo":"ROD7"},{"dia":"terça","codigo":"PRO6-2KM"},{"dia":"quarta","codigo":"ROD9"},{"dia":"sexta","codigo":"TRO40"},{"dia":"domingo","codigo":"MEIA"}]},"ava42":{"1":[{"dia":"segunda","codigo":"TRO50"},{"dia":"terça","codigo":"FAR12-600X600"},{"dia":"quarta","codigo":"PRO10-2KM"},{"dia":"quinta","codigo":"TRO60"},{"dia":"sábado","codigo":"ROD13"},{"dia":"domingo","codigo":"LON18"}],"2":[{"dia":"segunda","codigo":"ROD10"},{"dia":"terça","codigo":"FAR12-2KMX1KM"},{"dia":"quarta","codigo":"ROD14"},{"dia":"quinta","codigo":"INT10-700X300"},{"dia":"sábado","codigo":"ROD15"},{"dia":"domingo","codigo":"LON20"}],"3":[{"dia":"segunda","codigo":"TRO70"},{"dia":"terça","codigo":"FAR12-600X600"},{"dia":"quarta","codigo":"ROD15"},{"dia":"quinta","codigo":"INT9-1KMX2'"},{"dia":"sábado","codigo":"ROD15"},{"dia":"domingo","codigo":"LON21"}],"4":[{"dia":"segunda","codigo":"PRO12-3KM"},{"dia":"terça","codigo":"TRO70"},{"dia":"quarta","codigo":"ROD15"},{"dia":"quinta","codigo":"INT8-2KMX5'"},{"dia":"sábado","codigo":"ROD12"},{"dia":"domingo","codigo":"LON24"}],"5":[{"dia":"segunda","codigo":"ROD12"},{"dia":"terça","codigo":"FAR12-3KMX3KM"},{"dia":"quarta","codigo":"PIR7k - 2|1|1|1|2"},{"dia":"quinta","codigo":"ROD15"},{"dia":"sábado","codigo":"ROD14"},{"dia":"domingo","codigo":"LON28"}],"6":[{"dia":"segunda","codigo":"ROD10"},{"dia":"terça","codigo":"ROD15"},{"dia":"quarta","codigo":"INT9-3KMX6'"},{"dia":"quinta","codigo":"PRO16-4KM"},{"dia":"sábado","codigo":"TRO60"},{"dia":"domingo","codigo":"LON23"}],"7":[{"dia":"segunda","codigo":"ROD10"},{"dia":"terça","codigo":"FAR6-400X400"},{"dia":"quarta","codigo":"TRO50"},{"dia":"quinta","codigo":"INT10-2KMX5'"},{"dia":"sábado","codigo":"PRO40-20|10|10"},{"dia":"domingo","codigo":"LON25"}],"8":[{"dia":"segunda","codigo":"TRO60"},{"dia":"terça","codigo":"RIT14KM"},{"dia":"quarta","codigo":"ROD9"},{"dia":"quinta","codigo":"FAR10-700X300"},{"dia":"sábado","codigo":"ROD12"},{"dia":"domingo","codigo":"LON27"}],"9":[{"dia":"segunda","codigo":"ROD10"},{"dia":"terça","codigo":"FAR7KM-2'X2'"},{"dia":"quarta","codigo":"ROD12"},{"dia":"quinta","codigo":"PRO60-20|20|20"},{"dia":"domingo","codigo":"LON30"}],"10":[{"dia":"segunda","codigo":"TRO35"},{"dia":"terça","codigo":"ROD6"},{"dia":"quarta","codigo":"TRO50"},{"dia":"quinta","codigo":"FAR8-500X300"},{"dia":"sábado","codigo":"ROD5"},{"dia":"domingo","codigo":"LON32"}],"11":[{"dia":"segunda","codigo":"ROD5"},{"dia":"terça","codigo":"PRO10-1KM"},{"dia":"quarta","codigo":"TRO40"},{"dia":"quinta","codigo":"INT40MIN-1'X1'"},{"dia":"sábado","codigo":"ROD8"},{"dia":"domingo","codigo":"LON25"}],"12":[{"dia":"segunda","codigo":"TRO40"},{"dia":"terça","codigo":"FAR6-600X600"},{"dia":"quinta","codigo":"ROD10"},{"dia":"sábado","codigo":"TRO40"},{"dia":"domingo","codigo":"LON34"}],"13":[{"dia":"segunda","codigo":"TRO35"},{"dia":"terça","codigo":"ROD7"},{"dia":"quinta","codigo":"FAR8-400X400"},{"dia":"sábado","codigo":"ROD8"},{"dia":"domingo","codigo":"LON36"}],"14":[{"dia":"segunda","codigo":"TRO30"},{"dia":"terça","codigo":"ROD13"},{"dia":"quinta","codigo":"FAR12-1KMX1KM"},{"dia":"sábado","codigo":"ROD12"},{"dia":"domingo","codigo":"ROD15"}],"15":[{"dia":"segunda","codigo":"RIT14KM"},{"dia":"terça","codigo":"ROD10"},{"dia":"quinta","codigo":"FAR10-1KMX1KM"},{"dia":"sábado","codigo":"ROD7"},{"dia":"domingo","codigo":"LON17"}],"16":[{"dia":"segunda","codigo":"TRO60"},{"dia":"terça","codigo":"ROD10"},{"dia":"quinta","codigo":"ROD12"},{"dia":"sábado","codigo":"TRO40"},{"dia":"domingo","codigo":"MARAT"}]}};
+
+// ══════════════════════════════════════════════════════════════
+// MOTOR DE CORRIDA v3 — baseado na metodologia real do Rennan Dias
+// 153 treinos catalogados + 12 planos periodizados (nível × distância)
+// extraídos da planilha profissional. Fiel ao original, personalizado
+// por ritmo estimado do aluno (Karvonen adaptado às zonas do Rennan).
+// ══════════════════════════════════════════════════════════════
+
+const RD_ZONA_PCT={Z1:0.65,Z2:0.75,Z3:0.85,Z4:0.95,Z5:1.05};
+const RD_ZONA_NOME={Z1:'Muito Leve',Z2:'Leve',Z3:'Moderado',Z4:'Forte',Z5:'Muito Forte'};
+
+function RD_fmtPace(p){
+  let m=Math.floor(p),s=Math.round((p-m)*60);
+  if(s===60){m+=1;s=0;}
+  return `${m}:${String(s).padStart(2,'0')}/km`;
+}
+function RD_distParaMin(km,zona,testPace){
+  return km*(testPace/RD_ZONA_PCT[zona]);
+}
+
+function RD_parseTreino(codigo,testPace){
+  const t=RD_TREINOS_DB[codigo];
+  if(!t)return null;
+  const principal=(t.principal||'').toUpperCase().trim();
+  let segs=[];
+
+  // Padrão A: segmentos explícitos em TEMPO "X' ZONA (ZN) + Y' ZONA (ZN)"
+  const reTimeSegs=/(\d+)'\s*\w+\s*\(Z(\d)\)/g;
+  let mTimeSegs=[...principal.matchAll(reTimeSegs)];
+  if(principal.includes('+')&&mTimeSegs.length>=2){
+    mTimeSegs.forEach((m,i)=>{
+      const zona='Z'+m[2];
+      segs.push({label:`Bloco ${i+1}`,min:parseInt(m[1]),zona,ref:`${RD_fmtPace(testPace/RD_ZONA_PCT[zona])} · ${zona} (${RD_ZONA_NOME[zona]})`});
+    });
+    return segs;
+  }
+
+  // Padrão B: segmentos explícitos em KM "XKM ... (ZN) + YKM ... (ZN)" (pirâmide)
+  const reKmSegs=/(\d+(?:[.,]\d+)?)\s*KM(?:(?!KM).)*?\(Z(\d)\)/g;
+  let mKmSegs=[...principal.matchAll(reKmSegs)];
+  if(principal.includes('+')&&mKmSegs.length>=2){
+    mKmSegs.forEach((m,i)=>{
+      const zona='Z'+m[2];const kmv=parseFloat(m[1].replace(',','.'));
+      const mins=Math.round(RD_distParaMin(kmv,zona,testPace));
+      segs.push({label:`Bloco ${i+1} (${kmv}km)`,min:mins,zona,ref:`${RD_fmtPace(testPace/RD_ZONA_PCT[zona])} · ${zona} (${RD_ZONA_NOME[zona]})`});
+    });
+    return segs;
+  }
+
+  // Padrão C: FARTLEK "Xkm INTERCALANDO Aunit FORTE(Z4) X Bunit LEVE(Z2)"
+  let m=principal.match(/(\d+(?:[.,]\d+)?)\s*KM\s*INTERCALANDO\s*(\d+(?:[.,]\d+)?)\s*(M|KM)\s*\w*\(Z(\d)\)\s*X\s*(\d+(?:[.,]\d+)?)\s*(M|KM)\s*\w*\(Z(\d)\)/);
+  if(m){
+    let [,totalKm,d1,u1,z1,d2,u2,z2]=m;
+    d1=parseFloat(d1.replace(',','.'))/(u1==='M'?1000:1);
+    d2=parseFloat(d2.replace(',','.'))/(u2==='M'?1000:1);
+    totalKm=parseFloat(totalKm.replace(',','.'));
+    const ciclo=d1+d2;const nCiclos=Math.max(1,Math.round(totalKm/ciclo));
+    const zona1='Z'+z1,zona2='Z'+z2;
+    const min1=RD_distParaMin(d1,zona1,testPace),min2=RD_distParaMin(d2,zona2,testPace);
+    segs.push({label:`${nCiclos}× (${Math.round(d1*1000)}m forte + ${Math.round(d2*1000)}m leve)`,
+      min:Math.round((min1+min2)*nCiclos),zona:zona1,
+      ref:`Alternando ${RD_fmtPace(testPace/RD_ZONA_PCT[zona1])} / ${RD_fmtPace(testPace/RD_ZONA_PCT[zona2])} · ${zona1}/${zona2}`});
+    return segs;
+  }
+
+  // Padrão D1: "N TIROS DE Xunit (Z5) x RECUPERAÇÃO Y MIN/unit"
+  m=principal.match(/(\d+)\s*TIROS\s*DE\s*(\d+(?:[.,]\d+)?)\s*(M|KM)\s*\(Z(\d)\).*?RECUPERA[ÇC][ÃA]O.*?(\d+(?:[.,]\d+)?)\s*(MINUTOS?|M|KM)/);
+  if(m){
+    let [,n,d,u,z,rec,recU]=m;
+    n=parseInt(n);d=parseFloat(d.replace(',','.'))/(u==='M'?1000:1);const zona='Z'+z;
+    const minTiro=RD_distParaMin(d,zona,testPace);
+    const minRec=/MIN/.test(recU)?parseFloat(rec.replace(',','.')):RD_distParaMin(parseFloat(rec.replace(',','.'))/(recU==='M'?1000:1),'Z1',testPace);
+    segs.push({label:`${n}× ${Math.round(d*1000)}m forte + recuperação`,min:Math.round((minTiro+minRec)*n),zona,
+      ref:`${RD_fmtPace(testPace/RD_ZONA_PCT[zona])} · ${zona} (${RD_ZONA_NOME[zona]}) + trote leve`});
+    return segs;
+  }
+
+  // Padrão D2: "Xkm - TIROS DE Yunit (Z5) x RECUPERAÇÃO DE Zunit" (total dividido em reps)
+  m=principal.match(/(\d+(?:[.,]\d+)?)\s*KM.*?TIROS\s*DE\s*(\d+(?:[.,]\d+)?)\s*(M|KM)\s*\(Z(\d)\).*?RECUPERA[ÇC][ÃA]O.*?(\d+(?:[.,]\d+)?)\s*(M|KM|MINUTOS?)/);
+  if(m){
+    let [,total,d,u,z,rec,recU]=m;
+    total=parseFloat(total.replace(',','.'));d=parseFloat(d.replace(',','.'))/(u==='M'?1000:1);const zona='Z'+z;
+    const isMin=/MIN/.test(recU);
+    const recKm=isMin?null:parseFloat(rec.replace(',','.'))/(recU==='M'?1000:1);
+    const ciclo=d+(recKm||0.15);const n=Math.max(2,Math.round(total/ciclo));
+    const minTiro=RD_distParaMin(d,zona,testPace);
+    const minRec=isMin?parseFloat(rec.replace(',','.')):RD_distParaMin(recKm,'Z1',testPace);
+    segs.push({label:`${n}× ${Math.round(d*1000)}m forte + recuperação`,min:Math.round((minTiro+minRec)*n),zona,
+      ref:`${RD_fmtPace(testPace/RD_ZONA_PCT[zona])} · ${zona} (${RD_ZONA_NOME[zona]}) + trote leve`});
+    return segs;
+  }
+
+  // Padrão D3: intervalado em TEMPO "N MIN - TIROS DE X' (Z5) x RECUPERAÇÃO DE Y'"
+  m=principal.match(/TIROS\s*DE\s*(\d+(?:[.,]\d+)?)\s*'\s*\(Z(\d)\).*?RECUPERA[ÇC][ÃA]O.*?(\d+(?:[.,]\d+)?)\s*'/);
+  if(m){
+    let [,d,z,rec]=m;d=parseFloat(d.replace(',','.'));const zona='Z'+z;rec=parseFloat(rec.replace(',','.'));
+    const mTotal=principal.match(/^(\d+)\s*MIN/);
+    const total=mTotal?parseFloat(mTotal[1]):20;
+    const n=Math.max(2,Math.round(total/(d+rec)));
+    segs.push({label:`${n}× (${d}min forte + ${rec}min recuperação)`,min:Math.round(total),zona,
+      ref:`${RD_fmtPace(testPace/RD_ZONA_PCT[zona])} · ${zona} (${RD_ZONA_NOME[zona]}) + trote leve`});
+    return segs;
+  }
+
+  // Padrão D4: "N X TIROS DE Xm (Z5) X Y MIN RECUPERANDO"
+  m=principal.match(/(\d+)\s*X\s*TIROS\s*DE\s*(\d+(?:[.,]\d+)?)\s*(M|KM)\s*\(Z(\d)\)\s*X\s*(\d+(?:[.,]\d+)?)\s*MIN/);
+  if(m){
+    let [,n,d,u,z,rec]=m;
+    n=parseInt(n);d=parseFloat(d.replace(',','.'))/(u==='M'?1000:1);const zona='Z'+z;rec=parseFloat(rec.replace(',','.'));
+    const minTiro=RD_distParaMin(d,zona,testPace);
+    segs.push({label:`${n}× ${Math.round(d*1000)}m forte + recuperação`,min:Math.round((minTiro+rec)*n),zona,
+      ref:`${RD_fmtPace(testPace/RD_ZONA_PCT[zona])} · ${zona} (${RD_ZONA_NOME[zona]}) + trote leve`});
+    return segs;
+  }
+
+  // Padrão E: PROGRESSIVO "Xkm AUMENTANDO INTENSIDADE A CADA Ykm"
+  m=principal.match(/(\d+(?:[.,]\d+)?)\s*KM\s*AUMENTANDO\s*INTENSIDADE\s*A\s*CADA\s*(\d+(?:[.,]\d+)?)\s*KM/);
+  if(m){
+    const total=parseFloat(m[1].replace(',','.')),passo=parseFloat(m[2].replace(',','.'));
+    const nBlocos=Math.max(2,Math.round(total/passo));
+    const zonasProg=['Z2','Z3','Z4','Z5'];
+    for(let i=0;i<nBlocos;i++){
+      const zona=zonasProg[Math.min(i,zonasProg.length-1)];
+      const mins=Math.round(RD_distParaMin(passo,zona,testPace));
+      segs.push({label:`${passo}km — bloco ${i+1}/${nBlocos}`,min:mins,zona,
+        ref:`${RD_fmtPace(testPace/RD_ZONA_PCT[zona])} · ${zona} (${RD_ZONA_NOME[zona]})`});
+    }
+    return segs;
+  }
+
+  // Padrão F: RITMO "Xkm ... N A M SEGUNDOS MAIS RÁPIDO QUE Z3"
+  m=principal.match(/(\d+(?:[.,]\d+)?)\s*KM\s*(?:RITMO\s*)?\d+\s*A\s*\d+\s*SEGUNDOS\s*MAIS\s*R[ÁA]PIDO\s*QUE\s*Z(\d)/);
+  if(m){
+    const km=parseFloat(m[1].replace(',','.'));const zona='Z'+m[2];
+    const paceAj=testPace/RD_ZONA_PCT[zona]-0.1;
+    segs.push({label:`${km}km em ritmo de prova`,min:Math.round(km*paceAj),zona,
+      ref:`${RD_fmtPace(paceAj)} · um pouco mais rápido que ${zona}`});
+    return segs;
+  }
+
+  // Padrão G1: "N X (Xunit CORRENDO X Yunit CAMINHANDO)"
+  m=principal.match(/(\d+)\s*X\s*\(\s*(\d+(?:[.,]\d+)?)\s*(M|KM)\s*CORRENDO\s*X\s*(\d+(?:[.,]\d+)?)\s*(M|KM)\s*CAMINHANDO/);
+  if(m){
+    let [,n,run,ru,walk,wu]=m;
+    n=parseInt(n);run=parseFloat(run.replace(',','.'))/(ru==='M'?1000:1);walk=parseFloat(walk.replace(',','.'))/(wu==='M'?1000:1);
+    const minRun=RD_distParaMin(run,'Z2',testPace),minWalk=walk*9.5;
+    segs.push({label:`${n}× (${Math.round(run*1000)}m correndo + ${Math.round(walk*1000)}m caminhando)`,
+      min:Math.round((minRun+minWalk)*n),zona:'Z2',ref:'Alternado corrida leve / caminhada · Z1-Z2'});
+    return segs;
+  }
+
+  // Padrão G2: run/walk geral "Xmin/km ... Ncorrendo X Mcaminhando"
+  m=principal.match(/(\d+(?:[.,]\d+)?)\s*(KM|MIN)[:\s-]*.*?(\d+(?:[.,]\d+)?)\s*(M|'|MIN)\s*(?:CORRIDA(?:\s*LEVE)?|CORRENDO)\s*X\s*(\d+(?:[.,]\d+)?)\s*(M|'|"|MIN)\s*CAMIN/);
+  if(m){
+    let [,total,tu,run,ru,walk,wu]=m;
+    total=parseFloat(total.replace(',','.'));run=parseFloat(run.replace(',','.'));walk=parseFloat(walk.replace(',','.'));
+    if(tu==='KM'){
+      const cicloKm=(run+walk)/1000;const nCiclos=Math.max(1,Math.round(total/cicloKm));
+      const minRun=RD_distParaMin(run/1000,'Z2',testPace),minWalk=(walk/1000)*9.5;
+      segs.push({label:`${nCiclos}× (${Math.round(run)}m correndo + ${Math.round(walk)}m caminhando)`,
+        min:Math.round((minRun+minWalk)*nCiclos),zona:'Z2',ref:'Alternado corrida leve / caminhada · Z1-Z2'});
+    }else{
+      const cicloMin=run+walk;const nCiclos=Math.max(1,Math.round(total/cicloMin));
+      segs.push({label:`${nCiclos}× (${Math.round(run)}min correndo + ${Math.round(walk)}min caminhando)`,
+        min:Math.round(total),zona:'Z2',ref:'Alternado corrida leve / caminhada · Z1-Z2'});
+    }
+    return segs;
+  }
+
+  // Padrão H: simples "RODAGEM/TROTE DE Xkm ... ZONA"
+  m=principal.match(/(\d+(?:[.,]\d+)?)\s*KM(?:(?!KM).)*?Z(\d)/);
+  if(m){
+    const km=parseFloat(m[1].replace(',','.'));const zona='Z'+m[2];
+    segs.push({label:`${km}km contínuos`,min:Math.round(RD_distParaMin(km,zona,testPace)),zona,
+      ref:`${RD_fmtPace(testPace/RD_ZONA_PCT[zona])} · ${zona} (${RD_ZONA_NOME[zona]})`});
+    return segs;
+  }
+
+  // Padrão I: tempo simples "TROTE DE X MINUTOS ... Z2"
+  m=principal.match(/(\d+)\s*MINUTOS?(?:(?!MINUTOS?).)*?Z(\d)/);
+  if(m){
+    const mins=parseInt(m[1]);const zona='Z'+m[2];
+    segs.push({label:`${mins}min contínuos`,min:mins,zona,
+      ref:`${RD_fmtPace(testPace/RD_ZONA_PCT[zona])} · ${zona} (${RD_ZONA_NOME[zona]})`});
+    return segs;
+  }
+
+  // Padrão J: PROVA "Xkm DE CORRIDA"
+  m=principal.match(/(\d+(?:[.,]\d+)?)\s*KM\s*DE\s*CORRIDA/);
+  if(m){
+    const km=parseFloat(m[1].replace(',','.'));
+    segs.push({label:`Prova — ${km}km`,min:Math.round(RD_distParaMin(km,'Z3',testPace)),zona:'Z3',
+      ref:'Ritmo de prova — o que o corpo permitir no dia'});
+    return segs;
+  }
+
+  // Caso especial: TESTE de pista
+  if(principal.includes('MAIS RÁPIDO QUE CONSEGUIR')){
+    segs.push({label:'Teste — 3.200m o mais rápido possível',min:Math.round(3.2*testPace/1.05),zona:'Z5',
+      ref:'Esforço máximo — este resultado define suas zonas reais'});
+    return segs;
+  }
+
+  // Fallback genérico
+  let mFbKm=principal.match(/(\d+(?:[.,]\d+)?)\s*KM/);
+  let mFbMin=principal.match(/(\d+)\s*(?:MIN|')/);
+  let mFbZ=principal.match(/Z(\d)/);
+  const zonaFb=mFbZ?'Z'+mFbZ[1]:'Z2';
+  if(mFbKm){
+    const km=parseFloat(mFbKm[1].replace(',','.'));
+    segs.push({label:t.principal,min:Math.round(RD_distParaMin(km,zonaFb,testPace)),zona:zonaFb,
+      ref:`${RD_fmtPace(testPace/RD_ZONA_PCT[zonaFb])} · ${zonaFb} (${RD_ZONA_NOME[zonaFb]})`});
+    return segs;
+  }
+  if(mFbMin){
+    segs.push({label:t.principal,min:parseInt(mFbMin[1]),zona:zonaFb,
+      ref:`${RD_fmtPace(testPace/RD_ZONA_PCT[zonaFb])} · ${zonaFb} (${RD_ZONA_NOME[zonaFb]})`});
+    return segs;
+  }
+  return null;
+}
+
+function RD_montarSessao(codigo,dia,testPace){
+  const t=RD_TREINOS_DB[codigo];
+  if(!t)return null;
+  const segsPrincipais=RD_parseTreino(codigo,testPace)||[];
+  const segmentos=[];
+  const aqTxt=(t.aquecimento||'').toUpperCase().trim();
+  if(aqTxt&&aqTxt!=='NÃO'){
+    const m=aqTxt.match(/(\d+)/);
+    segmentos.push({label:'Aquecimento',min:m?parseInt(m[1]):5,zona:'Z1',ref:'Trote bem leve · Z1'});
+  }
+  segmentos.push(...segsPrincipais);
+  const esfTxt=(t.esfriamento||'').toUpperCase().trim();
+  if(esfTxt&&esfTxt!=='NÃO'){
+    const m=esfTxt.match(/(\d+)/);
+    segmentos.push({label:'Desaceleração',min:m?parseInt(m[1]):5,zona:'Z1',ref:'Trote leve / caminhada · Z1'});
+  }
+  const durTotal=segmentos.reduce((a,s)=>a+s.min,0);
+  const distKm=segsPrincipais.reduce((a,s)=>a+s.min/(testPace/RD_ZONA_PCT[s.zona]),0);
+  return {dia,tipo:t.tipo,texto:t.principal,segmentos,distKm:Math.round(distKm*10)/10,durMin:durTotal};
+}
+
+const RD_DIA_ABREV={segunda:'Seg',terça:'Ter',quarta:'Qua',quinta:'Qui',sexta:'Sex',sábado:'Sáb',domingo:'Dom'};
+const RD_TIPO_TITULO={
+  RODAGEM:'Rodagem',FARTLEK:'Fartlek (Ritmo Variado)',INTERVALADO:'Intervalado (Tiros)',
+  PROGRESSIVO:'Progressivo (Intensidade Crescente)',TROTE:'Trote Leve',LONGO:'Longão',
+  MISTO:'Pirâmide',RITMO:'Ritmo de Prova',PROVA:'🏁 Prova',INICIANTE:'Corrida + Caminhada',
+  TESTE:'Teste de Avaliação',CAMINHADA:'Caminhada'
+};
+const RD_TIPO_DICA={
+  RODAGEM:'Ritmo constante, controlado. Se não consegue manter a conversa, está rápido demais.',
+  FARTLEK:'Brinque com o ritmo — use referências no percurso em vez de cronômetro rígido.',
+  INTERVALADO:'Recuperação sempre em trote leve, nunca parado — mantém o corpo ativo entre os tiros.',
+  PROGRESSIVO:'Comece bem controlado — o objetivo é terminar mais forte, não começar forte.',
+  TROTE:'Ritmo bem leve, de recuperação. Serve pra circular o sangue, não pra treinar forte.',
+  LONGO:'O treino mais importante da semana pra resistência. Regra dos 10%: nunca aumente demais de uma vez.',
+  MISTO:'A pirâmide sobe e desce de intensidade — respeite o ritmo de cada trecho.',
+  RITMO:'Este é o ritmo que você vai sustentar no dia da prova — grave essa sensação.',
+  PROVA:'Chegou o grande dia! Confie no processo das últimas semanas.',
+  INICIANTE:'Alternar corrida e caminhada é o caminho certo pra construir resistência sem lesão.',
+  TESTE:'Esforço máximo neste teste — o resultado vai calibrar seus ritmos de treino reais.',
+  CAMINHADA:'Recuperação ativa. Ritmo de conversa fácil o tempo todo.'
+};
+
 function RD_gerarRun(p){
   if(!p.corrida)return {};
+
+  const distMap={'5k':'5','10k':'10',meia:'21',maratona:'42'};
+  const distKey=distMap[p.corrida]||'10';
+  const nivelMap={destreinado:'ini',iniciante:'ini',intermediario:'int',avancado:'ava'};
+  // Usa o NÍVEL DE CORRIDA especificamente informado (pode ser diferente do nível de musculação)
+  const nivelParaPlano=p.nivelCorrida||p.nivel;
+  const nivelKey=nivelMap[nivelParaPlano]||'int';
+  const planoReal=RD_PLANOS_CORRIDA[nivelKey+distKey];
+  if(!planoReal)return {};
+
+  // Pace de referência (equivalente ao "pace de teste 3.200m")
+  // Se o aluno informou o ritmo confortável real, usa ele (muito mais preciso).
+  // Senão, estima pelo nível de corrida.
+  let testPace;
+  if(p.ritmoAtual){
+    testPace=p.ritmoAtual*0.85; // ritmo confortável informado ≈ Z3 (85%) — reverte pra achar o testPace
+  }else{
+    const paceMap={destreinado:8.5,iniciante:7.5,intermediario:6.5,avancado:5.5};
+    const paceBase=paceMap[nivelParaPlano]||7.0;
+    testPace=paceBase*0.85;
+  }
+
+  // Zonas de FC (Karvonen) — complementam as zonas de ritmo do Rennan com referência de frequência cardíaca
   const fc=p.fcMax;
-  // Karvonen (FC de reserva) — zonas reais de treino, não % simples da FCmáx
   const fcRep=p.nivel==='avancado'?55:p.nivel==='intermediario'?62:70;
   const res=fc-fcRep;
-  const z=(lo,hi)=>`${Math.round(fcRep+res*lo)}-${Math.round(fcRep+res*hi)}bpm`;
-  const Z1=z(.50,.60),Z2=z(.60,.70),Z3=z(.70,.80),Z4=z(.80,.90),Z5=z(.90,1.0);
+  const zHR=(lo,hi)=>`${Math.round(fcRep+res*lo)}-${Math.round(fcRep+res*hi)}bpm`;
+  const ZONA_HR={Z1:zHR(.50,.60),Z2:zHR(.60,.70),Z3:zHR(.70,.80),Z4:zHR(.80,.90),Z5:zHR(.90,1.0)};
 
-  // Pace base estimado pelo nível (min/km) — evolui ao longo do bloco
-  const paceMap={destreinado:8.5,iniciante:7.5,intermediario:6.5,avancado:5.5};
-  const baseInicial=paceMap[p.nivel]||7.0;
-  const fmt=(m)=>{const min=Math.floor(m);const seg=Math.round((m-min)*60);return `${min}:${String(seg).padStart(2,'0')}/km`;};
-
-  // Evolução de pace: melhora ~4% do inicio ao fim do bloco (ganho real de aerobic efficiency em 8 semanas)
-  const paceNaSemana=(s)=>baseInicial*(1-0.04*((s-1)/7));
-
-  const metas={'5k':5,'10k':10,meia:21,maratona:42,pace:10};
-  const alvo=metas[p.corrida]||10;
-  const deloads=RD_deloadSemanas(p);
-
-  // Dias de corrida por semana — escalado pela disponibilidade, mas limitado por segurança
-  // (mais de 4 corridas/semana só faz sentido pra avançado com base construída)
-  const diasDisp=p.dias||3;
-  let nSessoes=2; // Leve + Longão (mínimo seguro)
-  if(diasDisp>=4)nSessoes=3; // + 1 sessão de qualidade
-  if(diasDisp>=5&&p.nivel!=='destreinado'&&p.nivel!=='iniciante')nSessoes=4; // + 1 leve extra
-
-  // Volume inicial seguro por nível
-  const iniMap={destreinado:3,iniciante:4,intermediario:6,avancado:8};
-  const ini=Math.min(iniMap[p.nivel]||4,alvo*0.5);
-  const pico=alvo<=10?alvo:Math.round(alvo*0.75); // provas longas: pico de treino é 75% da meta
-
-  // ── PROGRESSÃO DE VOLUME TOTAL RESPEITANDO A REGRA DOS 10% ──
-  // Constrói a sequência de volume semanal TOTAL (não só o longão) semana a semana,
-  // nunca subindo mais que 10% em relação à semana anterior (exceto deload, que sempre reduz).
-  const volumeTotalIni=ini*2.2; // long freq baixa nas primeiras semanas: total ≈ 2.2x o longão
-  const volumeTotalPico=pico*2.6; // mais sessões de qualidade no pico: total ≈ 2.6x o longão
-  let volumesSemana=[volumeTotalIni];
-  for(let s=2;s<=7;s++){
-    const alvoLinear=volumeTotalIni+(volumeTotalPico-volumeTotalIni)*((s-1)/6);
-    const tetoDez=volumesSemana[s-2]*1.10; // nunca mais que +10% da semana anterior
-    volumesSemana.push(Math.min(alvoLinear,tetoDez));
-  }
-  volumesSemana.push(volumeTotalPico); // semana 8 = pico/prova, sem teto de 10% (é o dia da prova)
-
+  const semanasOrdenadas=Object.keys(planoReal).map(Number).sort((a,b)=>a-b);
+  const totalSemanas=semanasOrdenadas.length;
   const run={};
-  let volumeRealAnterior=null; // rastreia a soma real de km da semana anterior (regra dos 10%)
-  for(let s=1;s<=8;s++){
-    const ehDeload=deloads.includes(s);
-    const pace=paceNaSemana(s);
-    const paceLeve=fmt(pace+0.9),paceMod=fmt(pace+0.15),paceForte=fmt(pace-0.55),paceTiro=fmt(pace-1.15);
 
-    let volumeSemana=volumesSemana[s-1];
-    if(ehDeload)volumeSemana*=0.6; // deload reduz o volume total, não só o longão
-    if(s===8)volumeSemana=pico*(nSessoes>=3?1.35:1.15); // semana do pico: garante o longão = pico
+  semanasOrdenadas.forEach((wn)=>{
+    const sessoesReais=planoReal[String(wn)];
+    const sessions=sessoesReais.map(sr=>{
+      const m=RD_montarSessao(sr.codigo,RD_DIA_ABREV[sr.dia]||sr.dia,testPace);
+      if(!m)return null;
+      // segmento "principal" = o de maior duração entre os que não são aquecimento/desaceleração
+      const principais=m.segmentos.filter(s=>!['Aquecimento','Desaceleração'].includes(s.label));
+      const dominante=principais.reduce((a,s)=>(!a||s.min>a.min)?s:a,null)||m.segmentos[0];
+      const zonaDom=dominante?.zona||'Z2';
+      return {
+        day:m.dia,
+        type:RD_TIPO_TITULO[m.tipo]||m.tipo,
+        dist:m.distKm>0?m.distKm+' km':(m.durMin+' min'),
+        distKm:m.distKm,
+        pace:dominante?RD_fmtPace(testPace/RD_ZONA_PCT[zonaDom]):'—',
+        fc:zonaDom+' '+ZONA_HR[zonaDom],
+        dur:'~'+m.durMin+' min',
+        segmentos:m.segmentos,
+        tip:RD_TIPO_DICA[m.tipo]||'Respeite o ritmo indicado — a evolução vem da constância.'
+      };
+    }).filter(Boolean);
 
-    // Longão sempre a maior fatia do volume da semana
-    let longao=s===8?pico:Math.round(volumeSemana*(nSessoes===2?0.55:0.42)*10)/10;
-    longao=Math.max(3,longao);
+    // Volume total da semana (soma real de todas as sessões, em km)
+    const volumeSemana=Math.round(sessions.reduce((a,s)=>a+s.distKm,0)*10)/10;
+    const tiposDaSemana=[...new Set(sessions.map(s=>s.type))];
 
-    const sessions=[];
-    const dias4=['Ter','Qui','Sex','Dom'];
+    const ehUltima=wn===semanasOrdenadas[semanasOrdenadas.length-1];
+    const sessaoDestaque=sessions.reduce((a,s)=>(!a||s.distKm>a.distKm)?s:a,null);
+    const metaTxt=ehUltima
+      ?`🏁 Semana da PROVA — ${sessaoDestaque?sessaoDestaque.dist:distKey+'km'}! O grande dia chegou`
+      :`${volumeSemana}km na semana · ${tiposDaSemana.join(' + ')}`;
 
-    // ── Monta segmentos por minuto (o que estava faltando) ──
-    const segAquec=(min,ritmo)=>({label:'Aquecimento',min,ref:ritmo});
-    const segDesac=(min)=>({label:'Desaceleração',min,ref:'Trote bem leve / caminhada · Z1 '+Z1});
+    run['Semana '+wn]={meta:metaTxt,sessions,volumeSemana};
+  });
 
-    // Sessão 1: rodagem leve — sempre presente
-    const durLeve=Math.round(Math.max(3,Math.min(10,longao*0.5))*(pace+0.9));
-    sessions.push({
-      day:dias4[0],type:'Rodagem Leve (Base Aeróbica)',
-      dist:Math.max(3,Math.min(10,Math.round(longao*0.5)))+' km',
-      distKm:Math.max(3,Math.min(10,Math.round(longao*0.5))),
-      pace:paceLeve,fc:'Z2 '+Z2,dur:'~'+durLeve+' min',
-      segmentos:[
-        segAquec(5,'Trote bem leve, sem pressa · Z1 '+Z1),
-        {label:'Ritmo contínuo',min:durLeve-10,ref:paceLeve+' · Z2 '+Z2},
-        segDesac(5)
-      ],
-      tip:'Teste da conversa: se não consegue falar frases inteiras, está rápido demais. Z2 constrói a base.'
-    });
-
-    // Sessão 2 (se houver): qualidade — rotaciona, mas NUNCA é cancelada, só ajustada em duração
-    if(nSessoes>=3){
-      const cicloIdx=(s-1)%3;
-      if(cicloIdx===0){
-        const tiros=ehDeload?4:(3+Math.min(4,Math.floor((s-1)/2)));
-        sessions.push({
-          day:dias4[1],type:'Intervalado (VO2máx)',
-          dist:tiros+' × 400m',distKm:Math.round(tiros*0.6*10)/10,tiros,pace:paceTiro,fc:'Z4-Z5 '+Z4,
-          dur:'~'+(20+tiros*2)+' min',
-          segmentos:[
-            segAquec(10,'Trote leve + 3 tiros de 20s progressivos'),
-            {label:tiros+'× (400m forte + 200m trote)',min:tiros*3,ref:paceTiro+' · Z4-Z5 '+Z4},
-            segDesac(8)
-          ],
-          tip:'Os tiros elevam seu VO2máx. Recuperação em trote, nunca parada — mantém o corpo em movimento.'
-        });
-      }else if(cicloIdx===1){
-        const durTempo=15+Math.min(10,s*1.5);
-        sessions.push({
-          day:dias4[1],type:'Tempo Run (Limiar)',
-          dist:Math.round(durTempo/pace*10)/10+' km',distKm:Math.round(durTempo/pace*10)/10,pace:paceForte,fc:'Z3-Z4 '+Z3,
-          dur:'~'+Math.round(durTempo+18)+' min',
-          segmentos:[
-            segAquec(10,'Trote leve, preparando o corpo · Z1-Z2 '+Z1),
-            {label:'Ritmo de limiar (tempo)',min:Math.round(durTempo),ref:paceForte+' · Z3-Z4 '+Z3},
-            segDesac(8)
-          ],
-          tip:'Ritmo de limiar: você fala 2-3 palavras, não uma frase inteira. É aqui que a velocidade de prova nasce.'
-        });
-      }else{
-        const durFartlek=20+Math.min(10,s);
-        sessions.push({
-          day:dias4[1],type:'Fartlek (Ritmo Variado)',
-          dist:Math.round(durFartlek/pace*10)/10+' km',distKm:Math.round(durFartlek/pace*10)/10,pace:paceMod,fc:'Z2-Z4 '+Z3,
-          dur:'~'+(durFartlek+16)+' min',
-          segmentos:[
-            segAquec(8,'Trote leve · Z1 '+Z1),
-            {label:'Blocos de 2min forte / 2min leve',min:durFartlek,ref:'Alternado · Z2-Z4 '+Z3},
-            segDesac(8)
-          ],
-          tip:'Fartlek é brincar com o ritmo — use referências (até aquele poste) em vez de cronômetro rígido.'
-        });
-      }
-    }
-
-    // Sessão 3 extra (se 4+ sessões): mais uma leve, mantém volume sem elevar risco
-    if(nSessoes>=4){
-      const durLeve2=Math.round(4*(pace+0.9));
-      sessions.push({
-        day:dias4[2],type:'Rodagem Leve (Regenerativa)',
-        dist:'4 km',distKm:4,pace:paceLeve,fc:'Z1-Z2 '+Z1,dur:'~'+durLeve2+' min',
-        segmentos:[
-          segAquec(5,'Trote bem leve · Z1 '+Z1),
-          {label:'Ritmo regenerativo',min:durLeve2-8,ref:paceLeve+' · Z1-Z2 '+Z1},
-          segDesac(3)
-        ],
-        tip:'Corrida regenerativa: o objetivo é circular o sangue, não treinar. Se sentir cansaço, encurte.'
-      });
-    }
-
-    // Última sessão: sempre o longão (ou a prova, na semana 8)
-    const durLongao=Math.round(longao*(pace+0.9));
-    sessions.push({
-      day:'Dom',type:s===8?'🏁 PROVA / META':'Longão (Resistência)',
-      dist:longao+' km',distKm:longao,pace:paceLeve,fc:'Z1-Z2 '+Z2,dur:'~'+durLongao+' min',
-      segmentos: s===8 ? [
-        {label:'Largada — ritmo controlado',min:Math.round(durLongao*0.15),ref:paceLeve+' · não saia rápido demais!'},
-        {label:'Ritmo de prova',min:Math.round(durLongao*0.70),ref:paceMod+' · mantenha constante'},
-        {label:'Reta final',min:Math.round(durLongao*0.15),ref:'O que tiver — comemore!'}
-      ] : [
-        segAquec(5,'Caminhada rápida → trote · Z1 '+Z1),
-        {label:'Ritmo conversacional constante',min:durLongao-10,ref:paceLeve+' · Z1-Z2 '+Z2},
-        segDesac(5)
-      ],
-      tip:s===8?`Você treinou 8 semanas pra isso. ${alvo}km é seu. Confie no processo.`
-         :'Regra dos 10%: nunca aumente o longão mais que 10% da semana anterior. Este plano já respeita isso pra você.'
-    });
-
-    // ── Regra dos 10%: escala a semana INTEIRA se a soma real (distKm) crescer demais ──
-    if(!ehDeload && s!==1 && s!==8 && volumeRealAnterior!==null){
-      const somaAtual=sessions.reduce((a,x)=>a+(x.distKm||0),0);
-      const crescimento=(somaAtual-volumeRealAnterior)/volumeRealAnterior;
-      if(crescimento>0.10){
-        const fator=(volumeRealAnterior*1.10)/somaAtual;
-        sessions.forEach(sess=>{
-          if(sess.tiros){ // sessão de tiros: reduz REPS (não faz sentido "5.3 tiros")
-            const novosTiros=Math.max(3,Math.round(sess.tiros*fator));
-            sess.tiros=novosTiros;sess.dist=novosTiros+' × 400m';sess.distKm=Math.round(novosTiros*0.6*10)/10;
-            sess.dur='~'+(20+novosTiros*2)+' min';
-            if(sess.segmentos)sess.segmentos[1]={label:novosTiros+'× (400m forte + 200m trote)',min:novosTiros*3,ref:sess.segmentos[1].ref};
-          }else if(sess.distKm){
-            const novaDist=Math.max(2,Math.round(sess.distKm*fator*10)/10);
-            sess.dist=novaDist+' km';sess.distKm=novaDist;
-            const paceNum=parseFloat(sess.pace);
-            if(!isNaN(paceNum))sess.dur='~'+Math.round(novaDist*(paceNum+1))+' min';
-            if(sess.segmentos){
-              const totalMinOrig=sess.segmentos.reduce((a,g)=>a+g.min,0);
-              const diff=totalMinOrig-Math.round(totalMinOrig*fator);
-              const meioIdx=Math.floor(sess.segmentos.length/2);
-              sess.segmentos[meioIdx].min=Math.max(5,sess.segmentos[meioIdx].min-diff);
-            }
-          }
-        });
-        const sessLongao=sessions.find(x=>/Longão/.test(x.type));
-        if(sessLongao)longao=sessLongao.distKm;
-      }
-    }
-    volumeRealAnterior=sessions.reduce((a,x)=>a+(x.distKm||0),0);
-
-    // ── Distribuição real 80/20 (calculada de verdade, sem piso artificial) ──
-    const tempoDe=(sess)=>sess.segmentos?sess.segmentos.reduce((a,g)=>a+g.min,0):30;
-    const ehBaixa=(sess)=>/Leve|Longão|PROVA/i.test(sess.type);
-    let tBaixa=0,tTotal=0;
-    sessions.forEach(sess=>{const t=tempoDe(sess);tTotal+=t;if(ehBaixa(sess))tBaixa+=t;});
-    const pctBaixa=tTotal?Math.round(tBaixa/tTotal*100):100;
-    const distTxt=`📊 ${pctBaixa}% leve / ${100-pctBaixa}% forte`;
-
-    const metaTxt=s===8
-      ?(alvo<=10?`🏁 Semana da PROVA: ${alvo}km — o grande dia!`:`🏁 Pico da preparação: ${pico}km — pronto para ${alvo}km!`)
-      :(ehDeload?'⚡ Deload — recuperar para crescer · '+distTxt
-      :`Longão ${longao}km · ${distTxt}`);
-    run['Semana '+s]={meta:metaTxt,sessions,distribuicao:distTxt};
-  }
   return run;
 }
 // ─── 7. FUNÇÃO PÚBLICA — substitui o fallback antigo ───
@@ -7126,10 +7326,40 @@ setTimeout(checarTreinoPendente, 5000);
 // ══ E-MAIL DE BOAS-VINDAS (EmailJS + Gmail) ══
 // CONFIGURAÇÃO: crie conta gratuita em emailjs.com, conecte seu Gmail e preencha:
 const EMAILJS_CONFIG = {
-  serviceId: 'SEU_SERVICE_ID',    // ex: service_abc123
-  templateId: 'SEU_TEMPLATE_ID',  // ex: template_xyz789
-  publicKey: 'SUA_PUBLIC_KEY'     // ex: AbCdEfGh123
+  serviceId: 'SEU_SERVICE_ID',        // ex: service_abc123
+  templateId: 'SEU_TEMPLATE_ID',      // ex: template_xyz789 — boas-vindas pro aluno
+  templateIdAdmin: 'SEU_TEMPLATE_ADMIN_ID', // template separado — notificação pra você
+  publicKey: 'SUA_PUBLIC_KEY',        // ex: AbCdEfGh123
+  adminEmail: 'rennan@rennandias.com.br'    // pra onde a notificação de novo aluno vai
 };
+
+async function notificarAdminNovoAluno(nome, email){
+  if(EMAILJS_CONFIG.serviceId==='SEU_SERVICE_ID' || EMAILJS_CONFIG.templateIdAdmin==='SEU_TEMPLATE_ADMIN_ID'){
+    console.log('EmailJS admin não configurado — pulando notificação de novo aluno');
+    return;
+  }
+  try{
+    const res = await fetch('https://api.emailjs.com/api/v1.0/email/send',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({
+        service_id: EMAILJS_CONFIG.serviceId,
+        template_id: EMAILJS_CONFIG.templateIdAdmin,
+        user_id: EMAILJS_CONFIG.publicKey,
+        template_params:{
+          to_email: EMAILJS_CONFIG.adminEmail,
+          aluno_nome: nome,
+          aluno_email: email,
+          data_cadastro: new Date().toLocaleString('pt-BR',{dateStyle:'short',timeStyle:'short'}),
+          link_admin: 'https://shiriufc-bit.github.io/fitquest/'
+        }
+      })
+    });
+    console.log('Notificação admin novo aluno:', res.ok ? 'enviada ✅' : 'falhou');
+  }catch(e){
+    console.warn('Notificação admin erro:', e.message);
+  }
+}
 
 async function enviarEmailBoasVindas(nome, email){
   if(EMAILJS_CONFIG.serviceId==='SEU_SERVICE_ID'){
