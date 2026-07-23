@@ -792,7 +792,7 @@ textarea.fi{resize:vertical;min-height:80px;}
 
 <!-- SPLASH -->
 <div id="sc-splash" class="screen active">
-  <div id="fq-version-badge" style="position:absolute;bottom:8px;right:12px;font-size:9px;color:#333;font-weight:700;z-index:5">v74</div>
+  <div id="fq-version-badge" style="position:absolute;bottom:8px;right:12px;font-size:9px;color:#333;font-weight:700;z-index:5">v75</div>
   <img src="https://images.unsplash.com/photo-1517836357463-d25dfeac3438?w=800&q=80" alt="Fitness" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center top;filter:brightness(.35);z-index:0"/>
   <div class="splash-glow"></div>
   <div class="splash-noise"></div>
@@ -1967,6 +1967,18 @@ textarea.fi{resize:vertical;min-height:80px;}
       </div>
     </div>
 
+    <!-- TAB: TROCAR TREINOS -->
+    <div class="adm-panel" id="adm-treinos">
+      <div style="padding:12px">
+        <div style="font-size:11px;color:var(--mu);margin-bottom:14px;line-height:1.5">
+          Troca os exercícios da semana atual de cada aluno, mantendo o mesmo objetivo, grupo muscular,
+          séries/reps/carga da fase — só muda QUAL exercício específico é usado.
+        </div>
+        <input class="fi" id="treinos-search" placeholder="🔍 Buscar aluno..." oninput="renderTrocarTreinos(this.value)" style="margin-bottom:12px"/>
+        <div id="treinos-list"></div>
+      </div>
+    </div>
+
   </div>
 
   <!-- BOTTOM NAV -->
@@ -1974,6 +1986,7 @@ textarea.fi{resize:vertical;min-height:80px;}
     <button class="nbtn adm-nbtn active" onclick="switchAdm('dashboard',this)"><span class="nico">📊</span><span class="nlbl">Dashboard</span><div class="ndot"></div></button>
     <button class="nbtn adm-nbtn" onclick="switchAdm('students',this)"><span class="nico">👥</span><span class="nlbl">Alunos</span><div class="ndot"></div></button>
     <button class="nbtn adm-nbtn" onclick="switchAdm('exercises',this)"><span class="nico">🏋️</span><span class="nlbl">Exercícios</span><div class="ndot"></div></button>
+    <button class="nbtn adm-nbtn" onclick="switchAdm('treinos',this)"><span class="nico">🔄</span><span class="nlbl">Treinos</span><div class="ndot"></div></button>
   </div>
 </div>
 
@@ -2237,7 +2250,7 @@ textarea.fi{resize:vertical;min-height:80px;}
 
 <script>
 // ══ SUPABASE ══
-const FQ_VERSION='v74';console.log('%cFitQuest '+FQ_VERSION,'color:#e50914;font-weight:bold;font-size:14px');
+const FQ_VERSION='v75';console.log('%cFitQuest '+FQ_VERSION,'color:#e50914;font-weight:bold;font-size:14px');
 // ══ PROXY DE IA (Cloudflare Worker) ══
 // Quando preenchido, a IA real funciona em produção com a chave protegida no servidor.
 // Deixe '' para usar o plano local (fallback). Ex: 'https://fitquest-ai.SEU-USUARIO.workers.dev'
@@ -4810,7 +4823,81 @@ function switchTab(name,btn){
 window.ADM_CACHE=[];
 window.ADM_COMPRAS=[];
 async function adminLogout(){try{if(sb)await sb.auth.signOut();}catch(e){}DB.del('fq_cur');show('sc-splash');}
-function switchAdm(name,btn){document.querySelectorAll('.adm-panel').forEach(p=>p.classList.remove('active'));document.querySelectorAll('.adm-nav .nbtn').forEach(b=>b.classList.remove('active'));document.getElementById('adm-'+name).classList.add('active');if(btn)btn.classList.add('active');if(name==='exercises')renderBank();}
+// ══ ADMIN: TROCAR TREINO — regenera os exercícios da semana atual do aluno,
+// mantendo a fase de periodização (séries/reps/carga), grupo muscular e restrições
+// de segurança (lesão/equipamento), só varia QUAIS exercícios específicos são usados. ══
+
+function resumoTreinoAluno(u){
+  if(!u.aiPlan||!u.gymWeek)return 'Sem plano gerado ainda';
+  const semana=u.aiPlan['Semana '+u.gymWeek];
+  if(!semana||!semana.days)return 'Sem plano na semana atual';
+  const dias=Object.keys(semana.days);
+  const totalEx=Object.values(semana.days).reduce((a,exs)=>a+exs.length,0);
+  return dias.join(' · ')+' ('+totalEx+' exercícios)';
+}
+
+function renderTrocarTreinos(filtro){
+  const users=DB.get('fq_users')||{};
+  const lista=(window.ADM_CACHE||Object.values(users)).filter(u=>!u.isAdmin);
+  const termo=(filtro||'').toLowerCase();
+  const filtrados=lista.filter(u=>!termo||(u.name||'').toLowerCase().includes(termo)||(u.email||'').toLowerCase().includes(termo));
+
+  document.getElementById('treinos-list').innerHTML = filtrados.length ? filtrados.map(u=>{
+    const temPlano = u.aiPlan && u.gymWeek && u.aiPlan['Semana '+u.gymWeek];
+    return `<div style="background:var(--s);border:1px solid var(--b);border-radius:10px;padding:12px 14px;margin-bottom:8px">
+      <div style="font-size:13px;font-weight:800;margin-bottom:2px">${u.name||'—'}</div>
+      <div style="font-size:10.5px;color:var(--mu);margin-bottom:10px">${resumoTreinoAluno(u)}</div>
+      <button class="st-btn" ${temPlano?'':'disabled'} onclick="admTrocarTreino('${u.email}')"
+        style="width:100%;background:${temPlano?'rgba(229,9,20,.12)':'rgba(255,255,255,.04)'};color:${temPlano?'var(--r)':'var(--mu)'};border:1px solid ${temPlano?'rgba(229,9,20,.3)':'var(--b)'}">
+        🔄 Trocar Treino
+      </button>
+    </div>`;
+  }).join('') : '<div style="text-align:center;color:var(--mu);padding:30px;font-size:12px">Nenhum aluno encontrado</div>';
+}
+
+async function admTrocarTreino(email){
+  const users=DB.get('fq_users')||{};
+  const u=users[email]||(window.ADM_CACHE||[]).find(a=>a.email===email);
+  if(!u||!u.anamnese||!u.aiPlan||!u.gymWeek){ fqToast('Aluno sem plano ativo para trocar.','warn'); return; }
+
+  if(!await fqConfirm('Trocar treino', 'Gerar novas variações de exercício para '+u.name+', mantendo o mesmo objetivo e fase de treino?', 'Trocar', '🔄')) return;
+
+  try{
+    const p=RD_perfil(u.anamnese);
+    const semanaAtual=u.gymWeek;
+    const planoAtual=u.aiPlan['Semana '+semanaAtual];
+    if(!planoAtual||!planoAtual.days){ fqToast('Não encontrei o plano dessa semana.','warn'); return; }
+
+    const novosDays={};
+    Object.entries(planoAtual.days).forEach(([nomeDia,exsAtuais])=>{
+      const novosExs=exsAtuais.map(exAtual=>{
+        const exOriginal=EXERCISE_BANK.find(e=>e.id===exAtual.id);
+        if(!exOriginal||!exOriginal.muscle) return exAtual; // sem info suficiente, mantém como está
+        const grupo=exOriginal.muscle.split(/[\/\s]/)[0].toLowerCase();
+        const ehComposto=/supino|agachamento|terra|remada curvada|desenvolvimento|puxada|barra fixa|leg press|stiff/i.test(exOriginal.name);
+        const alternativas=RD_escolhe(grupo,1,p,semanaAtual+100,[exAtual.id],ehComposto); // +100 força offset de rotação diferente
+        const novoEx=alternativas[0];
+        if(!novoEx) return exAtual; // não achou alternativa segura, mantém o original
+        // Mantém sets/reps/rest/carga da FASE (o objetivo), só troca o exercício e a técnica (obs)
+        return {...exAtual, id:novoEx.id, obs:exAtual.obs.replace(/^[^.]*\./, novoEx.obs?(''+novoEx.obs):'Execute com controle total.')};
+      });
+      novosDays[nomeDia]=novosExs;
+    });
+
+    u.aiPlan['Semana '+semanaAtual]={...planoAtual, days:novosDays};
+    users[email]=u; DB.set('fq_users',users);
+    if(window.ADM_CACHE){const s=window.ADM_CACHE.find(a=>a.email===email);if(s)s.aiPlan=u.aiPlan;}
+    if(sb) await sb.from('alunos').update({ai_plan:u.aiPlan}).eq('email',email);
+
+    fqToast('✅ Treino trocado! '+u.name+' já vê os novos exercícios no app.','ok');
+    renderTrocarTreinos(document.getElementById('treinos-search')?.value||'');
+  }catch(e){
+    console.error('Trocar treino erro:',e);
+    fqToast('Erro ao trocar treino: '+(e?.message||'tente novamente'),'warn');
+  }
+}
+
+function switchAdm(name,btn){document.querySelectorAll('.adm-panel').forEach(p=>p.classList.remove('active'));document.querySelectorAll('.adm-nav .nbtn').forEach(b=>b.classList.remove('active'));document.getElementById('adm-'+name).classList.add('active');if(btn)btn.classList.add('active');if(name==='exercises')renderBank();if(name==='treinos')renderTrocarTreinos();}
 async function loadAdmin(){
   let all=[];
   if(sb){
