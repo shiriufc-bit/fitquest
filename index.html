@@ -792,7 +792,7 @@ textarea.fi{resize:vertical;min-height:80px;}
 
 <!-- SPLASH -->
 <div id="sc-splash" class="screen active">
-  <div id="fq-version-badge" style="position:absolute;bottom:8px;right:12px;font-size:9px;color:#333;font-weight:700;z-index:5">v75</div>
+  <div id="fq-version-badge" style="position:absolute;bottom:8px;right:12px;font-size:9px;color:#333;font-weight:700;z-index:5">v79</div>
   <img src="https://images.unsplash.com/photo-1517836357463-d25dfeac3438?w=800&q=80" alt="Fitness" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center top;filter:brightness(.35);z-index:0"/>
   <div class="splash-glow"></div>
   <div class="splash-noise"></div>
@@ -1203,6 +1203,12 @@ textarea.fi{resize:vertical;min-height:80px;}
         </div>
       </div>
 
+      <!-- BANNER DE TRIAL -->
+      <div id="trial-banner" style="margin-top:16px"></div>
+
+      <!-- CARD DE DESTAQUE: MISSÕES -->
+      <div id="home-missoes-card" style="margin:16px 20px 0"></div>
+
       <!-- CONTINUAR ASSISTINDO = Continue Training -->
       <div class="section" style="margin-top:16px">
         <div class="section-hdr"><div class="section-title">Continue treinando</div></div>
@@ -1328,6 +1334,10 @@ textarea.fi{resize:vertical;min-height:80px;}
         </div>
         <div class="wk-progress-bar"><div class="wk-progress-fill" id="gym-prog-bar" style="width:0%"></div></div>
         <div class="wk-body">
+          <div id="gym-modo-bar" style="display:flex;background:var(--s2);border-radius:10px;padding:3px;margin-bottom:14px">
+            <div id="gym-modo-nosso" onclick="setModoTreino('nosso')" style="flex:1;text-align:center;padding:8px;border-radius:8px;font-size:11.5px;font-weight:800;cursor:pointer;transition:all .2s">🤖 Nosso Plano</div>
+            <div id="gym-modo-meu" onclick="setModoTreino('meu')" style="flex:1;text-align:center;padding:8px;border-radius:8px;font-size:11.5px;font-weight:800;cursor:pointer;transition:all .2s">✏️ Meu Treino</div>
+          </div>
           <div class="wk-weeks" id="gym-wtabs"></div>
           <div class="wk-day-btns" id="gym-day-btns"></div>
           <div id="gym-exercises"></div>
@@ -1424,7 +1434,11 @@ textarea.fi{resize:vertical;min-height:80px;}
   </div>
 
     <!-- STORE -->
-    <div class="tp" id="tp-store">
+    <div class="tp" id="tp-missoes">
+  <div id="missoes-content"></div>
+</div>
+
+<div class="tp" id="tp-store">
       <div style="padding-top:56px">
 
         <!-- Store Hero -->
@@ -2250,7 +2264,7 @@ textarea.fi{resize:vertical;min-height:80px;}
 
 <script>
 // ══ SUPABASE ══
-const FQ_VERSION='v75';console.log('%cFitQuest '+FQ_VERSION,'color:#e50914;font-weight:bold;font-size:14px');
+const FQ_VERSION='v79';console.log('%cFitQuest '+FQ_VERSION,'color:#e50914;font-weight:bold;font-size:14px');
 // ══ PROXY DE IA (Cloudflare Worker) ══
 // Quando preenchido, a IA real funciona em produção com a chave protegida no servidor.
 // Deixe '' para usar o plano local (fallback). Ex: 'https://fitquest-ai.SEU-USUARIO.workers.dev'
@@ -2880,10 +2894,10 @@ function renovarMissoesSemanais(u){
   return true;
 }
 function rowToUser(data){
-  return{id:data.id,name:data.nome,email:data.email,plano:data.plano,trainApproved:data.treino_liberado,isAdmin:!!data.is_admin,aiPlan:data.ai_plan,anamnese:data.anamnese,anamneseDone:!!data.anamnese,gymWeek:data.gym_week||1,runWeek:data.run_week||1,gymDone:data.gym_done||{},runDone:data.run_done||{},loadHistory:data.load_history||{},workoutHistory:data.workout_history||[],xp:data.xp||0,level:data.level||1,streak:data.streak||1,coins:data.coins||0,badges:data.badges||[],prs:data.prs||[],stats:data.stats||{treinos:0,distancia:0,semanas:0},purchases:data.purchases||[],pacoteEbooks:!!data.pacote_ebooks,programIntakes:data.program_intakes||{},avatar:data.avatar||null,evals:data.evals||[],missions:MISSOES_PADRAO.map(m=>({...m})),createdAt:data.criado_em,lastLogin:data.ultimo_acesso};
+  return{id:data.id,name:data.nome,email:data.email,plano:data.plano,trialInicio:data.trial_inicio,assinaturaStatus:data.assinatura_status||'trial',assinaturaAte:data.assinatura_ate,trainApproved:data.treino_liberado,isAdmin:!!data.is_admin,aiPlan:data.ai_plan,anamnese:data.anamnese,anamneseDone:!!data.anamnese,gymWeek:data.gym_week||1,runWeek:data.run_week||1,gymDone:data.gym_done||{},runDone:data.run_done||{},loadHistory:data.load_history||{},workoutHistory:data.workout_history||[],xp:data.xp||0,level:data.level||1,streak:data.streak||1,coins:data.coins||0,badges:data.badges||[],prs:data.prs||[],stats:data.stats||{treinos:0,distancia:0,semanas:0},purchases:data.purchases||[],pacoteEbooks:!!data.pacote_ebooks,programIntakes:data.program_intakes||{},avatar:data.avatar||null,evals:data.evals||[],missions:MISSOES_PADRAO.map(m=>({...m})),createdAt:data.criado_em,lastLogin:data.ultimo_acesso};
 }
 function userToRow(u){
-  return{id:u.id,nome:u.name,email:u.email,plano:u.plano||'free',treino_liberado:u.trainApproved||false,ai_plan:u.aiPlan||null,anamnese:u.anamnese||null,gym_week:u.gymWeek||1,run_week:u.runWeek||1,gym_done:u.gymDone||{},run_done:u.runDone||{},load_history:u.loadHistory||{},workout_history:u.workoutHistory||[],xp:u.xp||0,level:u.level||1,streak:u.streak||1,coins:u.coins||0,badges:u.badges||[],prs:u.prs||[],stats:u.stats||{treinos:0,distancia:0,semanas:0},avatar:u.avatar||null,evals:u.evals||[],program_intakes:u.programIntakes||{},ultimo_acesso:new Date().toISOString(),updated_at:new Date().toISOString()};
+  return{id:u.id,nome:u.name,email:u.email,plano:u.plano||'free',trial_inicio:u.trialInicio||new Date().toISOString(),treino_liberado:u.trainApproved||false,ai_plan:u.aiPlan||null,anamnese:u.anamnese||null,gym_week:u.gymWeek||1,run_week:u.runWeek||1,gym_done:u.gymDone||{},run_done:u.runDone||{},load_history:u.loadHistory||{},workout_history:u.workoutHistory||[],xp:u.xp||0,level:u.level||1,streak:u.streak||1,coins:u.coins||0,badges:u.badges||[],prs:u.prs||[],stats:u.stats||{treinos:0,distancia:0,semanas:0},avatar:u.avatar||null,evals:u.evals||[],program_intakes:u.programIntakes||{},ultimo_acesso:new Date().toISOString(),updated_at:new Date().toISOString()};
   // Obs.: purchases/pacote_ebooks/is_admin/plano NÃO são enviados pelo aluno — são protegidos no banco e só mudam via webhook de pagamento ou admin.
 }
 async function syncU(u){if(!sb||!u||!u.id)return;try{await sb.from('alunos').upsert(userToRow(u),{onConflict:'id'});}catch(e){console.warn('sync:',e.message);}}
@@ -2902,12 +2916,19 @@ function switchAuth(mode){
   document.getElementById('auth-title').textContent=mode==='login'?'Entrar na sua conta':'Criar conta grátis';
   document.getElementById('auth-error').style.display='none';
 }
-function showErr(msg){const e=document.getElementById('auth-error');e.textContent=msg;e.style.display='block';}
+function showErr(msg,permitirHTML){
+  const e=document.getElementById('auth-error');
+  if(permitirHTML===true){ e.innerHTML=msg; }
+  else { e.textContent=msg; }   // padrão seguro: texto puro (bloqueia injeção)
+  e.style.display='block';
+}
 async function entrarComPerfil(u){
   if(u.email===ADMIN_EMAIL)u.isAdmin=true; // admin SEMPRE reconhecido pelo e-mail
   const users=DB.get('fq_users')||{};
   users[u.email]=u;DB.set('fq_users',users);DB.set('fq_cur',u.email);
   if(u.isAdmin){await loadAdmin();show('sc-adm');return;}
+  // Trial expirado sem assinatura ativa -> tela de assinatura
+  if(!temAcesso(u)){ mostrarTelaExpirada(u); return; }
   if(!u.anamneseDone){initAnam();show('sc-anam');}
   else{loadApp(u.email);show('sc-app');}
 }
@@ -2958,8 +2979,74 @@ async function doLogin(){
   finally{btn.textContent='Entrar';btn.disabled=false;}
 }
 function novoPerfilLocal(id,name,email){
-  return{id,name,email,anamneseDone:false,createdAt:new Date().toISOString(),plano:'free',trainApproved:true,isAdmin:false,xp:0,level:1,streak:1,coins:0,stats:{treinos:0,distancia:0,semanas:0},badges:[],missions:MISSOES_PADRAO.map(m=>({...m})),prs:[],gymWeek:1,gymDone:{},runWeek:1,runDone:{},aiPlan:null,workoutHistory:[],loadHistory:{},purchases:[],pacoteEbooks:false,programIntakes:{},evals:[]};
+  return{id,name,email,anamneseDone:false,createdAt:new Date().toISOString(),plano:'free',trialInicio:new Date().toISOString(),assinaturaStatus:'trial',trainApproved:true,isAdmin:false,xp:0,level:1,streak:1,coins:0,stats:{treinos:0,distancia:0,semanas:0},badges:[],missions:MISSOES_PADRAO.map(m=>({...m})),prs:[],gymWeek:1,gymDone:{},runWeek:1,runDone:{},aiPlan:null,workoutHistory:[],loadHistory:{},purchases:[],pacoteEbooks:false,programIntakes:{},evals:[]};
 }
+// ══════════════════════════════════════════════════════════
+// VALIDAÇÃO DE E-MAIL — camada extra contra cadastro-lixo.
+// IMPORTANTE: isto NÃO prova que o e-mail existe. A única prova real é o
+// link de confirmação do Supabase (Authentication > Providers > Email >
+// "Confirm email"). Aqui só barramos erros de digitação e descartáveis.
+// ══════════════════════════════════════════════════════════
+
+// Domínios de e-mail temporário/descartável mais comuns
+const EMAIL_DESCARTAVEIS = new Set([
+  'mailinator.com','guerrillamail.com','10minutemail.com','tempmail.com','temp-mail.org',
+  'throwawaymail.com','yopmail.com','trashmail.com','sharklasers.com','getnada.com',
+  'maildrop.cc','fakeinbox.com','mailnesia.com','dispostable.com','mintemail.com',
+  'spamgourmet.com','mytemp.email','emailondeck.com','tempinbox.com','mailcatch.com',
+  'inboxbear.com','luxusmail.org','tempr.email','discard.email','burnermail.io'
+]);
+
+// Erros de digitação frequentes → domínio correto
+const EMAIL_TYPOS = {
+  'gmail.con':'gmail.com','gmail.co':'gmail.com','gmial.com':'gmail.com','gmai.com':'gmail.com',
+  'gmail.cm':'gmail.com','gmail.comm':'gmail.com','gmail.om':'gmail.com','gnail.com':'gmail.com',
+  'hotmail.con':'hotmail.com','hotmial.com':'hotmail.com','hotmai.com':'hotmail.com',
+  'hotmail.co':'hotmail.com','hotmail.cm':'hotmail.com','hotmall.com':'hotmail.com',
+  'outlook.con':'outlook.com','outlok.com':'outlook.com','outloo.com':'outlook.com',
+  'yahoo.con':'yahoo.com','yaho.com':'yahoo.com','yahooo.com':'yahoo.com',
+  'icloud.con':'icloud.com','iclould.com':'icloud.com',
+  'bol.com':'bol.com.br','uol.com':'uol.com.br','terra.com':'terra.com.br',
+  'globo.com.br':'globo.com'
+};
+
+// Retorna {ok:true} ou {ok:false, msg:'...', sugestao:'...'}
+function validarEmail(email){
+  const e = (email||'').trim().toLowerCase();
+  if(!e) return {ok:false, msg:'Informe seu e-mail.'};
+
+  // Formato básico (mais rigoroso que o anterior: exige TLD com 2+ letras)
+  if(!/^[^\s@]+@[^\s@]+\.[a-z]{2,}$/i.test(e))
+    return {ok:false, msg:'E-mail inválido. Confira se digitou corretamente.'};
+
+  // Sem pontos consecutivos, nem ponto no começo/fim da parte local
+  const [local, dominio] = e.split('@');
+  if(local.startsWith('.')||local.endsWith('.')||local.includes('..'))
+    return {ok:false, msg:'E-mail inválido — verifique os pontos no endereço.'};
+  if(dominio.startsWith('.')||dominio.startsWith('-')||dominio.includes('..'))
+    return {ok:false, msg:'E-mail inválido — verifique o domínio.'};
+
+  // Domínio descartável
+  if(EMAIL_DESCARTAVEIS.has(dominio))
+    return {ok:false, msg:'Este é um e-mail temporário. Use seu e-mail pessoal para não perder acesso à conta.'};
+
+  // Erro de digitação conhecido — sugere correção
+  if(EMAIL_TYPOS[dominio]){
+    const corrigido = local+'@'+EMAIL_TYPOS[dominio];
+    return {ok:false, msg:`Você quis dizer <strong>${corrigido}</strong>?`, sugestao:corrigido};
+  }
+
+  return {ok:true};
+}
+
+// Aplica a sugestão de correção no campo e revalida
+function aplicarSugestaoEmail(campoId, sugestao){
+  const el = document.getElementById(campoId);
+  if(el){ el.value = sugestao; el.focus(); }
+  const err = document.getElementById('auth-error');
+  if(err) err.style.display='none';
+}
+
 async function doRegister(){
   const name=document.getElementById('reg-name').value.trim();
   const email=document.getElementById('reg-email').value.trim().toLowerCase();
@@ -2968,7 +3055,15 @@ async function doRegister(){
   if(!name||!email||!pass){showErr('Preencha todos os campos.');return;}
   if(pass.length<6){showErr('Senha mínimo 6 caracteres.');return;}
   if(pass!==pass2){showErr('Senhas não conferem.');return;}
-  if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){showErr('E-mail inválido.');return;}
+  const valEmail=validarEmail(email);
+  if(!valEmail.ok){
+    if(valEmail.sugestao){
+      showErr(`${valEmail.msg} <button onclick="aplicarSugestaoEmail('reg-email','${valEmail.sugestao}')" style="background:none;border:none;color:var(--r);font-weight:800;text-decoration:underline;cursor:pointer;font-size:inherit;padding:0;margin-left:4px">Corrigir</button>`, true);
+    } else {
+      showErr(valEmail.msg.replace(/<[^>]*>/g,''));  // sem HTML nas demais mensagens
+    }
+    return;
+  }
   if(!sb){showErr('Sem conexão com o servidor. Verifique sua internet e recarregue a página.');return;}
   const btn=document.getElementById('btn-reg');btn.textContent='Criando...';btn.disabled=true;
   try{
@@ -4403,6 +4498,111 @@ async function carregarRanking(){
 }
 
 // ══ LOAD APP ══
+// ══════════════════════════════════════════════════════════
+// ASSINATURA — 30 dias grátis, depois R$15/mês.
+// Status possíveis: 'trial' | 'ativa' | 'expirada'
+// IMPORTANTE: este controle é de EXPERIÊNCIA (mostra/esconde tela).
+// A liberação real de acesso pago depende do webhook do Mercado Pago
+// atualizar assinatura_status no banco — protegido por RLS.
+// ══════════════════════════════════════════════════════════
+
+const TRIAL_DIAS = 30;
+const MENSALIDADE = 'R$15';
+const LINK_ASSINATURA = 'https://mpago.la/22dn7UY'; // TODO: trocar pelo link de ASSINATURA recorrente
+
+function diasRestantesTrial(u){
+  if(!u||!u.trialInicio) return TRIAL_DIAS;
+  const inicio = new Date(u.trialInicio);
+  const agora = new Date();
+  const diasPassados = Math.floor((agora - inicio)/(1000*60*60*24));
+  return Math.max(0, TRIAL_DIAS - diasPassados);
+}
+
+function statusAssinatura(u){
+  if(!u) return 'trial';
+  if(u.isAdmin) return 'ativa';               // admin nunca é bloqueado
+  if(u.assinaturaStatus === 'ativa'){
+    // se tem data de validade e já passou, expirou
+    if(u.assinaturaAte && new Date(u.assinaturaAte) < new Date()) return 'expirada';
+    return 'ativa';
+  }
+  return diasRestantesTrial(u) > 0 ? 'trial' : 'expirada';
+}
+
+function temAcesso(u){ return statusAssinatura(u) !== 'expirada'; }
+
+function renderBannerTrial(u){
+  const el = document.getElementById('trial-banner');
+  if(!el) return;
+  const st = statusAssinatura(u);
+  if(st === 'ativa'){ el.innerHTML=''; return; }
+
+  if(st === 'trial'){
+    const dias = diasRestantesTrial(u);
+    const urgente = dias <= 7;
+    el.innerHTML = `<div style="margin:0 20px 12px;background:${urgente?'rgba(243,156,18,.12)':'rgba(46,204,113,.1)'};border:1px solid ${urgente?'rgba(243,156,18,.35)':'rgba(46,204,113,.25)'};border-radius:10px;padding:11px 14px;display:flex;align-items:center;gap:11px">
+      <div style="font-size:20px">${urgente?'⏳':'🎁'}</div>
+      <div style="flex:1;min-width:0">
+        <div style="font-size:12px;font-weight:800;color:${urgente?'#f39c12':'#2ecc71'}">
+          ${dias === 0 ? 'Último dia grátis!' : `${dias} ${dias===1?'dia':'dias'} de teste grátis`}
+        </div>
+        <div style="font-size:10.5px;color:var(--t2)">Depois, ${MENSALIDADE}/mês para continuar</div>
+      </div>
+      ${urgente?`<button onclick="abrirAssinatura()" style="background:#f39c12;border:none;border-radius:7px;color:#000;font-size:11px;font-weight:800;padding:7px 12px;cursor:pointer;flex-shrink:0">Assinar</button>`:''}
+    </div>`;
+  }
+}
+
+function abrirAssinatura(){
+  document.getElementById('modal-assinatura').classList.add('open');
+}
+
+function irParaPagamento(){
+  const u = getU();
+  window.open(LINK_ASSINATURA, '_blank');
+  fqToast('Após o pagamento, seu acesso é liberado automaticamente.','ok');
+}
+
+// Bloqueia o app quando o trial expira (mostra tela de assinatura)
+function verificarAcesso(){
+  const u = getU();
+  if(!u) return true;
+  if(temAcesso(u)) return true;
+  mostrarTelaExpirada(u);
+  return false;
+}
+
+function mostrarTelaExpirada(u){
+  const el = document.getElementById('sc-expirado');
+  if(!el) return;
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  el.classList.add('active');
+  const nome = (u.name||'').split(' ')[0];
+  const elc = document.getElementById('expirado-content');
+  if(elc) elc.innerHTML = `
+    <div style="text-align:center;padding:30px 24px">
+      <div style="font-size:56px;margin-bottom:16px">🔓</div>
+      <div style="font-size:21px;font-weight:900;margin-bottom:8px">Seus 30 dias acabaram, ${nome}</div>
+      <div style="font-size:13px;color:var(--t2);line-height:1.7;margin-bottom:24px">
+        Continue com treinos personalizados por IA, plano de corrida,<br/>
+        e-books e a comunidade completa.
+      </div>
+      <div style="background:var(--s);border:1px solid var(--r);border-radius:14px;padding:22px;margin-bottom:18px">
+        <div style="font-size:34px;font-weight:900;color:var(--r);line-height:1">${MENSALIDADE}</div>
+        <div style="font-size:12px;color:var(--mu);margin-bottom:16px">por mês · cancele quando quiser</div>
+        <div style="text-align:left;font-size:12px;color:var(--t2);line-height:2">
+          ✅ Treinos gerados por IA<br/>
+          ✅ Plano de corrida periodizado<br/>
+          ✅ Jornada das 30 Missões<br/>
+          ✅ Comunidade e ranking<br/>
+          ✅ Acompanhamento de evolução
+        </div>
+      </div>
+      <button class="btn-p" onclick="irParaPagamento()">Assinar por ${MENSALIDADE}/mês</button>
+      <button onclick="doLogout()" style="width:100%;background:none;border:none;color:var(--mu);font-size:12px;margin-top:14px;cursor:pointer;padding:8px">Sair da conta</button>
+    </div>`;
+}
+
 function loadApp(email){
   const users=DB.get('fq_users')||{};const u=users[email];if(!u)return;
   // Verificar se o streak quebrou (não treinou ontem nem hoje)
@@ -4460,6 +4660,9 @@ function loadApp(email){
   _safe(()=>renderRankingFull(u,email,users),'rankFull');
   _safe(()=>renderPRs(u.prs||[]),'prs');
   _safe(()=>renderComunidade(),'comunidade');
+  _safe(()=>renderBannerTrial(u),'trialBanner');
+  _safe(()=>renderHomeMissoesCard(),'missoesCard');
+  _safe(()=>renderMissoes(),'missoes');
   renderBadges(u.badges||[]);
   renderEvo(u);
   renderStore(u);
@@ -4613,7 +4816,242 @@ function renderRankingFull(u,email,users){
 
 // ══ GYM ══
 let curGymWeek='Semana 1';let curGymDay='Treino A';
+// ══════════════════════════════════════════════════════════
+// MEU TREINO — o aluno pode usar o plano gerado pelo app ("nosso")
+// ou montar/ajustar o próprio treino ("meu"). Os dois convivem:
+// trocar de modo nunca apaga o outro.
+// ══════════════════════════════════════════════════════════
+
+function getModoTreino(u){ return u.modoTreino || 'nosso'; }
+
+function setModoTreino(modo){
+  const u=getU(); if(!u) return;
+  u.modoTreino=modo;
+  // Ao entrar no modo próprio pela primeira vez, oferece começar do nosso plano
+  if(modo==='meu' && !u.meuTreino){
+    abrirEscolhaBaseTreino();
+    return;
+  }
+  saveU(u);
+  renderGym(u);
+}
+
+function atualizarBarraModo(u){
+  const modo=getModoTreino(u);
+  const bNosso=document.getElementById('gym-modo-nosso');
+  const bMeu=document.getElementById('gym-modo-meu');
+  if(!bNosso||!bMeu) return;
+  const ativo='background:var(--r);color:#fff';
+  const inativo='background:transparent;color:var(--t2)';
+  bNosso.style.cssText=`flex:1;text-align:center;padding:8px;border-radius:8px;font-size:11.5px;font-weight:800;cursor:pointer;transition:all .2s;${modo==='nosso'?ativo:inativo}`;
+  bMeu.style.cssText=`flex:1;text-align:center;padding:8px;border-radius:8px;font-size:11.5px;font-weight:800;cursor:pointer;transition:all .2s;${modo==='meu'?ativo:inativo}`;
+}
+
+function abrirEscolhaBaseTreino(){
+  document.getElementById('modal-base-treino').classList.add('open');
+}
+
+function criarMeuTreino(base){
+  const u=getU(); if(!u) return;
+  closeModal('modal-base-treino');
+
+  if(base==='copiar'){
+    // Parte do plano atual gerado pelo app
+    const P=getGP(u);
+    const semana=P['Semana '+(u.gymWeek||1)]||P[Object.keys(P)[0]];
+    const dias={};
+    if(semana&&semana.days){
+      Object.entries(semana.days).forEach(([nomeDia,exs])=>{
+        dias[nomeDia]=exs.map(ex=>{
+          const info=EXERCISE_BANK.find(e=>e.id===ex.id);
+          return {id:ex.id, nome:info?info.name:'Exercício', sets:ex.sets, reps:ex.reps, rest:ex.rest||60, custom:false};
+        });
+      });
+    }
+    u.meuTreino={dias, criadoEm:new Date().toISOString()};
+  }else{
+    // Do zero — começa com um dia vazio
+    u.meuTreino={dias:{'Treino A':[]}, criadoEm:new Date().toISOString()};
+  }
+  u.modoTreino='meu';
+  saveU(u);
+  fqToast(base==='copiar'?'✅ Treino copiado! Agora é só ajustar.':'✅ Treino criado! Adicione seus exercícios.','ok');
+  renderGym(u);
+}
+
+let MT_DIA_ATUAL=null;
+
+function renderMeuTreino(u){
+  const mt=u.meuTreino;
+  const elEx=document.getElementById('gym-exercises');
+  const elDias=document.getElementById('gym-day-btns');
+  const elSemanas=document.getElementById('gym-wtabs');
+  const elBtn=document.getElementById('gym-complete-btn');
+  if(elSemanas) elSemanas.innerHTML='';
+
+  if(!mt||!mt.dias||!Object.keys(mt.dias).length){
+    if(elDias) elDias.innerHTML='';
+    elEx.innerHTML=`<div style="text-align:center;padding:34px 20px">
+      <div style="font-size:46px;margin-bottom:14px">✏️</div>
+      <div style="font-size:15px;font-weight:800;margin-bottom:6px">Monte seu treino</div>
+      <div style="font-size:12.5px;color:var(--t2);line-height:1.6;margin-bottom:18px">Escolha exercícios da nossa lista ou adicione os seus.</div>
+      <button class="btn-p" onclick="abrirEscolhaBaseTreino()">Começar</button>
+    </div>`;
+    if(elBtn) elBtn.innerHTML='';
+    return;
+  }
+
+  const nomesDias=Object.keys(mt.dias);
+  if(!MT_DIA_ATUAL||!mt.dias[MT_DIA_ATUAL]) MT_DIA_ATUAL=nomesDias[0];
+
+  elDias.innerHTML=nomesDias.map(d=>
+    `<button class="day-btn ${d===MT_DIA_ATUAL?'active':''}" onclick="MT_DIA_ATUAL='${d.replace(/'/g,"")}';renderGym(getU())">${d}</button>`
+  ).join('')+`<button class="day-btn" onclick="mtAddDia()" style="background:rgba(46,204,113,.1);color:#2ecc71;border-color:rgba(46,204,113,.3)">+ Dia</button>`;
+
+  const exs=mt.dias[MT_DIA_ATUAL]||[];
+  elEx.innerHTML=`
+    ${exs.length?exs.map((ex,i)=>`
+      <div style="background:var(--s);border:1px solid var(--b);border-radius:10px;padding:12px 14px;margin-bottom:8px">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">
+          <div style="flex:1;min-width:0">
+            <div style="font-size:13px;font-weight:800;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${ex.nome}</div>
+            ${ex.custom?'<div style="font-size:9px;color:#f39c12;font-weight:700">✏️ SEU EXERCÍCIO</div>':''}
+          </div>
+          <button onclick="mtRemoverEx(${i})" style="background:rgba(229,9,20,.1);border:1px solid rgba(229,9,20,.25);color:var(--r);border-radius:6px;width:28px;height:28px;font-size:14px;cursor:pointer;flex-shrink:0">✕</button>
+        </div>
+        <div style="display:flex;gap:6px">
+          <div style="flex:1"><div style="font-size:9px;color:var(--mu);margin-bottom:3px;font-weight:700">SÉRIES</div>
+            <input type="number" value="${ex.sets}" min="1" max="10" onchange="mtEditarEx(${i},'sets',this.value)" class="fi" style="padding:7px;font-size:12px;text-align:center"/></div>
+          <div style="flex:1"><div style="font-size:9px;color:var(--mu);margin-bottom:3px;font-weight:700">REPS</div>
+            <input type="text" value="${ex.reps}" onchange="mtEditarEx(${i},'reps',this.value)" class="fi" style="padding:7px;font-size:12px;text-align:center"/></div>
+          <div style="flex:1"><div style="font-size:9px;color:var(--mu);margin-bottom:3px;font-weight:700">DESC (s)</div>
+            <input type="number" value="${ex.rest}" min="0" max="300" step="15" onchange="mtEditarEx(${i},'rest',this.value)" class="fi" style="padding:7px;font-size:12px;text-align:center"/></div>
+        </div>
+      </div>`).join('')
+      :'<div style="text-align:center;color:var(--mu);padding:26px;font-size:12px">Nenhum exercício neste dia ainda</div>'}
+    <button class="btn-p" style="margin-top:6px;background:rgba(46,204,113,.12);color:#2ecc71;border:1px solid rgba(46,204,113,.3)" onclick="abrirAddExercicio()">+ Adicionar Exercício</button>
+    ${nomesDias.length>1?`<button onclick="mtRemoverDia()" style="width:100%;margin-top:8px;background:none;border:none;color:var(--mu);font-size:11px;cursor:pointer;padding:8px">Remover dia "${MT_DIA_ATUAL}"</button>`:''}
+  `;
+
+  if(elBtn) elBtn.innerHTML = exs.length
+    ? `<button class="btn-p" style="margin-top:10px" onclick="concluirTreinoProprio()">✅ Concluir Treino de Hoje</button>`
+    : '';
+}
+
+function mtAddDia(){
+  const u=getU(); if(!u||!u.meuTreino) return;
+  const n=Object.keys(u.meuTreino.dias).length;
+  const nome='Treino '+String.fromCharCode(65+n); // A, B, C...
+  u.meuTreino.dias[nome]=[];
+  MT_DIA_ATUAL=nome;
+  saveU(u); renderGym(u);
+}
+
+function mtRemoverDia(){
+  const u=getU(); if(!u||!u.meuTreino) return;
+  const nomes=Object.keys(u.meuTreino.dias);
+  if(nomes.length<=1){ fqToast('Você precisa ter pelo menos um dia.','warn'); return; }
+  delete u.meuTreino.dias[MT_DIA_ATUAL];
+  MT_DIA_ATUAL=Object.keys(u.meuTreino.dias)[0];
+  saveU(u); renderGym(u);
+  fqToast('Dia removido.','ok');
+}
+
+function mtEditarEx(idx,campo,valor){
+  const u=getU(); if(!u||!u.meuTreino) return;
+  const exs=u.meuTreino.dias[MT_DIA_ATUAL];
+  if(!exs||!exs[idx]) return;
+  if(campo==='sets'||campo==='rest'){
+    const n=parseInt(valor);
+    exs[idx][campo]=isNaN(n)?exs[idx][campo]:Math.max(campo==='rest'?0:1,n);
+  }else{
+    exs[idx][campo]=sanitizeStr(valor,20);
+  }
+  saveU(u);
+}
+
+function mtRemoverEx(idx){
+  const u=getU(); if(!u||!u.meuTreino) return;
+  const exs=u.meuTreino.dias[MT_DIA_ATUAL];
+  if(!exs) return;
+  exs.splice(idx,1);
+  saveU(u); renderGym(u);
+}
+
+function abrirAddExercicio(){
+  document.getElementById('add-ex-busca').value='';
+  document.getElementById('add-ex-custom').value='';
+  renderListaAddEx('');
+  document.getElementById('modal-add-ex').classList.add('open');
+}
+
+function renderListaAddEx(termo){
+  const t=(termo||'').toLowerCase();
+  const filtrados=EXERCISE_BANK.filter(e=>!t||e.name.toLowerCase().includes(t)||(e.muscle||'').toLowerCase().includes(t)).slice(0,40);
+  document.getElementById('add-ex-lista').innerHTML=filtrados.length?filtrados.map(e=>
+    `<div onclick="mtAddExDoBanco('${e.id}')" style="display:flex;align-items:center;gap:10px;padding:10px 12px;border-bottom:1px solid rgba(255,255,255,.05);cursor:pointer">
+      <div style="font-size:18px">${e.emoji||'🏋️'}</div>
+      <div style="flex:1;min-width:0">
+        <div style="font-size:12.5px;font-weight:700">${e.name}</div>
+        <div style="font-size:10px;color:var(--mu)">${e.muscle} · ${e.equipment}</div>
+      </div>
+      <div style="color:var(--r);font-size:16px">+</div>
+    </div>`).join('')
+    :'<div style="text-align:center;color:var(--mu);padding:22px;font-size:12px">Nenhum exercício encontrado.<br>Use o campo abaixo para adicionar o seu.</div>';
+}
+
+function mtAddExDoBanco(id){
+  const u=getU(); if(!u||!u.meuTreino) return;
+  const info=EXERCISE_BANK.find(e=>e.id===id);
+  if(!info) return;
+  if(!u.meuTreino.dias[MT_DIA_ATUAL]) u.meuTreino.dias[MT_DIA_ATUAL]=[];
+  u.meuTreino.dias[MT_DIA_ATUAL].push({id, nome:info.name, sets:3, reps:'12', rest:60, custom:false});
+  saveU(u);
+  closeModal('modal-add-ex');
+  renderGym(u);
+  fqToast('✅ '+info.name+' adicionado','ok');
+}
+
+function mtAddExCustom(){
+  const u=getU(); if(!u||!u.meuTreino) return;
+  const nome=sanitizeStr(document.getElementById('add-ex-custom').value,60);
+  if(!nome){ fqToast('Digite o nome do exercício.','warn'); return; }
+  if(!u.meuTreino.dias[MT_DIA_ATUAL]) u.meuTreino.dias[MT_DIA_ATUAL]=[];
+  u.meuTreino.dias[MT_DIA_ATUAL].push({id:null, nome, sets:3, reps:'12', rest:60, custom:true});
+  saveU(u);
+  closeModal('modal-add-ex');
+  renderGym(u);
+  fqToast('✅ '+nome+' adicionado','ok');
+}
+
+function concluirTreinoProprio(){
+  const u=getU(); if(!u) return;
+  const exs=(u.meuTreino?.dias?.[MT_DIA_ATUAL])||[];
+  if(!exs.length){ fqToast('Adicione exercícios antes de concluir.','warn'); return; }
+
+  u.xp=(u.xp||0)+40;
+  u.coins=(u.coins||0)+8;
+  u.stats=u.stats||{}; u.stats.treinos=(u.stats.treinos||0)+1;
+  u.level=Math.max(1,Math.floor((u.xp||0)/500)+1);
+  u.workoutHistory=u.workoutHistory||[];
+  u.workoutHistory.push({date:new Date().toISOString(), day:MT_DIA_ATUAL+' (meu treino)', exercises:exs.map(e=>e.nome)});
+  atualizarStreak(u);
+  saveU(u);
+  fqToast('🎉 Treino concluído! +40 XP','ok');
+  if(typeof dispararConfete==='function') dispararConfete();
+  renderGym(u);
+}
+
 function renderGym(u){
+  atualizarBarraModo(u);
+  if(getModoTreino(u)==='meu'){
+    document.getElementById('gym-hero-tag').textContent='MEU TREINO';
+    document.getElementById('gym-hero-title').textContent='Treino Personalizado';
+    document.getElementById('gym-hero-sub').textContent='Montado por você';
+    document.getElementById('gym-prog-bar').style.width='100%';
+    renderMeuTreino(u);
+    return;
+  }
   const P=getGP(u);const wks=Object.keys(P);curGymWeek=`Semana ${u.gymWeek||1}`;const prog=P[curGymWeek]||P[wks[0]]||{fase:'',days:{}};if(!P[curGymWeek]&&wks[0])curGymWeek=wks[0];
   if(!u.trainApproved){
     document.getElementById('gym-hero-tag').textContent='EM BREVE';
@@ -4655,19 +5093,12 @@ function renderGymDay(w,d,u){
       </div>
       <div class="ep-body">
         <div class="ep-thumb" style="position:relative;overflow:hidden">
-          ${temVideoDemo(ex.id) ? `
-          <video src="exercicios/${ex.id}.mp4" autoplay loop muted playsinline
-            style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover"
-            onerror="fallbackExVideo(this,'${ex.id}','${(ex.emoji||'🏋️').replace(/'/g,"")}','${ex.name.replace(/'/g,"")}','${ex.muscle.replace(/'/g,"")}')"></video>
-          <div id="ep-badge-${ex.id}" style="position:absolute;bottom:6px;right:8px;z-index:2;font-size:8px;font-weight:800;background:rgba(0,0,0,.6);color:#fff;padding:2px 7px;border-radius:4px;letter-spacing:.5px">DEMONSTRAÇÃO</div>
-          ` : `
           <img src="${getExImg(ex.muscle)}" alt="${ex.name}" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;filter:brightness(.4)"/>
           <div style="position:relative;z-index:1;display:flex;flex-direction:column;align-items:center;gap:6px">
             <div style="font-size:44px;line-height:1;filter:drop-shadow(0 2px 8px rgba(0,0,0,.8))">${ex.emoji||'🏋️'}</div>
             <div style="font-size:13px;font-weight:800;text-shadow:0 2px 8px rgba(0,0,0,.8)">${ex.name}</div>
             <div style="font-size:10px;color:var(--r);font-weight:700;background:rgba(229,9,20,.15);padding:3px 10px;border-radius:4px;border:1px solid rgba(229,9,20,.3)">${ex.muscle}</div>
           </div>
-          `}
         </div>
         <div class="ep-obs">💡 ${ex.obs}</div>
         <table class="sets-tbl">
@@ -4817,6 +5248,7 @@ function switchTab(name,btn){
       nav.style.cssText='';
     }
   }
+  if(name==='missoes'&&typeof renderMissoes==='function')renderMissoes();
 }
 
 // ══ ADMIN (dados vêm do Supabase — todos os alunos, de qualquer aparelho) ══
@@ -8170,7 +8602,8 @@ async function admCriarAluno(){
   const senha = document.getElementById('ca-senha').value;
   if(!nome||!email||!senha){ fqToast('Preencha nome, e-mail e senha.','warn'); return; }
   if(senha.length<6){ fqToast('Senha mínimo 6 caracteres.','warn'); return; }
-  if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){ fqToast('E-mail inválido.','warn'); return; }
+  const valEmailAdm=validarEmail(email);
+  if(!valEmailAdm.ok){ fqToast(valEmailAdm.msg.replace(/<[^>]*>/g,''),'warn'); return; }
   if(!sb){ fqToast('Sem conexão com o servidor.','warn'); return; }
 
   const btn=document.getElementById('btn-criar-aluno'); btn.disabled=true; btn.textContent='Criando...';
@@ -8220,7 +8653,327 @@ async function admResetSenha(email){
   }
 }
 
+const FQ_MISSOES={"missoes":[{"n":1,"nome":"Primeiro Passo","fase":1,"dur":10,"formato":"Direto","xp":50,"blocos":[{"ex":["e144"],"sets":2,"reps":"30s","rest":30,"nota":"Aquecimento — solte o corpo"},{"ex":["e056"],"sets":2,"reps":"8","rest":45,"nota":"Mãos apoiadas em banco ou parede"},{"ex":["e135"],"sets":2,"reps":"8 cada lado","rest":45,"nota":"Lombar colada no chão"}]},{"n":2,"nome":"Fundação","fase":1,"dur":10,"formato":"Direto","xp":50,"blocos":[{"ex":["e144"],"sets":2,"reps":"30s","rest":30,"nota":"Aquecimento"},{"ex":["e056"],"sets":2,"reps":"10","rest":45,"nota":"Desça controlado"},{"ex":["e136"],"sets":2,"reps":"8 cada lado","rest":45,"nota":"Sem girar o quadril"}]},{"n":3,"nome":"Equilíbrio","fase":1,"dur":10,"formato":"Direto","xp":50,"blocos":[{"ex":["e144"],"sets":2,"reps":"30s","rest":30,"nota":"Aquecimento"},{"ex":["e130"],"sets":2,"reps":"10 cada","rest":45,"nota":"Aperte o glúteo no topo"},{"ex":["e133"],"sets":2,"reps":"20s","rest":45,"nota":"Quadril firme, sem balançar"}]},{"n":4,"nome":"Resistência Inicial","fase":1,"dur":11,"formato":"Direto","xp":50,"blocos":[{"ex":["e144"],"sets":2,"reps":"40s","rest":30,"nota":"Aquecimento"},{"ex":["e056"],"sets":3,"reps":"10","rest":45,"nota":"3 séries agora — você evoluiu"},{"ex":["e135"],"sets":2,"reps":"10 cada","rest":45,"nota":"Movimento lento"}]},{"n":5,"nome":"Core Forte","fase":1,"dur":11,"formato":"Direto","xp":50,"blocos":[{"ex":["e144"],"sets":2,"reps":"40s","rest":30,"nota":"Aquecimento"},{"ex":["e133"],"sets":3,"reps":"25s","rest":45,"nota":"Cada toque conta"},{"ex":["e136"],"sets":2,"reps":"10 cada","rest":45,"nota":"Alongue bem"}]},{"n":6,"nome":"Pernas de Aço","fase":1,"dur":11,"formato":"Direto","xp":50,"blocos":[{"ex":["e144"],"sets":2,"reps":"40s","rest":30,"nota":"Aquecimento"},{"ex":["e130"],"sets":3,"reps":"12 cada","rest":45,"nota":"Segure 1s no topo"},{"ex":["e090"],"sets":2,"reps":"15 cada","rest":40,"nota":"Amplitude completa"}]},{"n":7,"nome":"Circuito Iniciante","fase":1,"dur":12,"formato":"Circuito","xp":50,"blocos":[{"ex":["e144"],"sets":1,"reps":"45s","rest":20,"nota":"Aquecimento"},{"ex":["e056","e130","e133"],"sets":3,"reps":"10 / 10 cada / 20s","rest":60,"nota":"Faça em sequência, descanse só no fim"}]},{"n":8,"nome":"Coordenação","fase":1,"dur":12,"formato":"Circuito","xp":50,"blocos":[{"ex":["e144"],"sets":1,"reps":"45s","rest":20,"nota":"Aquecimento"},{"ex":["e096","e136","e135"],"sets":3,"reps":"20s / 8 cada / 8 cada","rest":60,"nota":"Ritmo constante"}]},{"n":9,"nome":"Formatura da Base","fase":1,"dur":12,"formato":"Circuito","xp":50,"blocos":[{"ex":["e144"],"sets":1,"reps":"45s","rest":20,"nota":"Aquecimento"},{"ex":["e055","e130","e133","e096"],"sets":3,"reps":"8 / 12 cada / 25s / 20s","rest":60,"nota":"🎓 Última da Fase Base — mostre o que aprendeu!"}]},{"n":10,"nome":"Primeira Carga","fase":2,"dur":12,"formato":"Direto","xp":75,"blocos":[{"ex":["e144"],"sets":2,"reps":"40s","rest":30,"nota":"Aquecimento"},{"ex":["e003"],"sets":3,"reps":"12","rest":45,"nota":"⚡ Halteres leves — sinta o peito trabalhar"},{"ex":["e137"],"sets":2,"reps":"20s","rest":45,"nota":"Lombar colada"}]},{"n":11,"nome":"Puxada e Empurrada","fase":2,"dur":12,"formato":"Direto","xp":75,"blocos":[{"ex":["e144"],"sets":2,"reps":"40s","rest":30,"nota":"Aquecimento"},{"ex":["e055"],"sets":3,"reps":"10","rest":45,"nota":"Corpo alinhado"},{"ex":["e014"],"sets":3,"reps":"12 cada","rest":45,"nota":"Cotovelo fixo"}]},{"n":12,"nome":"Base Sólida","fase":2,"dur":13,"formato":"Direto","xp":75,"blocos":[{"ex":["e144"],"sets":2,"reps":"45s","rest":30,"nota":"Aquecimento"},{"ex":["e130"],"sets":3,"reps":"15 cada","rest":45,"nota":"Adicione peso no quadril se tiver"},{"ex":["e090"],"sets":3,"reps":"15 cada","rest":40,"nota":"Segure no topo"}]},{"n":13,"nome":"Unilateral","fase":2,"dur":13,"formato":"Direto","xp":75,"blocos":[{"ex":["e144"],"sets":2,"reps":"45s","rest":30,"nota":"Aquecimento"},{"ex":["e129"],"sets":3,"reps":"8 cada","rest":50,"nota":"⚡ Desce lateral — trabalha mobilidade junto"},{"ex":["e133"],"sets":3,"reps":"30s","rest":45,"nota":"Quadril travado"}]},{"n":14,"nome":"Circuito com Carga","fase":2,"dur":13,"formato":"Circuito","xp":75,"blocos":[{"ex":["e144"],"sets":1,"reps":"45s","rest":20,"nota":"Aquecimento"},{"ex":["e003","e014","e137"],"sets":3,"reps":"12 / 12 cada / 25s","rest":55,"nota":"Sem parar entre exercícios"}]},{"n":15,"nome":"Explosão Leve","fase":2,"dur":13,"formato":"Circuito","xp":75,"blocos":[{"ex":["e144"],"sets":1,"reps":"45s","rest":20,"nota":"Aquecimento"},{"ex":["e117","e055","e096"],"sets":3,"reps":"8 / 10 / 25s","rest":55,"nota":"⚡ Primeiro salto! Aterrisse suave"}]},{"n":16,"nome":"Descanso Curto","fase":2,"dur":14,"formato":"Circuito","xp":75,"blocos":[{"ex":["e144"],"sets":1,"reps":"45s","rest":20,"nota":"Aquecimento"},{"ex":["e003","e130","e133","e096"],"sets":3,"reps":"12 / 15 cada / 30s / 25s","rest":45,"nota":"⚡ Descanso caiu pra 45s — segure o ritmo"}]},{"n":17,"nome":"Corpo Todo","fase":2,"dur":14,"formato":"Circuito","xp":75,"blocos":[{"ex":["e144"],"sets":1,"reps":"45s","rest":20,"nota":"Aquecimento"},{"ex":["e121","e055","e130","e139"],"sets":3,"reps":"20s / 12 / 15 cada / 8 cada","rest":45,"nota":"Ritmo constante do início ao fim"}]},{"n":18,"nome":"Formatura da Transição","fase":2,"dur":14,"formato":"Circuito","xp":75,"blocos":[{"ex":["e144"],"sets":1,"reps":"45s","rest":20,"nota":"Aquecimento"},{"ex":["e003","e117","e014","e137"],"sets":3,"reps":"12 / 10 / 12 cada / 30s","rest":45,"nota":"🎓 Última da Transição — você está pronto pra Força!"}]},{"n":19,"nome":"Entrada na Força","fase":3,"dur":13,"formato":"Direto","xp":100,"blocos":[{"ex":["e144"],"sets":2,"reps":"45s","rest":30,"nota":"Aquecimento"},{"ex":["e001"],"sets":4,"reps":"10","rest":50,"nota":"🔥 Supino — o rei do peito. Escápulas retraídas"},{"ex":["e137"],"sets":3,"reps":"25s","rest":40,"nota":"Core firme"}]},{"n":20,"nome":"Empurrar Pesado","fase":3,"dur":14,"formato":"Direto","xp":100,"blocos":[{"ex":["e144"],"sets":2,"reps":"45s","rest":30,"nota":"Aquecimento"},{"ex":["e001"],"sets":4,"reps":"8","rest":55,"nota":"Menos reps, mais carga"},{"ex":["e017"],"sets":3,"reps":"12","rest":45,"nota":"Cotovelos fixos"}]},{"n":21,"nome":"Puxar Forte","fase":3,"dur":14,"formato":"Direto","xp":100,"blocos":[{"ex":["e144"],"sets":2,"reps":"45s","rest":30,"nota":"Aquecimento"},{"ex":["e008"],"sets":4,"reps":"12","rest":50,"nota":"Alongue bem o peitoral"},{"ex":["e014"],"sets":3,"reps":"12 cada","rest":45,"nota":"Sem balançar o corpo"}]},{"n":22,"nome":"Pernas Sérias","fase":3,"dur":14,"formato":"Direto","xp":100,"blocos":[{"ex":["e144"],"sets":2,"reps":"45s","rest":30,"nota":"Aquecimento"},{"ex":["e129"],"sets":4,"reps":"10 cada","rest":50,"nota":"Amplitude total"},{"ex":["e090"],"sets":3,"reps":"18 cada","rest":40,"nota":"Queime a panturrilha"}]},{"n":23,"nome":"Circuito Força","fase":3,"dur":14,"formato":"Circuito","xp":100,"blocos":[{"ex":["e144"],"sets":1,"reps":"45s","rest":20,"nota":"Aquecimento"},{"ex":["e001","e008","e137"],"sets":4,"reps":"10 / 12 / 30s","rest":50,"nota":"🔥 4 rodadas agora"}]},{"n":24,"nome":"EMOM Iniciante","fase":3,"dur":14,"formato":"EMOM","xp":100,"blocos":[{"ex":["e144"],"sets":1,"reps":"45s","rest":20,"nota":"Aquecimento"},{"ex":["e055","e130"],"sets":10,"reps":"8 / 10 cada","rest":0,"nota":"⏱️ EMOM: a cada minuto, faça as reps. O que sobrar é descanso"}]},{"n":25,"nome":"Pliometria","fase":3,"dur":14,"formato":"Circuito","xp":100,"blocos":[{"ex":["e144"],"sets":1,"reps":"45s","rest":20,"nota":"Aquecimento"},{"ex":["e117","e119","e096"],"sets":4,"reps":"10 / 8 cada / 30s","rest":45,"nota":"🔥 Explosão máxima, aterrissagem suave"}]},{"n":26,"nome":"Unilateral Avançado","fase":3,"dur":15,"formato":"Circuito","xp":100,"blocos":[{"ex":["e144"],"sets":1,"reps":"45s","rest":20,"nota":"Aquecimento"},{"ex":["e125","e130","e133"],"sets":4,"reps":"5 cada / 15 cada / 35s","rest":50,"nota":"🔥 Pistol Squat! Use apoio se precisar"}]},{"n":27,"nome":"AMRAP 8","fase":3,"dur":14,"formato":"AMRAP","xp":100,"blocos":[{"ex":["e144"],"sets":1,"reps":"45s","rest":20,"nota":"Aquecimento"},{"ex":["e055","e117","e096"],"sets":1,"reps":"8 min — máximo de rodadas de: 10 flexões, 10 saltos, 20s mountain","rest":0,"nota":"⏱️ AMRAP: quantas rodadas você consegue em 8 min?"}]},{"n":28,"nome":"Posterior e Core","fase":3,"dur":15,"formato":"Direto","xp":100,"blocos":[{"ex":["e144"],"sets":2,"reps":"45s","rest":30,"nota":"Aquecimento"},{"ex":["e131"],"sets":4,"reps":"6","rest":60,"nota":"🔥 Nordic Curl — desça o mais lento que conseguir"},{"ex":["e139"],"sets":3,"reps":"10 cada","rest":45,"nota":"Controle total"}]},{"n":29,"nome":"Prova de Fogo","fase":3,"dur":15,"formato":"Circuito","xp":100,"blocos":[{"ex":["e144"],"sets":1,"reps":"45s","rest":20,"nota":"Aquecimento"},{"ex":["e001","e125","e137","e096"],"sets":4,"reps":"10 / 6 cada / 35s / 30s","rest":45,"nota":"🔥 Penúltima — dá tudo!"}]},{"n":30,"nome":"Missão Final","fase":3,"dur":15,"formato":"AMRAP","xp":100,"blocos":[{"ex":["e144"],"sets":1,"reps":"60s","rest":20,"nota":"Aquecimento caprichado"},{"ex":["e055","e117","e133","e121"],"sets":1,"reps":"10 min — máximo de rodadas de: 12 flexões, 12 saltos, 30s prancha, 20s bear crawl","rest":0,"nota":"🏆 MISSÃO FINAL — você percorreu 30 missões. Mostre tudo que construiu!"}]}],"fases":{"1":{"nome":"Base","emoji":"🌱","cor":"#2ecc71","desc":"Peso corporal · aprenda os padrões"},"2":{"nome":"Transição","emoji":"⚡","cor":"#f39c12","desc":"Carga leve · aumente a intensidade"},"3":{"nome":"Força","emoji":"🔥","cor":"#e50914","desc":"Musculação + funcional · nível avançado"}}};
+
+// ══════════════════════════════════════════════════════════
+// FITQUEST MISSÕES — produto gamificado: 30 missões progressivas,
+// 3 liberadas por semana. Convive com o plano de 8 semanas (o aluno escolhe).
+// ══════════════════════════════════════════════════════════
+
+const MISSOES_POR_SEMANA = 3;
+
+// Quantas missões o aluno já pode acessar, com base em quando ele entrou no modo
+function missoesLiberadas(u){
+  if(!u.missoesInicio) return 0;
+  const inicio = new Date(u.missoesInicio);
+  const agora = new Date();
+  const semanasPassadas = Math.floor((agora - inicio)/(1000*60*60*24*7));
+  return Math.min(30, (semanasPassadas+1)*MISSOES_POR_SEMANA);
+}
+
+function missoesConcluidas(u){
+  return (u.missoesFeitas||[]).length;
+}
+
+function proximaMissao(u){
+  const feitas = new Set(u.missoesFeitas||[]);
+  const liberadas = missoesLiberadas(u);
+  for(let i=1;i<=liberadas;i++){ if(!feitas.has(i)) return i; }
+  return null; // tudo que está liberado já foi feito
+}
+
+function diasParaProximaLiberacao(u){
+  if(!u.missoesInicio) return null;
+  const inicio = new Date(u.missoesInicio);
+  const agora = new Date();
+  const diasPassados = Math.floor((agora - inicio)/(1000*60*60*24));
+  return 7 - (diasPassados % 7);
+}
+
+async function ativarModoMissoes(){
+  const u = getU(); if(!u) return;
+  if(!await fqConfirm('Ativar Missões','Você vai começar a Jornada das 30 Missões. Novas missões são liberadas a cada semana. Seu plano de treino atual continua disponível normalmente.','Começar','🎮')) return;
+  u.missoesInicio = new Date().toISOString();
+  u.missoesFeitas = u.missoesFeitas || [];
+  saveU(u);
+  fqToast('🎮 Jornada iniciada! 3 missões liberadas.','ok');
+  renderMissoes();
+  switchTab('missoes', null);
+}
+
+function renderMissoes(){
+  const u = getU(); if(!u) return;
+  const el = document.getElementById('missoes-content');
+  if(!el) return;
+
+  // Ainda não ativou o modo
+  if(!u.missoesInicio){
+    el.innerHTML = `
+      <div style="padding:30px 20px;text-align:center">
+        <div style="font-size:60px;margin-bottom:14px">🎮</div>
+        <div style="font-size:20px;font-weight:900;margin-bottom:8px">Jornada das 30 Missões</div>
+        <div style="font-size:13px;color:var(--t2);line-height:1.7;margin-bottom:22px">
+          Treinos curtos de <strong>10 a 15 minutos</strong> que evoluem com você.<br/>
+          Comece com peso corporal e chegue à musculação avançada.<br/>
+          <strong>3 novas missões liberadas por semana.</strong>
+        </div>
+        <div style="display:flex;gap:8px;margin-bottom:22px">
+          ${[1,2,3].map(f=>{const fa=FQ_MISSOES.fases[f];return `
+            <div style="flex:1;background:var(--s);border:1px solid var(--b);border-radius:10px;padding:12px 8px">
+              <div style="font-size:22px;margin-bottom:4px">${fa.emoji}</div>
+              <div style="font-size:11px;font-weight:800;color:${fa.cor}">${fa.nome}</div>
+              <div style="font-size:9px;color:var(--mu);margin-top:3px;line-height:1.4">${fa.desc}</div>
+            </div>`;}).join('')}
+        </div>
+        <button class="btn-p" onclick="ativarModoMissoes()">🎮 Começar Jornada</button>
+        <div style="font-size:10px;color:var(--mu);margin-top:12px">Grátis · seu plano de treino atual continua normal</div>
+      </div>`;
+    return;
+  }
+
+  const liberadas = missoesLiberadas(u);
+  const feitas = new Set(u.missoesFeitas||[]);
+  const nFeitas = feitas.size;
+  const prox = proximaMissao(u);
+  const diasProx = diasParaProximaLiberacao(u);
+  const pctTotal = Math.round(nFeitas/30*100);
+
+  el.innerHTML = `
+    <div style="padding:16px 20px 8px">
+      <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:6px">
+        <div style="font-size:17px;font-weight:900">Sua Jornada</div>
+        <div style="font-size:12px;color:var(--r);font-weight:800">${nFeitas}/30</div>
+      </div>
+      <div style="height:6px;background:var(--s2);border-radius:3px;overflow:hidden;margin-bottom:6px">
+        <div style="height:100%;width:${pctTotal}%;background:linear-gradient(90deg,#2ecc71,#f39c12,#e50914);transition:width .4s"></div>
+      </div>
+      <div style="font-size:10.5px;color:var(--mu)">
+        ${liberadas<30 ? `${liberadas} missões liberadas · próximas 3 em ${diasProx} ${diasProx===1?'dia':'dias'}` : 'Todas as 30 missões liberadas!'}
+      </div>
+    </div>
+    ${[1,2,3].map(fase=>{
+      const fa = FQ_MISSOES.fases[fase];
+      const doFase = FQ_MISSOES.missoes.filter(m=>m.fase===fase);
+      const feitasFase = doFase.filter(m=>feitas.has(m.n)).length;
+      return `
+      <div style="padding:14px 20px 4px">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
+          <span style="font-size:18px">${fa.emoji}</span>
+          <div style="flex:1">
+            <div style="font-size:13px;font-weight:900;color:${fa.cor}">Fase ${fase} — ${fa.nome}</div>
+            <div style="font-size:10px;color:var(--mu)">${fa.desc}</div>
+          </div>
+          <div style="font-size:11px;font-weight:800;color:var(--mu)">${feitasFase}/${doFase.length}</div>
+        </div>
+        ${doFase.map(m=>{
+          const feita = feitas.has(m.n);
+          const disponivel = m.n <= liberadas;
+          const ehProxima = m.n === prox;
+          return `<div onclick="${disponivel?`abrirMissao(${m.n})`:''}" style="display:flex;align-items:center;gap:12px;background:${ehProxima?'rgba(229,9,20,.08)':'var(--s)'};border:1px solid ${ehProxima?'rgba(229,9,20,.3)':'var(--b)'};border-radius:10px;padding:11px 13px;margin-bottom:7px;${disponivel?'cursor:pointer':'opacity:.4'}">
+            <div style="width:30px;height:30px;border-radius:50%;background:${feita?'#2ecc71':(disponivel?fa.cor:'var(--s2)')};display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:900;color:#fff;flex-shrink:0">
+              ${feita?'✓':(disponivel?m.n:'🔒')}
+            </div>
+            <div style="flex:1;min-width:0">
+              <div style="font-size:12.5px;font-weight:700;${feita?'color:var(--mu)':''}">${m.nome}</div>
+              <div style="font-size:10px;color:var(--mu)">${m.dur} min · ${m.formato} · ${m.xp} XP</div>
+            </div>
+            ${ehProxima?'<div style="font-size:9px;font-weight:800;color:var(--r);background:rgba(229,9,20,.15);padding:3px 8px;border-radius:4px;flex-shrink:0">PRÓXIMA</div>':''}
+          </div>`;
+        }).join('')}
+      </div>`;
+    }).join('')}
+    <div style="height:80px"></div>`;
+}
+
+function abrirMissao(n){
+  const u = getU(); if(!u) return;
+  const m = FQ_MISSOES.missoes.find(x=>x.n===n);
+  if(!m) return;
+  if(n > missoesLiberadas(u)){ fqToast('🔒 Esta missão ainda não foi liberada.','warn'); return; }
+
+  const fa = FQ_MISSOES.fases[m.fase];
+  const jaFeita = (u.missoesFeitas||[]).includes(n);
+
+  document.getElementById('missao-detalhe-titulo').textContent = `Missão ${m.n} — ${m.nome}`;
+  document.getElementById('missao-detalhe-content').innerHTML = `
+    <div style="text-align:center;padding:6px 0 16px">
+      <div style="display:inline-block;background:${fa.cor};color:#fff;font-size:10px;font-weight:800;padding:3px 10px;border-radius:4px;margin-bottom:8px">${fa.emoji} ${fa.nome}</div>
+      <div style="display:flex;gap:14px;justify-content:center;font-size:11px;color:var(--t2)">
+        <div>⏱️ ${m.dur} min</div><div>📋 ${m.formato}</div><div>⭐ ${m.xp} XP</div>
+      </div>
+    </div>
+    ${m.blocos.map((b,bi)=>{
+      const nomes = b.ex.map(id=>{const e=EXERCISE_BANK.find(x=>x.id===id);return e?e.name:id;});
+      const ehCircuito = b.ex.length>1;
+      return `<div style="background:var(--s);border:1px solid var(--b);border-radius:10px;padding:12px 14px;margin-bottom:8px">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+          <div style="font-size:11px;font-weight:800;color:${fa.cor};text-transform:uppercase;letter-spacing:.5px">
+            ${bi===0?'Aquecimento':(ehCircuito?`Circuito · ${b.sets} rodadas`:`Bloco ${bi} · ${b.sets} séries`)}
+          </div>
+          ${b.rest>0?`<div style="font-size:10px;color:var(--mu)">${b.rest}s descanso</div>`:''}
+        </div>
+        ${nomes.map((nome,ni)=>{
+          const repsArr = String(b.reps).split('/').map(s=>s.trim());
+          const rep = repsArr[ni] || repsArr[0];
+          return `<div style="display:flex;align-items:center;gap:10px;padding:6px 0;${ni<nomes.length-1?'border-bottom:1px solid rgba(255,255,255,.05)':''}">
+            <div style="flex:1;font-size:12.5px;font-weight:600">${nome}</div>
+            <div style="font-size:12px;font-weight:800;color:var(--r)">${rep}</div>
+          </div>`;
+        }).join('')}
+        ${b.nota?`<div style="font-size:10.5px;color:var(--t2);margin-top:8px;padding-top:8px;border-top:1px solid rgba(255,255,255,.05);line-height:1.5">💡 ${b.nota}</div>`:''}
+      </div>`;
+    }).join('')}
+    <button class="btn-p" style="margin-top:8px" onclick="concluirMissao(${m.n})" ${jaFeita?'disabled style="opacity:.5;margin-top:8px"':''}>
+      ${jaFeita?'✅ Missão já concluída':'✅ Concluir Missão'}
+    </button>`;
+
+  document.getElementById('modal-missao').classList.add('open');
+}
+
+function concluirMissao(n){
+  const u = getU(); if(!u) return;
+  const m = FQ_MISSOES.missoes.find(x=>x.n===n);
+  if(!m) return;
+  u.missoesFeitas = u.missoesFeitas || [];
+  if(u.missoesFeitas.includes(n)){ fqToast('Você já concluiu esta missão.','warn'); return; }
+
+  u.missoesFeitas.push(n);
+  u.xp = (u.xp||0) + m.xp;
+  u.coins = (u.coins||0) + Math.round(m.xp/5);
+  const nivelAntes = u.level||1;
+  u.level = Math.max(1, Math.floor((u.xp||0)/500)+1);
+  saveU(u);
+
+  closeModal('modal-missao');
+  fqToast(`🎉 Missão ${n} concluída! +${m.xp} XP`,'ok');
+  if(typeof dispararConfete==='function') dispararConfete();
+  if(u.level>nivelAntes && typeof dispararConfete==='function') setTimeout(()=>dispararConfete(),400);
+
+  // marco de fase
+  const doFase = FQ_MISSOES.missoes.filter(x=>x.fase===m.fase);
+  const feitasFase = doFase.filter(x=>u.missoesFeitas.includes(x.n)).length;
+  if(feitasFase===doFase.length){
+    setTimeout(()=>fqToast(`🎓 Fase ${m.fase} completa! Parabéns!`,'ok'),900);
+  }
+  renderMissoes();
+  if(typeof renderHome==='function') renderHome();
+}
+
+
+function renderHomeMissoesCard(){
+  const u = getU(); if(!u) return;
+  const el = document.getElementById('home-missoes-card');
+  if(!el) return;
+
+  if(!u.missoesInicio){
+    el.innerHTML = `<div onclick="switchTab('missoes',null)" style="background:linear-gradient(135deg,rgba(46,204,113,.12),rgba(229,9,20,.12));border:1px solid rgba(229,9,20,.25);border-radius:12px;padding:16px;cursor:pointer;display:flex;align-items:center;gap:14px">
+      <div style="font-size:34px">🎮</div>
+      <div style="flex:1;min-width:0">
+        <div style="font-size:14px;font-weight:900;margin-bottom:3px">Jornada das 30 Missões</div>
+        <div style="font-size:11px;color:var(--t2);line-height:1.4">Treinos de 10-15 min que evoluem com você · grátis</div>
+      </div>
+      <div style="font-size:18px;color:var(--r)">›</div>
+    </div>`;
+    return;
+  }
+
+  const nFeitas = missoesConcluidas(u);
+  const prox = proximaMissao(u);
+  const m = prox ? FQ_MISSOES.missoes.find(x=>x.n===prox) : null;
+  const diasProx = diasParaProximaLiberacao(u);
+
+  el.innerHTML = `<div onclick="switchTab('missoes',null)" style="background:var(--s);border:1px solid var(--b);border-radius:12px;padding:14px 16px;cursor:pointer">
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:10px">
+      <div style="font-size:26px">🎮</div>
+      <div style="flex:1;min-width:0">
+        <div style="font-size:13px;font-weight:900">Jornada das Missões</div>
+        <div style="font-size:10.5px;color:var(--mu)">${nFeitas}/30 concluídas</div>
+      </div>
+      <div style="font-size:18px;color:var(--r)">›</div>
+    </div>
+    <div style="height:5px;background:var(--s2);border-radius:3px;overflow:hidden;margin-bottom:10px">
+      <div style="height:100%;width:${Math.round(nFeitas/30*100)}%;background:linear-gradient(90deg,#2ecc71,#f39c12,#e50914)"></div>
+    </div>
+    ${m
+      ? `<div style="background:rgba(229,9,20,.08);border-radius:8px;padding:9px 11px;display:flex;align-items:center;gap:10px">
+          <div style="font-size:10px;font-weight:800;color:var(--r);background:rgba(229,9,20,.15);padding:3px 7px;border-radius:4px">PRÓXIMA</div>
+          <div style="flex:1;min-width:0;font-size:11.5px;font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${m.nome}</div>
+          <div style="font-size:10px;color:var(--mu);flex-shrink:0">${m.dur}min</div>
+        </div>`
+      : `<div style="font-size:11px;color:var(--mu);text-align:center;padding:6px">
+          ${nFeitas>=30?'🏆 Jornada completa! Parabéns!':`✅ Tudo em dia — novas missões em ${diasProx} ${diasProx===1?'dia':'dias'}`}
+        </div>`}
+  </div>`;
+}
+
 </script>
+
+<!-- ══ TELA: TRIAL EXPIRADO ══ -->
+<div id="sc-expirado" class="screen">
+  <div style="min-height:100vh;display:flex;flex-direction:column;justify-content:center;background:var(--bg)">
+    <div id="expirado-content"></div>
+  </div>
+</div>
+
+<!-- ══ MODAL: ASSINATURA ══ -->
+<div class="modal-ov" id="modal-assinatura"><div class="modal-bx">
+  <div class="modal-t"><span>⭐ Assinar FitQuest</span><button class="modal-cl" onclick="closeModal('modal-assinatura')">✕</button></div>
+  <div style="padding:6px 0 4px;text-align:center">
+    <div style="font-size:32px;font-weight:900;color:var(--r);line-height:1">R$15</div>
+    <div style="font-size:11.5px;color:var(--mu);margin-bottom:18px">por mês · cancele quando quiser</div>
+    <div style="background:var(--s);border:1px solid var(--b);border-radius:10px;padding:16px;text-align:left;font-size:12px;color:var(--t2);line-height:2;margin-bottom:16px">
+      ✅ Treinos gerados por IA<br/>
+      ✅ Plano de corrida periodizado<br/>
+      ✅ Jornada das 30 Missões<br/>
+      ✅ Comunidade e ranking<br/>
+      ✅ Acompanhamento de evolução
+    </div>
+    <button class="btn-p" onclick="irParaPagamento()">Assinar agora</button>
+  </div>
+</div></div>
+
+<!-- ══ MODAL: ESCOLHER BASE DO TREINO PRÓPRIO ══ -->
+<div class="modal-ov" id="modal-base-treino"><div class="modal-bx">
+  <div class="modal-t"><span>✏️ Montar Meu Treino</span><button class="modal-cl" onclick="closeModal('modal-base-treino')">✕</button></div>
+  <div style="padding:4px 0">
+    <div style="font-size:12px;color:var(--t2);margin-bottom:16px;line-height:1.6">Como você prefere começar?</div>
+    <div onclick="criarMeuTreino('copiar')" style="background:var(--s);border:1px solid var(--b);border-radius:10px;padding:14px;margin-bottom:10px;cursor:pointer;display:flex;align-items:center;gap:12px">
+      <div style="font-size:26px">📋</div>
+      <div style="flex:1">
+        <div style="font-size:13px;font-weight:800;margin-bottom:2px">Partir do nosso plano</div>
+        <div style="font-size:11px;color:var(--t2);line-height:1.4">Copia seu treino atual e você ajusta o que quiser</div>
+      </div>
+    </div>
+    <div onclick="criarMeuTreino('zero')" style="background:var(--s);border:1px solid var(--b);border-radius:10px;padding:14px;cursor:pointer;display:flex;align-items:center;gap:12px">
+      <div style="font-size:26px">🆕</div>
+      <div style="flex:1">
+        <div style="font-size:13px;font-weight:800;margin-bottom:2px">Começar do zero</div>
+        <div style="font-size:11px;color:var(--t2);line-height:1.4">Monte tudo do seu jeito, exercício por exercício</div>
+      </div>
+    </div>
+    <div style="font-size:10.5px;color:var(--mu);margin-top:14px;line-height:1.5">💡 Seu plano gerado pelo app continua salvo — você pode voltar pra ele quando quiser.</div>
+  </div>
+</div></div>
+
+<!-- ══ MODAL: ADICIONAR EXERCÍCIO ══ -->
+<div class="modal-ov" id="modal-add-ex"><div class="modal-bx">
+  <div class="modal-t"><span>Adicionar Exercício</span><button class="modal-cl" onclick="closeModal('modal-add-ex')">✕</button></div>
+  <div style="padding:4px 0">
+    <input class="fi" id="add-ex-busca" placeholder="🔍 Buscar na nossa lista..." oninput="renderListaAddEx(this.value)" style="margin-bottom:10px"/>
+    <div id="add-ex-lista" style="max-height:34vh;overflow-y:auto;background:var(--s);border:1px solid var(--b);border-radius:10px;margin-bottom:14px"></div>
+    <div style="font-size:11px;color:var(--mu);margin-bottom:8px;font-weight:700">Ou adicione um exercício seu:</div>
+    <div style="display:flex;gap:8px">
+      <input class="fi" id="add-ex-custom" placeholder="Ex: Supino na máquina X" style="flex:1"/>
+      <button onclick="mtAddExCustom()" style="background:var(--r);border:none;border-radius:8px;color:#fff;font-weight:800;padding:0 16px;cursor:pointer;font-size:13px">+</button>
+    </div>
+  </div>
+</div></div>
+
+<!-- ══ MODAL DETALHE DA MISSÃO ══ -->
+<div class="modal-ov" id="modal-missao"><div class="modal-bx">
+  <div class="modal-t"><span id="missao-detalhe-titulo">Missão</span><button class="modal-cl" onclick="closeModal('modal-missao')">✕</button></div>
+  <div id="missao-detalhe-content" style="max-height:70vh;overflow-y:auto"></div>
+</div></div>
 
 <!-- ══ EBOOK VIEWER MODAL ══ -->
 <div <!-- ══ MODAL CRIAR ALUNO ══ -->
