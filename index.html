@@ -792,7 +792,7 @@ textarea.fi{resize:vertical;min-height:80px;}
 
 <!-- SPLASH -->
 <div id="sc-splash" class="screen active">
-  <div id="fq-version-badge" style="position:absolute;bottom:8px;right:12px;font-size:9px;color:#333;font-weight:700;z-index:5">v79</div>
+  <div id="fq-version-badge" style="position:absolute;bottom:8px;right:12px;font-size:9px;color:#333;font-weight:700;z-index:5">v81</div>
   <img src="https://images.unsplash.com/photo-1517836357463-d25dfeac3438?w=800&q=80" alt="Fitness" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center top;filter:brightness(.35);z-index:0"/>
   <div class="splash-glow"></div>
   <div class="splash-noise"></div>
@@ -803,9 +803,10 @@ textarea.fi{resize:vertical;min-height:80px;}
     <div class="splash-title">Seu treino.<br>Sua <span class="hl">evolução.</span><br>Seu ritmo.</div>
     <div class="splash-sub">Plataforma de assessoria esportiva com treinos personalizados e acompanhamento completo.</div>
     <div class="splash-btns">
-      <button class="btn-splash-primary" onclick="goAuth('register')">▶ Começar agora — É grátis</button>
+      <button class="btn-splash-primary" onclick="goAuth('register')">▶ Testar 7 dias grátis</button>
       <button class="btn-splash-secondary" onclick="goAuth('login')">Já tenho uma conta</button>
     </div>
+    <div style="text-align:center;font-size:11px;color:rgba(255,255,255,.55);margin-top:12px;font-weight:600">✅ Sem cartão de crédito · cancele quando quiser</div>
   </div>
 </div>
 
@@ -817,6 +818,7 @@ textarea.fi{resize:vertical;min-height:80px;}
     <div class="auth-logo-sm"><span class="r">FIT</span>QUEST</div>
     <div class="auth-box">
       <div class="auth-title" id="auth-title">Criar conta</div>
+      <div id="auth-trial-badge" style="background:rgba(46,204,113,.1);border:1px solid rgba(46,204,113,.3);border-radius:8px;padding:9px 12px;margin-bottom:14px;text-align:center;font-size:11.5px;font-weight:700;color:#2ecc71">🎁 7 dias grátis · sem cartão de crédito</div>
       <div class="auth-tabs">
         <button class="auth-tab" id="tab-login" onclick="switchAuth('login')">Entrar</button>
         <button class="auth-tab active" id="tab-reg" onclick="switchAuth('register')">Criar conta</button>
@@ -832,7 +834,7 @@ textarea.fi{resize:vertical;min-height:80px;}
         <div class="fg"><label class="fl">E-mail</label><input id="reg-email" class="fi" type="email" placeholder="seu@email.com"/></div>
         <div class="fg"><label class="fl">Senha</label><input id="reg-pass" class="fi" type="password" placeholder="Mínimo 6 caracteres"/></div>
         <div class="fg"><label class="fl">Confirmar senha</label><input id="reg-pass2" class="fi" type="password" placeholder="Repita a senha"/></div>
-        <button class="btn-p" id="btn-reg" onclick="doRegister()">Criar conta grátis</button>
+        <button class="btn-p" id="btn-reg" onclick="doRegister()">Começar meus 7 dias grátis</button>
       </div>
     </div>
   </div>
@@ -2264,7 +2266,7 @@ textarea.fi{resize:vertical;min-height:80px;}
 
 <script>
 // ══ SUPABASE ══
-const FQ_VERSION='v79';console.log('%cFitQuest '+FQ_VERSION,'color:#e50914;font-weight:bold;font-size:14px');
+const FQ_VERSION='v81';console.log('%cFitQuest '+FQ_VERSION,'color:#e50914;font-weight:bold;font-size:14px');
 // ══ PROXY DE IA (Cloudflare Worker) ══
 // Quando preenchido, a IA real funciona em produção com a chave protegida no servidor.
 // Deixe '' para usar o plano local (fallback). Ex: 'https://fitquest-ai.SEU-USUARIO.workers.dev'
@@ -2455,7 +2457,6 @@ let EXERCISE_BANK=[
   {id:'e132',name:'Copenhagen Plank',muscle:'Adutores/Core',equipment:'Banco',emoji:'🇩🇰',obs:'Prancha lateral com a perna de cima apoiada no banco. Previne lesão de adutor (pubalgia).'},
   {id:'e133',name:'Prancha com Toque no Ombro',muscle:'Core/Anti-rotação',equipment:'Peso Corporal',emoji:'🤚',obs:'Em prancha, toque o ombro oposto alternadamente. Quadril NÃO gira. Anti-rotação puro.'},
   {id:'e134',name:'Pallof Press',muscle:'Core/Anti-rotação',equipment:'Cabo',emoji:'🛡️',obs:'De lado ao cabo, empurre à frente resistindo à rotação. O melhor exercício de core funcional.'},
-  {id:'e135',name:'Dead Bug',muscle:'Core Profundo',equipment:'Peso Corporal',emoji:'🐞',obs:'Deitado, braço e perna opostos descem. Lombar COLADA no chão. Ativa transverso do abdômen.'},
   {id:'e136',name:'Bird Dog',muscle:'Core/Lombar/Glúteo',equipment:'Peso Corporal',emoji:'🐦',obs:'Quatro apoios, estenda braço e perna opostos. Segure 3s. Estabilidade da coluna.'},
   {id:'e137',name:'Hollow Body Hold',muscle:'Core Completo',equipment:'Peso Corporal',emoji:'🌙',obs:'Deitado, ombros e pernas fora do chão, lombar colada. Base da ginástica. Segure 20-40s.'},
   {id:'e138',name:'Prancha Dinâmica (Up-Down)',muscle:'Core/Tríceps/Ombro',equipment:'Peso Corporal',emoji:'⬆️',obs:'Alterne entre prancha de antebraço e de mão. Quadril estável, sem balanço.'},
@@ -2500,7 +2501,57 @@ let EXERCISE_BANK=[
   {id:'e177',name:'Bulgarian Split Squat Isométrico',muscle:'Quadríceps/Glúteo',equipment:'Banco',emoji:'⏸️',obs:'Segure a posição baixa do búlgaro por 20-30s. Isometria = ganho de força na amplitude treinada.'},
   {id:'e178',name:'Wall Sit',muscle:'Quadríceps/Isometria',equipment:'Parede',emoji:'🧱',obs:'Costas na parede, joelhos a 90°. Segure até a falha. Zero impacto, muito eficaz.'},
   {id:'e179',name:'Isometria de Supino (Pausa)',muscle:'Peito',equipment:'Barra',emoji:'⏱️',obs:'Pause 3s com a barra a 2cm do peito. Elimina o rebote e expõe o ponto fraco.'},
-  {id:'e180',name:'Agachamento com Pausa',muscle:'Quadríceps/Glúteo',equipment:'Barra',emoji:'⏸️',obs:'Pause 3s no fundo do agachamento. Força na posição mais difícil — sem usar o reflexo elástico.'},
+  {id:'e180',name:'Agachamento com Pausa',muscle:'Quadríceps/Glúteo',equipment:'Barra',emoji:'⏸️',obs:'Pause 3s no fundo do agachamento. Força na posição mais difícil — sem usar o reflexo elástico.'},,
+  {id:'e181',name:'Supino com Halteres Neutro',muscle:'Peito',equipment:'Halteres',emoji:'🤲',obs:'Palmas viradas uma pra outra. Menos estresse no ombro.'},
+  {id:'e182',name:'Crossover na Polia Alta',muscle:'Peito Inferior',equipment:'Cabo',emoji:'🔀',obs:'Cruze as mãos no fim. Contraia 1s.'},
+  {id:'e183',name:'Crossover na Polia Baixa',muscle:'Peito Superior',equipment:'Cabo',emoji:'🔀',obs:'Suba as mãos até a altura dos olhos.'},
+  {id:'e184',name:'Flexão Diamante',muscle:'Tríceps/Peito',equipment:'Peso Corporal',emoji:'💎',obs:'Mãos formando um losango. Cotovelos colados.'},
+  {id:'e185',name:'Flexão Archer',muscle:'Peito',equipment:'Peso Corporal',emoji:'🏹',obs:'Estende um braço lateralmente. Transição pro one-arm.'},
+  {id:'e187',name:'Supino na Máquina',muscle:'Peito',equipment:'Máquina',emoji:'🏗️',obs:'Ideal pra iniciante — trajetória guiada.'},
+  {id:'e188',name:'Voador Peitoral',muscle:'Peito',equipment:'Máquina',emoji:'🦋',obs:'Cotovelos levemente flexionados. Aperte no centro.'},
+  {id:'e189',name:'Pullover na Polia',muscle:'Peito/Costas',equipment:'Cabo',emoji:'🎣',obs:'Braços quase retos. Sinta o alongamento.'},
+  {id:'e191',name:'Elevação Lateral no Cabo',muscle:'Ombro Lateral',equipment:'Cabo',emoji:'↔️',obs:'Tensão constante, diferente do halter.'},
+  {id:'e192',name:'Elevação Lateral Inclinado',muscle:'Ombro Lateral',equipment:'Halteres',emoji:'📐',obs:'Deitado de lado no banco. Isola muito bem.'},
+  {id:'e193',name:'Desenvolvimento Militar',muscle:'Ombro',equipment:'Barra',emoji:'🎖️',obs:'Em pé, core firme. Não arqueie a lombar.'},
+  {id:'e194',name:'Remada Alta',muscle:'Ombro/Trapézio',equipment:'Barra',emoji:'⬆️',obs:'Cotovelos acima dos punhos. Pegada média.'},
+  {id:'e195',name:'Crucifixo Inverso na Máquina',muscle:'Ombro Posterior',equipment:'Máquina',emoji:'🔙',obs:'Aperte as escápulas. Movimento controlado.'},
+  {id:'e196',name:'Elevação Frontal com Anilha',muscle:'Ombro Frontal',equipment:'Anilha',emoji:'🥏',obs:'Segure a anilha pelas laterais.'},
+  {id:'e197',name:'Pike Push-up',muscle:'Ombro',equipment:'Peso Corporal',emoji:'🔺',obs:'Quadril alto, empurre com os ombros. Progressão pro handstand.'},
+  {id:'e198',name:'Stiff com Halteres',muscle:'Posterior',equipment:'Halteres',emoji:'🦵',obs:'Quadril pra trás, joelhos levemente flexionados.'},
+  {id:'e199',name:'Mesa Flexora Unilateral',muscle:'Posterior',equipment:'Máquina',emoji:'1️⃣',obs:'Corrige assimetrias entre as pernas.'},
+  {id:'e200',name:'Bom Dia (Good Morning)',muscle:'Posterior/Lombar',equipment:'Barra',emoji:'🌅',obs:'Barra nas costas, quadril pra trás. Carga leve.'},
+  {id:'e201',name:'Elevação Pélvica com Barra',muscle:'Glúteo/Posterior',equipment:'Barra',emoji:'🌉',obs:'Queixo pro peito, aperte o glúteo no topo.'},
+  {id:'e202',name:'Glute-Ham Raise',muscle:'Posterior/Glúteo',equipment:'Máquina',emoji:'💪',obs:'Extremamente eficaz pro posterior.'},
+  {id:'e203',name:'Cadeira Flexora Sentado',muscle:'Posterior',equipment:'Máquina',emoji:'🪑',obs:'Amplitude completa, sem balançar.'},
+  {id:'e204',name:'Kettlebell Swing Unilateral',muscle:'Posterior/Corpo Todo',equipment:'Kettlebell',emoji:'🔔',obs:'Um braço. Core trabalha contra a rotação.'},
+  {id:'e205',name:'Panturrilha no Leg Press',muscle:'Panturrilha',equipment:'Máquina',emoji:'🦿',obs:'Só a ponta do pé na plataforma.'},
+  {id:'e206',name:'Panturrilha Sentado',muscle:'Panturrilha',equipment:'Máquina',emoji:'🪑',obs:'Foco no sóleo. Joelho flexionado.'},
+  {id:'e208',name:'Salto na Panturrilha',muscle:'Panturrilha/Pliometria',equipment:'Peso Corporal',emoji:'🦘',obs:'Saltinhos rápidos, só com o tornozelo.'},
+  {id:'e210',name:'Rosca Spider',muscle:'Bíceps',equipment:'Halteres',emoji:'🕷️',obs:'Peito apoiado no banco inclinado.'},
+  {id:'e211',name:'Rosca no Cabo',muscle:'Bíceps',equipment:'Cabo',emoji:'🎣',obs:'Tensão constante do início ao fim.'},
+  {id:'e212',name:'Tríceps Mergulho na Máquina',muscle:'Tríceps',equipment:'Máquina',emoji:'🏗️',obs:'Cotovelos colados ao corpo.'},
+  {id:'e213',name:'Tríceps Unilateral Inverso',muscle:'Tríceps',equipment:'Cabo',emoji:'1️⃣',obs:'Pegada supinada, um braço.'},
+  {id:'e214',name:'Rosca Martelo no Cabo',muscle:'Bíceps/Antebraço',equipment:'Cabo',emoji:'🔨',obs:'Corda, pegada neutra.'},
+  {id:'e215',name:'Puxada Neutra',muscle:'Costas',equipment:'Cabo',emoji:'🤝',obs:'Pegada neutra, menos estresse no ombro.'},
+  {id:'e217',name:'Remada na Máquina',muscle:'Costas',equipment:'Máquina',emoji:'🏗️',obs:'Ideal pra iniciante. Postura guiada.'},
+  {id:'e218',name:'Pulldown com Braço Reto',muscle:'Costas',equipment:'Cabo',emoji:'📏',obs:'Braços retos. Isola o dorsal sem bíceps.'},
+  {id:'e219',name:'Barra Fixa Australiana',muscle:'Costas',equipment:'Barra Baixa',emoji:'🇦🇺',obs:'Corpo inclinado, pés no chão. Progressão pra barra fixa.'},
+  {id:'e220',name:'Barra Fixa Pegada Neutra',muscle:'Costas/Bíceps',equipment:'Barra Fixa',emoji:'🤝',obs:'Mais fácil que a pronada. Boa progressão.'},
+  {id:'e222',name:'Abdominal na Polia Alta',muscle:'Abdômen',equipment:'Cabo',emoji:'🙏',obs:'Ajoelhado. Flexione a coluna, não o quadril.'},
+  {id:'e223',name:'Rollout com Roda',muscle:'Core',equipment:'Roda Abdominal',emoji:'🎡',obs:'Vá até onde conseguir manter a lombar neutra.'},
+  {id:'e225',name:'Elevação de Pernas na Barra',muscle:'Abdômen Inferior',equipment:'Barra Fixa',emoji:'🎯',obs:'Sem balanço. Controle na descida.'},
+  {id:'e226',name:'Prancha Lateral com Elevação',muscle:'Oblíquos',equipment:'Peso Corporal',emoji:'📐',obs:'Sobe e desce o quadril.'},
+  {id:'e227',name:'Thruster com Halteres',muscle:'Corpo Todo',equipment:'Halteres',emoji:'🚀',obs:'Agachamento + desenvolvimento em um movimento.'},
+  {id:'e228',name:'Devil Press',muscle:'Corpo Todo/Cardio',equipment:'Halteres',emoji:'😈',obs:'Burpee + snatch com halteres. Brutal.'},
+  {id:'e229',name:'Man Maker',muscle:'Corpo Todo',equipment:'Halteres',emoji:'🏗️',obs:'Flexão + remada + clean + press. O mais completo.'},
+  {id:'e231',name:'Box Jump Over',muscle:'Pliometria/Cardio',equipment:'Caixa',emoji:'📦',obs:'Salta e passa por cima da caixa.'},
+  {id:'e232',name:'Burpee Pull-up',muscle:'Corpo Todo',equipment:'Barra Fixa',emoji:'🔥',obs:'Burpee terminando com barra fixa.'},
+  {id:'e234',name:'Battle Rope Ondas Duplas',muscle:'Cardio/Ombro',equipment:'Corda Naval',emoji:'🌊',obs:'Ondas simultâneas. 20-30s máximo.'},
+  {id:'e236',name:'Clean and Jerk',muscle:'Corpo Todo',equipment:'Barra',emoji:'🏋️',obs:'Técnica antes de carga. Movimento olímpico.'},
+  {id:'e237',name:'Alongamento Peitoral na Porta',muscle:'Mobilidade/Peito',equipment:'Nenhum',emoji:'🚪',obs:'Antebraço na porta, gire o corpo. 30s cada lado.'},
+  {id:'e238',name:'Rotação Torácica Deitado',muscle:'Mobilidade',equipment:'Nenhum',emoji:'🔄',obs:'Joelhos dobrados, gire só o tronco.'},
+  {id:'e239',name:'Alongamento Flexor de Quadril',muscle:'Mobilidade/Quadril',equipment:'Nenhum',emoji:'🦵',obs:'Joelho no chão, empurre o quadril à frente.'},
+  {id:'e240',name:'Cat-Cow',muscle:'Mobilidade/Coluna',equipment:'Nenhum',emoji:'🐈',obs:'Alterne arqueando e arredondando as costas.'}
 ];
 
 const DG={
@@ -2914,6 +2965,8 @@ function switchAuth(mode){
   document.getElementById('tab-login').classList.toggle('active',mode==='login');
   document.getElementById('tab-reg').classList.toggle('active',mode==='register');
   document.getElementById('auth-title').textContent=mode==='login'?'Entrar na sua conta':'Criar conta grátis';
+  const badge=document.getElementById('auth-trial-badge');
+  if(badge) badge.style.display=mode==='register'?'block':'none';
   document.getElementById('auth-error').style.display='none';
 }
 function showErr(msg,permitirHTML){
@@ -4499,14 +4552,14 @@ async function carregarRanking(){
 
 // ══ LOAD APP ══
 // ══════════════════════════════════════════════════════════
-// ASSINATURA — 30 dias grátis, depois R$15/mês.
+// ASSINATURA — 7 dias grátis, depois R$15/mês.
 // Status possíveis: 'trial' | 'ativa' | 'expirada'
 // IMPORTANTE: este controle é de EXPERIÊNCIA (mostra/esconde tela).
 // A liberação real de acesso pago depende do webhook do Mercado Pago
 // atualizar assinatura_status no banco — protegido por RLS.
 // ══════════════════════════════════════════════════════════
 
-const TRIAL_DIAS = 30;
+const TRIAL_DIAS = 7;
 const MENSALIDADE = 'R$15';
 const LINK_ASSINATURA = 'https://mpago.la/22dn7UY'; // TODO: trocar pelo link de ASSINATURA recorrente
 
@@ -4539,12 +4592,12 @@ function renderBannerTrial(u){
 
   if(st === 'trial'){
     const dias = diasRestantesTrial(u);
-    const urgente = dias <= 7;
+    const urgente = dias <= 2;
     el.innerHTML = `<div style="margin:0 20px 12px;background:${urgente?'rgba(243,156,18,.12)':'rgba(46,204,113,.1)'};border:1px solid ${urgente?'rgba(243,156,18,.35)':'rgba(46,204,113,.25)'};border-radius:10px;padding:11px 14px;display:flex;align-items:center;gap:11px">
       <div style="font-size:20px">${urgente?'⏳':'🎁'}</div>
       <div style="flex:1;min-width:0">
         <div style="font-size:12px;font-weight:800;color:${urgente?'#f39c12':'#2ecc71'}">
-          ${dias === 0 ? 'Último dia grátis!' : `${dias} ${dias===1?'dia':'dias'} de teste grátis`}
+          ${dias <= 1 ? 'Último dia grátis!' : `${dias} dias de teste grátis`}
         </div>
         <div style="font-size:10.5px;color:var(--t2)">Depois, ${MENSALIDADE}/mês para continuar</div>
       </div>
@@ -8653,52 +8706,99 @@ async function admResetSenha(email){
   }
 }
 
-const FQ_MISSOES={"missoes":[{"n":1,"nome":"Primeiro Passo","fase":1,"dur":10,"formato":"Direto","xp":50,"blocos":[{"ex":["e144"],"sets":2,"reps":"30s","rest":30,"nota":"Aquecimento — solte o corpo"},{"ex":["e056"],"sets":2,"reps":"8","rest":45,"nota":"Mãos apoiadas em banco ou parede"},{"ex":["e135"],"sets":2,"reps":"8 cada lado","rest":45,"nota":"Lombar colada no chão"}]},{"n":2,"nome":"Fundação","fase":1,"dur":10,"formato":"Direto","xp":50,"blocos":[{"ex":["e144"],"sets":2,"reps":"30s","rest":30,"nota":"Aquecimento"},{"ex":["e056"],"sets":2,"reps":"10","rest":45,"nota":"Desça controlado"},{"ex":["e136"],"sets":2,"reps":"8 cada lado","rest":45,"nota":"Sem girar o quadril"}]},{"n":3,"nome":"Equilíbrio","fase":1,"dur":10,"formato":"Direto","xp":50,"blocos":[{"ex":["e144"],"sets":2,"reps":"30s","rest":30,"nota":"Aquecimento"},{"ex":["e130"],"sets":2,"reps":"10 cada","rest":45,"nota":"Aperte o glúteo no topo"},{"ex":["e133"],"sets":2,"reps":"20s","rest":45,"nota":"Quadril firme, sem balançar"}]},{"n":4,"nome":"Resistência Inicial","fase":1,"dur":11,"formato":"Direto","xp":50,"blocos":[{"ex":["e144"],"sets":2,"reps":"40s","rest":30,"nota":"Aquecimento"},{"ex":["e056"],"sets":3,"reps":"10","rest":45,"nota":"3 séries agora — você evoluiu"},{"ex":["e135"],"sets":2,"reps":"10 cada","rest":45,"nota":"Movimento lento"}]},{"n":5,"nome":"Core Forte","fase":1,"dur":11,"formato":"Direto","xp":50,"blocos":[{"ex":["e144"],"sets":2,"reps":"40s","rest":30,"nota":"Aquecimento"},{"ex":["e133"],"sets":3,"reps":"25s","rest":45,"nota":"Cada toque conta"},{"ex":["e136"],"sets":2,"reps":"10 cada","rest":45,"nota":"Alongue bem"}]},{"n":6,"nome":"Pernas de Aço","fase":1,"dur":11,"formato":"Direto","xp":50,"blocos":[{"ex":["e144"],"sets":2,"reps":"40s","rest":30,"nota":"Aquecimento"},{"ex":["e130"],"sets":3,"reps":"12 cada","rest":45,"nota":"Segure 1s no topo"},{"ex":["e090"],"sets":2,"reps":"15 cada","rest":40,"nota":"Amplitude completa"}]},{"n":7,"nome":"Circuito Iniciante","fase":1,"dur":12,"formato":"Circuito","xp":50,"blocos":[{"ex":["e144"],"sets":1,"reps":"45s","rest":20,"nota":"Aquecimento"},{"ex":["e056","e130","e133"],"sets":3,"reps":"10 / 10 cada / 20s","rest":60,"nota":"Faça em sequência, descanse só no fim"}]},{"n":8,"nome":"Coordenação","fase":1,"dur":12,"formato":"Circuito","xp":50,"blocos":[{"ex":["e144"],"sets":1,"reps":"45s","rest":20,"nota":"Aquecimento"},{"ex":["e096","e136","e135"],"sets":3,"reps":"20s / 8 cada / 8 cada","rest":60,"nota":"Ritmo constante"}]},{"n":9,"nome":"Formatura da Base","fase":1,"dur":12,"formato":"Circuito","xp":50,"blocos":[{"ex":["e144"],"sets":1,"reps":"45s","rest":20,"nota":"Aquecimento"},{"ex":["e055","e130","e133","e096"],"sets":3,"reps":"8 / 12 cada / 25s / 20s","rest":60,"nota":"🎓 Última da Fase Base — mostre o que aprendeu!"}]},{"n":10,"nome":"Primeira Carga","fase":2,"dur":12,"formato":"Direto","xp":75,"blocos":[{"ex":["e144"],"sets":2,"reps":"40s","rest":30,"nota":"Aquecimento"},{"ex":["e003"],"sets":3,"reps":"12","rest":45,"nota":"⚡ Halteres leves — sinta o peito trabalhar"},{"ex":["e137"],"sets":2,"reps":"20s","rest":45,"nota":"Lombar colada"}]},{"n":11,"nome":"Puxada e Empurrada","fase":2,"dur":12,"formato":"Direto","xp":75,"blocos":[{"ex":["e144"],"sets":2,"reps":"40s","rest":30,"nota":"Aquecimento"},{"ex":["e055"],"sets":3,"reps":"10","rest":45,"nota":"Corpo alinhado"},{"ex":["e014"],"sets":3,"reps":"12 cada","rest":45,"nota":"Cotovelo fixo"}]},{"n":12,"nome":"Base Sólida","fase":2,"dur":13,"formato":"Direto","xp":75,"blocos":[{"ex":["e144"],"sets":2,"reps":"45s","rest":30,"nota":"Aquecimento"},{"ex":["e130"],"sets":3,"reps":"15 cada","rest":45,"nota":"Adicione peso no quadril se tiver"},{"ex":["e090"],"sets":3,"reps":"15 cada","rest":40,"nota":"Segure no topo"}]},{"n":13,"nome":"Unilateral","fase":2,"dur":13,"formato":"Direto","xp":75,"blocos":[{"ex":["e144"],"sets":2,"reps":"45s","rest":30,"nota":"Aquecimento"},{"ex":["e129"],"sets":3,"reps":"8 cada","rest":50,"nota":"⚡ Desce lateral — trabalha mobilidade junto"},{"ex":["e133"],"sets":3,"reps":"30s","rest":45,"nota":"Quadril travado"}]},{"n":14,"nome":"Circuito com Carga","fase":2,"dur":13,"formato":"Circuito","xp":75,"blocos":[{"ex":["e144"],"sets":1,"reps":"45s","rest":20,"nota":"Aquecimento"},{"ex":["e003","e014","e137"],"sets":3,"reps":"12 / 12 cada / 25s","rest":55,"nota":"Sem parar entre exercícios"}]},{"n":15,"nome":"Explosão Leve","fase":2,"dur":13,"formato":"Circuito","xp":75,"blocos":[{"ex":["e144"],"sets":1,"reps":"45s","rest":20,"nota":"Aquecimento"},{"ex":["e117","e055","e096"],"sets":3,"reps":"8 / 10 / 25s","rest":55,"nota":"⚡ Primeiro salto! Aterrisse suave"}]},{"n":16,"nome":"Descanso Curto","fase":2,"dur":14,"formato":"Circuito","xp":75,"blocos":[{"ex":["e144"],"sets":1,"reps":"45s","rest":20,"nota":"Aquecimento"},{"ex":["e003","e130","e133","e096"],"sets":3,"reps":"12 / 15 cada / 30s / 25s","rest":45,"nota":"⚡ Descanso caiu pra 45s — segure o ritmo"}]},{"n":17,"nome":"Corpo Todo","fase":2,"dur":14,"formato":"Circuito","xp":75,"blocos":[{"ex":["e144"],"sets":1,"reps":"45s","rest":20,"nota":"Aquecimento"},{"ex":["e121","e055","e130","e139"],"sets":3,"reps":"20s / 12 / 15 cada / 8 cada","rest":45,"nota":"Ritmo constante do início ao fim"}]},{"n":18,"nome":"Formatura da Transição","fase":2,"dur":14,"formato":"Circuito","xp":75,"blocos":[{"ex":["e144"],"sets":1,"reps":"45s","rest":20,"nota":"Aquecimento"},{"ex":["e003","e117","e014","e137"],"sets":3,"reps":"12 / 10 / 12 cada / 30s","rest":45,"nota":"🎓 Última da Transição — você está pronto pra Força!"}]},{"n":19,"nome":"Entrada na Força","fase":3,"dur":13,"formato":"Direto","xp":100,"blocos":[{"ex":["e144"],"sets":2,"reps":"45s","rest":30,"nota":"Aquecimento"},{"ex":["e001"],"sets":4,"reps":"10","rest":50,"nota":"🔥 Supino — o rei do peito. Escápulas retraídas"},{"ex":["e137"],"sets":3,"reps":"25s","rest":40,"nota":"Core firme"}]},{"n":20,"nome":"Empurrar Pesado","fase":3,"dur":14,"formato":"Direto","xp":100,"blocos":[{"ex":["e144"],"sets":2,"reps":"45s","rest":30,"nota":"Aquecimento"},{"ex":["e001"],"sets":4,"reps":"8","rest":55,"nota":"Menos reps, mais carga"},{"ex":["e017"],"sets":3,"reps":"12","rest":45,"nota":"Cotovelos fixos"}]},{"n":21,"nome":"Puxar Forte","fase":3,"dur":14,"formato":"Direto","xp":100,"blocos":[{"ex":["e144"],"sets":2,"reps":"45s","rest":30,"nota":"Aquecimento"},{"ex":["e008"],"sets":4,"reps":"12","rest":50,"nota":"Alongue bem o peitoral"},{"ex":["e014"],"sets":3,"reps":"12 cada","rest":45,"nota":"Sem balançar o corpo"}]},{"n":22,"nome":"Pernas Sérias","fase":3,"dur":14,"formato":"Direto","xp":100,"blocos":[{"ex":["e144"],"sets":2,"reps":"45s","rest":30,"nota":"Aquecimento"},{"ex":["e129"],"sets":4,"reps":"10 cada","rest":50,"nota":"Amplitude total"},{"ex":["e090"],"sets":3,"reps":"18 cada","rest":40,"nota":"Queime a panturrilha"}]},{"n":23,"nome":"Circuito Força","fase":3,"dur":14,"formato":"Circuito","xp":100,"blocos":[{"ex":["e144"],"sets":1,"reps":"45s","rest":20,"nota":"Aquecimento"},{"ex":["e001","e008","e137"],"sets":4,"reps":"10 / 12 / 30s","rest":50,"nota":"🔥 4 rodadas agora"}]},{"n":24,"nome":"EMOM Iniciante","fase":3,"dur":14,"formato":"EMOM","xp":100,"blocos":[{"ex":["e144"],"sets":1,"reps":"45s","rest":20,"nota":"Aquecimento"},{"ex":["e055","e130"],"sets":10,"reps":"8 / 10 cada","rest":0,"nota":"⏱️ EMOM: a cada minuto, faça as reps. O que sobrar é descanso"}]},{"n":25,"nome":"Pliometria","fase":3,"dur":14,"formato":"Circuito","xp":100,"blocos":[{"ex":["e144"],"sets":1,"reps":"45s","rest":20,"nota":"Aquecimento"},{"ex":["e117","e119","e096"],"sets":4,"reps":"10 / 8 cada / 30s","rest":45,"nota":"🔥 Explosão máxima, aterrissagem suave"}]},{"n":26,"nome":"Unilateral Avançado","fase":3,"dur":15,"formato":"Circuito","xp":100,"blocos":[{"ex":["e144"],"sets":1,"reps":"45s","rest":20,"nota":"Aquecimento"},{"ex":["e125","e130","e133"],"sets":4,"reps":"5 cada / 15 cada / 35s","rest":50,"nota":"🔥 Pistol Squat! Use apoio se precisar"}]},{"n":27,"nome":"AMRAP 8","fase":3,"dur":14,"formato":"AMRAP","xp":100,"blocos":[{"ex":["e144"],"sets":1,"reps":"45s","rest":20,"nota":"Aquecimento"},{"ex":["e055","e117","e096"],"sets":1,"reps":"8 min — máximo de rodadas de: 10 flexões, 10 saltos, 20s mountain","rest":0,"nota":"⏱️ AMRAP: quantas rodadas você consegue em 8 min?"}]},{"n":28,"nome":"Posterior e Core","fase":3,"dur":15,"formato":"Direto","xp":100,"blocos":[{"ex":["e144"],"sets":2,"reps":"45s","rest":30,"nota":"Aquecimento"},{"ex":["e131"],"sets":4,"reps":"6","rest":60,"nota":"🔥 Nordic Curl — desça o mais lento que conseguir"},{"ex":["e139"],"sets":3,"reps":"10 cada","rest":45,"nota":"Controle total"}]},{"n":29,"nome":"Prova de Fogo","fase":3,"dur":15,"formato":"Circuito","xp":100,"blocos":[{"ex":["e144"],"sets":1,"reps":"45s","rest":20,"nota":"Aquecimento"},{"ex":["e001","e125","e137","e096"],"sets":4,"reps":"10 / 6 cada / 35s / 30s","rest":45,"nota":"🔥 Penúltima — dá tudo!"}]},{"n":30,"nome":"Missão Final","fase":3,"dur":15,"formato":"AMRAP","xp":100,"blocos":[{"ex":["e144"],"sets":1,"reps":"60s","rest":20,"nota":"Aquecimento caprichado"},{"ex":["e055","e117","e133","e121"],"sets":1,"reps":"10 min — máximo de rodadas de: 12 flexões, 12 saltos, 30s prancha, 20s bear crawl","rest":0,"nota":"🏆 MISSÃO FINAL — você percorreu 30 missões. Mostre tudo que construiu!"}]}],"fases":{"1":{"nome":"Base","emoji":"🌱","cor":"#2ecc71","desc":"Peso corporal · aprenda os padrões"},"2":{"nome":"Transição","emoji":"⚡","cor":"#f39c12","desc":"Carga leve · aumente a intensidade"},"3":{"nome":"Força","emoji":"🔥","cor":"#e50914","desc":"Musculação + funcional · nível avançado"}}};
+const FQ_JORNADAS={"trilhas":{"ini_casa":[{"n":1,"nome":"Primeiro Contato","dur":12,"formato":"Direto","xp":50,"blocos":[{"ex":["e144"],"sets":1,"reps":"4 min","rest":0,"nota":"Aquecimento — solte o corpo sem pressa"},{"ex":["e056"],"sets":2,"reps":"8","rest":60,"nota":"Mãos apoiadas em banco ou parede. Desça controlado"},{"ex":["e019"],"sets":2,"reps":"10","rest":60,"nota":"Peso nos calcanhares, joelhos alinhados aos pés"},{"ex":["e029"],"sets":2,"reps":"20s","rest":45,"nota":"Corpo em linha reta. Contraia o abdômen"}]},{"n":2,"nome":"Encontrando o Ritmo","dur":13,"formato":"Direto","xp":50,"blocos":[{"ex":["e144"],"sets":1,"reps":"4 min","rest":0,"nota":"Aquecimento"},{"ex":["e056"],"sets":3,"reps":"8","rest":60,"nota":"3 séries hoje — você está evoluindo"},{"ex":["e019"],"sets":3,"reps":"12","rest":60,"nota":"Desça até onde conseguir com boa forma"},{"ex":["e040"],"sets":2,"reps":"8 cada","rest":45,"nota":"Lombar sempre colada no chão"}]},{"n":3,"nome":"Base Firme","dur":14,"formato":"Direto","xp":50,"blocos":[{"ex":["e144"],"sets":1,"reps":"4 min","rest":0,"nota":"Aquecimento"},{"ex":["e130"],"sets":3,"reps":"12 cada","rest":60,"nota":"Aperte o glúteo 1s no topo"},{"ex":["e055"],"sets":2,"reps":"6","rest":60,"nota":"Primeira flexão no chão! Vá até onde der"},{"ex":["e029"],"sets":3,"reps":"25s","rest":45,"nota":"Sem deixar o quadril cair"}]},{"n":4,"nome":"Corpo Inteiro","dur":15,"formato":"Direto","xp":50,"blocos":[{"ex":["e144"],"sets":1,"reps":"4 min","rest":0,"nota":"Aquecimento"},{"ex":["e019"],"sets":3,"reps":"15","rest":55,"nota":"Ritmo constante"},{"ex":["e056"],"sets":3,"reps":"10","rest":55,"nota":"Controle na descida"},{"ex":["e007"],"sets":3,"reps":"10 cada","rest":55,"nota":"Use uma garrafa d'água ou mochila se não tiver halter"},{"ex":["e136"],"sets":2,"reps":"8 cada","rest":45,"nota":"Segure 2s em cima"}]},{"n":5,"nome":"Resistência","dur":15,"formato":"Direto","xp":50,"blocos":[{"ex":["e144"],"sets":1,"reps":"4 min","rest":0,"nota":"Aquecimento"},{"ex":["e019"],"sets":3,"reps":"15","rest":55,"nota":"Sem parar no meio da série"},{"ex":["e055"],"sets":3,"reps":"8","rest":55,"nota":"Se cansar, apoie os joelhos"},{"ex":["e029"],"sets":3,"reps":"30s","rest":45,"nota":"Respire normalmente durante a prancha"}]},{"n":6,"nome":"Primeiro Circuito","dur":16,"formato":"Circuito","xp":50,"blocos":[{"ex":["e144"],"sets":1,"reps":"5 min","rest":0,"nota":"Aquecimento caprichado — hoje o ritmo sobe"},{"ex":["e019","e056","e029"],"sets":3,"reps":"12 / 10 / 25s","rest":60,"nota":"Faça os 3 seguidos, descanse só no fim da rodada"}]},{"n":7,"nome":"Unilateral","dur":16,"formato":"Circuito","xp":50,"blocos":[{"ex":["e144"],"sets":1,"reps":"5 min","rest":0,"nota":"Aquecimento"},{"ex":["e127","e130","e039"],"sets":3,"reps":"8 cada / 12 cada / 20s cada","rest":55,"nota":"Um lado de cada vez — corrige desequilíbrios"}]},{"n":8,"nome":"Ritmo Acelerado","dur":17,"formato":"Circuito","xp":50,"blocos":[{"ex":["e144"],"sets":1,"reps":"5 min","rest":0,"nota":"Aquecimento"},{"ex":["e019","e055","e096","e029"],"sets":3,"reps":"15 / 8 / 20s / 30s","rest":50,"nota":"Descanso encurtou pra 50s — segure o ritmo"}]},{"n":9,"nome":"Desafio Crescente","dur":18,"formato":"Circuito","xp":50,"blocos":[{"ex":["e144"],"sets":1,"reps":"5 min","rest":0,"nota":"Aquecimento"},{"ex":["e019","e055","e007","e096"],"sets":4,"reps":"15 / 10 / 12 cada / 25s","rest":45,"nota":"4 rodadas! Você já consegue muito mais que na missão 1"}]},{"n":10,"nome":"Formatura Iniciante","dur":18,"formato":"Circuito","xp":50,"blocos":[{"ex":["e144"],"sets":1,"reps":"5 min","rest":0,"nota":"Aquecimento"},{"ex":["e019","e055","e130","e029","e096"],"sets":4,"reps":"18 / 12 / 15 cada / 35s / 30s","rest":45,"nota":"🎓 Última missão! Compare com a missão 1 — a evolução é sua"}]}],"ini_academia":[{"n":1,"nome":"Conhecendo as Máquinas","dur":12,"formato":"Direto","xp":50,"blocos":[{"ex":["e144"],"sets":1,"reps":"4 min","rest":0,"nota":"Aquecimento na esteira ou bike"},{"ex":["e187"],"sets":2,"reps":"12","rest":60,"nota":"Supino na máquina — trajetória guiada, ideal pra começar"},{"ex":["e020"],"sets":2,"reps":"12","rest":60,"nota":"Não trave os joelhos no topo"},{"ex":["e029"],"sets":2,"reps":"20s","rest":45,"nota":"Corpo em linha reta"}]},{"n":2,"nome":"Puxar e Empurrar","dur":13,"formato":"Direto","xp":50,"blocos":[{"ex":["e144"],"sets":1,"reps":"4 min","rest":0,"nota":"Aquecimento"},{"ex":["e187"],"sets":3,"reps":"12","rest":60,"nota":"3 séries hoje"},{"ex":["e217"],"sets":3,"reps":"12","rest":60,"nota":"Remada na máquina — aperte as escápulas"},{"ex":["e023"],"sets":2,"reps":"15","rest":45,"nota":"Segure 1s no topo"}]},{"n":3,"nome":"Pernas na Máquina","dur":14,"formato":"Direto","xp":50,"blocos":[{"ex":["e144"],"sets":1,"reps":"4 min","rest":0,"nota":"Aquecimento"},{"ex":["e020"],"sets":3,"reps":"15","rest":60,"nota":"Amplitude confortável"},{"ex":["e023"],"sets":3,"reps":"15","rest":55,"nota":"Movimento controlado"},{"ex":["e083"],"sets":3,"reps":"12","rest":55,"nota":"Posterior de coxa"}]},{"n":4,"nome":"Corpo Completo","dur":15,"formato":"Direto","xp":50,"blocos":[{"ex":["e144"],"sets":1,"reps":"4 min","rest":0,"nota":"Aquecimento"},{"ex":["e187"],"sets":3,"reps":"12","rest":55,"nota":"Escápulas retraídas"},{"ex":["e006"],"sets":3,"reps":"12","rest":55,"nota":"Puxada alta — leve à altura do queixo"},{"ex":["e020"],"sets":3,"reps":"15","rest":55,"nota":"Pés na largura dos ombros"},{"ex":["e029"],"sets":2,"reps":"25s","rest":45,"nota":"Core firme"}]},{"n":5,"nome":"Volume Crescente","dur":15,"formato":"Direto","xp":50,"blocos":[{"ex":["e144"],"sets":1,"reps":"4 min","rest":0,"nota":"Aquecimento"},{"ex":["e001"],"sets":3,"reps":"10","rest":60,"nota":"Primeiro supino com barra! Peça ajuda se precisar"},{"ex":["e030"],"sets":3,"reps":"12","rest":55,"nota":"Puxe até o abdômen"},{"ex":["e025"],"sets":3,"reps":"15","rest":45,"nota":"Amplitude total"}]},{"n":6,"nome":"Primeiro Circuito","dur":16,"formato":"Circuito","xp":50,"blocos":[{"ex":["e144"],"sets":1,"reps":"5 min","rest":0,"nota":"Aquecimento"},{"ex":["e020","e187","e029"],"sets":3,"reps":"15 / 12 / 25s","rest":60,"nota":"Sem parar entre exercícios"}]},{"n":7,"nome":"Ombro e Braço","dur":16,"formato":"Direto","xp":50,"blocos":[{"ex":["e144"],"sets":1,"reps":"5 min","rest":0,"nota":"Aquecimento"},{"ex":["e010"],"sets":3,"reps":"12","rest":55,"nota":"Não arqueie a lombar"},{"ex":["e011"],"sets":3,"reps":"15","rest":50,"nota":"Cotovelo levemente flexionado"},{"ex":["e013"],"sets":3,"reps":"12","rest":50,"nota":"Cotovelos fixos ao lado do corpo"},{"ex":["e016"],"sets":3,"reps":"15","rest":45,"nota":"Cotovelos colados"}]},{"n":8,"nome":"Densidade","dur":17,"formato":"Circuito","xp":50,"blocos":[{"ex":["e144"],"sets":1,"reps":"5 min","rest":0,"nota":"Aquecimento"},{"ex":["e020","e006","e010","e029"],"sets":3,"reps":"15 / 12 / 12 / 30s","rest":50,"nota":"Descanso caiu — mantenha a forma"}]},{"n":9,"nome":"Desafio Crescente","dur":18,"formato":"Circuito","xp":50,"blocos":[{"ex":["e144"],"sets":1,"reps":"5 min","rest":0,"nota":"Aquecimento"},{"ex":["e001","e030","e020","e096"],"sets":4,"reps":"12 / 12 / 15 / 25s","rest":45,"nota":"4 rodadas hoje!"}]},{"n":10,"nome":"Formatura Iniciante","dur":18,"formato":"Circuito","xp":50,"blocos":[{"ex":["e144"],"sets":1,"reps":"5 min","rest":0,"nota":"Aquecimento"},{"ex":["e001","e006","e020","e025","e029"],"sets":4,"reps":"12 / 12 / 18 / 18 / 35s","rest":45,"nota":"🎓 Última missão! Você domina a academia agora"}]}],"int_casa":[{"n":1,"nome":"Retomada Forte","dur":20,"formato":"Circuito","xp":80,"blocos":[{"ex":["e144"],"sets":1,"reps":"5 min","rest":0,"nota":"Aquecimento dinâmico"},{"ex":["e055","e019","e029"],"sets":4,"reps":"15 / 20 / 40s","rest":45,"nota":"RIR 2-3: pare com 2-3 reps sobrando"}]},{"n":2,"nome":"Superset","dur":22,"formato":"Superset","xp":80,"blocos":[{"ex":["e144"],"sets":1,"reps":"5 min","rest":0,"nota":"Aquecimento"},{"ex":["e055","e007"],"sets":4,"reps":"15 / 12 cada","rest":45,"nota":"SUPERSET: os 2 seguidos, sem pausa entre eles"},{"ex":["e079","e130"],"sets":4,"reps":"10 cada / 15 cada","rest":45,"nota":"SUPERSET pernas"}]},{"n":3,"nome":"EMOM 12","dur":22,"formato":"EMOM","xp":80,"blocos":[{"ex":["e144"],"sets":1,"reps":"5 min","rest":0,"nota":"Aquecimento"},{"ex":["e055","e019"],"sets":12,"reps":"min ímpar: 12 flexões · min par: 18 agachamentos","rest":0,"nota":"⏱️ EMOM: a cada minuto faz as reps. O que sobrar é seu descanso"}]},{"n":4,"nome":"Explosão","dur":23,"formato":"Circuito","xp":80,"blocos":[{"ex":["e144"],"sets":1,"reps":"5 min","rest":0,"nota":"Aquecimento"},{"ex":["e117","e055","e096"],"sets":4,"reps":"15 / 15 / 40s","rest":40,"nota":"Salto com aterrissagem suave, joelho alinhado"},{"ex":["e029"],"sets":3,"reps":"45s","rest":30,"nota":"Finalizador de core"}]},{"n":5,"nome":"Unilateral Pesado","dur":24,"formato":"Superset","xp":80,"blocos":[{"ex":["e144"],"sets":1,"reps":"5 min","rest":0,"nota":"Aquecimento"},{"ex":["e079","e084"],"sets":4,"reps":"12 cada / 12 cada","rest":45,"nota":"SUPERSET: búlgaro + stiff unilateral"},{"ex":["e184","e007"],"sets":4,"reps":"12 / 12 cada","rest":40,"nota":"SUPERSET: flexão diamante + remada"}]},{"n":6,"nome":"Escada","dur":24,"formato":"Escada","xp":80,"blocos":[{"ex":["e144"],"sets":1,"reps":"5 min","rest":0,"nota":"Aquecimento"},{"ex":["e097","e055","e019"],"sets":1,"reps":"Escada 10-9-8-7-6-5-4-3-2-1 de cada","rest":0,"nota":"⏱️ Faz 10 de cada, depois 9 de cada... até 1. Sem descanso programado"}]},{"n":7,"nome":"AMRAP 15","dur":25,"formato":"AMRAP","xp":80,"blocos":[{"ex":["e144"],"sets":1,"reps":"5 min","rest":0,"nota":"Aquecimento"},{"ex":["e097","e117","e096","e029"],"sets":1,"reps":"15 min — máximo de rodadas: 8 burpees, 12 saltos, 30s mountain, 30s prancha","rest":0,"nota":"⏱️ AMRAP: quantas rodadas em 15 min? Anote e tente bater na próxima"}]},{"n":8,"nome":"Densidade Máxima","dur":26,"formato":"Circuito","xp":80,"blocos":[{"ex":["e144"],"sets":1,"reps":"5 min","rest":0,"nota":"Aquecimento"},{"ex":["e055","e079","e007","e117","e029"],"sets":4,"reps":"18 / 12 cada / 15 cada / 15 / 45s","rest":35,"nota":"Descanso caiu pra 35s — resistência real"}]},{"n":9,"nome":"Complex Corporal","dur":27,"formato":"Complex","xp":80,"blocos":[{"ex":["e144"],"sets":1,"reps":"6 min","rest":0,"nota":"Aquecimento"},{"ex":["e019","e055","e097","e117"],"sets":5,"reps":"10 de cada, em sequência sem pausa","rest":60,"nota":"COMPLEX: 5 rodadas. Só descansa no fim de cada rodada"}]},{"n":10,"nome":"Formatura Intermediário","dur":28,"formato":"AMRAP","xp":80,"blocos":[{"ex":["e144"],"sets":1,"reps":"6 min","rest":0,"nota":"Aquecimento completo"},{"ex":["e097","e124","e184","e121","e029"],"sets":1,"reps":"18 min — rodadas de: 10 burpees, 10 búlgaro c/ salto cada, 12 diamante, 30s bear crawl, 45s prancha","rest":0,"nota":"🎓 Formatura! Se completou isso, você está pronto pro Avançado"}]}],"int_academia":[{"n":1,"nome":"Base de Força","dur":20,"formato":"Direto","xp":80,"blocos":[{"ex":["e144"],"sets":1,"reps":"5 min","rest":0,"nota":"Aquecimento"},{"ex":["e001"],"sets":4,"reps":"10","rest":45,"nota":"RIR 2-3. Escápulas retraídas"},{"ex":["e005"],"sets":4,"reps":"12","rest":45,"nota":"Tronco a 45°, puxe até o abdômen"},{"ex":["e019"],"sets":4,"reps":"12","rest":45,"nota":"Agachamento livre com barra"}]},{"n":2,"nome":"Superset Peito/Costas","dur":22,"formato":"Superset","xp":80,"blocos":[{"ex":["e144"],"sets":1,"reps":"5 min","rest":0,"nota":"Aquecimento"},{"ex":["e001","e006"],"sets":4,"reps":"10 / 12","rest":45,"nota":"SUPERSET: empurra e puxa, sem pausa entre eles"},{"ex":["e002","e030"],"sets":3,"reps":"12 / 12","rest":45,"nota":"SUPERSET inclinado + remada baixa"}]},{"n":3,"nome":"Pernas Sérias","dur":23,"formato":"Direto","xp":80,"blocos":[{"ex":["e144"],"sets":1,"reps":"5 min","rest":0,"nota":"Aquecimento"},{"ex":["e019"],"sets":4,"reps":"10","rest":50,"nota":"Desça até paralelo"},{"ex":["e021"],"sets":4,"reps":"12","rest":45,"nota":"Quadril pra trás, lombar neutra"},{"ex":["e201"],"sets":4,"reps":"12","rest":45,"nota":"Aperte o glúteo no topo"},{"ex":["e025"],"sets":3,"reps":"18","rest":35,"nota":"Amplitude completa"}]},{"n":4,"nome":"EMOM Barra","dur":23,"formato":"EMOM","xp":80,"blocos":[{"ex":["e144"],"sets":1,"reps":"5 min","rest":0,"nota":"Aquecimento"},{"ex":["e110","e098"],"sets":12,"reps":"min ímpar: 8 thrusters · min par: 15 kettlebell swings","rest":0,"nota":"⏱️ EMOM 12 min. Carga moderada — a fadiga acumula"}]},{"n":5,"nome":"Ombro e Braço","dur":24,"formato":"Superset","xp":80,"blocos":[{"ex":["e144"],"sets":1,"reps":"5 min","rest":0,"nota":"Aquecimento"},{"ex":["e194","e011"],"sets":4,"reps":"12 / 15","rest":40,"nota":"SUPERSET: Arnold + elevação lateral"},{"ex":["e013","e016"],"sets":4,"reps":"12 / 15","rest":40,"nota":"SUPERSET: bíceps + tríceps"}]},{"n":6,"nome":"Circuito Metabólico","dur":25,"formato":"Circuito","xp":80,"blocos":[{"ex":["e144"],"sets":1,"reps":"5 min","rest":0,"nota":"Aquecimento"},{"ex":["e110","e098","e116","e096"],"sets":4,"reps":"10 / 15 / 12 / 40s","rest":40,"nota":"Ritmo alto — este é o queimador"}]},{"n":7,"nome":"AMRAP 15","dur":25,"formato":"AMRAP","xp":80,"blocos":[{"ex":["e144"],"sets":1,"reps":"5 min","rest":0,"nota":"Aquecimento"},{"ex":["e098","e116","e057","e096"],"sets":1,"reps":"15 min — rodadas de: 15 KB swing, 10 box jump, 5 barra fixa, 30s mountain","rest":0,"nota":"⏱️ AMRAP: anote suas rodadas e tente bater depois"}]},{"n":8,"nome":"Força e Densidade","dur":26,"formato":"Circuito","xp":80,"blocos":[{"ex":["e144"],"sets":1,"reps":"5 min","rest":0,"nota":"Aquecimento"},{"ex":["e001","e005","e019","e029"],"sets":4,"reps":"10 / 12 / 12 / 45s","rest":35,"nota":"Descanso 35s com carga real — teste de resistência"}]},{"n":9,"nome":"Complex com Barra","dur":27,"formato":"Complex","xp":80,"blocos":[{"ex":["e144"],"sets":1,"reps":"6 min","rest":0,"nota":"Aquecimento"},{"ex":["e100","e005","e110"],"sets":5,"reps":"6 terra + 6 remada + 6 thruster, sem soltar a barra","rest":75,"nota":"COMPLEX: use carga leve/moderada. A barra não toca o chão até o fim"}]},{"n":10,"nome":"Formatura Intermediário","dur":28,"formato":"AMRAP","xp":80,"blocos":[{"ex":["e144"],"sets":1,"reps":"6 min","rest":0,"nota":"Aquecimento completo"},{"ex":["e228","e098","e232","e111"],"sets":1,"reps":"18 min — rodadas de: 8 devil press, 20 KB swing, 6 burpee pull-up, 15 wall ball","rest":0,"nota":"🎓 Formatura! Isso é nível competitivo de base"}]}],"ava_casa":[{"n":1,"nome":"Teste de Fogo","dur":25,"formato":"Circuito","xp":120,"blocos":[{"ex":["e144"],"sets":1,"reps":"6 min","rest":0,"nota":"Aquecimento completo — hoje o corpo vai trabalhar de verdade"},{"ex":["e055","e125","e121","e029"],"sets":5,"reps":"20 / 5 cada / 40s / 60s","rest":30,"nota":"RIR 0-1: vá até quase não conseguir mais"}]},{"n":2,"nome":"Pliometria Pura","dur":26,"formato":"Circuito","xp":120,"blocos":[{"ex":["e144"],"sets":1,"reps":"6 min","rest":0,"nota":"Aquecimento com mobilidade de tornozelo e quadril"},{"ex":["e117","e124","e118","e120"],"sets":5,"reps":"20 / 10 cada / 10 / 12","rest":35,"nota":"Explosão máxima, aterrissagem sempre suave"}]},{"n":3,"nome":"EMOM 20","dur":26,"formato":"EMOM","xp":120,"blocos":[{"ex":["e144"],"sets":1,"reps":"6 min","rest":0,"nota":"Aquecimento"},{"ex":["e097","e125","e184"],"sets":20,"reps":"min 1: 12 burpees · min 2: 8 pistol cada · min 3: 15 diamante · repete","rest":0,"nota":"⏱️ EMOM 20 min. Se não terminar dentro do minuto, o descanso some"}]},{"n":4,"nome":"Tabata Duplo","dur":25,"formato":"Tabata","xp":120,"blocos":[{"ex":["e144"],"sets":1,"reps":"6 min","rest":0,"nota":"Aquecimento"},{"ex":["e117"],"sets":8,"reps":"20s máximo de saltos / 10s descanso","rest":0,"nota":"⏱️ TABATA 1: 4 min brutais. Máximo de reps em cada 20s"},{"ex":["e055"],"sets":8,"reps":"20s máximo de flexões / 10s descanso","rest":180,"nota":"⏱️ TABATA 2 após 3 min de pausa"}]},{"n":5,"nome":"Unilateral Extremo","dur":28,"formato":"Superset","xp":120,"blocos":[{"ex":["e144"],"sets":1,"reps":"6 min","rest":0,"nota":"Aquecimento"},{"ex":["e125","e131"],"sets":5,"reps":"6 cada / 8","rest":40,"nota":"SUPERSET: pistol + nordic curl. Os dois mais difíceis do peso corporal"},{"ex":["e185","e171"],"sets":4,"reps":"6 cada / 40s cada","rest":30,"nota":"SUPERSET: archer + farmer walk unilateral"}]},{"n":6,"nome":"Escada Descendente","dur":28,"formato":"Escada","xp":120,"blocos":[{"ex":["e144"],"sets":1,"reps":"6 min","rest":0,"nota":"Aquecimento"},{"ex":["e097","e117","e055"],"sets":1,"reps":"Escada 15-12-9-6-3 de cada, sem descanso","rest":0,"nota":"⏱️ Cronometre. Este tempo é seu recorde a bater"}]},{"n":7,"nome":"AMRAP 20","dur":30,"formato":"AMRAP","xp":120,"blocos":[{"ex":["e144"],"sets":1,"reps":"6 min","rest":0,"nota":"Aquecimento"},{"ex":["e097","e124","e121","e185","e029"],"sets":1,"reps":"20 min — rodadas: 12 burpees, 10 búlgaro salto cada, 40s bear crawl, 8 archer cada, 60s prancha","rest":0,"nota":"⏱️ AMRAP 20. Ritmo sustentável — não estoure nas 2 primeiras rodadas"}]},{"n":8,"nome":"Complex Sem Pausa","dur":30,"formato":"Complex","xp":120,"blocos":[{"ex":["e144"],"sets":1,"reps":"6 min","rest":0,"nota":"Aquecimento"},{"ex":["e055","e097","e117","e125","e121"],"sets":6,"reps":"8 de cada em sequência, sem parar","rest":60,"nota":"COMPLEX 6 rodadas. Cada rodada é um ciclo completo do corpo"}]},{"n":9,"nome":"Prova de Resistência","dur":32,"formato":"Circuito","xp":120,"blocos":[{"ex":["e144"],"sets":1,"reps":"6 min","rest":0,"nota":"Aquecimento"},{"ex":["e125","e120","e131","e123","e137"],"sets":5,"reps":"8 cada / 15 / 10 / 15 / 50s","rest":25,"nota":"Descanso 25s — quase nenhum. Penúltima missão!"}]},{"n":10,"nome":"Missão Final","dur":35,"formato":"AMRAP","xp":120,"blocos":[{"ex":["e144"],"sets":1,"reps":"7 min","rest":0,"nota":"Aquecimento completo e caprichado"},{"ex":["e097","e125","e120","e124","e121","e029"],"sets":1,"reps":"25 min — rodadas: 15 burpees, 8 pistol cada, 15 flexão plio, 10 búlgaro salto cada, 45s bear crawl, 60s prancha","rest":0,"nota":"🏆 MISSÃO FINAL. 25 minutos. Você construiu isso do zero. Vai!"}]}],"ava_academia":[{"n":1,"nome":"Força Bruta","dur":25,"formato":"Direto","xp":120,"blocos":[{"ex":["e144"],"sets":1,"reps":"6 min","rest":0,"nota":"Aquecimento com séries progressivas"},{"ex":["e001"],"sets":5,"reps":"6","rest":90,"nota":"RIR 0-1. Carga alta, use segurança"},{"ex":["e100"],"sets":5,"reps":"5","rest":90,"nota":"Terra pesado. Lombar neutra SEMPRE"},{"ex":["e019"],"sets":4,"reps":"8","rest":75,"nota":"Agachamento profundo"}]},{"n":2,"nome":"Complex Olímpico","dur":26,"formato":"Complex","xp":120,"blocos":[{"ex":["e144"],"sets":1,"reps":"6 min","rest":0,"nota":"Aquecimento com barra vazia"},{"ex":["e100","e005","e108","e110"],"sets":5,"reps":"6 terra + 6 remada + 6 clean + 6 thruster","rest":90,"nota":"COMPLEX: a barra não toca o chão durante a rodada"}]},{"n":3,"nome":"EMOM 20","dur":27,"formato":"EMOM","xp":120,"blocos":[{"ex":["e144"],"sets":1,"reps":"6 min","rest":0,"nota":"Aquecimento"},{"ex":["e110","e098","e232"],"sets":20,"reps":"min 1: 10 thrusters · min 2: 20 KB swing · min 3: 8 burpee pull-up · repete","rest":0,"nota":"⏱️ EMOM 20. A fadiga vai acumular — segure a técnica"}]},{"n":4,"nome":"Drop-set Peito","dur":27,"formato":"Drop-set","xp":120,"blocos":[{"ex":["e144"],"sets":1,"reps":"6 min","rest":0,"nota":"Aquecimento"},{"ex":["e001"],"sets":4,"reps":"8 + drop 30% + máximo","rest":90,"nota":"DROP-SET: falha, tira 30% da carga, vai até a falha de novo"},{"ex":["e053"],"sets":4,"reps":"12 + drop + máximo","rest":60,"nota":"Crossover com drop-set"},{"ex":["e184"],"sets":3,"reps":"máximo","rest":45,"nota":"Finalizador até a falha"}]},{"n":5,"nome":"Costas Completo","dur":28,"formato":"Superset","xp":120,"blocos":[{"ex":["e144"],"sets":1,"reps":"6 min","rest":0,"nota":"Aquecimento"},{"ex":["e057","e005"],"sets":5,"reps":"máximo / 10","rest":60,"nota":"SUPERSET: barra fixa até a falha + remada pesada"},{"ex":["e049","e218"],"sets":4,"reps":"12 / 15","rest":45,"nota":"SUPERSET: cavalinho + pulldown braço reto"}]},{"n":6,"nome":"Metabólico Brutal","dur":30,"formato":"Circuito","xp":120,"blocos":[{"ex":["e144"],"sets":1,"reps":"6 min","rest":0,"nota":"Aquecimento"},{"ex":["e229","e231","e098","e234"],"sets":5,"reps":"8 / 12 / 20 / 30s","rest":30,"nota":"Man maker é o exercício mais completo que existe. Prepare-se"}]},{"n":7,"nome":"AMRAP 20","dur":30,"formato":"AMRAP","xp":120,"blocos":[{"ex":["e144"],"sets":1,"reps":"6 min","rest":0,"nota":"Aquecimento"},{"ex":["e228","e111","e232","e098"],"sets":1,"reps":"20 min — rodadas: 10 devil press, 15 wall ball, 8 burpee pull-up, 25 KB swing","rest":0,"nota":"⏱️ AMRAP 20 estilo competição"}]},{"n":8,"nome":"Cluster Set","dur":30,"formato":"Cluster","xp":120,"blocos":[{"ex":["e144"],"sets":1,"reps":"6 min","rest":0,"nota":"Aquecimento"},{"ex":["e019"],"sets":5,"reps":"3+3+3 (15s entre mini-séries)","rest":120,"nota":"CLUSTER: 3 reps, 15s pausa, 3 reps, 15s, 3 reps = 1 série. Permite carga altíssima"},{"ex":["e001"],"sets":4,"reps":"3+3+3 (15s entre)","rest":120,"nota":"Mesmo protocolo no supino"}]},{"n":9,"nome":"Prova de Resistência","dur":32,"formato":"Circuito","xp":120,"blocos":[{"ex":["e144"],"sets":1,"reps":"6 min","rest":0,"nota":"Aquecimento"},{"ex":["e110","e232","e231","e229","e096"],"sets":5,"reps":"10 / 8 / 15 / 6 / 45s","rest":25,"nota":"Descanso 25s. Penúltima — mostre do que é capaz"}]},{"n":10,"nome":"Missão Final","dur":35,"formato":"AMRAP","xp":120,"blocos":[{"ex":["e144"],"sets":1,"reps":"7 min","rest":0,"nota":"Aquecimento completo"},{"ex":["e229","e232","e228","e111","e098","e234"],"sets":1,"reps":"25 min — rodadas: 6 man maker, 8 burpee pull-up, 10 devil press, 20 wall ball, 25 KB swing, 30s battle rope","rest":0,"nota":"🏆 MISSÃO FINAL. 25 min do treino mais completo do app. Você chegou aqui!"}]}]},"meta":{"ini_casa":{"nivel":"iniciante","ambiente":"casa","nome":"Primeiros Passos","emoji":"🌱","cor":"#2ecc71","desc":"Em casa · aprenda os movimentos","xp":50},"ini_academia":{"nivel":"iniciante","ambiente":"academia","nome":"Primeiros Passos","emoji":"🌱","cor":"#2ecc71","desc":"Na academia · aprenda as máquinas","xp":50},"int_casa":{"nivel":"intermediario","ambiente":"casa","nome":"Construção","emoji":"⚡","cor":"#f39c12","desc":"Em casa · intensidade real","xp":80},"int_academia":{"nivel":"intermediario","ambiente":"academia","nome":"Construção","emoji":"⚡","cor":"#f39c12","desc":"Na academia · carga e volume","xp":80},"ava_casa":{"nivel":"avancado","ambiente":"casa","nome":"Superação","emoji":"🔥","cor":"#e50914","desc":"Em casa · sem desculpas","xp":120},"ava_academia":{"nivel":"avancado","ambiente":"academia","nome":"Superação","emoji":"🔥","cor":"#e50914","desc":"Na academia · nível competitivo","xp":120}}};
 
 // ══════════════════════════════════════════════════════════
-// FITQUEST MISSÕES — produto gamificado: 30 missões progressivas,
-// 3 liberadas por semana. Convive com o plano de 8 semanas (o aluno escolhe).
+// FITQUEST JORNADAS — 6 trilhas (3 níveis × 2 ambientes), 10 missões cada.
+// 3 missões liberadas por semana. O app sugere a trilha pela anamnese,
+// mas o aluno escolhe livremente e pode trocar sem perder progresso.
 // ══════════════════════════════════════════════════════════
 
 const MISSOES_POR_SEMANA = 3;
 
-// Quantas missões o aluno já pode acessar, com base em quando ele entrou no modo
+// Sugere a trilha com base no nível da anamnese e no local de treino
+function trilhaSugerida(u){
+  const an = u.anamnese || {};
+  const t = (an.tempo||'').toLowerCase();
+  let nivel = 'iniciante';
+  if(t.includes('avan')) nivel = 'avancado';
+  else if(t.includes('intermedi')) nivel = 'intermediario';
+  const local = (an.local||'').toLowerCase();
+  const ambiente = /academia/.test(local) ? 'academia' : 'casa';
+  const prefixo = nivel==='avancado'?'ava':(nivel==='intermediario'?'int':'ini');
+  return prefixo + '_' + ambiente;
+}
+
+function trilhaAtual(u){ return u.jornadaTrilha || null; }
+function missoesDaTrilha(chave){ return (FQ_JORNADAS.trilhas[chave]) || []; }
+function metaTrilha(chave){ return FQ_JORNADAS.meta[chave] || null; }
+
 function missoesLiberadas(u){
-  if(!u.missoesInicio) return 0;
-  const inicio = new Date(u.missoesInicio);
-  const agora = new Date();
-  const semanasPassadas = Math.floor((agora - inicio)/(1000*60*60*24*7));
-  return Math.min(30, (semanasPassadas+1)*MISSOES_POR_SEMANA);
+  if(!u.jornadaInicio) return 0;
+  const inicio = new Date(u.jornadaInicio);
+  const semanas = Math.floor((new Date() - inicio)/(1000*60*60*24*7));
+  return Math.min(10, (semanas+1)*MISSOES_POR_SEMANA);
 }
 
 function missoesConcluidas(u){
-  return (u.missoesFeitas||[]).length;
+  const t = trilhaAtual(u);
+  if(!t) return 0;
+  return ((u.jornadaFeitas||{})[t]||[]).length;
 }
 
 function proximaMissao(u){
-  const feitas = new Set(u.missoesFeitas||[]);
-  const liberadas = missoesLiberadas(u);
-  for(let i=1;i<=liberadas;i++){ if(!feitas.has(i)) return i; }
-  return null; // tudo que está liberado já foi feito
+  const t = trilhaAtual(u);
+  if(!t) return null;
+  const feitas = new Set((u.jornadaFeitas||{})[t]||[]);
+  const lib = missoesLiberadas(u);
+  for(let i=1;i<=lib;i++){ if(!feitas.has(i)) return i; }
+  return null;
 }
 
 function diasParaProximaLiberacao(u){
-  if(!u.missoesInicio) return null;
-  const inicio = new Date(u.missoesInicio);
-  const agora = new Date();
-  const diasPassados = Math.floor((agora - inicio)/(1000*60*60*24));
-  return 7 - (diasPassados % 7);
+  if(!u.jornadaInicio) return null;
+  const dias = Math.floor((new Date() - new Date(u.jornadaInicio))/(1000*60*60*24));
+  return 7 - (dias % 7);
 }
 
-async function ativarModoMissoes(){
+function escolherTrilha(chave){
   const u = getU(); if(!u) return;
-  if(!await fqConfirm('Ativar Missões','Você vai começar a Jornada das 30 Missões. Novas missões são liberadas a cada semana. Seu plano de treino atual continua disponível normalmente.','Começar','🎮')) return;
-  u.missoesInicio = new Date().toISOString();
-  u.missoesFeitas = u.missoesFeitas || [];
+  u.jornadaTrilha = chave;
+  if(!u.jornadaInicio) u.jornadaInicio = new Date().toISOString();
+  u.jornadaFeitas = u.jornadaFeitas || {};
+  if(!u.jornadaFeitas[chave]) u.jornadaFeitas[chave] = [];
   saveU(u);
-  fqToast('🎮 Jornada iniciada! 3 missões liberadas.','ok');
+  closeModal('modal-escolher-trilha');
+  const meta = metaTrilha(chave);
+  fqToast(`${meta.emoji} Jornada ${meta.nome} iniciada!`,'ok');
   renderMissoes();
-  switchTab('missoes', null);
+}
+
+function abrirEscolhaTrilha(){
+  const u = getU(); if(!u) return;
+  const sug = trilhaSugerida(u);
+  const atual = trilhaAtual(u);
+  const grupos = {iniciante:[],intermediario:[],avancado:[]};
+  Object.entries(FQ_JORNADAS.meta).forEach(([chave,m])=>grupos[m.nivel].push([chave,m]));
+
+  document.getElementById('trilha-lista').innerHTML = Object.entries(grupos).map(([nivel,lista])=>{
+    return lista.map(([chave,m])=>{
+      const ehSug = chave===sug, ehAtual = chave===atual;
+      const feitas = ((u.jornadaFeitas||{})[chave]||[]).length;
+      return `<div onclick="escolherTrilha('${chave}')" style="background:${ehAtual?'rgba(229,9,20,.1)':'var(--s)'};border:1px solid ${ehAtual?'var(--r)':(ehSug?m.cor:'var(--b)')};border-radius:11px;padding:13px 14px;margin-bottom:8px;cursor:pointer;display:flex;align-items:center;gap:12px">
+        <div style="font-size:24px">${m.emoji}</div>
+        <div style="flex:1;min-width:0">
+          <div style="font-size:13px;font-weight:800;display:flex;align-items:center;gap:6px">
+            ${m.nome} · ${m.ambiente==='casa'?'🏠 Casa':'🏋️ Academia'}
+            ${ehSug?`<span style="font-size:8px;background:${m.cor};color:#000;padding:2px 6px;border-radius:3px;font-weight:900">SUGERIDA</span>`:''}
+            ${ehAtual?'<span style="font-size:8px;background:var(--r);color:#fff;padding:2px 6px;border-radius:3px;font-weight:900">ATUAL</span>':''}
+          </div>
+          <div style="font-size:10.5px;color:var(--mu);margin-top:2px">${m.desc}${feitas?` · ${feitas}/10 feitas`:''}</div>
+        </div>
+      </div>`;
+    }).join('');
+  }).join('');
+  document.getElementById('modal-escolher-trilha').classList.add('open');
 }
 
 function renderMissoes(){
@@ -8706,193 +8806,185 @@ function renderMissoes(){
   const el = document.getElementById('missoes-content');
   if(!el) return;
 
-  // Ainda não ativou o modo
-  if(!u.missoesInicio){
-    el.innerHTML = `
-      <div style="padding:30px 20px;text-align:center">
-        <div style="font-size:60px;margin-bottom:14px">🎮</div>
-        <div style="font-size:20px;font-weight:900;margin-bottom:8px">Jornada das 30 Missões</div>
-        <div style="font-size:13px;color:var(--t2);line-height:1.7;margin-bottom:22px">
-          Treinos curtos de <strong>10 a 15 minutos</strong> que evoluem com você.<br/>
-          Comece com peso corporal e chegue à musculação avançada.<br/>
-          <strong>3 novas missões liberadas por semana.</strong>
-        </div>
-        <div style="display:flex;gap:8px;margin-bottom:22px">
-          ${[1,2,3].map(f=>{const fa=FQ_MISSOES.fases[f];return `
-            <div style="flex:1;background:var(--s);border:1px solid var(--b);border-radius:10px;padding:12px 8px">
-              <div style="font-size:22px;margin-bottom:4px">${fa.emoji}</div>
-              <div style="font-size:11px;font-weight:800;color:${fa.cor}">${fa.nome}</div>
-              <div style="font-size:9px;color:var(--mu);margin-top:3px;line-height:1.4">${fa.desc}</div>
-            </div>`;}).join('')}
-        </div>
-        <button class="btn-p" onclick="ativarModoMissoes()">🎮 Começar Jornada</button>
-        <div style="font-size:10px;color:var(--mu);margin-top:12px">Grátis · seu plano de treino atual continua normal</div>
-      </div>`;
+  const trilha = trilhaAtual(u);
+  if(!trilha){
+    const sug = metaTrilha(trilhaSugerida(u));
+    el.innerHTML = `<div style="padding:30px 20px;text-align:center">
+      <div style="font-size:58px;margin-bottom:14px">🎮</div>
+      <div style="font-size:20px;font-weight:900;margin-bottom:8px">Jornadas FitQuest</div>
+      <div style="font-size:13px;color:var(--t2);line-height:1.7;margin-bottom:20px">
+        Missões que evoluem com você.<br/><strong>3 novas liberadas por semana.</strong>
+      </div>
+      <div style="display:flex;gap:8px;margin-bottom:20px">
+        ${['iniciante','intermediario','avancado'].map(n=>{
+          const m = Object.values(FQ_JORNADAS.meta).find(x=>x.nivel===n);
+          return `<div style="flex:1;background:var(--s);border:1px solid var(--b);border-radius:10px;padding:12px 8px">
+            <div style="font-size:22px;margin-bottom:4px">${m.emoji}</div>
+            <div style="font-size:11px;font-weight:800;color:${m.cor}">${m.nome}</div>
+          </div>`;}).join('')}
+      </div>
+      ${sug?`<div style="font-size:11.5px;color:var(--t2);margin-bottom:14px">Pelo seu perfil, sugerimos: <strong style="color:${sug.cor}">${sug.emoji} ${sug.nome} · ${sug.ambiente==='casa'?'Casa':'Academia'}</strong></div>`:''}
+      <button class="btn-p" onclick="abrirEscolhaTrilha()">Escolher minha jornada</button>
+    </div>`;
     return;
   }
 
-  const liberadas = missoesLiberadas(u);
-  const feitas = new Set(u.missoesFeitas||[]);
-  const nFeitas = feitas.size;
+  const meta = metaTrilha(trilha);
+  const missoes = missoesDaTrilha(trilha);
+  const feitas = new Set((u.jornadaFeitas||{})[trilha]||[]);
+  const lib = missoesLiberadas(u);
   const prox = proximaMissao(u);
-  const diasProx = diasParaProximaLiberacao(u);
-  const pctTotal = Math.round(nFeitas/30*100);
+  const dias = diasParaProximaLiberacao(u);
+  const pct = Math.round(feitas.size/missoes.length*100);
 
   el.innerHTML = `
-    <div style="padding:16px 20px 8px">
-      <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:6px">
-        <div style="font-size:17px;font-weight:900">Sua Jornada</div>
-        <div style="font-size:12px;color:var(--r);font-weight:800">${nFeitas}/30</div>
+    <div style="padding:16px 20px 10px">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
+        <div style="font-size:26px">${meta.emoji}</div>
+        <div style="flex:1;min-width:0">
+          <div style="font-size:15px;font-weight:900">${meta.nome} · ${meta.ambiente==='casa'?'🏠 Casa':'🏋️ Academia'}</div>
+          <div style="font-size:10.5px;color:var(--mu)">${meta.desc}</div>
+        </div>
+        <button onclick="abrirEscolhaTrilha()" style="background:var(--s2);border:1px solid var(--b);border-radius:7px;color:var(--t2);font-size:10px;font-weight:700;padding:6px 10px;cursor:pointer;flex-shrink:0">Trocar</button>
+      </div>
+      <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:5px">
+        <div style="font-size:11px;color:var(--mu)">Progresso</div>
+        <div style="font-size:12px;color:${meta.cor};font-weight:800">${feitas.size}/${missoes.length}</div>
       </div>
       <div style="height:6px;background:var(--s2);border-radius:3px;overflow:hidden;margin-bottom:6px">
-        <div style="height:100%;width:${pctTotal}%;background:linear-gradient(90deg,#2ecc71,#f39c12,#e50914);transition:width .4s"></div>
+        <div style="height:100%;width:${pct}%;background:${meta.cor};transition:width .4s"></div>
       </div>
       <div style="font-size:10.5px;color:var(--mu)">
-        ${liberadas<30 ? `${liberadas} missões liberadas · próximas 3 em ${diasProx} ${diasProx===1?'dia':'dias'}` : 'Todas as 30 missões liberadas!'}
+        ${lib<missoes.length?`${lib} liberadas · próximas em ${dias} ${dias===1?'dia':'dias'}`:'Todas liberadas!'}
       </div>
     </div>
-    ${[1,2,3].map(fase=>{
-      const fa = FQ_MISSOES.fases[fase];
-      const doFase = FQ_MISSOES.missoes.filter(m=>m.fase===fase);
-      const feitasFase = doFase.filter(m=>feitas.has(m.n)).length;
-      return `
-      <div style="padding:14px 20px 4px">
-        <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
-          <span style="font-size:18px">${fa.emoji}</span>
-          <div style="flex:1">
-            <div style="font-size:13px;font-weight:900;color:${fa.cor}">Fase ${fase} — ${fa.nome}</div>
-            <div style="font-size:10px;color:var(--mu)">${fa.desc}</div>
+    <div style="padding:8px 20px 0">
+      ${missoes.map(m=>{
+        const feita = feitas.has(m.n);
+        const disp = m.n <= lib;
+        const ehProx = m.n === prox;
+        return `<div onclick="${disp?`abrirMissao(${m.n})`:''}" style="display:flex;align-items:center;gap:12px;background:${ehProx?'rgba(229,9,20,.08)':'var(--s)'};border:1px solid ${ehProx?'rgba(229,9,20,.3)':'var(--b)'};border-radius:10px;padding:11px 13px;margin-bottom:7px;${disp?'cursor:pointer':'opacity:.4'}">
+          <div style="width:30px;height:30px;border-radius:50%;background:${feita?'#2ecc71':(disp?meta.cor:'var(--s2)')};display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:900;color:#fff;flex-shrink:0">${feita?'✓':(disp?m.n:'🔒')}</div>
+          <div style="flex:1;min-width:0">
+            <div style="font-size:12.5px;font-weight:700;${feita?'color:var(--mu)':''}">${m.nome}</div>
+            <div style="font-size:10px;color:var(--mu)">${m.dur} min · ${m.formato} · ${m.xp} XP</div>
           </div>
-          <div style="font-size:11px;font-weight:800;color:var(--mu)">${feitasFase}/${doFase.length}</div>
-        </div>
-        ${doFase.map(m=>{
-          const feita = feitas.has(m.n);
-          const disponivel = m.n <= liberadas;
-          const ehProxima = m.n === prox;
-          return `<div onclick="${disponivel?`abrirMissao(${m.n})`:''}" style="display:flex;align-items:center;gap:12px;background:${ehProxima?'rgba(229,9,20,.08)':'var(--s)'};border:1px solid ${ehProxima?'rgba(229,9,20,.3)':'var(--b)'};border-radius:10px;padding:11px 13px;margin-bottom:7px;${disponivel?'cursor:pointer':'opacity:.4'}">
-            <div style="width:30px;height:30px;border-radius:50%;background:${feita?'#2ecc71':(disponivel?fa.cor:'var(--s2)')};display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:900;color:#fff;flex-shrink:0">
-              ${feita?'✓':(disponivel?m.n:'🔒')}
-            </div>
-            <div style="flex:1;min-width:0">
-              <div style="font-size:12.5px;font-weight:700;${feita?'color:var(--mu)':''}">${m.nome}</div>
-              <div style="font-size:10px;color:var(--mu)">${m.dur} min · ${m.formato} · ${m.xp} XP</div>
-            </div>
-            ${ehProxima?'<div style="font-size:9px;font-weight:800;color:var(--r);background:rgba(229,9,20,.15);padding:3px 8px;border-radius:4px;flex-shrink:0">PRÓXIMA</div>':''}
-          </div>`;
-        }).join('')}
-      </div>`;
-    }).join('')}
+          ${ehProx?'<div style="font-size:9px;font-weight:800;color:var(--r);background:rgba(229,9,20,.15);padding:3px 8px;border-radius:4px;flex-shrink:0">PRÓXIMA</div>':''}
+        </div>`;
+      }).join('')}
+    </div>
     <div style="height:80px"></div>`;
 }
 
 function abrirMissao(n){
   const u = getU(); if(!u) return;
-  const m = FQ_MISSOES.missoes.find(x=>x.n===n);
+  const trilha = trilhaAtual(u); if(!trilha) return;
+  const m = missoesDaTrilha(trilha).find(x=>x.n===n);
   if(!m) return;
   if(n > missoesLiberadas(u)){ fqToast('🔒 Esta missão ainda não foi liberada.','warn'); return; }
-
-  const fa = FQ_MISSOES.fases[m.fase];
-  const jaFeita = (u.missoesFeitas||[]).includes(n);
+  const meta = metaTrilha(trilha);
+  const jaFeita = ((u.jornadaFeitas||{})[trilha]||[]).includes(n);
 
   document.getElementById('missao-detalhe-titulo').textContent = `Missão ${m.n} — ${m.nome}`;
   document.getElementById('missao-detalhe-content').innerHTML = `
     <div style="text-align:center;padding:6px 0 16px">
-      <div style="display:inline-block;background:${fa.cor};color:#fff;font-size:10px;font-weight:800;padding:3px 10px;border-radius:4px;margin-bottom:8px">${fa.emoji} ${fa.nome}</div>
+      <div style="display:inline-block;background:${meta.cor};color:#fff;font-size:10px;font-weight:800;padding:3px 10px;border-radius:4px;margin-bottom:8px">${meta.emoji} ${meta.nome}</div>
       <div style="display:flex;gap:14px;justify-content:center;font-size:11px;color:var(--t2)">
         <div>⏱️ ${m.dur} min</div><div>📋 ${m.formato}</div><div>⭐ ${m.xp} XP</div>
       </div>
     </div>
     ${m.blocos.map((b,bi)=>{
       const nomes = b.ex.map(id=>{const e=EXERCISE_BANK.find(x=>x.id===id);return e?e.name:id;});
-      const ehCircuito = b.ex.length>1;
+      const ehMulti = b.ex.length>1;
       return `<div style="background:var(--s);border:1px solid var(--b);border-radius:10px;padding:12px 14px;margin-bottom:8px">
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
-          <div style="font-size:11px;font-weight:800;color:${fa.cor};text-transform:uppercase;letter-spacing:.5px">
-            ${bi===0?'Aquecimento':(ehCircuito?`Circuito · ${b.sets} rodadas`:`Bloco ${bi} · ${b.sets} séries`)}
+          <div style="font-size:11px;font-weight:800;color:${meta.cor};text-transform:uppercase;letter-spacing:.5px">
+            ${bi===0?'Aquecimento':(ehMulti?`${b.sets>1?b.sets+' rodadas':'Bloco'}`:`${b.sets} séries`)}
           </div>
           ${b.rest>0?`<div style="font-size:10px;color:var(--mu)">${b.rest}s descanso</div>`:''}
         </div>
         ${nomes.map((nome,ni)=>{
           const repsArr = String(b.reps).split('/').map(s=>s.trim());
-          const rep = repsArr[ni] || repsArr[0];
+          const rep = repsArr.length>1 ? (repsArr[ni]||repsArr[0]) : repsArr[0];
           return `<div style="display:flex;align-items:center;gap:10px;padding:6px 0;${ni<nomes.length-1?'border-bottom:1px solid rgba(255,255,255,.05)':''}">
             <div style="flex:1;font-size:12.5px;font-weight:600">${nome}</div>
-            <div style="font-size:12px;font-weight:800;color:var(--r)">${rep}</div>
+            <div style="font-size:11.5px;font-weight:800;color:var(--r);text-align:right;flex-shrink:0;max-width:55%">${rep}</div>
           </div>`;
         }).join('')}
         ${b.nota?`<div style="font-size:10.5px;color:var(--t2);margin-top:8px;padding-top:8px;border-top:1px solid rgba(255,255,255,.05);line-height:1.5">💡 ${b.nota}</div>`:''}
       </div>`;
     }).join('')}
-    <button class="btn-p" style="margin-top:8px" onclick="concluirMissao(${m.n})" ${jaFeita?'disabled style="opacity:.5;margin-top:8px"':''}>
+    <button class="btn-p" style="margin-top:8px${jaFeita?';opacity:.5':''}" onclick="concluirMissao(${m.n})" ${jaFeita?'disabled':''}>
       ${jaFeita?'✅ Missão já concluída':'✅ Concluir Missão'}
     </button>`;
-
   document.getElementById('modal-missao').classList.add('open');
 }
 
 function concluirMissao(n){
   const u = getU(); if(!u) return;
-  const m = FQ_MISSOES.missoes.find(x=>x.n===n);
+  const trilha = trilhaAtual(u); if(!trilha) return;
+  const m = missoesDaTrilha(trilha).find(x=>x.n===n);
   if(!m) return;
-  u.missoesFeitas = u.missoesFeitas || [];
-  if(u.missoesFeitas.includes(n)){ fqToast('Você já concluiu esta missão.','warn'); return; }
+  u.jornadaFeitas = u.jornadaFeitas || {};
+  u.jornadaFeitas[trilha] = u.jornadaFeitas[trilha] || [];
+  if(u.jornadaFeitas[trilha].includes(n)){ fqToast('Você já concluiu esta missão.','warn'); return; }
 
-  u.missoesFeitas.push(n);
+  u.jornadaFeitas[trilha].push(n);
   u.xp = (u.xp||0) + m.xp;
   u.coins = (u.coins||0) + Math.round(m.xp/5);
   const nivelAntes = u.level||1;
   u.level = Math.max(1, Math.floor((u.xp||0)/500)+1);
+  u.stats = u.stats||{}; u.stats.treinos = (u.stats.treinos||0)+1;
+  if(typeof atualizarStreak==='function') atualizarStreak(u);
   saveU(u);
 
   closeModal('modal-missao');
   fqToast(`🎉 Missão ${n} concluída! +${m.xp} XP`,'ok');
   if(typeof dispararConfete==='function') dispararConfete();
   if(u.level>nivelAntes && typeof dispararConfete==='function') setTimeout(()=>dispararConfete(),400);
-
-  // marco de fase
-  const doFase = FQ_MISSOES.missoes.filter(x=>x.fase===m.fase);
-  const feitasFase = doFase.filter(x=>u.missoesFeitas.includes(x.n)).length;
-  if(feitasFase===doFase.length){
-    setTimeout(()=>fqToast(`🎓 Fase ${m.fase} completa! Parabéns!`,'ok'),900);
+  if(u.jornadaFeitas[trilha].length===missoesDaTrilha(trilha).length){
+    setTimeout(()=>fqToast('🎓 Jornada completa! Que tal subir de nível?','ok'),900);
   }
   renderMissoes();
-  if(typeof renderHome==='function') renderHome();
+  if(typeof renderHomeMissoesCard==='function') renderHomeMissoesCard();
 }
-
 
 function renderHomeMissoesCard(){
   const u = getU(); if(!u) return;
   const el = document.getElementById('home-missoes-card');
   if(!el) return;
 
-  if(!u.missoesInicio){
+  const trilha = trilhaAtual(u);
+  if(!trilha){
     el.innerHTML = `<div onclick="switchTab('missoes',null)" style="background:linear-gradient(135deg,rgba(46,204,113,.12),rgba(229,9,20,.12));border:1px solid rgba(229,9,20,.25);border-radius:12px;padding:16px;cursor:pointer;display:flex;align-items:center;gap:14px">
       <div style="font-size:34px">🎮</div>
       <div style="flex:1;min-width:0">
-        <div style="font-size:14px;font-weight:900;margin-bottom:3px">Jornada das 30 Missões</div>
-        <div style="font-size:11px;color:var(--t2);line-height:1.4">Treinos de 10-15 min que evoluem com você · grátis</div>
+        <div style="font-size:14px;font-weight:900;margin-bottom:3px">Jornadas FitQuest</div>
+        <div style="font-size:11px;color:var(--t2);line-height:1.4">Missões no seu nível · escolha sua trilha</div>
       </div>
       <div style="font-size:18px;color:var(--r)">›</div>
     </div>`;
     return;
   }
 
+  const meta = metaTrilha(trilha);
+  const missoes = missoesDaTrilha(trilha);
   const nFeitas = missoesConcluidas(u);
   const prox = proximaMissao(u);
-  const m = prox ? FQ_MISSOES.missoes.find(x=>x.n===prox) : null;
-  const diasProx = diasParaProximaLiberacao(u);
+  const m = prox ? missoes.find(x=>x.n===prox) : null;
+  const dias = diasParaProximaLiberacao(u);
 
   el.innerHTML = `<div onclick="switchTab('missoes',null)" style="background:var(--s);border:1px solid var(--b);border-radius:12px;padding:14px 16px;cursor:pointer">
     <div style="display:flex;align-items:center;gap:12px;margin-bottom:10px">
-      <div style="font-size:26px">🎮</div>
+      <div style="font-size:26px">${meta.emoji}</div>
       <div style="flex:1;min-width:0">
-        <div style="font-size:13px;font-weight:900">Jornada das Missões</div>
-        <div style="font-size:10.5px;color:var(--mu)">${nFeitas}/30 concluídas</div>
+        <div style="font-size:13px;font-weight:900">${meta.nome} · ${meta.ambiente==='casa'?'Casa':'Academia'}</div>
+        <div style="font-size:10.5px;color:var(--mu)">${nFeitas}/${missoes.length} missões</div>
       </div>
       <div style="font-size:18px;color:var(--r)">›</div>
     </div>
     <div style="height:5px;background:var(--s2);border-radius:3px;overflow:hidden;margin-bottom:10px">
-      <div style="height:100%;width:${Math.round(nFeitas/30*100)}%;background:linear-gradient(90deg,#2ecc71,#f39c12,#e50914)"></div>
+      <div style="height:100%;width:${Math.round(nFeitas/missoes.length*100)}%;background:${meta.cor}"></div>
     </div>
     ${m
       ? `<div style="background:rgba(229,9,20,.08);border-radius:8px;padding:9px 11px;display:flex;align-items:center;gap:10px">
@@ -8901,7 +8993,7 @@ function renderHomeMissoesCard(){
           <div style="font-size:10px;color:var(--mu);flex-shrink:0">${m.dur}min</div>
         </div>`
       : `<div style="font-size:11px;color:var(--mu);text-align:center;padding:6px">
-          ${nFeitas>=30?'🏆 Jornada completa! Parabéns!':`✅ Tudo em dia — novas missões em ${diasProx} ${diasProx===1?'dia':'dias'}`}
+          ${nFeitas>=missoes.length?'🏆 Jornada completa!':`✅ Em dia — novas em ${dias} ${dias===1?'dia':'dias'}`}
         </div>`}
   </div>`;
 }
@@ -8966,6 +9058,15 @@ function renderHomeMissoesCard(){
       <input class="fi" id="add-ex-custom" placeholder="Ex: Supino na máquina X" style="flex:1"/>
       <button onclick="mtAddExCustom()" style="background:var(--r);border:none;border-radius:8px;color:#fff;font-weight:800;padding:0 16px;cursor:pointer;font-size:13px">+</button>
     </div>
+  </div>
+</div></div>
+
+<!-- ══ MODAL: ESCOLHER TRILHA ══ -->
+<div class="modal-ov" id="modal-escolher-trilha"><div class="modal-bx">
+  <div class="modal-t"><span>🎮 Escolha sua Jornada</span><button class="modal-cl" onclick="closeModal('modal-escolher-trilha')">✕</button></div>
+  <div style="padding:4px 0">
+    <div style="font-size:11.5px;color:var(--t2);margin-bottom:14px;line-height:1.6">Escolha o nível e onde você treina. Pode trocar quando quiser — seu progresso em cada trilha fica salvo.</div>
+    <div id="trilha-lista" style="max-height:60vh;overflow-y:auto"></div>
   </div>
 </div></div>
 
