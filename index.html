@@ -793,7 +793,7 @@ textarea.fi{resize:vertical;min-height:80px;}
 
 <!-- SPLASH -->
 <div id="sc-splash" class="screen active">
-  <div id="fq-version-badge" style="position:absolute;bottom:8px;right:12px;font-size:9px;color:#333;font-weight:700;z-index:5">v85</div>
+  <div id="fq-version-badge" style="position:absolute;bottom:8px;right:12px;font-size:9px;color:#333;font-weight:700;z-index:5">v91</div>
   <img src="https://images.unsplash.com/photo-1517836357463-d25dfeac3438?w=800&q=80" alt="Fitness" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center top;filter:brightness(.35);z-index:0"/>
   <div class="splash-glow"></div>
   <div class="splash-noise"></div>
@@ -2267,7 +2267,7 @@ textarea.fi{resize:vertical;min-height:80px;}
 
 <script>
 // ══ SUPABASE ══
-const FQ_VERSION='v85';console.log('%cFitQuest '+FQ_VERSION,'color:#e50914;font-weight:bold;font-size:14px');
+const FQ_VERSION='v91';console.log('%cFitQuest '+FQ_VERSION,'color:#e50914;font-weight:bold;font-size:14px');
 // ══ PROXY DE IA (Cloudflare Worker) ══
 // Quando preenchido, a IA real funciona em produção com a chave protegida no servidor.
 // Deixe '' para usar o plano local (fallback). Ex: 'https://fitquest-ai.SEU-USUARIO.workers.dev'
@@ -2359,7 +2359,7 @@ let EXERCISE_BANK=[
   {id:'e033',name:'Isométrico de Quadríceps',muscle:'Quadríceps',equipment:'Livre',emoji:'🦵',obs:'Deitado, joelho estendido, contraia o quadríceps por 10s. Ideal para condromalácia.'},
   {id:'e034',name:'Elevação de Perna Estendida',muscle:'Quadríceps/Core',equipment:'Livre',emoji:'🦵',obs:'Deitado, levante a perna estendida a 45°. Sem estresse na patela. Fortalece VMO.'},
   {id:'e035',name:'Abdução de Quadril (Elástico)',muscle:'Glúteo Médio',equipment:'Elástico/Livre',emoji:'🦴',obs:'Decúbito lateral, eleve a perna até 45°. Corrige valgo dinâmico. Protege o joelho.'},
-  {id:'e036',name:'Agachamento na Parede (Wall Sit)',muscle:'Quadríceps/Glúteo',equipment:'Livre',emoji:'🧱',obs:'Costas na parede, joelho a 60-90°. Isométrico. Fortalece sem impacto articular.'},
+  {id:'e036',name:'Agachamento na Parede (Wall Sit)',muscle:'Quadríceps/Glúteo',equipment:'Livre',emoji:'🧱',obs:'Costas na parede, joelho a 60-90°. Segure até a falha. Zero impacto articular.'},
   {id:'e037',name:'Step Up',muscle:'Quadríceps/Glúteo',equipment:'Banco/Caixa',emoji:'📦',obs:'Suba o degrau devagar. Controle a descida. Funcional e menor stress no joelho.'},
   {id:'e038',name:'Leg Press Amplitude Parcial',muscle:'Quadríceps/Glúteo',equipment:'Máquina',emoji:'🦵',obs:'JOELHO LESIONADO: use amplitude 0-45° apenas. Sem dor = exercício correto.'},
   {id:'e039',name:'Prancha Lateral',muscle:'Core/Oblíquos',equipment:'Livre',emoji:'📐',obs:'Corpo alinhado. 30-60s cada lado. Fortalece core sem compressão lombar.'},
@@ -2408,7 +2408,6 @@ let EXERCISE_BANK=[
   {id:'e082',name:'Passada (Walking Lunge)',muscle:'Quadríceps/Glúteo',equipment:'Halteres',emoji:'🚶',obs:'Passos longos alternados. Joelho de trás quase toca o chão. Tronco ereto sempre.'},
   {id:'e083',name:'Cadeira Flexora',muscle:'Posterior',equipment:'Máquina',emoji:'💺',obs:'Sentado, flexione até 90°. Ajuste o encosto: joelho alinhado com eixo da máquina.'},
   {id:'e084',name:'Stiff Unilateral',muscle:'Posterior/Glúteo',equipment:'Halteres',emoji:'🦩',obs:'Uma perna, halteres na mão oposta. Desafio de equilíbrio + isolamento posterior.'},
-  {id:'e085',name:'Good Morning',muscle:'Posterior/Lombar',equipment:'Barra',emoji:'🌅',obs:'Barra nas costas, quadril vai para trás, tronco inclina até 45°. Cargas LEVES sempre.'},
   {id:'e086',name:'Elevação Pélvica Máquina',muscle:'Glúteo',equipment:'Máquina',emoji:'🍑',obs:'Hip thrust na máquina específica. Ajuste o apoio na dobra do quadril. Pico 2s no topo.'},
   {id:'e087',name:'Coice no Cabo (Kickback Glúteo)',muscle:'Glúteo',equipment:'Cabo',emoji:'🦶',obs:'Tornozeleira no cabo baixo. Estenda o quadril para trás SEM curvar a lombar.'},
   {id:'e088',name:'Abdução no Cabo',muscle:'Glúteo Médio',equipment:'Cabo',emoji:'↗️',obs:'Em pé, perna abre lateralmente contra resistência. Estabilização de quadril e joelho.'},
@@ -2431,15 +2430,15 @@ let EXERCISE_BANK=[
   {id:'e105',name:'Prancha com Elevação de Perna',muscle:'Core/Glúteo',equipment:'Peso Corporal',emoji:'�959',obs:'Prancha estável + eleve uma perna 15cm por 2s alternando. Anti-rotação avançada.'},
   {id:'e106',name:'Kettlebell Goblet Squat',muscle:'Quadríceps/Glúteo/Core',equipment:'Kettlebell',emoji:'🔔',obs:'KB no peito, cotovelos dentro dos joelhos. Ensina o padrão de agachamento com tronco ereto.'},
   {id:'e107',name:'Turkish Get-Up',muscle:'Corpo Todo/Core',equipment:'Kettlebell',emoji:'🧎',obs:'Do chão até de pé com KB acima da cabeça. Movimento completo — comece com peso muito leve.'},
-  {id:'e108',name:'Kettlebell Clean',muscle:'Corpo Todo/Posterior',equipment:'Kettlebell',emoji:'🔄',obs:'Puxada explosiva do chão ao rack. Quadril gera a força, braço só guia.'},
-  {id:'e109',name:'Kettlebell Snatch',muscle:'Corpo Todo/Ombro',equipment:'Kettlebell',emoji:'💥',obs:'Do chão ao topo em um movimento. Avançado — domine o swing e o clean antes.'},
-  {id:'e110',name:'Thruster',muscle:'Corpo Todo/Ombro/Quadríceps',equipment:'Halteres/Barra',emoji:'🚀',obs:'Agachamento frontal + desenvolvimento em movimento único. Extremamente metabólico.'},
-  {id:'e111',name:'Wall Ball',muscle:'Corpo Todo/Quadríceps/Ombro',equipment:'Medicine Ball',emoji:'🎯',obs:'Agache e arremesse a bola na parede. Pegue no ar e repita. Cardio + força.'},
+  {id:'e108',name:'Kettlebell Clean',muscle:'Corpo Todo',equipment:'Kettlebell',emoji:'🔄',obs:'Puxada explosiva do chão ao rack. Quadril gera a força, braço só guia.'},
+  {id:'e109',name:'Kettlebell Snatch',muscle:'Corpo Todo',equipment:'Kettlebell',emoji:'💥',obs:'Do chão ao topo em um movimento. Avançado — domine o swing e o clean antes.'},
+  {id:'e110',name:'Thruster',muscle:'Corpo Todo',equipment:'Halteres/Barra',emoji:'🚀',obs:'Agachamento frontal + desenvolvimento em movimento único. Extremamente metabólico.'},
+  {id:'e111',name:'Wall Ball',muscle:'Corpo Todo',equipment:'Medicine Ball',emoji:'🎯',obs:'Agache e arremesse a bola na parede. Pegue no ar e repita. Cardio + força.'},
   {id:'e112',name:'Slam Ball',muscle:'Core/Costas/Ombro',equipment:'Medicine Ball',emoji:'⚡',obs:'Erga acima da cabeça e arremesse no chão com força total. Potência e descarga.'},
-  {id:'e113',name:'Battle Rope',muscle:'Ombro/Core/Cardio',equipment:'Corda Naval',emoji:'🌊',obs:'Ondas alternadas ou simultâneas. 20-30s de esforço máximo. Cardio brutal sem impacto.'},
-  {id:'e114',name:'Sled Push',muscle:'Corpo Todo/Quadríceps',equipment:'Trenó',emoji:'🛷',obs:'Empurre o trenó em posição inclinada, passos curtos e potentes. Zero impacto excêntrico.'},
-  {id:'e115',name:'Sled Pull',muscle:'Costas/Posterior',equipment:'Trenó',emoji:'🪢',obs:'Puxe o trenó caminhando para trás. Excelente para reabilitação de joelho.'},
-  {id:'e116',name:'Box Jump',muscle:'Quadríceps/Glúteo/Pliometria',equipment:'Caixa',emoji:'📦',obs:'Salte na caixa, DESÇA caminhando (não pule de volta). Aterrisse suave, joelhos alinhados.'},
+  {id:'e113',name:'Corda Naval (Battle Rope)',muscle:'Ombro/Core/Cardio',equipment:'Corda Naval',emoji:'🌊',obs:'Ondas alternadas ou simultâneas. 20-30s de esforço máximo. Cardio brutal sem impacto.'},
+  {id:'e114',name:'Empurrar Trenó (Sled Push)',muscle:'Corpo Todo/Quadríceps',equipment:'Trenó',emoji:'🛷',obs:'Empurre o trenó em posição inclinada, passos curtos e potentes. Zero impacto excêntrico.'},
+  {id:'e115',name:'Puxar Trenó (Sled Pull)',muscle:'Costas/Posterior',equipment:'Trenó',emoji:'🪢',obs:'Puxe o trenó caminhando para trás. Excelente para reabilitação de joelho.'},
+  {id:'e116',name:'Salto na Caixa (Box Jump)',muscle:'Quadríceps/Glúteo/Pliometria',equipment:'Caixa',emoji:'📦',obs:'Salte na caixa, DESÇA caminhando (não pule de volta). Aterrisse suave, joelhos alinhados.'},
   {id:'e117',name:'Salto Agachado (Squat Jump)',muscle:'Quadríceps/Glúteo/Pliometria',equipment:'Peso Corporal',emoji:'🦘',obs:'Agache e exploda para cima. Aterrisse suave, absorvendo com os joelhos. Máx 8-10 reps.'},
   {id:'e118',name:'Salto Amplo (Broad Jump)',muscle:'Glúteo/Posterior/Pliometria',equipment:'Peso Corporal',emoji:'➡️',obs:'Salto horizontal máximo. Braços impulsionam. Aterrisse em agachamento controlado.'},
   {id:'e119',name:'Skater Jump',muscle:'Glúteo Médio/Pliometria',equipment:'Peso Corporal',emoji:'⛸️',obs:'Salto lateral de uma perna para a outra. Estabilize 1s antes do próximo. Anti-lesão de joelho.'},
@@ -2454,7 +2453,7 @@ let EXERCISE_BANK=[
   {id:'e128',name:'Afundo Lateral',muscle:'Adutores/Glúteo Médio',equipment:'Halteres/Livre',emoji:'↔️',obs:'Passo lateral amplo, sente no quadril. Trabalha o plano frontal — esquecido pela maioria.'},
   {id:'e129',name:'Cossack Squat',muscle:'Adutores/Quadríceps/Mobilidade',equipment:'Peso Corporal',emoji:'🕺',obs:'Agachamento lateral profundo com a outra perna estendida. Mobilidade + força de adutores.'},
   {id:'e130',name:'Elevação Pélvica Unilateral',muscle:'Glúteo',equipment:'Peso Corporal',emoji:'🍑',obs:'Uma perna no chão, outra estendida. Corrige assimetria de glúteo. Aperte 2s no topo.'},
-  {id:'e131',name:'Nordic Curl',muscle:'Posterior',equipment:'Peso Corporal',emoji:'🇳🇴',obs:'Ajoelhado, pés presos, desça controlando com o posterior. Reduz lesão de isquiotibiais em 51%.'},
+  {id:'e131',name:'Flexão Nórdica (Nordic Curl)',muscle:'Posterior',equipment:'Peso Corporal',emoji:'🇳🇴',obs:'Ajoelhado, pés presos, desça controlando com o posterior. Reduz lesão de isquiotibiais em 51%.'},
   {id:'e132',name:'Copenhagen Plank',muscle:'Adutores/Core',equipment:'Banco',emoji:'🇩🇰',obs:'Prancha lateral com a perna de cima apoiada no banco. Previne lesão de adutor (pubalgia).'},
   {id:'e133',name:'Prancha com Toque no Ombro',muscle:'Core/Anti-rotação',equipment:'Peso Corporal',emoji:'🤚',obs:'Em prancha, toque o ombro oposto alternadamente. Quadril NÃO gira. Anti-rotação puro.'},
   {id:'e134',name:'Pallof Press',muscle:'Core/Anti-rotação',equipment:'Cabo',emoji:'🛡️',obs:'De lado ao cabo, empurre à frente resistindo à rotação. O melhor exercício de core funcional.'},
@@ -2462,7 +2461,6 @@ let EXERCISE_BANK=[
   {id:'e137',name:'Hollow Body Hold',muscle:'Core Completo',equipment:'Peso Corporal',emoji:'🌙',obs:'Deitado, ombros e pernas fora do chão, lombar colada. Base da ginástica. Segure 20-40s.'},
   {id:'e138',name:'Prancha Dinâmica (Up-Down)',muscle:'Core/Tríceps/Ombro',equipment:'Peso Corporal',emoji:'⬆️',obs:'Alterne entre prancha de antebraço e de mão. Quadril estável, sem balanço.'},
   {id:'e139',name:'Windshield Wiper',muscle:'Oblíquos/Core',equipment:'Peso Corporal',emoji:'🚗',obs:'Deitado, pernas a 90°, gire de um lado ao outro controlando. Avançado.'},
-  {id:'e140',name:'Hanging Leg Raise',muscle:'Abdômen Inferior',equipment:'Barra Fixa',emoji:'🪝',obs:'Pendurado, eleve as pernas estendidas até 90°. Sem balanço. O padrão-ouro de core.'},
   {id:'e141',name:'Toes to Bar',muscle:'Core Completo',equipment:'Barra Fixa',emoji:'🎪',obs:'Pendurado, leve os pés até tocar a barra. Requer força e mobilidade. Muito avançado.'},
   {id:'e142',name:'L-Sit',muscle:'Core/Tríceps',equipment:'Paralelas',emoji:'🇱',obs:'Sustentado nas paralelas, pernas estendidas à frente formando L. Isometria brutal.'},
   {id:'e143',name:'Burpee com Salto na Caixa',muscle:'Corpo Todo/Cardio',equipment:'Caixa',emoji:'📦',obs:'Burpee completo + box jump. Condicionamento máximo. Ritmo constante, técnica primeiro.'},
@@ -2500,7 +2498,6 @@ let EXERCISE_BANK=[
   {id:'e175',name:'Landmine Row',muscle:'Costas',equipment:'Landmine',emoji:'🎣',obs:'Remada com a barra ancorada. Amplitude excelente, menos stress lombar que a remada curvada.'},
   {id:'e176',name:'Landmine Rotation',muscle:'Core/Oblíquos',equipment:'Landmine',emoji:'🌪️',obs:'Barra na diagonal, gire o tronco de lado a lado. Rotação com carga — esporte específico.'},
   {id:'e177',name:'Bulgarian Split Squat Isométrico',muscle:'Quadríceps/Glúteo',equipment:'Banco',emoji:'⏸️',obs:'Segure a posição baixa do búlgaro por 20-30s. Isometria = ganho de força na amplitude treinada.'},
-  {id:'e178',name:'Wall Sit',muscle:'Quadríceps/Isometria',equipment:'Parede',emoji:'🧱',obs:'Costas na parede, joelhos a 90°. Segure até a falha. Zero impacto, muito eficaz.'},
   {id:'e179',name:'Isometria de Supino (Pausa)',muscle:'Peito',equipment:'Barra',emoji:'⏱️',obs:'Pause 3s com a barra a 2cm do peito. Elimina o rebote e expõe o ponto fraco.'},
   {id:'e180',name:'Agachamento com Pausa',muscle:'Quadríceps/Glúteo',equipment:'Barra',emoji:'⏸️',obs:'Pause 3s no fundo do agachamento. Força na posição mais difícil — sem usar o reflexo elástico.'},
   {id:'e181',name:'Supino com Halteres Neutro',muscle:'Peito',equipment:'Halteres',emoji:'🤲',obs:'Palmas viradas uma pra outra. Menos estresse no ombro.'},
@@ -2520,7 +2517,7 @@ let EXERCISE_BANK=[
   {id:'e197',name:'Pike Push-up',muscle:'Ombro',equipment:'Peso Corporal',emoji:'🔺',obs:'Quadril alto, empurre com os ombros. Progressão pro handstand.'},
   {id:'e198',name:'Stiff com Halteres',muscle:'Posterior',equipment:'Halteres',emoji:'🦵',obs:'Quadril pra trás, joelhos levemente flexionados.'},
   {id:'e199',name:'Mesa Flexora Unilateral',muscle:'Posterior',equipment:'Máquina',emoji:'1️⃣',obs:'Corrige assimetrias entre as pernas.'},
-  {id:'e200',name:'Bom Dia (Good Morning)',muscle:'Posterior/Lombar',equipment:'Barra',emoji:'🌅',obs:'Barra nas costas, quadril pra trás. Carga leve.'},
+  {id:'e200',name:'Bom Dia (Good Morning)',muscle:'Posterior/Lombar',equipment:'Barra',emoji:'🌅',obs:'Barra nas costas, quadril vai para trás, tronco inclina até 45°. Cargas LEVES sempre.'},
   {id:'e201',name:'Elevação Pélvica com Barra',muscle:'Glúteo/Posterior',equipment:'Barra',emoji:'🌉',obs:'Queixo pro peito, aperte o glúteo no topo.'},
   {id:'e202',name:'Glute-Ham Raise',muscle:'Posterior/Glúteo',equipment:'Máquina',emoji:'💪',obs:'Extremamente eficaz pro posterior.'},
   {id:'e203',name:'Cadeira Flexora Sentado',muscle:'Posterior',equipment:'Máquina',emoji:'🪑',obs:'Amplitude completa, sem balançar.'},
@@ -2540,19 +2537,15 @@ let EXERCISE_BANK=[
   {id:'e220',name:'Barra Fixa Pegada Neutra',muscle:'Costas/Bíceps',equipment:'Barra Fixa',emoji:'🤝',obs:'Mais fácil que a pronada. Boa progressão.'},
   {id:'e222',name:'Abdominal na Polia Alta',muscle:'Abdômen',equipment:'Cabo',emoji:'🙏',obs:'Ajoelhado. Flexione a coluna, não o quadril.'},
   {id:'e223',name:'Rollout com Roda',muscle:'Core',equipment:'Roda Abdominal',emoji:'🎡',obs:'Vá até onde conseguir manter a lombar neutra.'},
-  {id:'e225',name:'Elevação de Pernas na Barra',muscle:'Abdômen Inferior',equipment:'Barra Fixa',emoji:'🎯',obs:'Sem balanço. Controle na descida.'},
+  {id:'e225',name:'Elevação de Pernas na Barra',muscle:'Abdômen Inferior',equipment:'Barra Fixa',emoji:'🎯',obs:'Pendurado, eleve as pernas estendidas até 90°. Sem balanço. O padrão-ouro de core.'},
   {id:'e226',name:'Prancha Lateral com Elevação',muscle:'Oblíquos',equipment:'Peso Corporal',emoji:'📐',obs:'Sobe e desce o quadril.'},
   {id:'e227',name:'Thruster com Halteres',muscle:'Corpo Todo',equipment:'Halteres',emoji:'🚀',obs:'Agachamento + desenvolvimento em um movimento.'},
   {id:'e228',name:'Devil Press',muscle:'Corpo Todo/Cardio',equipment:'Halteres',emoji:'😈',obs:'Burpee + snatch com halteres. Brutal.'},
   {id:'e229',name:'Man Maker',muscle:'Corpo Todo',equipment:'Halteres',emoji:'🏗️',obs:'Flexão + remada + clean + press. O mais completo.'},
-  {id:'e231',name:'Box Jump Over',muscle:'Pliometria/Cardio',equipment:'Caixa',emoji:'📦',obs:'Salta e passa por cima da caixa.'},
+  {id:'e231',name:'Salto Sobre a Caixa (Box Jump Over)',muscle:'Pliometria/Cardio',equipment:'Caixa',emoji:'📦',obs:'Salta e passa por cima da caixa.'},
   {id:'e232',name:'Burpee Pull-up',muscle:'Corpo Todo',equipment:'Barra Fixa',emoji:'🔥',obs:'Burpee terminando com barra fixa.'},
-  {id:'e234',name:'Battle Rope Ondas Duplas',muscle:'Cardio/Ombro',equipment:'Corda Naval',emoji:'🌊',obs:'Ondas simultâneas. 20-30s máximo.'},
-  {id:'e236',name:'Clean and Jerk',muscle:'Corpo Todo',equipment:'Barra',emoji:'🏋️',obs:'Técnica antes de carga. Movimento olímpico.'},
-  {id:'e237',name:'Alongamento Peitoral na Porta',muscle:'Mobilidade/Peito',equipment:'Nenhum',emoji:'🚪',obs:'Antebraço na porta, gire o corpo. 30s cada lado.'},
-  {id:'e238',name:'Rotação Torácica Deitado',muscle:'Mobilidade',equipment:'Nenhum',emoji:'🔄',obs:'Joelhos dobrados, gire só o tronco.'},
-  {id:'e239',name:'Alongamento Flexor de Quadril',muscle:'Mobilidade/Quadril',equipment:'Nenhum',emoji:'🦵',obs:'Joelho no chão, empurre o quadril à frente.'},
-  {id:'e240',name:'Cat-Cow',muscle:'Mobilidade/Coluna',equipment:'Nenhum',emoji:'🐈',obs:'Alterne arqueando e arredondando as costas.'}
+  {id:'e234',name:'Corda Naval - Ondas Duplas',muscle:'Cardio/Ombro',equipment:'Corda Naval',emoji:'🌊',obs:'Ondas simultâneas. 20-30s máximo.'},
+  {id:'e236',name:'Clean and Jerk',muscle:'Corpo Todo',equipment:'Barra',emoji:'🏋️',obs:'Técnica antes de carga. Movimento olímpico.'}
 ];
 
 const DG={
@@ -2965,7 +2958,7 @@ async function loadUDB(userId){if(!sb||!userId)return null;try{const{data}=await
 // Admin identificado por hash — e-mail real nunca exposto no fonte
 const _AH = btoa('rennan@rennandias.com.br'); // base64 — não é segurança absoluta mas evita scraping trivial
 const ADMIN_EMAIL = atob(_AH); // reconstruído em runtime
-function goAuth(mode){show('sc-auth');switchAuth(mode);}
+function goAuth(mode){show('sc-auth');switchAuth(mode);_pushNavState('screen:auth');}
 function switchAuth(mode){
   document.getElementById('form-login').style.display=mode==='login'?'block':'none';
   document.getElementById('form-register').style.display=mode==='register'?'block':'none';
@@ -3282,7 +3275,18 @@ async function genAIWithRetry(email, an, maxRetries){
 // ══════════════════════════════════════════════════════════════
 
 // ─── 1. PERFIL DO ALUNO (interpreta a anamnese) ───
-function RD_perfil(an){
+// Hash estável e simples (djb2) — mesmo texto sempre gera o mesmo número,
+// textos diferentes geram números bem espalhados. Usado pra dar a cada
+// aluno uma "assinatura" própria na escolha de exercícios, sem precisar
+// guardar nada extra no banco — o próprio e-mail já é suficiente.
+function RD_hashSemente(texto){
+  let h=5381;
+  const s=String(texto||'semente-padrao');
+  for(let i=0;i<s.length;i++){ h=((h*33)^s.charCodeAt(i))>>>0; }
+  return h;
+}
+
+function RD_perfil(an,semente){
   const t=(an.tempo||'').toLowerCase();
   let nivel='iniciante';
   if(t.includes('nunca'))nivel='destreinado';
@@ -3364,6 +3368,7 @@ function RD_perfil(an){
 
   return {nivel,dias,dur,objetivo,idade,fcMax,recup,ambiente,corrida,foco,
     nivelCorrida,ritmoAtual,cargaSupino,cargaAgacho,evitar,
+    seed:RD_hashSemente(semente),
     lesoes:{joelho:!!an.temJoelho,lombar:!!an.temLombar,ombro:!!an.temOmbro},
     peso:parseFloat(an.peso)||75};
 }
@@ -3500,14 +3505,23 @@ function RD_escolhe(grupo,n,p,semana,excluir,ancora){
   if(!pool.length)return [];
   const out=[];
   const usados=new Set(excluir||[]);
-  // ÂNCORA: o exercício principal (composto) NÃO rotaciona — especificidade gera força (Kassiano 2022).
-  // Evidência: variar vs. manter exercícios dá hipertrofia SIMILAR, mas força exige repetir o movimento.
+  // ÂNCORA: o exercício principal (composto) NÃO rotaciona AO LONGO DAS SEMANAS do mesmo
+  // aluno — especificidade gera força (Kassiano 2022). Evidência: variar vs. manter exercícios
+  // dá hipertrofia SIMILAR, mas força exige repetir o movimento.
+  // Porém ENTRE alunos diferentes, a escolha varia pela "assinatura" de cada um (p.seed) — sem
+  // isso, todo aluno com perfil parecido (mesmo nível/equipamento) cairia sempre na mesma opção.
   if(ancora){
-    const comp=pool.find(e=>/supino|agachamento|terra|remada curvada|desenvolvimento|puxada|barra fixa|leg press|stiff/i.test(e.name)&&!usados.has(e.id));
-    if(comp){usados.add(comp.id);out.push(comp);}
+    const candidatosAncora=pool.filter(e=>/supino|agachamento|hack squat|terra|remada curvada|remada t\b|cavalinho|remada baixa|desenvolvimento|puxada|barra fixa|leg press|stiff|thruster|burpee|clean|snatch|devil press|man maker|turkish get|wall ball|sled push/i.test(e.name)&&!/pausa|isometr|wall sit/i.test(e.name)&&!usados.has(e.id));
+    if(candidatosAncora.length){
+      const idx=(p&&p.seed?p.seed:0)%candidatosAncora.length;
+      const comp=candidatosAncora[idx];
+      usados.add(comp.id);out.push(comp);
+    }
   }
-  // ACESSÓRIOS: rotacionam a cada 2 semanas (variedade sustenta adesão e cobre ângulos diferentes)
-  const off=Math.floor((semana-1)/2)%Math.max(1,pool.length);
+  // ACESSÓRIOS: rotacionam a cada 2 semanas (variedade sustenta adesão e cobre ângulos diferentes),
+  // e cada aluno começa esse giro num ponto diferente (mesma logica da assinatura acima)
+  const semOffset=(p&&p.seed?p.seed:0)%Math.max(1,pool.length);
+  const off=(Math.floor((semana-1)/2)+semOffset)%Math.max(1,pool.length);
   for(let i=0;i<pool.length&&out.length<n;i++){
     const e=pool[(off+i)%pool.length];
     if(usados.has(e.id))continue;
@@ -3602,10 +3616,12 @@ function RD_prescricao(p,semana,ehDeload){
 
 // ─── BLOCOS COMPLEMENTARES: aquecimento, ativação e finalizador ───
 const RD_AQUECIMENTO={
-  geral:['e152','e144'],           // gato-vaca + polichinelo
-  lower:['e152','e163','e155'],    // mobilidade + ativação glúteo + flexores
-  upper:['e153','e169','e166'],    // torácica + escápula + manguito
-  corrida:['e160','e154','e163']   // panturrilha + quadril + glúteo
+  // e240 (duplicata de e152 Cat-Cow) removido; e162 e e129 adicionados — mais variedade real
+  geral:['e152','e144','e161','e162','e129'],                // gato-vaca, polichinelo, postura da criança, cachorro olhando p/ baixo, cossack
+  // e239 (duplicata de e155 alongamento de flexor de quadril) removido; e159 adicionado
+  lower:['e152','e163','e155','e154','e165','e160','e159'], // mobilidade, ativação glúteo, flexores, foam roller IT band
+  upper:['e153','e169','e166','e156','e157','e158','e170'], // torácica, escápula, manguito (+ variações)
+  corrida:['e160','e154','e163','e165','e159']             // panturrilha, quadril, glúteo (+ variações)
 };
 const RD_FINALIZADOR={
   // Cada lista inclui opções de peso corporal — o filtro de equipamento escolhe as viáveis
@@ -3743,9 +3759,16 @@ function RD_gerarGym(p){
       const ehLower=/Lower|Legs|Pernas|Posterior/i.test(tipo);
       const ehUpper=/Upper|Push|Pull|Peito|Costas|Ombro/i.test(tipo);
       const aq=ehLower?RD_AQUECIMENTO.lower:(ehUpper?RD_AQUECIMENTO.upper:RD_AQUECIMENTO.geral);
-      let blocoAq=RD_bloco(aq,p,'aquec',s,[]);
-      if(!blocoAq.length)blocoAq=RD_bloco(['e152','e161','e136'],p,'aquec',s,[]);
-      blocoAq.slice(0,3).forEach(e=>exs.push(e));
+      let blocoAqTodos=RD_bloco(aq,p,'aquec',s,[]);
+      if(!blocoAqTodos.length)blocoAqTodos=RD_bloco(['e152','e161','e136'],p,'aquec',s,[]);
+      // A "assinatura" do aluno (p.seed) decide POR ONDE começar a lista de aquecimento —
+      // sem isso, todo aluno via sempre os mesmos 2-3 primeiros itens da lista fixa.
+      const aqOffset=(p&&p.seed?p.seed:0)%Math.max(1,blocoAqTodos.length);
+      const blocoAq=[];
+      for(let k=0;k<blocoAqTodos.length&&blocoAq.length<3;k++){
+        blocoAq.push(blocoAqTodos[(aqOffset+k)%blocoAqTodos.length]);
+      }
+      blocoAq.forEach(e=>exs.push(e));
 
       // ── BLOCO 2: TREINO PRINCIPAL ──
       const jaUsados=exs.map(x=>x.id); // evita repetir o que já entrou no aquecimento
@@ -3755,7 +3778,7 @@ function RD_gerarGym(p){
         const ehAncora=gi===0; // 1º grupo do treino carrega o composto principal (não rotaciona)
         RD_escolhe(grupo,n,p,s+di,jaUsados,ehAncora).forEach((e)=>{
           jaUsados.push(e.id);
-          const composto=/supino|agachamento|terra|remada|desenvolvimento|puxada|barra fixa|leg press|stiff|thruster/i.test(e.name);
+          const composto=/supino|agachamento|hack squat|terra|remada|desenvolvimento|puxada|barra fixa|leg press|stiff|thruster|burpee|clean|snatch|devil press|man maker/i.test(e.name);
           const pliom=/salto|jump|pliom|box|skater/i.test(e.name);
           const cardio=/cardio|sprint|corda|rope|bike|remo|esteira|el[íi]ptico|escada/i.test(e.name+' '+(e.muscle||''));
           const isometria=/isometri|hold|wall sit|pausa|l-sit/i.test(e.name);
@@ -4179,7 +4202,7 @@ function gerarTreinoFallback(email,an){
   const users=DB.get('fq_users')||{};
   if(!users[email])return;
   try{
-    const p=RD_perfil(an||{});
+    const p=RD_perfil(an||{},email);
     const gym=RD_gerarGym(p);
     const run=RD_gerarRun(p);
     users[email].aiPlan={gym,run};
@@ -5321,7 +5344,13 @@ window.addEventListener('popstate', function(){
     _fqNavegandoViaVoltar = false;
     return;
   }
-  // Prioridade 2: dentro do app, se não estiver na Home, o Voltar leva pra Home
+  // Prioridade 2: na tela de login/cadastro, o Voltar leva de volta pro site institucional
+  const scAuth = document.getElementById('sc-auth');
+  if(scAuth && scAuth.classList.contains('active')){
+    window.location.href = 'https://rennandias.com.br';
+    return;
+  }
+  // Prioridade 3: dentro do app, se não estiver na Home, o Voltar leva pra Home
   const scApp = document.getElementById('sc-app');
   if(scApp && scApp.classList.contains('active')){
     const abaAtiva = document.querySelector('.tp.active');
@@ -5402,7 +5431,7 @@ async function admTrocarTreino(email){
   if(!await fqConfirm('Trocar treino', 'Gerar novas variações de exercício para '+u.name+', mantendo o mesmo objetivo e fase de treino?', 'Trocar', '🔄')) return;
 
   try{
-    const p=RD_perfil(u.anamnese);
+    const p=RD_perfil(u.anamnese,u.email);
     const semanaAtual=u.gymWeek;
     const planoAtual=u.aiPlan['Semana '+semanaAtual];
     if(!planoAtual||!planoAtual.days){ fqToast('Não encontrei o plano dessa semana.','warn'); return; }
@@ -5413,7 +5442,7 @@ async function admTrocarTreino(email){
         const exOriginal=EXERCISE_BANK.find(e=>e.id===exAtual.id);
         if(!exOriginal||!exOriginal.muscle) return exAtual; // sem info suficiente, mantém como está
         const grupo=exOriginal.muscle.split(/[\/\s]/)[0].toLowerCase();
-        const ehComposto=/supino|agachamento|terra|remada curvada|desenvolvimento|puxada|barra fixa|leg press|stiff/i.test(exOriginal.name);
+        const ehComposto=/supino|agachamento|hack squat|terra|remada curvada|remada t\b|cavalinho|remada baixa|desenvolvimento|puxada|barra fixa|leg press|stiff|thruster|burpee|clean|snatch|devil press|man maker|turkish get|wall ball|sled push/i.test(exOriginal.name);
         const alternativas=RD_escolhe(grupo,1,p,semanaAtual+100,[exAtual.id],ehComposto); // +100 força offset de rotação diferente
         const novoEx=alternativas[0];
         if(!novoEx) return exAtual; // não achou alternativa segura, mantém o original
