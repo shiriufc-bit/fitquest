@@ -793,7 +793,7 @@ textarea.fi{resize:vertical;min-height:80px;}
 
 <!-- SPLASH -->
 <div id="sc-splash" class="screen active">
-  <div id="fq-version-badge" style="position:absolute;bottom:8px;right:12px;font-size:9px;color:#333;font-weight:700;z-index:5">v91</div>
+  <div id="fq-version-badge" style="position:absolute;bottom:8px;right:12px;font-size:9px;color:#333;font-weight:700;z-index:5">v95</div>
   <img src="https://images.unsplash.com/photo-1517836357463-d25dfeac3438?w=800&q=80" alt="Fitness" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center top;filter:brightness(.35);z-index:0"/>
   <div class="splash-glow"></div>
   <div class="splash-noise"></div>
@@ -807,7 +807,7 @@ textarea.fi{resize:vertical;min-height:80px;}
       <button class="btn-splash-primary" onclick="goAuth('register')">▶ Testar 7 dias grátis</button>
       <button class="btn-splash-secondary" onclick="goAuth('login')">Já tenho uma conta</button>
     </div>
-    <div style="text-align:center;font-size:11px;color:rgba(255,255,255,.55);margin-top:12px;font-weight:600">✅ Sem cartão de crédito · cancele quando quiser</div>
+    <div style="text-align:center;font-size:11px;color:rgba(255,255,255,.55);margin-top:12px;font-weight:600">✅ Sem cartão salvo · sem renovação automática</div>
   </div>
 </div>
 
@@ -2267,7 +2267,7 @@ textarea.fi{resize:vertical;min-height:80px;}
 
 <script>
 // ══ SUPABASE ══
-const FQ_VERSION='v91';console.log('%cFitQuest '+FQ_VERSION,'color:#e50914;font-weight:bold;font-size:14px');
+const FQ_VERSION='v95';console.log('%cFitQuest '+FQ_VERSION,'color:#e50914;font-weight:bold;font-size:14px');
 // ══ PROXY DE IA (Cloudflare Worker) ══
 // Quando preenchido, a IA real funciona em produção com a chave protegida no servidor.
 // Deixe '' para usar o plano local (fallback). Ex: 'https://fitquest-ai.SEU-USUARIO.workers.dev'
@@ -4590,8 +4590,17 @@ async function carregarRanking(){
 // ══════════════════════════════════════════════════════════
 
 const TRIAL_DIAS = 7;
-const MENSALIDADE = 'R$15';
-const LINK_ASSINATURA = 'https://mpago.la/22dn7UY'; // TODO: trocar pelo link de ASSINATURA recorrente
+const PLANOS = {
+  mensal: {
+    preco: 'R$14,90', precoDetalhe: '/mês', economia: null,
+    link: 'https://mpago.la/1WnV2mh'
+  },
+  anual: {
+    preco: 'R$9,90', precoDetalhe: '/mês', economia: 'Economize 34% · R$118,80 (em até 12x)',
+    link: 'https://mpago.li/1ko8b92'
+  }
+};
+const MENSALIDADE = PLANOS.mensal.preco; // mantido por compatibilidade com textos existentes
 
 function diasRestantesTrial(u){
   if(!u||!u.trialInicio) return TRIAL_DIAS;
@@ -4629,7 +4638,7 @@ function renderBannerTrial(u){
         <div style="font-size:12px;font-weight:800;color:${urgente?'#f39c12':'#2ecc71'}">
           ${dias <= 1 ? 'Último dia grátis!' : `${dias} dias de teste grátis`}
         </div>
-        <div style="font-size:10.5px;color:var(--t2)">Depois, ${MENSALIDADE}/mês para continuar</div>
+        <div style="font-size:10.5px;color:var(--t2)">Depois, a partir de ${PLANOS.anual.preco}/mês para continuar</div>
       </div>
       ${urgente?`<button onclick="abrirAssinatura()" style="background:#f39c12;border:none;border-radius:7px;color:#000;font-size:11px;font-weight:800;padding:7px 12px;cursor:pointer;flex-shrink:0">Assinar</button>`:''}
     </div>`;
@@ -4638,12 +4647,84 @@ function renderBannerTrial(u){
 
 function abrirAssinatura(){
   abrirModal('modal-assinatura');
+  renderModalAssinatura();
 }
 
-function irParaPagamento(){
+function renderModalAssinatura(){
+  const el = document.getElementById('modal-assinatura-content');
+  if(!el) return;
+  el.innerHTML = `
+    ${renderSeletorPlanos()}
+    <div style="background:var(--s);border:1px solid var(--b);border-radius:10px;padding:16px;text-align:left;font-size:12px;color:var(--t2);line-height:2;margin-bottom:16px">
+      ✅ Musculação e corrida sob medida<br/>
+      ✅ Jornada com 60 missões gamificadas<br/>
+      ✅ Plano de corrida periodizado<br/>
+      ✅ Comunidade e ranking<br/>
+      ✅ Acompanhamento de evolução
+    </div>
+    <button class="btn-p" onclick="irParaPagamento(_planoSelecionado)">Assinar plano ${_planoSelecionado==='anual'?'anual':'mensal'}</button>`;
+}
+
+// ══ SELETOR DE PLANO (mensal vs anual) — compartilhado entre a tela de
+// expiração e o modal de assinatura, pra manter os dois sempre consistentes. ══
+let _planoSelecionado = 'anual'; // anual pré-selecionado (é o que queremos incentivar)
+
+function renderSeletorPlanos(){
+  return `<div style="display:flex;gap:10px;margin-bottom:16px">
+    ${Object.entries(PLANOS).map(([id,p])=>{
+      const sel = _planoSelecionado===id;
+      return `<div onclick="selecionarPlano('${id}')" style="flex:1;position:relative;cursor:pointer;
+        background:${sel?'rgba(229,9,20,.1)':'var(--s)'};border:2px solid ${sel?'var(--r)':'var(--b)'};
+        border-radius:12px;padding:16px 12px;text-align:center;transition:all .15s">
+        ${id==='anual'?'<div style="position:absolute;top:-10px;left:50%;transform:translateX(-50%);background:var(--r);color:#fff;font-size:9px;font-weight:800;padding:3px 10px;border-radius:5px;white-space:nowrap">MAIS ESCOLHIDO</div>':''}
+        <div style="font-size:11px;color:var(--mu);font-weight:700;text-transform:uppercase;margin-top:4px">${id==='mensal'?'Mensal':'Anual'}</div>
+        <div style="font-size:24px;font-weight:900;color:${sel?'var(--r)':'#fff'};margin:4px 0">${p.preco}<span style="font-size:12px;color:var(--mu);font-weight:400">${p.precoDetalhe}</span></div>
+        ${p.economia?`<div style="font-size:9.5px;color:#2ecc71;font-weight:700">${p.economia}</div>`:'<div style="font-size:9.5px;color:var(--mu)">Cobrado mês a mês</div>'}
+      </div>`;
+    }).join('')}
+  </div>`;
+}
+
+function selecionarPlano(id){
+  _planoSelecionado = id;
+  // re-renderiza qualquer um dos dois lugares que estiver ativo no momento
   const u = getU();
-  window.open(LINK_ASSINATURA, '_blank');
-  fqToast('Após o pagamento, seu acesso é liberado automaticamente.','ok');
+  if(document.getElementById('sc-expirado')?.classList.contains('active') && u) mostrarTelaExpirada(u);
+  const modalAssin = document.getElementById('modal-assinatura');
+  if(modalAssin?.classList.contains('open')) renderModalAssinatura();
+}
+
+async function irParaPagamento(planoId){
+  const plano = PLANOS[planoId];
+  if(!plano){ fqToast('Escolha um plano antes de continuar.','warn'); return; }
+  const u = getU();
+  if(!u || !u.email){ fqToast('Erro ao identificar sua conta. Faça login novamente.','warn'); return; }
+
+  // Tenta gerar um pagamento automático (identificado com o aluno) via função no Supabase.
+  // Se a função ainda não estiver configurada (ou falhar), cai pro link fixo como reserva —
+  // nesse caso a liberação de acesso continua manual, pelo admin.
+  try{
+    const resp = await fetch(`${SUPABASE_URL}/functions/v1/criar-pagamento`, {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({email:u.email, plano:planoId})
+    });
+    if(resp.ok){
+      const data = await resp.json();
+      if(data && data.init_point){
+        window.open(data.init_point, '_blank');
+        fqToast('Após o pagamento, seu acesso é liberado automaticamente em instantes.','ok');
+        return;
+      }
+    }
+  }catch(e){ /* segue pro fallback abaixo */ }
+
+  if(plano.link){
+    window.open(plano.link, '_blank');
+    fqToast('Após o pagamento, aguarde a liberação do seu acesso.','ok');
+  }else{
+    fqToast('Esse plano ainda não está disponível — em breve!','warn');
+  }
 }
 
 // Bloqueia o app quando o trial expira (mostra tela de assinatura)
@@ -4665,23 +4746,22 @@ function mostrarTelaExpirada(u){
   if(elc) elc.innerHTML = `
     <div style="text-align:center;padding:30px 24px">
       <div style="font-size:56px;margin-bottom:16px">🔓</div>
-      <div style="font-size:21px;font-weight:900;margin-bottom:8px">Seus 30 dias acabaram, ${nome}</div>
+      <div style="font-size:21px;font-weight:900;margin-bottom:8px">Seus ${TRIAL_DIAS} dias acabaram, ${nome}</div>
       <div style="font-size:13px;color:var(--t2);line-height:1.7;margin-bottom:24px">
-        Continue com treinos personalizados por IA, plano de corrida,<br/>
-        e-books e a comunidade completa.
+        Continue com musculação e corrida personalizadas,<br/>
+        a Jornada das Missões, e-books e a comunidade completa.
       </div>
-      <div style="background:var(--s);border:1px solid var(--r);border-radius:14px;padding:22px;margin-bottom:18px">
-        <div style="font-size:34px;font-weight:900;color:var(--r);line-height:1">${MENSALIDADE}</div>
-        <div style="font-size:12px;color:var(--mu);margin-bottom:16px">por mês · cancele quando quiser</div>
+      ${renderSeletorPlanos()}
+      <div style="background:var(--s);border:1px solid var(--b);border-radius:14px;padding:18px 22px;margin-bottom:18px">
         <div style="text-align:left;font-size:12px;color:var(--t2);line-height:2">
-          ✅ Treinos gerados por IA<br/>
+          ✅ Musculação e corrida sob medida<br/>
+          ✅ Jornada com 60 missões gamificadas<br/>
           ✅ Plano de corrida periodizado<br/>
-          ✅ Jornada das 30 Missões<br/>
           ✅ Comunidade e ranking<br/>
           ✅ Acompanhamento de evolução
         </div>
       </div>
-      <button class="btn-p" onclick="irParaPagamento()">Assinar por ${MENSALIDADE}/mês</button>
+      <button class="btn-p" onclick="irParaPagamento(_planoSelecionado)">Assinar plano ${_planoSelecionado==='anual'?'anual':'mensal'}</button>
       <button onclick="doLogout()" style="width:100%;background:none;border:none;color:var(--mu);font-size:12px;margin-top:14px;cursor:pointer;padding:8px">Sair da conta</button>
     </div>`;
 }
@@ -5641,9 +5721,23 @@ function admStudentCard(u, compact=false){
       <button class="st-btn" onclick="admResetSenha('${u.email}')" style="background:rgba(52,152,219,.12);color:#3498db;border:1px solid rgba(52,152,219,.3)">🔑 Redefinir senha</button>
       <button class="st-btn anam" onclick="openAnam('${u.email}')">📋 Anamnese</button>
       <button class="st-btn ebook" onclick="openEbooksAdmin('${u.email}')">📚 E-Books</button>
+      <button class="st-btn" onclick="abrirMarcarPago('${u.email}')" style="background:rgba(46,204,113,.12);color:#2ecc71;border:1px solid rgba(46,204,113,.3)">💳 Marcar como pago</button>
       <button class="st-btn del" onclick="admDel('${u.email}')">🗑️</button>
     </div>
+    <div style="padding:8px 14px 0;font-size:10px;color:var(--mu)">${admStatusAssinaturaTxt(u)}</div>
   </div>`;
+}
+
+// Texto curto do status de assinatura pra aparecer no card do admin
+function admStatusAssinaturaTxt(u){
+  const st = typeof statusAssinatura==='function' ? statusAssinatura(u) : 'trial';
+  if(st==='ativa'){
+    const ate = u.assinaturaAte ? new Date(u.assinaturaAte).toLocaleDateString('pt-BR') : '—';
+    return `💳 Assinatura ativa · válida até ${ate}`;
+  }
+  if(st==='expirada') return `⛔ Assinatura expirada`;
+  const dias = typeof diasRestantesTrial==='function' ? diasRestantesTrial(u) : '?';
+  return `🎁 Em trial · ${dias} dias restantes`;
 }
 
 function admRenderStudents(list, filter){
@@ -8778,6 +8872,47 @@ async function admCriarAluno(){
 }
 
 // ══ ADMIN: RESET DE SENHA (nunca vemos a senha — só disparamos o link) ══
+// ══ ADMIN: MARCAR ALUNO COMO PAGO — libera acesso manualmente após confirmar
+// o pagamento no Mercado Pago (os dois planos são pagamento único, sem webhook). ══
+let _pagoEmailAtual = null;
+
+function abrirMarcarPago(email){
+  _pagoEmailAtual = email;
+  abrirModal('modal-marcar-pago');
+}
+
+async function admConfirmarPago(planoId){
+  const email = _pagoEmailAtual;
+  if(!email){ fqToast('Erro: aluno não identificado.','warn'); return; }
+  const dias = planoId==='anual' ? 365 : 30;
+  const nomePlano = planoId==='anual' ? 'Anual' : 'Mensal';
+  if(!await fqConfirm('Confirmar pagamento', `Confirma que ${email} pagou o plano ${nomePlano}? Isso libera o acesso por ${dias} dias.`, 'Confirmar', '💳')) return;
+
+  try{
+    const users = DB.get('fq_users')||{};
+    const u = users[email] || (window.ADM_CACHE||[]).find(a=>a.email===email);
+    if(!u){ fqToast('Aluno não encontrado.','warn'); return; }
+
+    const agora = new Date();
+    const ate = new Date(agora.getTime() + dias*24*60*60*1000);
+    u.assinaturaStatus = 'ativa';
+    u.assinaturaAte = ate.toISOString();
+    u.plano = planoId;
+
+    users[email] = u;
+    DB.set('fq_users', users);
+    if(window.ADM_CACHE){ const s=window.ADM_CACHE.find(a=>a.email===email); if(s){ s.assinaturaStatus='ativa'; s.assinaturaAte=u.assinaturaAte; s.plano=planoId; } }
+    if(sb) await sb.from('alunos').update({assinatura_status:'ativa', assinatura_ate:u.assinaturaAte, plano:planoId}).eq('email',email);
+
+    closeModal('modal-marcar-pago');
+    fqToast(`✅ Acesso liberado até ${ate.toLocaleDateString('pt-BR')}`,'ok');
+    if(typeof loadAdmin==='function') loadAdmin().then(()=>{ if(typeof admRenderStudents==='function' && window.ADM_CACHE) admRenderStudents(window.ADM_CACHE); });
+  }catch(e){
+    console.error('Marcar pago erro:', e);
+    fqToast('Erro ao liberar acesso: '+(e?.message||'tente novamente'),'warn');
+  }
+}
+
 async function admResetSenha(email){
   if(!sb){ fqToast('Sem conexão com o servidor.','warn'); return; }
   if(!await fqConfirm('Redefinir senha', `Enviar link de redefinição de senha para ${email}?`, 'Enviar', '🔑')) return;
@@ -9094,18 +9229,7 @@ function renderHomeMissoesCard(){
 <!-- ══ MODAL: ASSINATURA ══ -->
 <div class="modal-ov" id="modal-assinatura"><div class="modal-bx">
   <div class="modal-t"><span>⭐ Assinar FitQuest</span><button class="modal-cl" onclick="closeModal('modal-assinatura')">✕</button></div>
-  <div style="padding:6px 0 4px;text-align:center">
-    <div style="font-size:32px;font-weight:900;color:var(--r);line-height:1">R$15</div>
-    <div style="font-size:11.5px;color:var(--mu);margin-bottom:18px">por mês · cancele quando quiser</div>
-    <div style="background:var(--s);border:1px solid var(--b);border-radius:10px;padding:16px;text-align:left;font-size:12px;color:var(--t2);line-height:2;margin-bottom:16px">
-      ✅ Treinos gerados por IA<br/>
-      ✅ Plano de corrida periodizado<br/>
-      ✅ Jornada das 30 Missões<br/>
-      ✅ Comunidade e ranking<br/>
-      ✅ Acompanhamento de evolução
-    </div>
-    <button class="btn-p" onclick="irParaPagamento()">Assinar agora</button>
-  </div>
+  <div id="modal-assinatura-content" style="padding:6px 0 4px"></div>
 </div></div>
 
 <!-- ══ MODAL: ESCOLHER BASE DO TREINO PRÓPRIO ══ -->
@@ -9141,6 +9265,22 @@ function renderHomeMissoesCard(){
     <div style="display:flex;gap:8px">
       <input class="fi" id="add-ex-custom" placeholder="Ex: Supino na máquina X" style="flex:1"/>
       <button onclick="mtAddExCustom()" style="background:var(--r);border:none;border-radius:8px;color:#fff;font-weight:800;padding:0 16px;cursor:pointer;font-size:13px">+</button>
+    </div>
+  </div>
+</div></div>
+
+<!-- ══ MODAL: MARCAR ALUNO COMO PAGO (ADMIN) ══ -->
+<div class="modal-ov" id="modal-marcar-pago"><div class="modal-bx">
+  <div class="modal-t"><span>💳 Marcar como Pago</span><button class="modal-cl" onclick="closeModal('modal-marcar-pago')">✕</button></div>
+  <div style="padding:4px 0">
+    <div style="font-size:12px;color:var(--t2);margin-bottom:16px;line-height:1.6">Qual plano o aluno pagou? Confirme só depois de ver o pagamento chegar no Mercado Pago.</div>
+    <div onclick="admConfirmarPago('mensal')" style="background:var(--s);border:1px solid var(--b);border-radius:10px;padding:16px;margin-bottom:10px;cursor:pointer;display:flex;align-items:center;justify-content:space-between">
+      <div><div style="font-size:13px;font-weight:800">Mensal</div><div style="font-size:10.5px;color:var(--mu)">Libera por 30 dias</div></div>
+      <div style="font-size:18px;font-weight:900;color:var(--r)">R$14,90</div>
+    </div>
+    <div onclick="admConfirmarPago('anual')" style="background:var(--s);border:1px solid var(--b);border-radius:10px;padding:16px;cursor:pointer;display:flex;align-items:center;justify-content:space-between">
+      <div><div style="font-size:13px;font-weight:800">Anual</div><div style="font-size:10.5px;color:var(--mu)">Libera por 365 dias</div></div>
+      <div style="font-size:18px;font-weight:900;color:var(--r)">R$118,80</div>
     </div>
   </div>
 </div></div>
