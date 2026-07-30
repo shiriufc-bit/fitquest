@@ -800,7 +800,7 @@ textarea.fi{resize:vertical;min-height:80px;}
       <option value="en">🇺🇸 EN</option>
     </select>
   </div>
-  <div id="fq-version-badge" style="position:absolute;bottom:8px;right:12px;font-size:9px;color:#333;font-weight:700;z-index:5">v104</div>
+  <div id="fq-version-badge" style="position:absolute;bottom:8px;right:12px;font-size:9px;color:#333;font-weight:700;z-index:5">v107</div>
   <img src="https://images.unsplash.com/photo-1517836357463-d25dfeac3438?w=800&q=80" alt="Fitness" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center top;filter:brightness(.35);z-index:0"/>
   <div class="splash-glow"></div>
   <div class="splash-noise"></div>
@@ -849,15 +849,15 @@ textarea.fi{resize:vertical;min-height:80px;}
 </div>
 
 <!-- ANAMNESE -->
-<div id="sc-anam" class="screen">
-  <div class="an-hdr"><h1 data-i18n="anam.hdr.title">📋 Avaliação Completa</h1><p data-i18n="anam.hdr.sub">Quanto mais detalhes, mais preciso será seu treino!</p></div>
+<div id="sc-anam-geral" class="screen">
+  <div class="an-hdr"><h1 data-i18n="anam.g.hdrtitle">📋 Vamos te conhecer</h1><p data-i18n="anam.g.hdrsub">Isso ajuda a gente a entender sua saúde e rotina — leva menos de 2 minutos.</p></div>
   <div class="an-pw">
-    <div class="an-sl"><span id="step-label">Etapa 1 de 7</span><span id="step-pct">14%</span></div>
-    <div class="pbb"><div class="pbf" id="anam-progress" style="width:14%"></div></div>
+    <div class="an-sl"><span id="step-label-geral">Etapa 1 de 3</span><span id="step-pct-geral">33%</span></div>
+    <div class="pbb"><div class="pbf" id="anam-progress-geral" style="width:33%"></div></div>
   </div>
 
-  <!-- ETAPA 1: DADOS PESSOAIS -->
-  <div id="anam-step-1" class="anam-step">
+  <div id="anam-geral-step-1" class="anam-step">
+    <div class="an-sec"><div class="an-stt" data-i18n="anam.sec.1">👤 Dados Pessoais</div>
     <div class="an-sec"><div class="an-stt" data-i18n="anam.sec.1">👤 Dados Pessoais</div>
       <div class="fr">
         <div class="fg"><label class="fl" data-i18n="anam.71ef84890d">Data de nascimento</label><input class="fi" type="date" id="a-nasc"/></div>
@@ -878,10 +878,112 @@ textarea.fi{resize:vertical;min-height:80px;}
         </div>
       </div>
     </div>
+
+    </div>
   </div>
 
-  <!-- ETAPA 2: EXPERIÊNCIA E ESTRUTURA -->
-  <div id="anam-step-2" class="anam-step" style="display:none">
+  <div id="anam-geral-step-2" class="anam-step" style="display:none">
+    <div class="an-sec"><div class="an-stt" data-i18n="anam.g.sec2">❤️ Saúde</div>
+    <div class="an-sec"><div class="an-stt" data-i18n="anam.sec.4">❤️ Histórico de Saúde</div>
+      <div class="fg"><label class="fl" data-i18n="anam.79d8fc6d21">Condições de saúde diagnosticadas</label>
+        <div class="cg" id="cg-saude">
+          <label class="co"><input type="checkbox" value="Hipertensão arterial"><span class="cb"></span><span data-i18n="anam.8bd8f172f0">Hipertensão arterial</span></label>
+          <label class="co"><input type="checkbox" value="Diabetes tipo 1 ou 2"><span class="cb"></span><span data-i18n="anam.eec40977f4">Diabetes (tipo 1 ou 2)</span></label>
+          <label class="co"><input type="checkbox" value="Problemas cardíacos"><span class="cb"></span><span data-i18n="anam.d8841c8a55">Problemas cardíacos</span></label>
+          <label class="co"><input type="checkbox" value="Colesterol/triglicerídeos altos"><span class="cb"></span><span data-i18n="anam.8030e6c86b">Colesterol / Triglicerídeos altos</span></label>
+          <label class="co"><input type="checkbox" value="Obesidade"><span class="cb"></span><span data-i18n="anam.9ae7e3b7eb">Obesidade (IMC > 30)</span></label>
+          <label class="co"><input type="checkbox" value="Hipotireoidismo/Hipertireoidismo"><span class="cb"></span><span data-i18n="anam.9600875e49">Problemas de tireoide</span></label>
+          <label class="co"><input type="checkbox" value="Osteoporose/Osteopenia"><span class="cb"></span><span data-i18n="anam.b80fa8269e">Osteoporose / Osteopenia</span></label>
+          <label class="co"><input type="checkbox" value="Ansiedade/Depressão"><span class="cb"></span><span data-i18n="anam.2f9157dcbb">Ansiedade / Depressão</span></label>
+          <label class="co"><input type="checkbox" value="Nenhuma das anteriores"><span class="cb"></span><span data-i18n="anam.2cc9d1e1f5">✅ Nenhuma das anteriores</span></label>
+        </div>
+      </div>
+
+      <div class="fg"><label class="fl" data-i18n="anam.65bc976c5f">Medicamentos de uso contínuo?</label>
+        <div class="rg" id="rg-med"><label class="ro"><input type="radio" name="med" value="Não"><span data-i18n="anam.b231909af1">Não</span></label><label class="ro"><input type="radio" name="med" value="Sim"><span data-i18n="anam.cbb5486e85">Sim</span></label></div>
+      </div>
+      <div class="fg"><label class="fl" data-i18n="anam.251bee014c">Se sim, quais medicamentos?</label>
+        <textarea class="fi" id="a-med" placeholder="Ex: metformina, losartana, antidepressivo... (deixe em branco se não usa)"></textarea>
+      </div>
+      <div class="fg"><label class="fl" data-i18n="anam.cb285306ea">Histórico de cirurgias</label>
+        <textarea class="fi" id="a-cir" placeholder="Ex: cirurgia no joelho em 2020, hérnio em 2018... (escreva Não se não teve)"></textarea>
+      </div>
+
+      <div class="fg"><label class="fl" data-i18n="anam.7b7b73e84a">Pratica ou praticou atividade física regularmente nos últimos 6 meses?</label>
+        <div class="rg" id="rg-ativo">
+          <label class="ro"><input type="radio" name="ativo" value="Não, sou sedentário"><span data-i18n="anam.943fe40a26">❌ Não, sedentário</span></label>
+          <label class="ro"><input type="radio" name="ativo" value="Às vezes (irregular)"><span data-i18n="anam.dc01e60599">🔄 Às vezes</span></label>
+          <label class="ro"><input type="radio" name="ativo" value="Sim, 1-2x por semana"><span data-i18n="anam.1f81da69e8">✅ 1–2x/semana</span></label>
+          <label class="ro"><input type="radio" name="ativo" value="Sim, 3-4x por semana"><span data-i18n="anam.fd760e415e">✅ 3–4x/semana</span></label>
+          <label class="ro"><input type="radio" name="ativo" value="Sim, 5+ por semana"><span data-i18n="anam.d9f9677c0a">✅ 5+x/semana</span></label>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <div id="anam-geral-step-3" class="anam-step" style="display:none">
+    <div class="an-sec"><div class="an-stt" data-i18n="anam.g.sec3">🌙 Estilo de Vida</div>
+      <div class="fg"><label class="fl" data-i18n="anam.139888d11f">Horas de sono por noite</label>
+        <div class="rg" id="rg-sono">
+          <label class="ro"><input type="radio" name="sono" value="Menos de 5h"><span data-i18n="anam.cb8e262bd0">Menos de 5h</span></label>
+          <label class="ro"><input type="radio" name="sono" value="5-6h"><span data-i18n="anam.055c415668">5–6h</span></label>
+          <label class="ro"><input type="radio" name="sono" value="7-8h"><span data-i18n="anam.cc8c7d9519">7–8h</span></label>
+          <label class="ro"><input type="radio" name="sono" value="Mais de 8h"><span data-i18n="anam.e00523125c">Mais de 8h</span></label>
+        </div>
+      </div>
+
+      <div class="fg"><label class="fl" data-i18n="anam.1313b513eb">Nível de estresse diário</label>
+        <div class="rg" id="rg-stress">
+          <label class="ro"><input type="radio" name="stress" value="Baixo"><span data-i18n="anam.1f7740d5bc">😌 Baixo</span></label>
+          <label class="ro"><input type="radio" name="stress" value="Moderado"><span data-i18n="anam.8a599bf19c">😐 Moderado</span></label>
+          <label class="ro"><input type="radio" name="stress" value="Alto"><span data-i18n="anam.30a5720c34">😰 Alto</span></label>
+          <label class="ro"><input type="radio" name="stress" value="Muito alto (burnout)"><span data-i18n="anam.958e3dd502">😤 Muito alto</span></label>
+        </div>
+      </div>
+
+      <div class="fg"><label class="fl" data-i18n="anam.6c495e0ab2">Qualidade da alimentação</label>
+        <div class="rg" id="rg-alim">
+          <label class="ro"><input type="radio" name="alim" value="Muito ruim (fast food, sem controle)"><span data-i18n="anam.2bb3d1b3b7">😔 Muito ruim</span></label>
+          <label class="ro"><input type="radio" name="alim" value="Regular (come de tudo)"><span data-i18n="anam.84e4da8d34">😐 Regular</span></label>
+          <label class="ro"><input type="radio" name="alim" value="Boa (balanceada)"><span data-i18n="anam.2011eeaea4">😊 Boa</span></label>
+          <label class="ro"><input type="radio" name="alim" value="Ótima (acompanhamento nutricional)"><span data-i18n="anam.28bfb23706">🤩 Ótima</span></label>
+        </div>
+      </div>
+
+      <div class="fg"><label class="fl" data-i18n="anam.40427e7c67">Prazo desejado para atingir o objetivo</label>
+        <div class="rg" id="rg-prazo">
+          <label class="ro"><input type="radio" name="prazo" value="1-2 meses"><span data-i18n="anam.ad1b55928d">1–2 meses</span></label>
+          <label class="ro"><input type="radio" name="prazo" value="3-6 meses"><span data-i18n="anam.ab52188dd9">3–6 meses</span></label>
+          <label class="ro"><input type="radio" name="prazo" value="6-12 meses"><span data-i18n="anam.ee27302273">6–12 meses</span></label>
+          <label class="ro"><input type="radio" name="prazo" value="Mais de 1 ano"><span data-i18n="anam.e3141a4627">+1 ano</span></label>
+          <label class="ro"><input type="radio" name="prazo" value="Sem prazo definido"><span data-i18n="anam.1f5bf413ca">Sem prazo</span></label>
+        </div>
+      </div>
+      <div class="fg"><label class="fl" data-i18n="anam.528ca04324">O que te motiva a treinar? (escreva livremente)</label>
+        <textarea class="fi" id="a-motiv" placeholder="Ex: quero ter mais energia, melhorar a saúde, emagrecer 10kg, entrar na corrida da minha cidade..." rows="3"></textarea>
+      </div>
+
+    </div>
+  </div>
+
+
+  <div style="height:80px"></div>
+  <div class="an-nav">
+    <button class="btn-bk" id="btn-back-geral" onclick="anamPrev('geral')" style="display:none" data-i18n="anam.btn.back">← Voltar</button>
+    <button class="btn-nx" id="btn-nxt-geral" onclick="anamNext('geral')" data-i18n="anam.btn.next">Próxima etapa →</button>
+  </div>
+</div>
+
+<div id="sc-anam-musc" class="screen">
+  <div class="an-hdr"><h1 data-i18n="anam.m.hdrtitle">🏋️ Seu Treino de Musculação</h1><p data-i18n="anam.m.hdrsub">Só o que o motor precisa pra montar seu treino certinho.</p></div>
+  <div class="an-pw">
+    <div class="an-sl"><span id="step-label-musc">Etapa 1 de 3</span><span id="step-pct-musc">33%</span></div>
+    <div class="pbb"><div class="pbf" id="anam-progress-musc" style="width:33%"></div></div>
+  </div>
+
+  <div id="anam-musc-step-1" class="anam-step">
+    <div class="an-sec"><div class="an-stt" data-i18n="anam.m.sec1">🏋️ Experiência e Estrutura</div>
     <div class="an-sec"><div class="an-stt" data-i18n="anam.sec.2">🏋️ Experiência de Treino</div>
       <div class="fg"><label class="fl" data-i18n="anam.450040215f">Tempo de experiência com exercícios</label>
         <div class="rg" id="rg-tempo">
@@ -897,6 +999,7 @@ textarea.fi{resize:vertical;min-height:80px;}
       <div class="fg"><label class="fl" data-i18n="anam.7ba7859ca5">Carga aproximada no Agachamento (kg) <span style="font-weight:400;color:var(--mu)">(pode chutar, opcional)</span></label>
         <input class="fi" type="number" id="a-cargaagacho" placeholder="Ex: 60" min="0" max="500"/>
       </div>
+
       
       <div class="fg"><label class="fl" data-i18n="anam.de94aee5ba">Dias disponíveis por semana</label>
         <div class="rg" id="rg-dias">
@@ -924,12 +1027,12 @@ textarea.fi{resize:vertical;min-height:80px;}
           <label class="ro"><input type="radio" name="local" value="Rua/Pista"><span data-i18n="anam.564ea47079">🛤️ Rua/Pista</span></label>
         </div>
       </div>
-      
+
     </div>
   </div>
 
-  <!-- ETAPA 3: OBJETIVOS -->
-  <div id="anam-step-3" class="anam-step" style="display:none">
+  <div id="anam-musc-step-2" class="anam-step" style="display:none">
+    <div class="an-sec"><div class="an-stt" data-i18n="anam.m.sec2">🎯 Objetivos</div>
     <div class="an-sec"><div class="an-stt" data-i18n="anam.sec.3">🎯 Objetivos e Metas</div>
       <div class="fg"><label class="fl" data-i18n="anam.59ad7c9279">Objetivos <span style="font-weight:400;color:var(--mu)">(selecione todos que se aplicam)</span></label>
         <div class="cg" id="cg-obj">
@@ -945,6 +1048,113 @@ textarea.fi{resize:vertical;min-height:80px;}
           <label class="co"><input type="checkbox" value="Reduzir estresse e ansiedade"><span class="cb"></span><span data-i18n="anam.66cc87bc9e">🧠 Reduzir estresse e ansiedade</span></label>
         </div>
       </div>
+
+    </div>
+  </div>
+
+  <div id="anam-musc-step-3" class="anam-step" style="display:none">
+    <div class="an-sec"><div class="an-stt" data-i18n="anam.m.sec3">🩺 Lesões e Composição</div>
+      <div class="fg"><label class="fl" data-i18n="anam.f1c0c67470">Possui dor ou lesão em alguma região?</label>
+        <div class="cg" id="cg-lesoes">
+          <label class="co"><input type="checkbox" value="Joelho (dor anterior - possível condromalácia)"><span class="cb"></span><span data-i18n="anam.02aad486d7">🦵 Joelho — Dor na frente (possível condromalácia)</span></label>
+          <label class="co"><input type="checkbox" value="Joelho (dor lateral ou posterior)"><span class="cb"></span><span data-i18n="anam.b594103d4d">🦵 Joelho — Dor lateral ou posterior</span></label>
+          <label class="co"><input type="checkbox" value="Lombar (dor nas costas baixas)"><span class="cb"></span><span data-i18n="anam.867ace186b">🔵 Lombar — Dor nas costas baixas</span></label>
+          <label class="co"><input type="checkbox" value="Cervical (pescoço)"><span class="cb"></span><span data-i18n="anam.6241386e9f">🔵 Cervical — Dor no pescoço</span></label>
+          <label class="co"><input type="checkbox" value="Ombro direito"><span class="cb"></span><span data-i18n="anam.9a364204b4">💪 Ombro direito</span></label>
+          <label class="co"><input type="checkbox" value="Ombro esquerdo"><span class="cb"></span><span data-i18n="anam.ae0182bf21">💪 Ombro esquerdo</span></label>
+          <label class="co"><input type="checkbox" value="Cotovelo/Antebraço"><span class="cb"></span><span data-i18n="anam.bfd411a2a5">💪 Cotovelo / Antebraço</span></label>
+          <label class="co"><input type="checkbox" value="Punho/Mão"><span class="cb"></span><span data-i18n="anam.635b76ad5f">🤚 Punho / Mão</span></label>
+          <label class="co"><input type="checkbox" value="Quadril"><span class="cb"></span><span data-i18n="anam.2222af0e4c">🦴 Quadril</span></label>
+          <label class="co"><input type="checkbox" value="Tornozelo/Pé"><span class="cb"></span><span data-i18n="anam.8bdfac82f2">🦶 Tornozelo / Pé</span></label>
+          <label class="co"><input type="checkbox" value="Hérnio de disco"><span class="cb"></span><span data-i18n="anam.3cfc7cb1b6">🔵 Hérnia de disco</span></label>
+          <label class="co"><input type="checkbox" value="Nenhuma dor ou lesão"><span class="cb"></span><span data-i18n="anam.5d61dd7519">✅ Nenhuma dor ou lesão</span></label>
+        </div>
+      </div>
+
+      <div class="fg"><label class="fl" data-i18n="anam.0352e48a08">Intensidade da dor (se houver) — escala de 0 a 10</label>
+        <div class="rg" id="rg-dor-int">
+          <label class="ro"><input type="radio" name="dorint" value="Sem dor (0)"><span data-i18n="anam.c38992c679">Sem dor</span></label>
+          <label class="ro"><input type="radio" name="dorint" value="Leve (1-3)">Leve<br><small>1–3</small></label>
+          <label class="ro"><input type="radio" name="dorint" value="Moderada (4-6)">Moderada<br><small>4–6</small></label>
+          <label class="ro"><input type="radio" name="dorint" value="Intensa (7-10)">Intensa<br><small>7–10</small></label>
+        </div>
+      </div>
+      <div class="fg"><label class="fl" data-i18n="anam.7e66a34621">Há quanto tempo sente essa dor/lesão?</label>
+        <div class="rg" id="rg-dor-tempo">
+          <label class="ro"><input type="radio" name="dortempo" value="Não tenho dor"><span data-i18n="anam.ac1fa8d456">Não tenho</span></label>
+          <label class="ro"><input type="radio" name="dortempo" value="Menos de 1 mês"><span data-i18n="anam.be6fb05cd9">-1 mês</span></label>
+          <label class="ro"><input type="radio" name="dortempo" value="1-6 meses"><span data-i18n="anam.edf3869429">1–6m</span></label>
+          <label class="ro"><input type="radio" name="dortempo" value="6-12 meses"><span data-i18n="anam.47b5b84c83">6–12m</span></label>
+          <label class="ro"><input type="radio" name="dortempo" value="Mais de 1 ano"><span data-i18n="anam.e3141a4627">+1 ano</span></label>
+        </div>
+      </div>
+
+      <div class="fg"><label class="fl" data-i18n="anam.6636c1620d">Como você descreve seu biótipo atual?</label>
+        <div class="rg" id="rg-biotipo">
+          <label class="ro"><input type="radio" name="biotipo" value="Ectomorfo (magro, dificuldade de ganhar massa)">🦒 Magro<br><small>dif. de engordar</small></label>
+          <label class="ro"><input type="radio" name="biotipo" value="Mesomorfo (musculoso, ganha massa fácil)">💪 Musculoso<br><small>ganha fácil</small></label>
+          <label class="ro"><input type="radio" name="biotipo" value="Endomorfo (tendência a acumular gordura)">🐻 Tendência<br><small>a engordar</small></label>
+          <label class="ro"><input type="radio" name="biotipo" value="Misto"><span data-i18n="anam.6ea0f46280">🔄 Misto</span></label>
+        </div>
+      </div>
+
+      <div class="fg"><label class="fl" data-i18n="anam.13cdca0624">Onde você acumula mais gordura?</label>
+        <div class="rg" id="rg-gordura">
+          <label class="ro"><input type="radio" name="gordura" value="Abdômen (barriga)"><span data-i18n="anam.80e4e4a853">🍎 Barriga</span></label>
+          <label class="ro"><input type="radio" name="gordura" value="Glúteos e coxas"><span data-i18n="anam.316dd118f3">🍐 Glúteos/Coxas</span></label>
+          <label class="ro"><input type="radio" name="gordura" value="Distribuído uniformemente"><span data-i18n="anam.a3057d953b">🔄 Distribuído</span></label>
+          <label class="ro"><input type="radio" name="gordura" value="Não tenho gordura localizada"><span data-i18n="anam.1a07354842">✅ Não tenho</span></label>
+        </div>
+      </div>
+
+      <div class="fg"><label class="fl" data-i18n="anam.2ef53f3e8d">Parte do corpo que quer focar no treino</label>
+        <div class="cg" id="cg-foco">
+          <label class="co"><input type="checkbox" value="Abdômen/core"><span class="cb"></span><span data-i18n="anam.7d43c4d6ee">Abdômen / Core</span></label>
+          <label class="co"><input type="checkbox" value="Glúteos"><span class="cb"></span><span data-i18n="anam.979f06e771">Glúteos</span></label>
+          <label class="co"><input type="checkbox" value="Pernas (coxas e panturrilhas)"><span class="cb"></span><span data-i18n="anam.d536970897">Pernas (coxas e panturrilhas)</span></label>
+          <label class="co"><input type="checkbox" value="Costas e ombros (V)"><span class="cb"></span><span data-i18n="anam.729a7b8d0a">Costas e ombros (forma V)</span></label>
+          <label class="co"><input type="checkbox" value="Peito"><span class="cb"></span><span data-i18n="anam.6a614d6612">Peito</span></label>
+          <label class="co"><input type="checkbox" value="Braços (bíceps e tríceps)"><span class="cb"></span><span data-i18n="anam.2e1d815150">Braços (bíceps e tríceps)</span></label>
+          <label class="co"><input type="checkbox" value="Corpo todo equilibrado"><span class="cb"></span><span data-i18n="anam.120e3e0a1c">✅ Corpo todo equilibrado</span></label>
+        </div>
+      </div>
+
+      <div class="fg"><label class="fl" data-i18n="anam.863c134643">Algum exercício que prefere evitar? <span style="font-weight:400;color:var(--mu)">(opcional, separe por vírgula)</span></label>
+        <input class="fi" type="text" id="a-evitar" placeholder="Ex: burpee, prancha, agachamento livre"/>
+      </div>
+
+      <div class="fg"><label class="fl" data-i18n="anam.dd1de83ca4">Suplementação atual</label>
+        <div class="cg" id="cg-supl">
+          <label class="co"><input type="checkbox" value="Whey protein"><span class="cb"></span><span data-i18n="anam.5286df5820">Whey protein</span></label>
+          <label class="co"><input type="checkbox" value="Creatina"><span class="cb"></span><span data-i18n="anam.00dfc1367f">Creatina</span></label>
+          <label class="co"><input type="checkbox" value="Pré-treino (cafeína)"><span class="cb"></span><span data-i18n="anam.a5bf67b64c">Pré-treino / cafeína</span></label>
+          <label class="co"><input type="checkbox" value="BCAA"><span class="cb"></span><span data-i18n="anam.37fd8bf028">BCAA</span></label>
+          <label class="co"><input type="checkbox" value="Colágeno"><span class="cb"></span><span data-i18n="anam.edd733c688">Colágeno</span></label>
+          <label class="co"><input type="checkbox" value="Vitaminas/Minerais"><span class="cb"></span><span data-i18n="anam.63f5283532">Vitaminas / Minerais</span></label>
+          <label class="co"><input type="checkbox" value="Não uso suplementos"><span class="cb"></span><span data-i18n="anam.4b8addfeca">✅ Não uso suplementos</span></label>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+
+  <div style="height:80px"></div>
+  <div class="an-nav">
+    <button class="btn-bk" id="btn-back-musc" onclick="anamPrev('musc')" style="display:none" data-i18n="anam.btn.back">← Voltar</button>
+    <button class="btn-nx" id="btn-nxt-musc" onclick="anamNext('musc')" data-i18n="anam.btn.next">Próxima etapa →</button>
+  </div>
+</div>
+
+<div id="sc-anam-corrida" class="screen">
+  <div class="an-hdr"><h1 data-i18n="anam.c.hdrtitle">🏃 Seu Treino de Corrida</h1><p data-i18n="anam.c.hdrsub">Bem rápido — só o essencial pra montar seu plano de corrida.</p></div>
+  <div class="an-pw">
+    <div class="an-sl"><span id="step-label-corrida">Etapa 1 de 2</span><span id="step-pct-corrida">50%</span></div>
+    <div class="pbb"><div class="pbf" id="anam-progress-corrida" style="width:50%"></div></div>
+  </div>
+
+  <div id="anam-corrida-step-1" class="anam-step">
+    <div class="an-sec"><div class="an-stt" data-i18n="anam.c.sec1">🏃 Sua Corrida</div>
       
       <div class="fg"><label class="fl" data-i18n="anam.7d81e97b0e">Meta de corrida <span style="font-weight:400;color:var(--mu)">(pode marcar mais de uma)</span></label>
         <div class="cg" id="cg-mc">
@@ -968,63 +1178,14 @@ textarea.fi{resize:vertical;min-height:80px;}
       <div class="fg"><label class="fl" data-i18n="anam.176129adf1">Qual seu ritmo confortável atual de corrida? <span style="font-weight:400;color:var(--mu)">(opcional — deixe em branco se não sabe)</span></label>
         <input class="fi" type="text" id="a-ritmoatual" placeholder="Ex: 6:30 (min por km)"/>
       </div>
-      <div class="fg"><label class="fl" data-i18n="anam.40427e7c67">Prazo desejado para atingir o objetivo</label>
-        <div class="rg" id="rg-prazo">
-          <label class="ro"><input type="radio" name="prazo" value="1-2 meses"><span data-i18n="anam.ad1b55928d">1–2 meses</span></label>
-          <label class="ro"><input type="radio" name="prazo" value="3-6 meses"><span data-i18n="anam.ab52188dd9">3–6 meses</span></label>
-          <label class="ro"><input type="radio" name="prazo" value="6-12 meses"><span data-i18n="anam.ee27302273">6–12 meses</span></label>
-          <label class="ro"><input type="radio" name="prazo" value="Mais de 1 ano"><span data-i18n="anam.e3141a4627">+1 ano</span></label>
-          <label class="ro"><input type="radio" name="prazo" value="Sem prazo definido"><span data-i18n="anam.1f5bf413ca">Sem prazo</span></label>
-        </div>
-      </div>
-      <div class="fg"><label class="fl" data-i18n="anam.528ca04324">O que te motiva a treinar? (escreva livremente)</label>
-        <textarea class="fi" id="a-motiv" placeholder="Ex: quero ter mais energia, melhorar a saúde, emagrecer 10kg, entrar na corrida da minha cidade..." rows="3"></textarea>
-      </div>
+
     </div>
   </div>
 
-  <!-- ETAPA 4: HISTÓRICO DE SAÚDE -->
-  <div id="anam-step-4" class="anam-step" style="display:none">
-    <div class="an-sec"><div class="an-stt" data-i18n="anam.sec.4">❤️ Histórico de Saúde</div>
-      <div class="fg"><label class="fl" data-i18n="anam.79d8fc6d21">Condições de saúde diagnosticadas</label>
-        <div class="cg" id="cg-saude">
-          <label class="co"><input type="checkbox" value="Hipertensão arterial"><span class="cb"></span><span data-i18n="anam.8bd8f172f0">Hipertensão arterial</span></label>
-          <label class="co"><input type="checkbox" value="Diabetes tipo 1 ou 2"><span class="cb"></span><span data-i18n="anam.eec40977f4">Diabetes (tipo 1 ou 2)</span></label>
-          <label class="co"><input type="checkbox" value="Problemas cardíacos"><span class="cb"></span><span data-i18n="anam.d8841c8a55">Problemas cardíacos</span></label>
-          <label class="co"><input type="checkbox" value="Colesterol/triglicerídeos altos"><span class="cb"></span><span data-i18n="anam.8030e6c86b">Colesterol / Triglicerídeos altos</span></label>
-          <label class="co"><input type="checkbox" value="Obesidade"><span class="cb"></span><span data-i18n="anam.9ae7e3b7eb">Obesidade (IMC > 30)</span></label>
-          <label class="co"><input type="checkbox" value="Hipotireoidismo/Hipertireoidismo"><span class="cb"></span><span data-i18n="anam.9600875e49">Problemas de tireoide</span></label>
-          <label class="co"><input type="checkbox" value="Osteoporose/Osteopenia"><span class="cb"></span><span data-i18n="anam.b80fa8269e">Osteoporose / Osteopenia</span></label>
-          <label class="co"><input type="checkbox" value="Ansiedade/Depressão"><span class="cb"></span><span data-i18n="anam.2f9157dcbb">Ansiedade / Depressão</span></label>
-          <label class="co"><input type="checkbox" value="Nenhuma das anteriores"><span class="cb"></span><span data-i18n="anam.2cc9d1e1f5">✅ Nenhuma das anteriores</span></label>
-        </div>
-      </div>
-      <div class="fg"><label class="fl" data-i18n="anam.65bc976c5f">Medicamentos de uso contínuo?</label>
-        <div class="rg" id="rg-med"><label class="ro"><input type="radio" name="med" value="Não"><span data-i18n="anam.b231909af1">Não</span></label><label class="ro"><input type="radio" name="med" value="Sim"><span data-i18n="anam.cbb5486e85">Sim</span></label></div>
-      </div>
-      <div class="fg"><label class="fl" data-i18n="anam.251bee014c">Se sim, quais medicamentos?</label>
-        <textarea class="fi" id="a-med" placeholder="Ex: metformina, losartana, antidepressivo... (deixe em branco se não usa)"></textarea>
-      </div>
-      <div class="fg"><label class="fl" data-i18n="anam.cb285306ea">Histórico de cirurgias</label>
-        <textarea class="fi" id="a-cir" placeholder="Ex: cirurgia no joelho em 2020, hérnio em 2018... (escreva Não se não teve)"></textarea>
-      </div>
-      <div class="fg"><label class="fl" data-i18n="anam.7b7b73e84a">Pratica ou praticou atividade física regularmente nos últimos 6 meses?</label>
-        <div class="rg" id="rg-ativo">
-          <label class="ro"><input type="radio" name="ativo" value="Não, sou sedentário"><span data-i18n="anam.943fe40a26">❌ Não, sedentário</span></label>
-          <label class="ro"><input type="radio" name="ativo" value="Às vezes (irregular)"><span data-i18n="anam.dc01e60599">🔄 Às vezes</span></label>
-          <label class="ro"><input type="radio" name="ativo" value="Sim, 1-2x por semana"><span data-i18n="anam.1f81da69e8">✅ 1–2x/semana</span></label>
-          <label class="ro"><input type="radio" name="ativo" value="Sim, 3-4x por semana"><span data-i18n="anam.fd760e415e">✅ 3–4x/semana</span></label>
-          <label class="ro"><input type="radio" name="ativo" value="Sim, 5+ por semana"><span data-i18n="anam.d9f9677c0a">✅ 5+x/semana</span></label>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- ETAPA 5: LESÕES E RESTRIÇÕES -->
-  <div id="anam-step-5" class="anam-step" style="display:none">
-    <div class="an-sec"><div class="an-stt" data-i18n="anam.sec.5">🩺 Lesões e Restrições Físicas</div>
+  <div id="anam-corrida-step-2" class="anam-step" style="display:none">
+    <div class="an-sec"><div class="an-stt" data-i18n="anam.c.sec2">🩺 Lesões</div>
       <div class="fg"><label class="fl" data-i18n="anam.f1c0c67470">Possui dor ou lesão em alguma região?</label>
-        <div class="cg" id="cg-lesoes">
+        <div class="cg" id="cg-lesoes-corrida">
           <label class="co"><input type="checkbox" value="Joelho (dor anterior - possível condromalácia)"><span class="cb"></span><span data-i18n="anam.02aad486d7">🦵 Joelho — Dor na frente (possível condromalácia)</span></label>
           <label class="co"><input type="checkbox" value="Joelho (dor lateral ou posterior)"><span class="cb"></span><span data-i18n="anam.b594103d4d">🦵 Joelho — Dor lateral ou posterior</span></label>
           <label class="co"><input type="checkbox" value="Lombar (dor nas costas baixas)"><span class="cb"></span><span data-i18n="anam.867ace186b">🔵 Lombar — Dor nas costas baixas</span></label>
@@ -1039,113 +1200,33 @@ textarea.fi{resize:vertical;min-height:80px;}
           <label class="co"><input type="checkbox" value="Nenhuma dor ou lesão"><span class="cb"></span><span data-i18n="anam.5d61dd7519">✅ Nenhuma dor ou lesão</span></label>
         </div>
       </div>
+
       <div class="fg"><label class="fl" data-i18n="anam.0352e48a08">Intensidade da dor (se houver) — escala de 0 a 10</label>
-        <div class="rg" id="rg-dor-int">
-          <label class="ro"><input type="radio" name="dorint" value="Sem dor (0)"><span data-i18n="anam.c38992c679">Sem dor</span></label>
-          <label class="ro"><input type="radio" name="dorint" value="Leve (1-3)">Leve<br><small>1–3</small></label>
-          <label class="ro"><input type="radio" name="dorint" value="Moderada (4-6)">Moderada<br><small>4–6</small></label>
-          <label class="ro"><input type="radio" name="dorint" value="Intensa (7-10)">Intensa<br><small>7–10</small></label>
+        <div class="rg" id="rg-dor-int-corrida">
+          <label class="ro"><input type="radio" name="dorint-corrida" value="Sem dor (0)"><span data-i18n="anam.c38992c679">Sem dor</span></label>
+          <label class="ro"><input type="radio" name="dorint-corrida" value="Leve (1-3)">Leve<br><small>1–3</small></label>
+          <label class="ro"><input type="radio" name="dorint-corrida" value="Moderada (4-6)">Moderada<br><small>4–6</small></label>
+          <label class="ro"><input type="radio" name="dorint-corrida" value="Intensa (7-10)">Intensa<br><small>7–10</small></label>
         </div>
       </div>
       <div class="fg"><label class="fl" data-i18n="anam.7e66a34621">Há quanto tempo sente essa dor/lesão?</label>
-        <div class="rg" id="rg-dor-tempo">
-          <label class="ro"><input type="radio" name="dortempo" value="Não tenho dor"><span data-i18n="anam.ac1fa8d456">Não tenho</span></label>
-          <label class="ro"><input type="radio" name="dortempo" value="Menos de 1 mês"><span data-i18n="anam.be6fb05cd9">-1 mês</span></label>
-          <label class="ro"><input type="radio" name="dortempo" value="1-6 meses"><span data-i18n="anam.edf3869429">1–6m</span></label>
-          <label class="ro"><input type="radio" name="dortempo" value="6-12 meses"><span data-i18n="anam.47b5b84c83">6–12m</span></label>
-          <label class="ro"><input type="radio" name="dortempo" value="Mais de 1 ano"><span data-i18n="anam.e3141a4627">+1 ano</span></label>
+        <div class="rg" id="rg-dor-tempo-corrida">
+          <label class="ro"><input type="radio" name="dortempo-corrida" value="Não tenho dor"><span data-i18n="anam.ac1fa8d456">Não tenho</span></label>
+          <label class="ro"><input type="radio" name="dortempo-corrida" value="Menos de 1 mês"><span data-i18n="anam.be6fb05cd9">-1 mês</span></label>
+          <label class="ro"><input type="radio" name="dortempo-corrida" value="1-6 meses"><span data-i18n="anam.edf3869429">1–6m</span></label>
+          <label class="ro"><input type="radio" name="dortempo-corrida" value="6-12 meses"><span data-i18n="anam.47b5b84c83">6–12m</span></label>
+          <label class="ro"><input type="radio" name="dortempo-corrida" value="Mais de 1 ano"><span data-i18n="anam.e3141a4627">+1 ano</span></label>
         </div>
       </div>
-      
-      
+
     </div>
   </div>
 
-  <!-- ETAPA 6: CORPO E COMPOSIÇÃO -->
-  <div id="anam-step-6" class="anam-step" style="display:none">
-    <div class="an-sec"><div class="an-stt" data-i18n="anam.sec.6">📊 Composição e Corpo</div>
-      <div class="fg"><label class="fl" data-i18n="anam.6636c1620d">Como você descreve seu biótipo atual?</label>
-        <div class="rg" id="rg-biotipo">
-          <label class="ro"><input type="radio" name="biotipo" value="Ectomorfo (magro, dificuldade de ganhar massa)">🦒 Magro<br><small>dif. de engordar</small></label>
-          <label class="ro"><input type="radio" name="biotipo" value="Mesomorfo (musculoso, ganha massa fácil)">💪 Musculoso<br><small>ganha fácil</small></label>
-          <label class="ro"><input type="radio" name="biotipo" value="Endomorfo (tendência a acumular gordura)">🐻 Tendência<br><small>a engordar</small></label>
-          <label class="ro"><input type="radio" name="biotipo" value="Misto"><span data-i18n="anam.6ea0f46280">🔄 Misto</span></label>
-        </div>
-      </div>
-      <div class="fg"><label class="fl" data-i18n="anam.13cdca0624">Onde você acumula mais gordura?</label>
-        <div class="rg" id="rg-gordura">
-          <label class="ro"><input type="radio" name="gordura" value="Abdômen (barriga)"><span data-i18n="anam.80e4e4a853">🍎 Barriga</span></label>
-          <label class="ro"><input type="radio" name="gordura" value="Glúteos e coxas"><span data-i18n="anam.316dd118f3">🍐 Glúteos/Coxas</span></label>
-          <label class="ro"><input type="radio" name="gordura" value="Distribuído uniformemente"><span data-i18n="anam.a3057d953b">🔄 Distribuído</span></label>
-          <label class="ro"><input type="radio" name="gordura" value="Não tenho gordura localizada"><span data-i18n="anam.1a07354842">✅ Não tenho</span></label>
-        </div>
-      </div>
-      <div class="fg"><label class="fl" data-i18n="anam.2ef53f3e8d">Parte do corpo que quer focar no treino</label>
-        <div class="cg" id="cg-foco">
-          <label class="co"><input type="checkbox" value="Abdômen/core"><span class="cb"></span><span data-i18n="anam.7d43c4d6ee">Abdômen / Core</span></label>
-          <label class="co"><input type="checkbox" value="Glúteos"><span class="cb"></span><span data-i18n="anam.979f06e771">Glúteos</span></label>
-          <label class="co"><input type="checkbox" value="Pernas (coxas e panturrilhas)"><span class="cb"></span><span data-i18n="anam.d536970897">Pernas (coxas e panturrilhas)</span></label>
-          <label class="co"><input type="checkbox" value="Costas e ombros (V)"><span class="cb"></span><span data-i18n="anam.729a7b8d0a">Costas e ombros (forma V)</span></label>
-          <label class="co"><input type="checkbox" value="Peito"><span class="cb"></span><span data-i18n="anam.6a614d6612">Peito</span></label>
-          <label class="co"><input type="checkbox" value="Braços (bíceps e tríceps)"><span class="cb"></span><span data-i18n="anam.2e1d815150">Braços (bíceps e tríceps)</span></label>
-          <label class="co"><input type="checkbox" value="Corpo todo equilibrado"><span class="cb"></span><span data-i18n="anam.120e3e0a1c">✅ Corpo todo equilibrado</span></label>
-        </div>
-      </div>
-      <div class="fg"><label class="fl" data-i18n="anam.863c134643">Algum exercício que prefere evitar? <span style="font-weight:400;color:var(--mu)">(opcional, separe por vírgula)</span></label>
-        <input class="fi" type="text" id="a-evitar" placeholder="Ex: burpee, prancha, agachamento livre"/>
-      </div>
-      <div class="fg"><label class="fl" data-i18n="anam.dd1de83ca4">Suplementação atual</label>
-        <div class="cg" id="cg-supl">
-          <label class="co"><input type="checkbox" value="Whey protein"><span class="cb"></span><span data-i18n="anam.5286df5820">Whey protein</span></label>
-          <label class="co"><input type="checkbox" value="Creatina"><span class="cb"></span><span data-i18n="anam.00dfc1367f">Creatina</span></label>
-          <label class="co"><input type="checkbox" value="Pré-treino (cafeína)"><span class="cb"></span><span data-i18n="anam.a5bf67b64c">Pré-treino / cafeína</span></label>
-          <label class="co"><input type="checkbox" value="BCAA"><span class="cb"></span><span data-i18n="anam.37fd8bf028">BCAA</span></label>
-          <label class="co"><input type="checkbox" value="Colágeno"><span class="cb"></span><span data-i18n="anam.edd733c688">Colágeno</span></label>
-          <label class="co"><input type="checkbox" value="Vitaminas/Minerais"><span class="cb"></span><span data-i18n="anam.63f5283532">Vitaminas / Minerais</span></label>
-          <label class="co"><input type="checkbox" value="Não uso suplementos"><span class="cb"></span><span data-i18n="anam.4b8addfeca">✅ Não uso suplementos</span></label>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- ETAPA 7: ESTILO DE VIDA -->
-  <div id="anam-step-7" class="anam-step" style="display:none">
-    <div class="an-sec"><div class="an-stt" data-i18n="anam.sec.7">🌙 Estilo de Vida e Recuperação</div>
-      <div class="fg"><label class="fl" data-i18n="anam.139888d11f">Horas de sono por noite</label>
-        <div class="rg" id="rg-sono">
-          <label class="ro"><input type="radio" name="sono" value="Menos de 5h"><span data-i18n="anam.cb8e262bd0">Menos de 5h</span></label>
-          <label class="ro"><input type="radio" name="sono" value="5-6h"><span data-i18n="anam.055c415668">5–6h</span></label>
-          <label class="ro"><input type="radio" name="sono" value="7-8h"><span data-i18n="anam.cc8c7d9519">7–8h</span></label>
-          <label class="ro"><input type="radio" name="sono" value="Mais de 8h"><span data-i18n="anam.e00523125c">Mais de 8h</span></label>
-        </div>
-      </div>
-      
-      <div class="fg"><label class="fl" data-i18n="anam.1313b513eb">Nível de estresse diário</label>
-        <div class="rg" id="rg-stress">
-          <label class="ro"><input type="radio" name="stress" value="Baixo"><span data-i18n="anam.1f7740d5bc">😌 Baixo</span></label>
-          <label class="ro"><input type="radio" name="stress" value="Moderado"><span data-i18n="anam.8a599bf19c">😐 Moderado</span></label>
-          <label class="ro"><input type="radio" name="stress" value="Alto"><span data-i18n="anam.30a5720c34">😰 Alto</span></label>
-          <label class="ro"><input type="radio" name="stress" value="Muito alto (burnout)"><span data-i18n="anam.958e3dd502">😤 Muito alto</span></label>
-        </div>
-      </div>
-      <div class="fg"><label class="fl" data-i18n="anam.6c495e0ab2">Qualidade da alimentação</label>
-        <div class="rg" id="rg-alim">
-          <label class="ro"><input type="radio" name="alim" value="Muito ruim (fast food, sem controle)"><span data-i18n="anam.2bb3d1b3b7">😔 Muito ruim</span></label>
-          <label class="ro"><input type="radio" name="alim" value="Regular (come de tudo)"><span data-i18n="anam.84e4da8d34">😐 Regular</span></label>
-          <label class="ro"><input type="radio" name="alim" value="Boa (balanceada)"><span data-i18n="anam.2011eeaea4">😊 Boa</span></label>
-          <label class="ro"><input type="radio" name="alim" value="Ótima (acompanhamento nutricional)"><span data-i18n="anam.28bfb23706">🤩 Ótima</span></label>
-        </div>
-      </div>
-      
-      
-      
-    </div>
-  </div>
 
   <div style="height:80px"></div>
   <div class="an-nav">
-    <button class="btn-bk" id="btn-back" onclick="anamPrev()" style="display:none" data-i18n="anam.btn.back">← Voltar</button>
-    <button class="btn-nx" id="btn-nxt" onclick="anamNext()" data-i18n="anam.btn.next">Próxima etapa →</button>
+    <button class="btn-bk" id="btn-back-corrida" onclick="anamPrev('corrida')" style="display:none" data-i18n="anam.btn.back">← Voltar</button>
+    <button class="btn-nx" id="btn-nxt-corrida" onclick="anamNext('corrida')" data-i18n="anam.btn.next">Próxima etapa →</button>
   </div>
 </div>
 
@@ -1217,6 +1298,7 @@ textarea.fi{resize:vertical;min-height:80px;}
       <div id="trial-banner" style="margin-top:16px"></div>
 
       <!-- CARD DE DESTAQUE: MISSÕES -->
+      <div id="home-plano-cards" style="margin:16px 20px 0"></div>
       <div id="home-missoes-card" style="margin:16px 20px 0"></div>
 
       <!-- CONTINUAR ASSISTINDO = Continue Training -->
@@ -2277,7 +2359,7 @@ textarea.fi{resize:vertical;min-height:80px;}
 
 <script>
 // ══ SUPABASE ══
-const FQ_VERSION='v104';console.log('%cFitQuest '+FQ_VERSION,'color:#e50914;font-weight:bold;font-size:14px');
+const FQ_VERSION='v107';console.log('%cFitQuest '+FQ_VERSION,'color:#e50914;font-weight:bold;font-size:14px');
 // ══ PROXY DE IA (Cloudflare Worker) ══
 // Quando preenchido, a IA real funciona em produção com a chave protegida no servidor.
 // Deixe '' para usar o plano local (fallback). Ex: 'https://fitquest-ai.SEU-USUARIO.workers.dev'
@@ -2951,10 +3033,10 @@ function renovarMissoesSemanais(u){
   return true;
 }
 function rowToUser(data){
-  return{id:data.id,name:data.nome,email:data.email,plano:data.plano,trialInicio:data.trial_inicio,assinaturaStatus:data.assinatura_status||'trial',assinaturaAte:data.assinatura_ate,diaConversao:data.dia_conversao,dataConversao:data.data_conversao,planoConversao:data.plano_conversao,trainApproved:data.treino_liberado,isAdmin:!!data.is_admin,aiPlan:data.ai_plan,anamnese:data.anamnese,anamneseDone:!!data.anamnese,gymWeek:data.gym_week||1,runWeek:data.run_week||1,gymDone:data.gym_done||{},runDone:data.run_done||{},loadHistory:data.load_history||{},workoutHistory:data.workout_history||[],xp:data.xp||0,level:data.level||1,streak:data.streak||1,coins:data.coins||0,badges:data.badges||[],prs:data.prs||[],stats:data.stats||{treinos:0,distancia:0,semanas:0},purchases:data.purchases||[],pacoteEbooks:!!data.pacote_ebooks,programIntakes:data.program_intakes||{},avatar:data.avatar||null,evals:data.evals||[],missions:MISSOES_PADRAO.map(m=>({...m})),createdAt:data.criado_em,lastLogin:data.ultimo_acesso};
+  return{id:data.id,name:data.nome,email:data.email,plano:data.plano,trialInicio:data.trial_inicio,assinaturaStatus:data.assinatura_status||'trial',assinaturaAte:data.assinatura_ate,diaConversao:data.dia_conversao,dataConversao:data.data_conversao,planoConversao:data.plano_conversao,trainApproved:data.treino_liberado,isAdmin:!!data.is_admin,aiPlan:data.ai_plan,anamnese:data.anamnese,anamneseDone:!!data.anamnese_geral,anamneseGeral:data.anamnese_geral||null,anamneseMusculacao:data.anamnese_musculacao||null,anamneseCorrida:data.anamnese_corrida||null,anamneseMuscDone:!!data.anamnese_musculacao,anamneseCorridaDone:!!data.anamnese_corrida,gymWeek:data.gym_week||1,runWeek:data.run_week||1,gymDone:data.gym_done||{},runDone:data.run_done||{},loadHistory:data.load_history||{},workoutHistory:data.workout_history||[],xp:data.xp||0,level:data.level||1,streak:data.streak||1,coins:data.coins||0,badges:data.badges||[],prs:data.prs||[],stats:data.stats||{treinos:0,distancia:0,semanas:0},purchases:data.purchases||[],pacoteEbooks:!!data.pacote_ebooks,programIntakes:data.program_intakes||{},avatar:data.avatar||null,evals:data.evals||[],missions:MISSOES_PADRAO.map(m=>({...m})),createdAt:data.criado_em,lastLogin:data.ultimo_acesso};
 }
 function userToRow(u){
-  return{id:u.id,nome:u.name,email:u.email,plano:u.plano||'free',trial_inicio:u.trialInicio||new Date().toISOString(),treino_liberado:u.trainApproved||false,ai_plan:u.aiPlan||null,anamnese:u.anamnese||null,gym_week:u.gymWeek||1,run_week:u.runWeek||1,gym_done:u.gymDone||{},run_done:u.runDone||{},load_history:u.loadHistory||{},workout_history:u.workoutHistory||[],xp:u.xp||0,level:u.level||1,streak:u.streak||1,coins:u.coins||0,badges:u.badges||[],prs:u.prs||[],stats:u.stats||{treinos:0,distancia:0,semanas:0},avatar:u.avatar||null,evals:u.evals||[],program_intakes:u.programIntakes||{},ultimo_acesso:new Date().toISOString(),updated_at:new Date().toISOString()};
+  return{id:u.id,nome:u.name,email:u.email,plano:u.plano||'free',trial_inicio:u.trialInicio||new Date().toISOString(),treino_liberado:u.trainApproved||false,ai_plan:u.aiPlan||null,anamnese:u.anamnese||null,anamnese_geral:u.anamneseGeral||null,anamnese_musculacao:u.anamneseMusculacao||null,anamnese_corrida:u.anamneseCorrida||null,gym_week:u.gymWeek||1,run_week:u.runWeek||1,gym_done:u.gymDone||{},run_done:u.runDone||{},load_history:u.loadHistory||{},workout_history:u.workoutHistory||[],xp:u.xp||0,level:u.level||1,streak:u.streak||1,coins:u.coins||0,badges:u.badges||[],prs:u.prs||[],stats:u.stats||{treinos:0,distancia:0,semanas:0},avatar:u.avatar||null,evals:u.evals||[],program_intakes:u.programIntakes||{},ultimo_acesso:new Date().toISOString(),updated_at:new Date().toISOString()};
   // Obs.: purchases/pacote_ebooks/is_admin/plano NÃO são enviados pelo aluno — são protegidos no banco e só mudam via webhook de pagamento ou admin.
 }
 async function syncU(u){if(!sb||!u||!u.id)return;try{await sb.from('alunos').upsert(userToRow(u),{onConflict:'id'});}catch(e){console.warn('sync:',e.message);}}
@@ -2995,7 +3077,7 @@ async function entrarComPerfil(u){
   if(u.isAdmin){await loadAdmin();show('sc-adm');return;}
   // Trial expirado sem assinatura ativa -> tela de assinatura
   if(!temAcesso(u)){ mostrarTelaExpirada(u); return; }
-  if(!u.anamneseDone){initAnam();show('sc-anam');}
+  if(!u.anamneseDone){initAnam('geral');show('sc-anam-geral');}
   else{loadApp(u.email);show('sc-app');}
 }
 // ══ Rate limiting de login (brute-force protection) ══
@@ -3045,7 +3127,7 @@ async function doLogin(){
   finally{btn.textContent='Entrar';btn.disabled=false;}
 }
 function novoPerfilLocal(id,name,email){
-  return{id,name,email,anamneseDone:false,createdAt:new Date().toISOString(),plano:'free',trialInicio:new Date().toISOString(),assinaturaStatus:'trial',trainApproved:true,isAdmin:false,xp:0,level:1,streak:1,coins:0,stats:{treinos:0,distancia:0,semanas:0},badges:[],missions:MISSOES_PADRAO.map(m=>({...m})),prs:[],gymWeek:1,gymDone:{},runWeek:1,runDone:{},aiPlan:null,workoutHistory:[],loadHistory:{},purchases:[],pacoteEbooks:false,programIntakes:{},evals:[]};
+  return{id,name,email,anamneseDone:false,anamneseMuscDone:false,anamneseCorridaDone:false,anamneseGeral:null,anamneseMusculacao:null,anamneseCorrida:null,createdAt:new Date().toISOString(),plano:'free',trialInicio:new Date().toISOString(),assinaturaStatus:'trial',trainApproved:true,isAdmin:false,xp:0,level:1,streak:1,coins:0,stats:{treinos:0,distancia:0,semanas:0},badges:[],missions:MISSOES_PADRAO.map(m=>({...m})),prs:[],gymWeek:1,gymDone:{},runWeek:1,runDone:{},aiPlan:null,workoutHistory:[],loadHistory:{},purchases:[],pacoteEbooks:false,programIntakes:{},evals:[]};
 }
 // ══════════════════════════════════════════════════════════
 // VALIDAÇÃO DE E-MAIL — camada extra contra cadastro-lixo.
@@ -3147,9 +3229,13 @@ async function doRegister(){
     await sb.from('alunos').upsert(userToRow(u),{onConflict:'id'});
     const users=DB.get('fq_users')||{};users[email]=u;DB.set('fq_users',users);DB.set('fq_cur',email);
     enviarEmailBoasVindas(name, email); // e-mail de boas-vindas (não bloqueia)
-    notificarAdminNovoAluno(name, email); // avisa você por e-mail (não bloqueia)
+    // NOTA: o aviso pra você (admin) de novo cadastro NÃO é mais disparado daqui.
+    // Isso agora acontece pelo servidor (função notificar-novo-aluno + Database
+    // Webhook), que é mais confiável — funciona mesmo se o aluno fechar o app
+    // logo após se cadastrar. Ver notificarAdminNovoAluno() abaixo, mantida só
+    // como reserva manual (não é mais chamada automaticamente).
     if(u.isAdmin){await loadAdmin();show('sc-adm');return;}
-    initAnam();show('sc-anam');
+    initAnam('geral');show('sc-anam-geral');
   }catch(e){
     console.error('Register error:',e);
     const isNet=/fetch|network|failed|load/i.test(e?.message||'');
@@ -3172,88 +3258,143 @@ async function doLogout(){
 }
 
 // ══ ANAMNESE ══
-let anamStep=1;
-function initAnam(){
-  anamStep=1;updAnam();
-  document.querySelectorAll('.rg').forEach(g=>{g.querySelectorAll('.ro').forEach(o=>o.addEventListener('click',()=>{g.querySelectorAll('.ro').forEach(x=>x.classList.remove('sel'));o.classList.add('sel');o.querySelector('input').checked=true;}));});
-  document.querySelectorAll('.cg').forEach(g=>{g.querySelectorAll('.co').forEach(o=>o.addEventListener('click',()=>{o.classList.toggle('sel');const cb=o.querySelector('input');cb.checked=!cb.checked;o.querySelector('.cb').textContent=cb.checked?'✓':'';}));});
+// (anamStep antigo removido — substituído por anamStepState, parametrizado por tipo)
+// ══ ASSISTENTE DE ANAMNESE — parametrizado por tipo (geral/musc/corrida) ══
+// Os 3 fluxos (geral, musculação, corrida) compartilham a mesma lógica de
+// navegação por etapas, só mudam o número de etapas e os campos coletados.
+const ANAM_TOTAL={geral:3,musc:3,corrida:2};
+const anamStepState={geral:1,musc:1,corrida:1};
+
+function initAnam(tipo){
+  tipo=tipo||'geral';
+  anamStepState[tipo]=1;
+  updAnam(tipo);
+  const raiz=document.getElementById('sc-anam-'+tipo);
+  if(!raiz) return;
+  raiz.querySelectorAll('.rg').forEach(g=>{g.querySelectorAll('.ro').forEach(o=>o.addEventListener('click',()=>{g.querySelectorAll('.ro').forEach(x=>x.classList.remove('sel'));o.classList.add('sel');o.querySelector('input').checked=true;}));});
+  raiz.querySelectorAll('.cg').forEach(g=>{g.querySelectorAll('.co').forEach(o=>o.addEventListener('click',()=>{o.classList.toggle('sel');const cb=o.querySelector('input');cb.checked=!cb.checked;o.querySelector('.cb').textContent=cb.checked?'✓':'';}));});
   try{ aplicarIdioma(); }catch(e){}
 }
-function updAnam(){
-  const TOTAL=7;
-  const pct=Math.round((anamStep/TOTAL)*100);
-  document.getElementById('anam-progress').style.width=pct+'%';
-  document.getElementById('step-label').textContent=t('anam.stepcount',{n:anamStep,total:TOTAL});
-  document.getElementById('step-pct').textContent=pct+'%';
-  document.querySelectorAll('.anam-step').forEach((s,i)=>s.style.display=(i+1===anamStep)?'block':'none');
-  document.getElementById('btn-back').style.display=anamStep>1?'block':'none';
-  document.getElementById('btn-nxt').textContent=anamStep===TOTAL?t('anam.btn.submit'):t('anam.btn.next');
+function updAnam(tipo){
+  tipo=tipo||'geral';
+  const TOTAL=ANAM_TOTAL[tipo];
+  const step=anamStepState[tipo];
+  const pct=Math.round((step/TOTAL)*100);
+  const prog=document.getElementById('anam-progress-'+tipo); if(prog) prog.style.width=pct+'%';
+  const lbl=document.getElementById('step-label-'+tipo); if(lbl) lbl.textContent=t('anam.stepcount',{n:step,total:TOTAL});
+  const pctEl=document.getElementById('step-pct-'+tipo); if(pctEl) pctEl.textContent=pct+'%';
+  document.querySelectorAll('#sc-anam-'+tipo+' .anam-step').forEach((s,i)=>s.style.display=(i+1===step)?'block':'none');
+  const back=document.getElementById('btn-back-'+tipo); if(back) back.style.display=step>1?'block':'none';
+  const nxt=document.getElementById('btn-nxt-'+tipo); if(nxt) nxt.textContent=step===TOTAL?t('anam.btn.submit'):t('anam.btn.next');
 }
-function anamNext(){if(anamStep<7){anamStep++;updAnam();window.scrollTo(0,0);}else submitAnam();}
-function anamPrev(){if(anamStep>1){anamStep--;updAnam();window.scrollTo(0,0);}}
-async function submitAnam(){
+function anamNext(tipo){
+  tipo=tipo||'geral';
+  if(anamStepState[tipo]<ANAM_TOTAL[tipo]){ anamStepState[tipo]++; updAnam(tipo); window.scrollTo(0,0); }
+  else{
+    if(tipo==='geral') submitAnamGeral();
+    else if(tipo==='musc') submitAnamMusc();
+    else if(tipo==='corrida') submitAnamCorrida();
+  }
+}
+function anamPrev(tipo){
+  tipo=tipo||'geral';
+  if(anamStepState[tipo]>1){ anamStepState[tipo]--; updAnam(tipo); window.scrollTo(0,0); }
+}
+// ── ANAMNESE GERAL — obrigatória logo após cadastro, vai direto pra Home (sem gerar plano) ──
+async function submitAnamGeral(){
   const email=DB.get('fq_cur');const users=DB.get('fq_users')||{};if(!users[email])return;
   const gr=n=>{const e=document.querySelector(`input[name="${n}"]:checked`);return e?e.value:'';};
   const gc=id=>Array.from(document.querySelectorAll(`#${id} input:checked`)).map(e=>e.value);
   const gv=id=>{const el=document.getElementById(id);return el?el.value:'';};
   const an={
-    // Etapa 1 - Dados pessoais
     nasc:gv('a-nasc'),sexo:gv('a-sexo'),peso:gv('a-peso'),altura:gv('a-altura'),
     prof:gv('a-prof'),fone:gv('a-fone'),atvTrab:gr('atvtrab'),
-    // Etapa 2 - Estrutura
+    saude:gc('cg-saude'),med:gr('med'),medDesc:gv('a-med'),cir:gv('a-cir'),ativo:gr('ativo'),
+    sono:gr('sono'),stress:gr('stress'),alim:gr('alim'),prazo:gr('prazo'),motiv:gv('a-motiv'),
+    at:new Date().toISOString()
+  };
+  users[email].anamneseGeral=an;
+  users[email].anamneseDone=true; // mantém o nome antigo — continua sendo o que libera a Home
+  users[email].xp=(users[email].xp||0)+50;users[email].coins=(users[email].coins||0)+25;
+  DB.set('fq_users',users);
+  if(typeof sb!=='undefined'&&sb&&typeof syncU==='function')syncU(users[email]).catch(()=>{});
+  goToApp();
+  fqToast('👋 Perfil criado! Agora escolha seu treino.','ok');
+}
+
+// Junta a anamnese geral com uma anamnese específica (musc ou corrida) —
+// é isso que vira o objeto completo que o motor (RD_perfil) espera.
+function mesclarAnamnese(u, especifica){
+  return {...(u.anamneseGeral||{}), ...especifica};
+}
+
+// ── ANAMNESE MUSCULAÇÃO — ao clicar "Quero treino de musculação" na Home ──
+async function submitAnamMusc(){
+  const email=DB.get('fq_cur');const users=DB.get('fq_users')||{};if(!users[email])return;
+  const gr=n=>{const e=document.querySelector(`input[name="${n}"]:checked`);return e?e.value:'';};
+  const gc=id=>Array.from(document.querySelectorAll(`#${id} input:checked`)).map(e=>e.value);
+  const gv=id=>{const el=document.getElementById(id);return el?el.value:'';};
+  const especifica={
     tempo:gr('tempo'),dias:gr('dias'),dur:gr('dur'),local:gr('local'),
     cargaSupino:gv('a-cargasupino'),cargaAgacho:gv('a-cargaagacho'),
-    // Etapa 3 - Objetivos
-    obj:gc('cg-obj'),mc:gc('cg-mc'),prazo:gr('prazo'),motiv:gv('a-motiv'),
-    nivelCorrida:gr('nivelcorrida'),ritmoAtual:gv('a-ritmoatual'),
-    // Etapa 4 - Saúde
-    saude:gc('cg-saude'),med:gr('med'),medDesc:gv('a-med'),cir:gv('a-cir'),ativo:gr('ativo'),
-    // Etapa 5 - Lesões (CRÍTICO para adaptação de treino)
+    obj:gc('cg-obj'),
     lesoes:gc('cg-lesoes'),dorInt:gr('dorint'),dorTempo:gr('dortempo'),
-    // Flags especiais de lesão para IA
     temJoelho:gc('cg-lesoes').some(l=>l.includes('Joelho')),
     temLombar:gc('cg-lesoes').some(l=>l.includes('Lombar')||l.includes('Hérnia')),
     temOmbro:gc('cg-lesoes').some(l=>l.includes('Ombro')),
-    // Etapa 6 - Composição
     biotipo:gr('biotipo'),gordura:gr('gordura'),foco:gc('cg-foco'),supl:gc('cg-supl'),
     evitar:gv('a-evitar'),
-    // Etapa 7 - Estilo de vida
-    sono:gr('sono'),stress:gr('stress'),alim:gr('alim'),
     at:new Date().toISOString()
   };
-  users[email].anamnese=an;users[email].anamneseDone=true;users[email].xp=100;users[email].coins=50;
-  DB.set('fq_users',users);show('sc-ok');
-  document.getElementById('ok-title').textContent='Avaliação recebida!';
-  document.getElementById('ok-sub').textContent='Rennan irá analisar seu perfil e montar seu plano!';
+  users[email].anamneseMusculacao=especifica;
+  users[email].anamneseMuscDone=true;
+  const anCompleta=mesclarAnamnese(users[email],especifica);
+  DB.set('fq_users',users);
+  show('sc-ok');
   document.getElementById('btn-go-app').style.display='none';
-  document.getElementById('ok-sub').textContent='Gerando seu treino personalizado... isso pode levar até 1 minuto. Não feche o app! 🤖';
-  try{
-    await genAIWithRetry(email,an,2);
-  }catch(e){
-    console.error('AI error após retries:',e);
-    try{gerarTreinoFallback(email,an);}catch(e2){console.error('Fallback error:',e2);}
-  }
-  try{
-    // Garantia final: se por qualquer motivo ainda não há plano, gera o fallback
-    const chk=DB.get('fq_users')||{};
-    if(chk[email]&&!chk[email].aiPlan){gerarTreinoFallback(email,an);}
-    const usersFinal=DB.get('fq_users')||users;
-    if(usersFinal[email]){
-      usersFinal[email].trainApproved=true;
-      DB.set('fq_users',usersFinal);
-      syncU(usersFinal[email]).catch(()=>{}); // sync não bloqueia a liberação
-    }
-  }catch(e3){console.error('Pós-IA:',e3);}
-  finally{
-    // O botão SEMPRE aparece — nenhum erro acima pode travar o aluno aqui
-    const ico=document.querySelector('.ok-ico');if(ico)ico.textContent='🎉';
-    const t=document.getElementById('ok-title');if(t)t.textContent='Tudo pronto!';
-    const s=document.getElementById('ok-sub');if(s)s.textContent='Seu treino foi gerado! Hora de começar 🎬';
-    const b=document.getElementById('btn-go-app');
-    if(b){b.style.display='block';b.textContent='Acessar meu treino 🚀';}
-  }
+  document.getElementById('ok-sub').textContent='Montando seu treino de musculação... 🤖';
+  try{ gerarTreinoFallback(email,anCompleta,'gym'); }catch(e){ console.error('Erro ao gerar musculação:',e); }
+  const ico=document.querySelector('.ok-ico');if(ico)ico.textContent='💪';
+  const tit=document.getElementById('ok-title');if(tit)tit.textContent='Treino pronto!';
+  const sub=document.getElementById('ok-sub');if(sub)sub.textContent='Seu treino de musculação foi gerado 🎬';
+  const btn=document.getElementById('btn-go-app');
+  if(btn){btn.style.display='block';btn.textContent='Ver meu treino 🚀';}
   try{ aplicarIdioma(); }catch(e){}
 }
+
+// ── ANAMNESE CORRIDA — ao clicar "Quero treino de corrida" na Home ──
+async function submitAnamCorrida(){
+  const email=DB.get('fq_cur');const users=DB.get('fq_users')||{};if(!users[email])return;
+  const gr=n=>{const e=document.querySelector(`input[name="${n}"]:checked`);return e?e.value:'';};
+  const gc=id=>Array.from(document.querySelectorAll(`#${id} input:checked`)).map(e=>e.value);
+  const gv=id=>{const el=document.getElementById(id);return el?el.value:'';};
+  const especifica={
+    mc:gc('cg-mc'),nivelCorrida:gr('nivelcorrida'),ritmoAtual:gv('a-ritmoatual'),
+    lesoes:gc('cg-lesoes-corrida'),dorInt:gr('dorint-corrida'),dorTempo:gr('dortempo-corrida'),
+    temJoelho:gc('cg-lesoes-corrida').some(l=>l.includes('Joelho')),
+    temLombar:gc('cg-lesoes-corrida').some(l=>l.includes('Lombar')||l.includes('Hérnia')),
+    temOmbro:gc('cg-lesoes-corrida').some(l=>l.includes('Ombro')),
+    at:new Date().toISOString()
+  };
+  users[email].anamneseCorrida=especifica;
+  users[email].anamneseCorridaDone=true;
+  const anCompleta=mesclarAnamnese(users[email],especifica);
+  DB.set('fq_users',users);
+  show('sc-ok');
+  document.getElementById('btn-go-app').style.display='none';
+  document.getElementById('ok-sub').textContent='Montando seu plano de corrida... 🤖';
+  try{ gerarTreinoFallback(email,anCompleta,'run'); }catch(e){ console.error('Erro ao gerar corrida:',e); }
+  const ico=document.querySelector('.ok-ico');if(ico)ico.textContent='🏃';
+  const tit=document.getElementById('ok-title');if(tit)tit.textContent='Plano pronto!';
+  const sub=document.getElementById('ok-sub');if(sub)sub.textContent='Seu plano de corrida foi gerado 🎬';
+  const btn=document.getElementById('btn-go-app');
+  if(btn){btn.style.display='block';btn.textContent='Ver meu plano 🚀';}
+  try{ aplicarIdioma(); }catch(e){}
+}
+
+// Chamadas pelos cards da Home — abrem a anamnese específica certa
+function iniciarAnamneseMusc(){ initAnam('musc'); show('sc-anam-musc'); }
+function iniciarAnamneseCorrida(){ initAnam('corrida'); show('sc-anam-corrida'); }
 function goToApp(){const email=DB.get('fq_cur');loadApp(email);show('sc-app');}
 
 // ══ Rate limiting da IA (evita abuso) ══
@@ -3756,6 +3897,31 @@ function RD_auditarVolume(gym,p){
   return gym;
 }
 
+// ══ TÉCNICAS DE INTENSIDADE (hipertrofia) ══
+// Aplicadas só no último acessório do dia, só nas fases mais avançadas
+// (bloco 2+ da periodização — nunca na Acumulação nem no Deload), e só
+// em exercícios seguros pra levar à falha sem spotter (máquina/isolador —
+// nunca em composto livre pesado, que já tem sua própria lógica).
+const RD_TECNICAS = [
+  {
+    id: 'dropset',
+    nome: 'Drop-set',
+    obs: 'Técnica: DROP-SET — na última série, ao falhar, reduza 20-25% da carga e continue até nova falha, sem descanso.'
+  },
+  {
+    id: 'restpause',
+    nome: 'Rest-Pause',
+    obs: 'Técnica: REST-PAUSE — na última série, ao falhar, pause 15s respirando fundo, e continue com a mesma carga até nova falha.'
+  }
+];
+
+// Decide se um exercício é elegível pra levar técnica de intensidade
+// (evita comprometer composto pesado, cardio, pliometria e isometria)
+function RD_elegivelTecnica(nome){
+  const nãoElegivel = /supino|agachamento|hack squat|terra|remada curvada|remada t\b|cavalinho|remada baixa|desenvolvimento|puxada|barra fixa|leg press|stiff|thruster|burpee|clean|snatch|devil press|man maker|salto|jump|pliom|box|skater|cardio|sprint|corda|rope|bike|remo|esteira|el[íi]ptico|escada|isometri|hold|wall sit|pausa|l-sit/i;
+  return !nãoElegivel.test(nome);
+}
+
 function RD_gerarGym(p){
   const divisao=RD_divisao(p);
   const deloads=RD_deloadSemanas(p);
@@ -3787,6 +3953,7 @@ function RD_gerarGym(p){
 
       // ── BLOCO 2: TREINO PRINCIPAL ──
       const jaUsados=exs.map(x=>x.id); // evita repetir o que já entrou no aquecimento
+      let ultimoAcessorioElegivel=null; // rastreia o alvo pra técnica de intensidade
       estrutura.forEach(([grupo,qtd],gi)=>{
         const temFoco=p.foco.some(f=>grupo.toLowerCase().includes(f)||f.includes(grupo.toLowerCase()));
         const n=temFoco&&!ehDeload?qtd+1:qtd;
@@ -3820,9 +3987,24 @@ function RD_gerarGym(p){
               load=load+` · ≈${kgMin}-${kgMax}kg`;
             }
           }
-          exs.push({id:e.id,sets,reps,load,rest,obs:`RIR ${presc.rir} (deixe ${presc.rir} reps na reserva). ${e.obs||'Execute com controle total.'}`});
+          const exObj={id:e.id,sets,reps,load,rest,obs:`RIR ${presc.rir} (deixe ${presc.rir} reps na reserva). ${e.obs||'Execute com controle total.'}`};
+          exs.push(exObj);
+          // Só considera acessório (não âncora) e só se for seguro pra levar à falha
+          if(!ehAncora && !pliom && !cardio && !isometria && RD_elegivelTecnica(e.name)){
+            ultimoAcessorioElegivel=exObj;
+          }
         });
       });
+
+      // ── TÉCNICA DE INTENSIDADE — só hipertrofia, fases avançadas, nunca no deload ──
+      // (Evidência já usada no motor: ganhos de FORÇA não se beneficiam de treinar
+      // até a falha — por isso essas técnicas ficam restritas ao objetivo hipertrofia.)
+      const blocoAtual=Math.ceil(s/2); // mesmo cálculo usado dentro de RD_prescricao
+      if(p.objetivo==='hipertrofia' && !ehDeload && blocoAtual>=2 && ultimoAcessorioElegivel){
+        const tecnica=RD_TECNICAS[(s+di)%RD_TECNICAS.length]; // alterna pra variar entre semanas
+        ultimoAcessorioElegivel.tecnica=tecnica.nome;
+        ultimoAcessorioElegivel.tecnicaObs=tecnica.obs;
+      }
 
       // ── BLOCO 3: FINALIZADOR METABÓLICO (não no deload) ──
       if(!ehDeload&&p.dur>=45){
@@ -4244,14 +4426,17 @@ function RD_gerarRun(p){
   return run;
 }
 // ─── 7. FUNÇÃO PÚBLICA — substitui o fallback antigo ───
-function gerarTreinoFallback(email,an){
+// tipo: 'gym' | 'run' | undefined (undefined = ambos, mantido por compatibilidade)
+function gerarTreinoFallback(email,an,tipo){
   const users=DB.get('fq_users')||{};
   if(!users[email])return;
   try{
     const p=RD_perfil(an||{},email);
-    const gym=RD_gerarGym(p);
-    const run=RD_gerarRun(p);
-    users[email].aiPlan={gym,run};
+    const planoAtual=users[email].aiPlan||{};
+    const novoPlano={...planoAtual};
+    if(!tipo||tipo==='gym') novoPlano.gym=RD_gerarGym(p);
+    if(!tipo||tipo==='run') novoPlano.run=RD_gerarRun(p);
+    users[email].aiPlan=novoPlano;
     users[email].fcMax=p.fcMax;
     users[email].motorRD=true; // marca que veio do Motor Rennan Dias
     users[email].trainApproved=true;
@@ -4260,7 +4445,11 @@ function gerarTreinoFallback(email,an){
   }catch(e){
     console.error('Motor RD erro:',e);
     // Último recurso: plano padrão do app
-    users[email].aiPlan={gym:DG,run:DR};
+    const planoAtual=users[email].aiPlan||{};
+    const novoPlano={...planoAtual};
+    if(!tipo||tipo==='gym') novoPlano.gym=DG;
+    if(!tipo||tipo==='run') novoPlano.run=DR;
+    users[email].aiPlan=novoPlano;
     users[email].trainApproved=true;
     DB.set('fq_users',users);
   }
@@ -4709,6 +4898,21 @@ const FQ_I18N = {
     'anam.sel.male': "Masculino",
     'anam.sel.female': "Feminino",
     'anam.btn.submit': 'Enviar avaliação ✅',
+    'home.wantgym': 'Quero meu treino<br>de musculação',
+    'home.wantrun': 'Quero meu treino<br>de corrida',
+    'anam.g.hdrtitle': '📋 Vamos te conhecer',
+    'anam.g.hdrsub': 'Isso ajuda a gente a entender sua saúde e rotina — leva menos de 2 minutos.',
+    'anam.g.sec2': '❤️ Saúde',
+    'anam.g.sec3': '🌙 Estilo de Vida',
+    'anam.m.hdrtitle': '🏋️ Seu Treino de Musculação',
+    'anam.m.hdrsub': 'Só o que o motor precisa pra montar seu treino certinho.',
+    'anam.m.sec1': '🏋️ Experiência e Estrutura',
+    'anam.m.sec2': '🎯 Objetivos',
+    'anam.m.sec3': '🩺 Lesões e Composição',
+    'anam.c.hdrtitle': '🏃 Seu Treino de Corrida',
+    'anam.c.hdrsub': 'Bem rápido — só o essencial pra montar seu plano de corrida.',
+    'anam.c.sec1': '🏃 Sua Corrida',
+    'anam.c.sec2': '🩺 Lesões',
     // ── Anamnese ──
     'anam.71ef84890d': "Data de nascimento",
     'anam.5c7d7a110a': "Sexo biológico",
@@ -4925,6 +5129,21 @@ const FQ_I18N = {
     'anam.sel.male': "Male",
     'anam.sel.female': "Female",
     'anam.btn.submit': 'Submit assessment ✅',
+    'home.wantgym': 'I want my<br>strength workout',
+    'home.wantrun': 'I want my<br>running plan',
+    'anam.g.hdrtitle': "📋 Let's get to know you",
+    'anam.g.hdrsub': 'This helps us understand your health and routine — takes under 2 minutes.',
+    'anam.g.sec2': '❤️ Health',
+    'anam.g.sec3': '🌙 Lifestyle',
+    'anam.m.hdrtitle': '🏋️ Your Strength Training',
+    'anam.m.hdrsub': 'Just what the engine needs to build your workout right.',
+    'anam.m.sec1': '🏋️ Experience & Setup',
+    'anam.m.sec2': '🎯 Goals',
+    'anam.m.sec3': '🩺 Injuries & Body Composition',
+    'anam.c.hdrtitle': '🏃 Your Running Plan',
+    'anam.c.hdrsub': 'Quick one — just the essentials to build your running plan.',
+    'anam.c.sec1': '🏃 Your Running',
+    'anam.c.sec2': '🩺 Injuries',
     // ── Anamnese ──
     'anam.71ef84890d': "Date of birth",
     'anam.5c7d7a110a': "Biological sex",
@@ -5371,6 +5590,7 @@ function loadApp(email){
   _safe(()=>renderPRs(u.prs||[]),'prs');
   _safe(()=>renderComunidade(),'comunidade');
   _safe(()=>renderBannerTrial(u),'trialBanner');
+  _safe(()=>renderHomePlanoCards(),'planoCards');
   _safe(()=>renderHomeMissoesCard(),'missoesCard');
   _safe(()=>renderMissoes(),'missoes');
   renderBadges(u.badges||[]);
@@ -5798,7 +6018,7 @@ function renderGymDay(w,d,u){
       <div class="ep-header" onclick="togEp(${i})">
         <div class="ep-num ${dayDone?'done':''}">${i+1}</div>
         <div class="ep-info"><div class="ep-title">${exNome(ex)}</div><div class="ep-sub">${ex.muscle} · ${ex.equipment}</div></div>
-        <div class="ep-chips"><span class="ep-chip">${ed.sets}×${ed.reps}</span><span class="ep-chip">⏱${ed.rest||60}s</span></div>
+        <div class="ep-chips"><span class="ep-chip">${ed.sets}×${ed.reps}</span><span class="ep-chip">⏱${ed.rest||60}s</span>${ed.tecnica?`<span class="ep-chip" style="background:rgba(229,9,20,.18);color:#ff5a63;border:1px solid rgba(229,9,20,.35)">🔥 ${ed.tecnica}</span>`:''}</div>
         <span class="ep-chv">▾</span>
       </div>
       <div class="ep-body">
@@ -5810,7 +6030,7 @@ function renderGymDay(w,d,u){
             <div style="font-size:10px;color:var(--r);font-weight:700;background:rgba(229,9,20,.15);padding:3px 10px;border-radius:4px;border:1px solid rgba(229,9,20,.3)">${ex.muscle}</div>
           </div>
         </div>
-        <div class="ep-obs">💡 ${ex.obs}</div>
+        <div class="ep-obs">${ed.tecnica?`<div style="background:rgba(229,9,20,.1);border:1px solid rgba(229,9,20,.3);border-radius:6px;padding:10px 12px;margin-bottom:8px;font-size:12px;color:#ff8a90;font-weight:600">🔥 ${ed.tecnicaObs}</div>`:''}💡 ${ex.obs}</div>
         <table class="sets-tbl">
           <tr><th>Série</th><th>Reps</th><th>Carga</th><th>✓</th></tr>
           ${Array.from({length:ed.sets},(_,si)=>{const sk=`${w}_${d}_${i}_s${si}`;const sd=u.gymDone&&u.gymDone[sk];return `<tr class="set-row ${sd?'done':''}" id="sr-${i}-${si}"><td>Série ${si+1}</td><td>${ed.reps}</td><td><input class="carga-inp" id="ci-${i}-${si}" value="${sl}" placeholder="kg" onchange="saveCarga('${lk}',${i},${si})"/></td><td><div class="set-chk ${sd?'ck':''}" id="sc-${i}-${si}" onclick="chkSet('${w}','${d}',${i},${si},${ed.sets},${ed.rest||60},'${lk}')">${sd?'✓':''}</div></td></tr>`;}).join('')}
@@ -8573,12 +8793,20 @@ function dismissBanner(){document.getElementById('pwa-banner').style.display='no
           const local=users[fresh.email]||{};
           // Merge inteligente: banco NUNCA regride anamnese/plano feitos localmente
           const merged={...local,...fresh};
-          if(local.anamneseDone&&!fresh.anamneseDone){merged.anamneseDone=true;merged.anamnese=local.anamnese;}
+          if(local.anamneseDone&&!fresh.anamneseDone){merged.anamneseDone=true;merged.anamnese=local.anamnese;merged.anamneseGeral=local.anamneseGeral;}
+          if(local.anamneseMuscDone&&!fresh.anamneseMuscDone){merged.anamneseMuscDone=true;merged.anamneseMusculacao=local.anamneseMusculacao;}
+          if(local.anamneseCorridaDone&&!fresh.anamneseCorridaDone){merged.anamneseCorridaDone=true;merged.anamneseCorrida=local.anamneseCorrida;}
           if(local.aiPlan&&!fresh.aiPlan){merged.aiPlan=local.aiPlan;}
+          else if(local.aiPlan&&fresh.aiPlan){
+            // Mescla plano por tipo — nao deixa um gym/run local mais recente sumir
+            merged.aiPlan={...fresh.aiPlan};
+            if(local.aiPlan.gym && !fresh.aiPlan.gym) merged.aiPlan.gym=local.aiPlan.gym;
+            if(local.aiPlan.run && !fresh.aiPlan.run) merged.aiPlan.run=local.aiPlan.run;
+          }
           users[fresh.email]=merged;
           DB.set('fq_users',users);DB.set('fq_cur',fresh.email);
           if(merged.isAdmin){await loadAdmin();show('sc-adm');return;}
-          if(!merged.anamneseDone){initAnam();show('sc-anam');return;}
+          if(!merged.anamneseDone){initAnam('geral');show('sc-anam-geral');return;}
           if(!merged.aiPlan){try{gerarTreinoFallback(fresh.email,merged.anamnese||{});}catch(e){}} // nunca entrar sem plano
           loadApp(fresh.email);show('sc-app');return;
         }
@@ -8591,7 +8819,7 @@ function dismissBanner(){document.getElementById('pwa-banner').style.display='no
     if(!u){DB.del('fq_cur');show('sc-splash');return;}
     if(email===ADMIN_EMAIL)u.isAdmin=true;
     if(u.isAdmin){await loadAdmin();show('sc-adm');return;}
-    if(!u.anamneseDone){initAnam();show('sc-anam');return;}
+    if(!u.anamneseDone){initAnam('geral');show('sc-anam-geral');return;}
     if(!u.aiPlan){try{gerarTreinoFallback(email,u.anamnese||{});}catch(e){}}
     loadApp(email);show('sc-app');
   }catch(e){
@@ -9815,6 +10043,35 @@ function concluirMissao(n){
   }
   renderMissoes();
   if(typeof renderHomeMissoesCard==='function') renderHomeMissoesCard();
+}
+
+// ── Cards da Home pra escolher/gerar cada tipo de treino ──
+// Só aparecem enquanto aquele plano especifico nao foi gerado ainda.
+// Depois de gerado, o card some (o aluno usa a aba Treino/Corrida normalmente).
+function renderHomePlanoCards(){
+  const u = getU(); if(!u) return;
+  const el = document.getElementById('home-plano-cards');
+  if(!el) return;
+
+  const temGym = !!(u.aiPlan && u.aiPlan.gym && Object.keys(u.aiPlan.gym).length);
+  const temRun = !!(u.aiPlan && u.aiPlan.run && Object.keys(u.aiPlan.run).length);
+
+  if(temGym && temRun){ el.innerHTML=''; return; } // os dois ja gerados, nao mostra nada
+
+  const cardMusc = !temGym ? `
+    <div onclick="iniciarAnamneseMusc()" style="flex:1;background:linear-gradient(135deg,rgba(229,9,20,.14),rgba(229,9,20,.04));border:1px solid rgba(229,9,20,.3);border-radius:12px;padding:16px;cursor:pointer;text-align:center">
+      <div style="font-size:32px;margin-bottom:8px">🏋️</div>
+      <div style="font-size:12.5px;font-weight:900;line-height:1.3" data-i18n="home.wantgym">Quero meu treino<br>de musculação</div>
+    </div>` : '';
+
+  const cardCorrida = !temRun ? `
+    <div onclick="iniciarAnamneseCorrida()" style="flex:1;background:linear-gradient(135deg,rgba(46,204,113,.12),rgba(46,204,113,.03));border:1px solid rgba(46,204,113,.3);border-radius:12px;padding:16px;cursor:pointer;text-align:center">
+      <div style="font-size:32px;margin-bottom:8px">🏃</div>
+      <div style="font-size:12.5px;font-weight:900;line-height:1.3" data-i18n="home.wantrun">Quero meu treino<br>de corrida</div>
+    </div>` : '';
+
+  el.innerHTML = `<div style="display:flex;gap:10px">${cardMusc}${cardCorrida}</div>`;
+  try{ aplicarIdioma(); }catch(e){}
 }
 
 function renderHomeMissoesCard(){
