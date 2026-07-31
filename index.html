@@ -29,7 +29,10 @@ function closeEbook() {
   modal.classList.remove('open');
   document.body.style.overflow = '';
   EB_ATUAL = null;
-  if(!_fqNavegandoViaVoltar){ try{ history.back(); }catch(e){} }
+  if(!_fqNavegandoViaVoltar){
+    _fqConsumindoHistorico=true;
+    try{ history.back(); }catch(e){ _fqConsumindoHistorico=false; }
+  }
 }
 
 
@@ -53,7 +56,7 @@ function liberarPacoteEbooks(u) {
   DB.set('fq_users', users);
   if (sb) syncU(u).catch(()=>{});
   fqToast('🎉 Pacote desbloqueado! Os 10 e-books estão na sua Loja!','ok');
-  renderStore(u);
+  _safe(()=>renderStore(u),'store');
 }
 </script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" onerror="console.warn('Supabase CDN failed')"></script>
@@ -800,7 +803,7 @@ textarea.fi{resize:vertical;min-height:80px;}
       <option value="en">🇺🇸 EN</option>
     </select>
   </div>
-  <div id="fq-version-badge" style="position:absolute;bottom:8px;right:12px;font-size:9px;color:#333;font-weight:700;z-index:5">v109</div>
+  <div id="fq-version-badge" style="position:absolute;bottom:8px;right:12px;font-size:9px;color:#333;font-weight:700;z-index:5">v111</div>
   <img src="https://images.unsplash.com/photo-1517836357463-d25dfeac3438?w=800&q=80" alt="Fitness" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center top;filter:brightness(.35);z-index:0"/>
   <div class="splash-glow"></div>
   <div class="splash-noise"></div>
@@ -1292,7 +1295,6 @@ textarea.fi{resize:vertical;min-height:80px;}
       <div id="trial-banner" style="margin-top:16px"></div>
 
       <!-- CARD DE DESTAQUE: MISSÕES -->
-      <div id="home-plano-cards" style="margin:16px 20px 0"></div>
       <div id="home-missoes-card" style="margin:16px 20px 0"></div>
 
       <!-- CONTINUAR ASSISTINDO = Continue Training -->
@@ -1329,6 +1331,9 @@ textarea.fi{resize:vertical;min-height:80px;}
           </div>
         </div>
       </div>
+
+      <!-- Cards pra gerar treino que ainda nao existe (ficam junto do carrossel acima) -->
+      <div id="home-plano-cards" style="margin:4px 20px 0"></div>
 
       <!-- PROGRAMAS EM DESTAQUE -->
       <div class="section" style="position:relative;overflow:hidden;padding-top:4px;padding-bottom:4px">
@@ -2353,7 +2358,7 @@ textarea.fi{resize:vertical;min-height:80px;}
 
 <script>
 // ══ SUPABASE ══
-const FQ_VERSION='v109';console.log('%cFitQuest '+FQ_VERSION,'color:#e50914;font-weight:bold;font-size:14px');
+const FQ_VERSION='v111';console.log('%cFitQuest '+FQ_VERSION,'color:#e50914;font-weight:bold;font-size:14px');
 // ══ PROXY DE IA (Cloudflare Worker) ══
 // Quando preenchido, a IA real funciona em produção com a chave protegida no servidor.
 // Deixe '' para usar o plano local (fallback). Ex: 'https://fitquest-ai.SEU-USUARIO.workers.dev'
@@ -2966,11 +2971,19 @@ const DR={
 // ══ UTILS ══
 function show(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById(id).classList.add('active');window.scrollTo(0,0);}
 let _fqNavegandoViaVoltar=false;
+// Marca que o history.back() foi disparado pelo próprio código (só pra limpar a
+// entrada de histórico do modal), e NÃO por um "voltar" real do usuário.
+// Sem isso, fechar qualquer modal no X jogava o aluno de volta pra Home.
+let _fqConsumindoHistorico=false;
 function closeModal(id){
-  document.getElementById(id).classList.remove('open');
+  const el=document.getElementById(id);
+  if(el) el.classList.remove('open');
   // Se o fechamento foi manual (botão X), consome a entrada de histórico criada
   // ao abrir o modal — senão o Voltar precisaria de 2 cliques pra sair depois.
-  if(!_fqNavegandoViaVoltar){ try{ history.back(); }catch(e){} }
+  if(!_fqNavegandoViaVoltar){
+    _fqConsumindoHistorico=true;
+    try{ history.back(); }catch(e){ _fqConsumindoHistorico=false; }
+  }
 }
 function getExById(id){return EXERCISE_BANK.find(e=>e.id===id)||null;}
 function getU(){const e=DB.get('fq_cur');if(!e||e==='__admin__')return null;return(DB.get('fq_users')||{})[e]||null;}
@@ -3348,11 +3361,16 @@ async function submitAnamMusc(){
   document.getElementById('btn-go-app').style.display='none';
   document.getElementById('ok-sub').textContent='Montando seu treino de musculação... 🤖';
   try{ gerarTreinoFallback(email,anCompleta,'gym'); }catch(e){ console.error('Erro ao gerar musculação:',e); }
-  const ico=document.querySelector('.ok-ico');if(ico)ico.textContent='💪';
-  const tit=document.getElementById('ok-title');if(tit)tit.textContent='Treino pronto!';
-  const sub=document.getElementById('ok-sub');if(sub)sub.textContent='Seu treino de musculação foi gerado 🎬';
-  const btn=document.getElementById('btn-go-app');
-  if(btn){btn.style.display='block';btn.textContent='Ver meu treino 🚀';}
+  // O botão SEMPRE aparece — nenhum erro acima pode prender o aluno aqui
+  try{
+    const ico=document.querySelector('.ok-ico');if(ico)ico.textContent='💪';
+    const tit=document.getElementById('ok-title');if(tit)tit.textContent='Treino pronto!';
+    const sub=document.getElementById('ok-sub');if(sub)sub.textContent='Seu treino de musculação foi gerado 🎬';
+  }catch(e){ console.error('Erro ao atualizar tela de sucesso:',e); }
+  finally{
+    const btn=document.getElementById('btn-go-app');
+    if(btn){btn.style.display='block';btn.textContent='Ver meu treino 🚀';}
+  }
   try{ aplicarIdioma(); }catch(e){}
 }
 
@@ -3378,18 +3396,34 @@ async function submitAnamCorrida(){
   document.getElementById('btn-go-app').style.display='none';
   document.getElementById('ok-sub').textContent='Montando seu plano de corrida... 🤖';
   try{ gerarTreinoFallback(email,anCompleta,'run'); }catch(e){ console.error('Erro ao gerar corrida:',e); }
-  const ico=document.querySelector('.ok-ico');if(ico)ico.textContent='🏃';
-  const tit=document.getElementById('ok-title');if(tit)tit.textContent='Plano pronto!';
-  const sub=document.getElementById('ok-sub');if(sub)sub.textContent='Seu plano de corrida foi gerado 🎬';
-  const btn=document.getElementById('btn-go-app');
-  if(btn){btn.style.display='block';btn.textContent='Ver meu plano 🚀';}
+  // O botão SEMPRE aparece — nenhum erro acima pode prender o aluno aqui
+  try{
+    const ico=document.querySelector('.ok-ico');if(ico)ico.textContent='🏃';
+    const tit=document.getElementById('ok-title');if(tit)tit.textContent='Plano pronto!';
+    const sub=document.getElementById('ok-sub');if(sub)sub.textContent='Seu plano de corrida foi gerado 🎬';
+  }catch(e){ console.error('Erro ao atualizar tela de sucesso:',e); }
+  finally{
+    const btn=document.getElementById('btn-go-app');
+    if(btn){btn.style.display='block';btn.textContent='Ver meu plano 🚀';}
+  }
   try{ aplicarIdioma(); }catch(e){}
 }
 
 // Chamadas pelos cards da Home — abrem a anamnese específica certa
 function iniciarAnamneseMusc(){ initAnam('musc'); show('sc-anam-musc'); }
 function iniciarAnamneseCorrida(){ initAnam('corrida'); show('sc-anam-corrida'); }
-function goToApp(){const email=DB.get('fq_cur');loadApp(email);show('sc-app');}
+function goToApp(){
+  const email=DB.get('fq_cur');
+  // Mostra a tela do app PRIMEIRO. Se algo falhar na renderização, o aluno
+  // ainda entra no app (antes, um erro em qualquer render deixava a pessoa
+  // presa na tela de "treino pronto", clicando no botão sem nada acontecer).
+  show('sc-app');
+  try{ loadApp(email); }
+  catch(e){
+    console.error('Erro ao carregar o app:',e);
+    fqToast('Algumas informações não carregaram. Puxe a tela para atualizar.','warn');
+  }
+}
 
 // ══ Rate limiting da IA (evita abuso) ══
 const _aiCallLog = {};
@@ -4892,8 +4926,8 @@ const FQ_I18N = {
     'anam.sel.male': "Masculino",
     'anam.sel.female': "Feminino",
     'anam.btn.submit': 'Enviar avaliação ✅',
-    'home.wantgym': 'Quero meu treino<br>de musculação',
-    'home.wantrun': 'Quero meu treino<br>de corrida',
+    'home.wantgym': 'Criar treino de musculação',
+    'home.wantrun': 'Criar plano de corrida',
     'anam.g.hdrtitle': '📋 Vamos te conhecer',
     'anam.g.hdrsub': 'Isso ajuda a gente a entender sua saúde e rotina — leva menos de 2 minutos.',
     'anam.g.sec2': '❤️ Saúde',
@@ -4907,6 +4941,9 @@ const FQ_I18N = {
     'anam.c.hdrsub': 'Bem rápido — só o essencial pra montar seu plano de corrida.',
     'anam.c.sec1': '🏃 Sua Corrida',
     'anam.c.sec2': '🩺 Lesões',
+    'home.wantgym.sub': 'Responda 3 etapas rápidas',
+    'home.wantrun.sub': 'Só 2 etapas — bem rápido',
+    'home.addplan': '➕ Adicionar ao seu plano',
     // ── Anamnese ──
     'anam.71ef84890d': "Data de nascimento",
     'anam.5c7d7a110a': "Sexo biológico",
@@ -5123,8 +5160,8 @@ const FQ_I18N = {
     'anam.sel.male': "Male",
     'anam.sel.female': "Female",
     'anam.btn.submit': 'Submit assessment ✅',
-    'home.wantgym': 'I want my<br>strength workout',
-    'home.wantrun': 'I want my<br>running plan',
+    'home.wantgym': 'Create strength plan',
+    'home.wantrun': 'Create running plan',
     'anam.g.hdrtitle': "📋 Let's get to know you",
     'anam.g.hdrsub': 'This helps us understand your health and routine — takes under 2 minutes.',
     'anam.g.sec2': '❤️ Health',
@@ -5138,6 +5175,9 @@ const FQ_I18N = {
     'anam.c.hdrsub': 'Quick one — just the essentials to build your running plan.',
     'anam.c.sec1': '🏃 Your Running',
     'anam.c.sec2': '🩺 Injuries',
+    'home.wantgym.sub': 'Answer 3 quick steps',
+    'home.wantrun.sub': 'Just 2 steps — very quick',
+    'home.addplan': '➕ Add to your plan',
     // ── Anamnese ──
     'anam.71ef84890d': "Date of birth",
     'anam.5c7d7a110a': "Biological sex",
@@ -5527,6 +5567,9 @@ function mostrarTelaExpirada(u){
 }
 
 function loadApp(email){
+  // Executa cada render isoladamente: se um falhar, os outros continuam
+  // (definido no topo pra estar disponível em toda a função)
+  const _safe=(fn,name)=>{try{fn();}catch(e){console.error('render '+name+':',e.message);}};
   const users=DB.get('fq_users')||{};const u=users[email];if(!u)return;
   // Verificar se o streak quebrou (não treinou ontem nem hoje)
   if(u.ultimoTreinoStreak){
@@ -5543,9 +5586,9 @@ function loadApp(email){
   document.getElementById('streak-val').textContent=(u.streak||1)+streakFlame(u.streak||1);
   // Home profile card
   const homeName=document.getElementById('home-name');if(homeName)homeName.textContent=u.name||'Atleta';
-  updateAvatarDisplays(u);
-  renderPerfil(u);
-  checkAdminBtn();
+  _safe(()=>updateAvatarDisplays(u),'avatar');
+  _safe(()=>renderPerfil(u),'perfil');
+  _safe(()=>checkAdminBtn(),'adminBtn');
   // XP
   const xpN=(u.level||1)*1000;
   const lvEl=document.getElementById('app-lv');if(lvEl)lvEl.textContent=u.level||1;
@@ -5575,7 +5618,6 @@ function loadApp(email){
   const cwBarRun=document.getElementById('cw-bar-run');if(cwBarRun)cwBarRun.style.width=pctR+'%';
   const cwSubRun=document.getElementById('cw-sub-run');if(cwSubRun)cwSubRun.textContent=`${rw} · ${rprog?.meta||''}`;
   // Render
-  const _safe=(fn,name)=>{try{fn();}catch(e){console.error('render '+name+':',e.message);}};
   _safe(()=>renderMissions(u.missions||[]),'missions');
   _safe(()=>renderRankingCarousel(u,email,users),'rankCar');
   carregarRanking().then(()=>{try{renderRankingCarousel(u,email,users);renderRankingFull(u,email,users);}catch(e){}});
@@ -5589,10 +5631,10 @@ function loadApp(email){
   _safe(()=>renderHomePlanoCards(),'planoCards');
   _safe(()=>renderHomeMissoesCard(),'missoesCard');
   _safe(()=>renderMissoes(),'missoes');
-  renderBadges(u.badges||[]);
-  renderEvo(u);
+  _safe(()=>renderBadges(u.badges||[]),'badges');
+  _safe(()=>renderEvo(u),'evo');
   renderStore(u);
-  renderHomePrograms(u);
+  _safe(()=>renderHomePrograms(u),'programas');
 }
 
 // ══ HISTORY ══
@@ -6179,6 +6221,10 @@ function abrirModal(modalId){
 }
 
 window.addEventListener('popstate', function(){
+  // Se este "voltar" foi disparado pelo próprio código só pra limpar a entrada
+  // de histórico de um modal recém-fechado, não faz nada — senão o app navegaria
+  // pra Home sem o usuário ter pedido.
+  if(_fqConsumindoHistorico){ _fqConsumindoHistorico=false; return; }
   _fqNavegandoViaVoltar = true;
   // Prioridade 1: se houver um modal aberto, o Voltar fecha ELE (não a tela toda)
   const modalAberto = document.querySelector('.modal-ov.open, [id^="modal-"].open');
@@ -8804,7 +8850,10 @@ function dismissBanner(){document.getElementById('pwa-banner').style.display='no
           DB.set('fq_users',users);DB.set('fq_cur',fresh.email);
           if(merged.isAdmin){await loadAdmin();show('sc-adm');return;}
           if(!merged.anamneseDone){initAnam('geral');show('sc-anam-geral');return;}
-          if(!merged.aiPlan){try{gerarTreinoFallback(fresh.email,merged.anamnese||{});}catch(e){}} // nunca entrar sem plano
+          // NÃO gera plano automaticamente: na arquitetura atual o aluno escolhe
+          // na Home se quer musculação, corrida ou os dois. Gerar aqui atropelaria
+          // essa escolha e faria os cards de "criar treino" sumirem sem motivo.
+          if(false){try{gerarTreinoFallback(fresh.email,merged.anamnese||{});}catch(e){}} // nunca entrar sem plano
           loadApp(fresh.email);show('sc-app');return;
         }
       }
@@ -8817,7 +8866,7 @@ function dismissBanner(){document.getElementById('pwa-banner').style.display='no
     if(email===ADMIN_EMAIL)u.isAdmin=true;
     if(u.isAdmin){await loadAdmin();show('sc-adm');return;}
     if(!u.anamneseDone){initAnam('geral');show('sc-anam-geral');return;}
-    if(!u.aiPlan){try{gerarTreinoFallback(email,u.anamnese||{});}catch(e){}}
+    // NÃO gera plano automaticamente — o aluno escolhe na Home o que quer criar
     loadApp(email);show('sc-app');
   }catch(e){
     console.error('Init error:',e);
@@ -10056,18 +10105,28 @@ function renderHomePlanoCards(){
   if(temGym && temRun){ el.innerHTML=''; return; } // os dois ja gerados, nao mostra nada
 
   const cardMusc = !temGym ? `
-    <div onclick="iniciarAnamneseMusc()" style="flex:1;background:linear-gradient(135deg,rgba(229,9,20,.14),rgba(229,9,20,.04));border:1px solid rgba(229,9,20,.3);border-radius:12px;padding:16px;cursor:pointer;text-align:center">
-      <div style="font-size:32px;margin-bottom:8px">🏋️</div>
-      <div style="font-size:12.5px;font-weight:900;line-height:1.3" data-i18n="home.wantgym">Quero meu treino<br>de musculação</div>
+    <div onclick="iniciarAnamneseMusc()" style="flex:1;display:flex;align-items:center;gap:12px;background:linear-gradient(135deg,rgba(229,9,20,.14),rgba(229,9,20,.04));border:1px dashed rgba(229,9,20,.45);border-radius:12px;padding:14px;cursor:pointer;min-height:64px">
+      <div style="font-size:26px">🏋️</div>
+      <div style="flex:1;min-width:0">
+        <div style="font-size:13px;font-weight:900;line-height:1.25" data-i18n="home.wantgym">Criar treino de musculação</div>
+        <div style="font-size:10.5px;color:var(--mu);margin-top:2px" data-i18n="home.wantgym.sub">Responda 3 etapas rápidas</div>
+      </div>
+      <div style="font-size:18px;color:var(--r)">›</div>
     </div>` : '';
 
   const cardCorrida = !temRun ? `
-    <div onclick="iniciarAnamneseCorrida()" style="flex:1;background:linear-gradient(135deg,rgba(46,204,113,.12),rgba(46,204,113,.03));border:1px solid rgba(46,204,113,.3);border-radius:12px;padding:16px;cursor:pointer;text-align:center">
-      <div style="font-size:32px;margin-bottom:8px">🏃</div>
-      <div style="font-size:12.5px;font-weight:900;line-height:1.3" data-i18n="home.wantrun">Quero meu treino<br>de corrida</div>
+    <div onclick="iniciarAnamneseCorrida()" style="flex:1;display:flex;align-items:center;gap:12px;background:linear-gradient(135deg,rgba(46,204,113,.12),rgba(46,204,113,.03));border:1px dashed rgba(46,204,113,.45);border-radius:12px;padding:14px;cursor:pointer;min-height:64px">
+      <div style="font-size:26px">🏃</div>
+      <div style="flex:1;min-width:0">
+        <div style="font-size:13px;font-weight:900;line-height:1.25" data-i18n="home.wantrun">Criar plano de corrida</div>
+        <div style="font-size:10.5px;color:var(--mu);margin-top:2px" data-i18n="home.wantrun.sub">Só 2 etapas — bem rápido</div>
+      </div>
+      <div style="font-size:18px;color:#2ecc71">›</div>
     </div>` : '';
 
-  el.innerHTML = `<div style="display:flex;gap:10px">${cardMusc}${cardCorrida}</div>`;
+  el.innerHTML = `
+    <div style="font-size:11px;font-weight:800;color:var(--mu);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px" data-i18n="home.addplan">➕ Adicionar ao seu plano</div>
+    <div style="display:flex;flex-direction:column;gap:8px">${cardMusc}${cardCorrida}</div>`;
   try{ aplicarIdioma(); }catch(e){}
 }
 
