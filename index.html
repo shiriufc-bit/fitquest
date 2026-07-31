@@ -130,8 +130,8 @@ textarea.fi{resize:vertical;min-height:80px;}
 .auth-back{position:absolute;top:16px;left:16px;background:rgba(255,255,255,.1);border:1px solid var(--b);border-radius:6px;padding:8px 14px;color:var(--t2);font-size:13px;font-weight:600;cursor:pointer;}
 
 /* ══ ANAMNESE ══ */
-#sc-anam{min-height:100vh;padding:0 0 80px;display:none;background:var(--bg);}
-#sc-anam.active{display:block;}
+#sc-anam,#sc-anam-geral,#sc-anam-musc,#sc-anam-corrida{min-height:100vh;padding:0 0 80px;display:none;background:var(--bg);}
+#sc-anam.active,#sc-anam-geral.active,#sc-anam-musc.active,#sc-anam-corrida.active{display:block;}
 .an-hdr{background:linear-gradient(135deg,rgba(229,9,20,.15),transparent);border-bottom:1px solid var(--b);padding:24px 20px 20px;}
 .an-hdr h1{font-size:22px;font-weight:900;margin-bottom:4px;}
 .an-hdr p{font-size:13px;color:var(--t2);}
@@ -207,7 +207,7 @@ textarea.fi{resize:vertical;min-height:80px;}
 .section{padding:0 0 8px;}
 .section-hdr{padding:0 20px;margin-bottom:12px;display:flex;align-items:center;justify-content:space-between;}
 .section-title{font-size:18px;font-weight:800;letter-spacing:-.3px;text-shadow:0 1px 4px rgba(0,0,0,.5);}
-.section-link{font-size:12px;color:var(--r);font-weight:700;cursor:pointer;}
+.section-link{font-size:12px;color:var(--r);font-weight:700;cursor:pointer;padding:9px 6px;margin:-9px -6px;display:inline-block;min-height:32px;line-height:16px;}
 
 /* CARROSSEL */
 .carousel{display:flex;gap:10px;overflow-x:auto;padding:0 20px 8px;scrollbar-width:none;}
@@ -800,7 +800,7 @@ textarea.fi{resize:vertical;min-height:80px;}
       <option value="en">🇺🇸 EN</option>
     </select>
   </div>
-  <div id="fq-version-badge" style="position:absolute;bottom:8px;right:12px;font-size:9px;color:#333;font-weight:700;z-index:5">v107</div>
+  <div id="fq-version-badge" style="position:absolute;bottom:8px;right:12px;font-size:9px;color:#333;font-weight:700;z-index:5">v109</div>
   <img src="https://images.unsplash.com/photo-1517836357463-d25dfeac3438?w=800&q=80" alt="Fitness" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center top;filter:brightness(.35);z-index:0"/>
   <div class="splash-glow"></div>
   <div class="splash-noise"></div>
@@ -884,7 +884,6 @@ textarea.fi{resize:vertical;min-height:80px;}
 
   <div id="anam-geral-step-2" class="anam-step" style="display:none">
     <div class="an-sec"><div class="an-stt" data-i18n="anam.g.sec2">❤️ Saúde</div>
-    <div class="an-sec"><div class="an-stt" data-i18n="anam.sec.4">❤️ Histórico de Saúde</div>
       <div class="fg"><label class="fl" data-i18n="anam.79d8fc6d21">Condições de saúde diagnosticadas</label>
         <div class="cg" id="cg-saude">
           <label class="co"><input type="checkbox" value="Hipertensão arterial"><span class="cb"></span><span data-i18n="anam.8bd8f172f0">Hipertensão arterial</span></label>
@@ -967,7 +966,6 @@ textarea.fi{resize:vertical;min-height:80px;}
     </div>
   </div>
 
-
   <div style="height:80px"></div>
   <div class="an-nav">
     <button class="btn-bk" id="btn-back-geral" onclick="anamPrev('geral')" style="display:none" data-i18n="anam.btn.back">← Voltar</button>
@@ -984,7 +982,6 @@ textarea.fi{resize:vertical;min-height:80px;}
 
   <div id="anam-musc-step-1" class="anam-step">
     <div class="an-sec"><div class="an-stt" data-i18n="anam.m.sec1">🏋️ Experiência e Estrutura</div>
-    <div class="an-sec"><div class="an-stt" data-i18n="anam.sec.2">🏋️ Experiência de Treino</div>
       <div class="fg"><label class="fl" data-i18n="anam.450040215f">Tempo de experiência com exercícios</label>
         <div class="rg" id="rg-tempo">
           <label class="ro"><input type="radio" name="tempo" value="Nunca treinei"><span data-i18n="anam.1f571c8163">🌱 Nunca treinei</span></label>
@@ -1033,7 +1030,6 @@ textarea.fi{resize:vertical;min-height:80px;}
 
   <div id="anam-musc-step-2" class="anam-step" style="display:none">
     <div class="an-sec"><div class="an-stt" data-i18n="anam.m.sec2">🎯 Objetivos</div>
-    <div class="an-sec"><div class="an-stt" data-i18n="anam.sec.3">🎯 Objetivos e Metas</div>
       <div class="fg"><label class="fl" data-i18n="anam.59ad7c9279">Objetivos <span style="font-weight:400;color:var(--mu)">(selecione todos que se aplicam)</span></label>
         <div class="cg" id="cg-obj">
           <label class="co"><input type="checkbox" value="Hipertrofia (ganho de massa muscular)"><span class="cb"></span><span data-i18n="anam.34541cccb0">💪 Hipertrofia — ganho de massa muscular</span></label>
@@ -1138,7 +1134,6 @@ textarea.fi{resize:vertical;min-height:80px;}
     </div>
   </div>
 
-
   <div style="height:80px"></div>
   <div class="an-nav">
     <button class="btn-bk" id="btn-back-musc" onclick="anamPrev('musc')" style="display:none" data-i18n="anam.btn.back">← Voltar</button>
@@ -1221,7 +1216,6 @@ textarea.fi{resize:vertical;min-height:80px;}
 
     </div>
   </div>
-
 
   <div style="height:80px"></div>
   <div class="an-nav">
@@ -1373,7 +1367,7 @@ textarea.fi{resize:vertical;min-height:80px;}
 
       <!-- XP PROGRESS -->
       <div class="section">
-        <div class="section-hdr"><div class="section-title">Nível <span id="app-lv">1</span></div><div class="section-link" onclick="switchTab('badges',document.querySelectorAll('.nbtn')[5])">Conquistas</div></div>
+        <div class="section-hdr"><div class="section-title">Nível <span id="app-lv-2">1</span></div><div class="section-link" onclick="switchTab('badges',document.querySelectorAll('.nbtn')[5])">Conquistas</div></div>
         <div style="padding:0 20px;margin-bottom:8px">
           <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--t2);margin-bottom:6px;font-weight:600">
             <span id="app-xp">0 XP</span><span id="app-xpn">1000 XP</span>
@@ -1382,7 +1376,7 @@ textarea.fi{resize:vertical;min-height:80px;}
             <div id="app-xpb" style="height:100%;border-radius:99px;background:var(--r);width:0%;transition:width 1s;box-shadow:0 0 8px var(--rg)"></div>
           </div>
           <div style="display:flex;justify-content:space-between;margin-top:8px">
-            <span style="font-size:11px;color:var(--t2)">🪙 <span id="app-co">0</span> moedas</span>
+            <span style="font-size:11px;color:var(--t2)">🪙 <span id="app-co-2">0</span> moedas</span>
             <span style="font-size:11px;color:var(--r);font-weight:700" id="app-nm-small">Atleta</span>
           </div>
         </div>
@@ -1513,7 +1507,7 @@ textarea.fi{resize:vertical;min-height:80px;}
         <div style="padding:16px 20px 20px">
         <div style="margin-bottom:20px">
           <div style="font-size:28px;font-weight:900;margin-bottom:4px;display:none">🏆 Conquistas</div>
-          <div style="font-size:13px;color:var(--t2)"><span id="badges-count">0/8</span> desbloqueadas</div>
+          <div style="font-size:13px;color:var(--t2)"><span id="badges-count-2">0/8</span> desbloqueadas</div>
           <div class="pbb" style="margin-top:10px"><div class="pbf" id="badges-bar" style="width:0%"></div></div>
         </div>
         <div class="stl">Conquistadas</div>
@@ -2102,7 +2096,7 @@ textarea.fi{resize:vertical;min-height:80px;}
 <!-- MODALS -->
 <div class="modal-ov" id="modal-student"><div class="modal-bx"><div class="modal-t"><span id="modal-st-name">Aluno</span><button class="modal-cl" onclick="closeModal('modal-student')">✕</button></div><div id="modal-st-content"></div></div></div>
 <div class="modal-ov" id="modal-anam"><div class="modal-bx"><div class="modal-t"><span>📋 Anamnese</span><button class="modal-cl" onclick="closeModal('modal-anam')">✕</button></div><div id="modal-anam-content"></div></div></div>
-<div class="modal-ov" id="modal-add-ex"><div class="modal-bx"><div class="modal-t"><span id="modal-ex-title">➕ Exercício</span><button class="modal-cl" onclick="closeModal('modal-add-ex')">✕</button></div><div id="modal-ex-content"></div></div></div>
+<div class="modal-ov" id="modal-adm-ex"><div class="modal-bx"><div class="modal-t"><span id="modal-ex-title">➕ Exercício</span><button class="modal-cl" onclick="closeModal('modal-adm-ex')">✕</button></div><div id="modal-ex-content"></div></div></div>
 <div class="modal-ov" id="modal-timer">
   <div class="modal-bx">
     <div style="font-size:11px;color:var(--mu);font-weight:800;text-transform:uppercase;letter-spacing:2px;margin-bottom:20px;text-align:center">⏱️ Descanso</div>
@@ -2359,7 +2353,7 @@ textarea.fi{resize:vertical;min-height:80px;}
 
 <script>
 // ══ SUPABASE ══
-const FQ_VERSION='v107';console.log('%cFitQuest '+FQ_VERSION,'color:#e50914;font-weight:bold;font-size:14px');
+const FQ_VERSION='v109';console.log('%cFitQuest '+FQ_VERSION,'color:#e50914;font-weight:bold;font-size:14px');
 // ══ PROXY DE IA (Cloudflare Worker) ══
 // Quando preenchido, a IA real funciona em produção com a chave protegida no servidor.
 // Deixe '' para usar o plano local (fallback). Ex: 'https://fitquest-ai.SEU-USUARIO.workers.dev'
@@ -5555,8 +5549,10 @@ function loadApp(email){
   // XP
   const xpN=(u.level||1)*1000;
   const lvEl=document.getElementById('app-lv');if(lvEl)lvEl.textContent=u.level||1;
+  const lvEl2=document.getElementById('app-lv-2');if(lvEl2)lvEl2.textContent=u.level||1;
   const stEl=document.getElementById('app-st');if(stEl)stEl.textContent=(u.streak||1)+streakFlame(u.streak||1);
   const coEl=document.getElementById('app-co');if(coEl)coEl.textContent=u.coins||0;
+  const coEl2=document.getElementById('app-co-2');if(coEl2)coEl2.textContent=u.coins||0;
   const xpEl=document.getElementById('app-xp');if(xpEl)xpEl.textContent=(u.xp||0).toLocaleString()+' XP';
   const xpnEl=document.getElementById('app-xpn');if(xpnEl)xpnEl.textContent=xpN.toLocaleString()+' XP';
   const xpbEl=document.getElementById('app-xpb');if(xpbEl)xpbEl.style.width=Math.min(((u.xp||0)/xpN)*100,100)+'%';
@@ -6158,6 +6154,7 @@ function renderBadges(earned){
   document.getElementById('badges-earned').innerHTML=e.map(b=>card(b,true)).join('')||'<div style="color:var(--mu);font-size:12px">Nenhuma ainda!</div>';
   document.getElementById('badges-locked').innerHTML=l.map(b=>card(b,false)).join('');
   document.getElementById('badges-count').textContent=`${e.length}/${BADGES.length}`;
+  const bc2=document.getElementById('badges-count-2');if(bc2)bc2.textContent=document.getElementById('badges-count').textContent;
   document.getElementById('badges-bar').style.width=(e.length/BADGES.length*100)+'%';
 }
 
@@ -6669,14 +6666,14 @@ function openAddEx(id=null){
   const ex=id?EXERCISE_BANK.find(e=>e.id===id):{id:'e'+String(EXERCISE_BANK.length+1).padStart(3,'0'),name:'',muscle:'',equipment:'',emoji:'🏋️',obs:''};
   document.getElementById('modal-ex-title').textContent=id?'✏️ Editar':'➕ Novo Exercício';
   document.getElementById('modal-ex-content').innerHTML=`<div class="fg"><label class="fl">Nome</label><input class="fi" id="ex-name" value="${ex.name}" placeholder="Ex: Supino Plano"/></div><div class="fr"><div class="fg"><label class="fl">Músculo</label><input class="fi" id="ex-muscle" value="${ex.muscle}" placeholder="Peito"/></div><div class="fg"><label class="fl">Equipamento</label><input class="fi" id="ex-equip" value="${ex.equipment}" placeholder="Barra"/></div></div><div class="fr"><div class="fg"><label class="fl">Emoji</label><input class="fi" id="ex-emoji" value="${ex.emoji||'🏋️'}" placeholder="🏋️"/></div></div><div class="fg"><label class="fl">Dica de execução</label><textarea class="fi" id="ex-obs" placeholder="Descreva...">${ex.obs}</textarea></div><button class="btn-p" onclick="saveEx('${ex.id}')">💾 Salvar</button>`;
-  abrirModal('modal-add-ex');
+  abrirModal('modal-adm-ex');
 }
 function saveEx(id){
   const name=document.getElementById('ex-name').value.trim();const muscle=document.getElementById('ex-muscle').value.trim();
   if(!name||!muscle){fqToast('Nome e músculo obrigatórios.','warn');return;}
   const obj={id,name,muscle,equipment:document.getElementById('ex-equip').value.trim(),emoji:document.getElementById('ex-emoji').value.trim()||'🏋️',obs:document.getElementById('ex-obs').value.trim()};
   const idx=EXERCISE_BANK.findIndex(e=>e.id===id);if(idx>=0)EXERCISE_BANK[idx]=obj;else EXERCISE_BANK.push(obj);
-  closeModal('modal-add-ex');renderBank();fqToast('✅ Exercício salvo!','ok');
+  closeModal('modal-adm-ex');renderBank();fqToast('✅ Exercício salvo!','ok');
 }
 async function delEx(id){if(!await fqConfirm('Excluir exercício','Remover este exercício do banco?','Excluir','🗑️'))return;const i=EXERCISE_BANK.findIndex(e=>e.id===id);if(i>=0)EXERCISE_BANK.splice(i,1);renderBank();}
 
