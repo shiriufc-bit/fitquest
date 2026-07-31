@@ -803,7 +803,7 @@ textarea.fi{resize:vertical;min-height:80px;}
       <option value="en">🇺🇸 EN</option>
     </select>
   </div>
-  <div id="fq-version-badge" style="position:absolute;bottom:8px;right:12px;font-size:9px;color:#333;font-weight:700;z-index:5">v111</div>
+  <div id="fq-version-badge" style="position:absolute;bottom:8px;right:12px;font-size:9px;color:#333;font-weight:700;z-index:5">v112</div>
   <img src="https://images.unsplash.com/photo-1517836357463-d25dfeac3438?w=800&q=80" alt="Fitness" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center top;filter:brightness(.35);z-index:0"/>
   <div class="splash-glow"></div>
   <div class="splash-noise"></div>
@@ -1452,6 +1452,7 @@ textarea.fi{resize:vertical;min-height:80px;}
         <div style="padding:0 20px;margin-bottom:14px">
           <div class="wk-weeks" id="run-wtabs"></div>
         </div>
+        <div id="run-unlock-info"></div>
         <div id="run-sessions"></div>
       </div>
     </div>
@@ -2358,7 +2359,7 @@ textarea.fi{resize:vertical;min-height:80px;}
 
 <script>
 // ══ SUPABASE ══
-const FQ_VERSION='v111';console.log('%cFitQuest '+FQ_VERSION,'color:#e50914;font-weight:bold;font-size:14px');
+const FQ_VERSION='v112';console.log('%cFitQuest '+FQ_VERSION,'color:#e50914;font-weight:bold;font-size:14px');
 // ══ PROXY DE IA (Cloudflare Worker) ══
 // Quando preenchido, a IA real funciona em produção com a chave protegida no servidor.
 // Deixe '' para usar o plano local (fallback). Ex: 'https://fitquest-ai.SEU-USUARIO.workers.dev'
@@ -3040,10 +3041,10 @@ function renovarMissoesSemanais(u){
   return true;
 }
 function rowToUser(data){
-  return{id:data.id,name:data.nome,email:data.email,plano:data.plano,trialInicio:data.trial_inicio,assinaturaStatus:data.assinatura_status||'trial',assinaturaAte:data.assinatura_ate,diaConversao:data.dia_conversao,dataConversao:data.data_conversao,planoConversao:data.plano_conversao,trainApproved:data.treino_liberado,isAdmin:!!data.is_admin,aiPlan:data.ai_plan,anamnese:data.anamnese,anamneseDone:!!data.anamnese_geral,anamneseGeral:data.anamnese_geral||null,anamneseMusculacao:data.anamnese_musculacao||null,anamneseCorrida:data.anamnese_corrida||null,anamneseMuscDone:!!data.anamnese_musculacao,anamneseCorridaDone:!!data.anamnese_corrida,gymWeek:data.gym_week||1,runWeek:data.run_week||1,gymDone:data.gym_done||{},runDone:data.run_done||{},loadHistory:data.load_history||{},workoutHistory:data.workout_history||[],xp:data.xp||0,level:data.level||1,streak:data.streak||1,coins:data.coins||0,badges:data.badges||[],prs:data.prs||[],stats:data.stats||{treinos:0,distancia:0,semanas:0},purchases:data.purchases||[],pacoteEbooks:!!data.pacote_ebooks,programIntakes:data.program_intakes||{},avatar:data.avatar||null,evals:data.evals||[],missions:MISSOES_PADRAO.map(m=>({...m})),createdAt:data.criado_em,lastLogin:data.ultimo_acesso};
+  return{id:data.id,name:data.nome,email:data.email,plano:data.plano,trialInicio:data.trial_inicio,runInicio:data.run_inicio,assinaturaStatus:data.assinatura_status||'trial',assinaturaAte:data.assinatura_ate,diaConversao:data.dia_conversao,dataConversao:data.data_conversao,planoConversao:data.plano_conversao,trainApproved:data.treino_liberado,isAdmin:!!data.is_admin,aiPlan:data.ai_plan,anamnese:data.anamnese,anamneseDone:!!data.anamnese_geral,anamneseGeral:data.anamnese_geral||null,anamneseMusculacao:data.anamnese_musculacao||null,anamneseCorrida:data.anamnese_corrida||null,anamneseMuscDone:!!data.anamnese_musculacao,anamneseCorridaDone:!!data.anamnese_corrida,gymWeek:data.gym_week||1,runWeek:data.run_week||1,gymDone:data.gym_done||{},runDone:data.run_done||{},loadHistory:data.load_history||{},workoutHistory:data.workout_history||[],xp:data.xp||0,level:data.level||1,streak:data.streak||1,coins:data.coins||0,badges:data.badges||[],prs:data.prs||[],stats:data.stats||{treinos:0,distancia:0,semanas:0},purchases:data.purchases||[],pacoteEbooks:!!data.pacote_ebooks,programIntakes:data.program_intakes||{},avatar:data.avatar||null,evals:data.evals||[],missions:MISSOES_PADRAO.map(m=>({...m})),createdAt:data.criado_em,lastLogin:data.ultimo_acesso};
 }
 function userToRow(u){
-  return{id:u.id,nome:u.name,email:u.email,plano:u.plano||'free',trial_inicio:u.trialInicio||new Date().toISOString(),treino_liberado:u.trainApproved||false,ai_plan:u.aiPlan||null,anamnese:u.anamnese||null,anamnese_geral:u.anamneseGeral||null,anamnese_musculacao:u.anamneseMusculacao||null,anamnese_corrida:u.anamneseCorrida||null,gym_week:u.gymWeek||1,run_week:u.runWeek||1,gym_done:u.gymDone||{},run_done:u.runDone||{},load_history:u.loadHistory||{},workout_history:u.workoutHistory||[],xp:u.xp||0,level:u.level||1,streak:u.streak||1,coins:u.coins||0,badges:u.badges||[],prs:u.prs||[],stats:u.stats||{treinos:0,distancia:0,semanas:0},avatar:u.avatar||null,evals:u.evals||[],program_intakes:u.programIntakes||{},ultimo_acesso:new Date().toISOString(),updated_at:new Date().toISOString()};
+  return{id:u.id,nome:u.name,email:u.email,plano:u.plano||'free',trial_inicio:u.trialInicio||new Date().toISOString(),run_inicio:u.runInicio||null,treino_liberado:u.trainApproved||false,ai_plan:u.aiPlan||null,anamnese:u.anamnese||null,anamnese_geral:u.anamneseGeral||null,anamnese_musculacao:u.anamneseMusculacao||null,anamnese_corrida:u.anamneseCorrida||null,gym_week:u.gymWeek||1,run_week:u.runWeek||1,gym_done:u.gymDone||{},run_done:u.runDone||{},load_history:u.loadHistory||{},workout_history:u.workoutHistory||[],xp:u.xp||0,level:u.level||1,streak:u.streak||1,coins:u.coins||0,badges:u.badges||[],prs:u.prs||[],stats:u.stats||{treinos:0,distancia:0,semanas:0},avatar:u.avatar||null,evals:u.evals||[],program_intakes:u.programIntakes||{},ultimo_acesso:new Date().toISOString(),updated_at:new Date().toISOString()};
   // Obs.: purchases/pacote_ebooks/is_admin/plano NÃO são enviados pelo aluno — são protegidos no banco e só mudam via webhook de pagamento ou admin.
 }
 async function syncU(u){if(!sb||!u||!u.id)return;try{await sb.from('alunos').upsert(userToRow(u),{onConflict:'id'});}catch(e){console.warn('sync:',e.message);}}
@@ -4463,7 +4464,12 @@ function gerarTreinoFallback(email,an,tipo){
     const planoAtual=users[email].aiPlan||{};
     const novoPlano={...planoAtual};
     if(!tipo||tipo==='gym') novoPlano.gym=RD_gerarGym(p);
-    if(!tipo||tipo==='run') novoPlano.run=RD_gerarRun(p);
+    if(!tipo||tipo==='run'){
+      novoPlano.run=RD_gerarRun(p);
+      // Marca quando o plano de corrida começou — é a partir daqui que as
+      // semanas seguintes vão liberando (1 por semana real)
+      if(!users[email].runInicio) users[email].runInicio=new Date().toISOString();
+    }
     users[email].aiPlan=novoPlano;
     users[email].fcMax=p.fcMax;
     users[email].motorRD=true; // marca que veio do Motor Rennan Dias
@@ -5880,7 +5886,12 @@ function renderMeuTreino(u){
   elEx.innerHTML=`
     ${exs.length?exs.map((ex,i)=>`
       <div style="background:var(--s);border:1px solid var(--b);border-radius:10px;padding:12px 14px;margin-bottom:8px">
-        <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
+          <div style="display:flex;flex-direction:column;gap:2px;flex-shrink:0">
+            <button onclick="mtMoverEx(${i},-1)" ${i===0?'disabled':''} style="background:${i===0?'rgba(255,255,255,.03)':'rgba(255,255,255,.08)'};border:1px solid var(--b);color:${i===0?'var(--mu)':'#fff'};border-radius:5px;width:26px;height:20px;font-size:11px;cursor:${i===0?'default':'pointer'};line-height:1;padding:0" title="Mover para cima">▲</button>
+            <button onclick="mtMoverEx(${i},1)" ${i===exs.length-1?'disabled':''} style="background:${i===exs.length-1?'rgba(255,255,255,.03)':'rgba(255,255,255,.08)'};border:1px solid var(--b);color:${i===exs.length-1?'var(--mu)':'#fff'};border-radius:5px;width:26px;height:20px;font-size:11px;cursor:${i===exs.length-1?'default':'pointer'};line-height:1;padding:0" title="Mover para baixo">▼</button>
+          </div>
+          <div style="background:var(--r);color:#fff;border-radius:6px;min-width:24px;height:24px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:900;flex-shrink:0">${i+1}</div>
           <div style="flex:1;min-width:0">
             <div style="font-size:13px;font-weight:800;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${ex.nome}</div>
             ${ex.custom?'<div style="font-size:9px;color:#f39c12;font-weight:700">✏️ SEU EXERCÍCIO</div>':''}
@@ -5936,6 +5947,18 @@ function mtEditarEx(idx,campo,valor){
     exs[idx][campo]=sanitizeStr(valor,20);
   }
   saveU(u);
+}
+
+// Move um exercício do "Meu Treino" para cima (-1) ou para baixo (+1) na ordem
+function mtMoverEx(idx, direcao){
+  const u=getU(); if(!u||!u.meuTreino) return;
+  const lista=u.meuTreino.dias[MT_DIA_ATUAL];
+  if(!lista) return;
+  const novo=idx+direcao;
+  if(novo<0 || novo>=lista.length) return; // já está no topo/fim
+  [lista[idx], lista[novo]] = [lista[novo], lista[idx]];
+  saveU(u);
+  renderGym(u);
 }
 
 function mtRemoverEx(idx){
@@ -6141,6 +6164,27 @@ function completeWk(w,d){
 }
 
 // ══ RUN ══
+// ══ LIBERAÇÃO SEMANAL DO PLANO DE CORRIDA (por tempo) ══
+// Periodização só funciona com tempo real de recuperação entre as semanas.
+// Sem isso, o aluno completaria os 3 treinos da semana no mesmo dia e
+// destravaria o plano inteiro em poucos dias — o que anula o efeito do treino.
+function runSemanaLiberada(u){
+  if(!u) return 1;
+  if(!u.runInicio) return 1; // plano recém-criado: só a semana 1
+  const dias = Math.floor((Date.now() - new Date(u.runInicio).getTime())/(1000*60*60*24));
+  const porTempo = Math.floor(dias/7) + 1;
+  const R = (typeof getRP==='function') ? getRP(u) : {};
+  const total = Object.keys(R).length || 1;
+  return Math.max(1, Math.min(porTempo, total));
+}
+
+// Quantos dias faltam pra próxima semana liberar (0 = já liberou)
+function runDiasProxSemana(u){
+  if(!u||!u.runInicio) return 7;
+  const dias = Math.floor((Date.now() - new Date(u.runInicio).getTime())/(1000*60*60*24));
+  return 7 - (dias % 7);
+}
+
 function renderRun(u){
   const R=getRP(u);const wks=Object.keys(R);const cw=`Semana ${u.runWeek||1}`;const prog=R[cw]||R[wks[0]]||{meta:'',sessions:[]};
   if(!u.trainApproved){document.getElementById('run-sessions').innerHTML=`<div style="text-align:center;padding:40px 20px"><div style="font-size:48px;margin-bottom:12px">⏳</div><div style="font-size:16px;font-weight:800;margin-bottom:8px">Programa de corrida em preparação</div><div style="font-size:13px;color:var(--t2)">Rennan está elaborando seu plano de corrida personalizado!</div></div>`;return;}
@@ -6148,7 +6192,16 @@ function renderRun(u){
   document.getElementById('run-title').textContent=`${cw} — ${prog.meta}`;
   document.getElementById('run-sub').textContent=`Semana ${u.runWeek||1} de ${wks.length}`;
   document.getElementById('run-prog').style.width=Math.round(((u.runWeek||1)/wks.length)*100)+'%';
-  document.getElementById('run-wtabs').innerHTML=wks.map(w=>{const wn=parseInt(w.split(' ')[1]);const lk=wn>(u.runWeek||1);const dn=wn<(u.runWeek||1);return `<div class="wk-week-btn ${w===cw?'active':''}" onclick="${lk?'':'selRW(\''+w+'\')' }" style="${lk?'opacity:.3;cursor:not-allowed':''}">${dn?'✅ ':lk?'🔒 ':''}${w}</div>`;}).join('');
+  const liberadaAte=runSemanaLiberada(u);
+  document.getElementById('run-wtabs').innerHTML=wks.map(w=>{const wn=parseInt(w.split(' ')[1]);const lk=wn>liberadaAte;const dn=wn<(u.runWeek||1);return `<div class="wk-week-btn ${w===cw?'active':''}" onclick="${lk?'':'selRW(\''+w+'\')' }" style="${lk?'opacity:.3;cursor:not-allowed':''}">${dn?'✅ ':lk?'🔒 ':''}${w}</div>`;}).join('');
+  // Aviso de quando a próxima semana abre (só se ainda houver semana bloqueada)
+  const elAviso=document.getElementById('run-unlock-info');
+  if(elAviso){
+    if(liberadaAte < wks.length){
+      const d=runDiasProxSemana(u);
+      elAviso.innerHTML=`<div style="background:rgba(255,255,255,.04);border:1px solid var(--b);border-radius:8px;padding:10px 12px;margin:0 20px 12px;font-size:11.5px;color:var(--t2);line-height:1.5">🔒 A <strong style="color:#fff">Semana ${liberadaAte+1}</strong> abre em ${d} ${d===1?'dia':'dias'} — a recuperação entre semanas faz parte do treino.</div>`;
+    } else { elAviso.innerHTML=''; }
+  }
   renderRunWeek(cw,u);
 }
 function selRW(w){const u=getU();if(!u)return;document.querySelectorAll('#run-wtabs .wk-week-btn').forEach(t=>t.classList.toggle('active',t.textContent.includes(w.replace('Semana ',''))));renderRunWeek(w,u);}
@@ -6168,7 +6221,18 @@ function markRun(w,i){
   atualizarStreak(u);
   try{registrarEventoComunidade('treino',{nome:u.name,nome_treino:'Corrida ('+(isNaN(km)?'':km+'km')+')',titulo:tituloAtual(u)?.emoji});}catch(e){}
   const tot=R[w].sessions.length;const tw=Object.keys(R).length;
-  if([...Array(tot).keys()].every(j=>u.runDone[`run_${w}_${j}`])){const wn=parseInt(w.split(' ')[1]);if(wn===(u.runWeek||1)&&(u.runWeek||1)<tw){u.runWeek=(u.runWeek||1)+1;u.xp+=150;u.coins+=30;}}
+  if([...Array(tot).keys()].every(j=>u.runDone[`run_${w}_${j}`])){
+    const wn=parseInt(w.split(' ')[1]);
+    // Só avança se o tempo também já liberou a próxima semana — completar
+    // tudo no mesmo dia não deve destravar o plano inteiro.
+    const liberada=runSemanaLiberada(u);
+    if(wn===(u.runWeek||1)&&(u.runWeek||1)<tw&&liberada>(u.runWeek||1)){
+      u.runWeek=(u.runWeek||1)+1;u.xp+=150;u.coins+=30;
+    }else if(wn===(u.runWeek||1)&&liberada<=(u.runWeek||1)){
+      const d=runDiasProxSemana(u);
+      setTimeout(()=>fqToast(`✅ Semana concluída! A próxima abre em ${d} ${d===1?'dia':'dias'}.`,'ok',5000),300);
+    }
+  }
   if((u.xp||0)>=(u.level||1)*1000){u.level=(u.level||1)+1;u.xp=0;setTimeout(()=>fqToast('🎉 Subiu para o Nível '+(u.level||1)+'!','ok',5000),200);try{dispararConfete(40);}catch(e){}}
   DB.set('fq_users',users);loadApp(email);switchTab('run',document.querySelectorAll('.nbtn')[2]);
 }
