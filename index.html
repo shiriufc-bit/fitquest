@@ -2652,7 +2652,13 @@ let EXERCISE_BANK=[
   {id:'e249',name:'Prancha com Salto 3 Apoios',muscle:'Core/Pliometria',equipment:'Peso Corporal',emoji:'🤸',obs:'Prancha de antebraço, salte alternando apoio de um pé de cada vez. Core rígido, sem balançar o quadril.'},
   {id:'e250',name:'Alongamento Abdominal Deitado (Cobra)',muscle:'Mobilidade/Abdômen',equipment:'Peso Corporal',emoji:'🐍',obs:'Deitado de bruços, apoie os antebraços e eleve o tronco levemente. Alonga a parede abdominal e flexores de quadril.'},
   {id:'e251',name:'Postura da Criança para Prancha (Mobilidade)',muscle:'Mobilidade/Ombro',equipment:'Peso Corporal',emoji:'🧘',obs:'Alterne entre postura da criança e prancha alta empurrando o chão. Ótimo aquecimento de ombro e coluna.'},
-  {id:'e252',name:'Rosca Drag (Drag Curl)',muscle:'Bíceps',equipment:'Barra',emoji:'🔽',obs:'A barra "arrasta" rente ao corpo subindo, cotovelos vão para trás. Remove a ajuda do deltoide, isola mais o bíceps.'}
+  {id:'e252',name:'Rosca Drag (Drag Curl)',muscle:'Bíceps',equipment:'Barra',emoji:'🔽',obs:'A barra "arrasta" rente ao corpo subindo, cotovelos vão para trás. Remove a ajuda do deltoide, isola mais o bíceps.'},
+  {id:'e253',name:'Crucifixo no Cabo (Altura Média)',muscle:'Peito',equipment:'Cabo',emoji:'✂️',obs:'Polias na altura do ombro, pegada neutra. Braços abrem e fecham em arco, sem dobrar o cotovelo.'},
+  {id:'e254',name:'Passada Estática no Smith (Split Squat)',muscle:'Quadríceps/Glúteo',equipment:'Smith',emoji:'🏛️',obs:'Passada dividida com a barra guiada, os dois pés no chão. Joelho traseiro quase toca o chão, tronco ereto.'},
+  {id:'e255',name:'Rosca Martelo Sentado',muscle:'Bíceps/Braquial',equipment:'Halteres',emoji:'🔨',obs:'Sentado no banco, pegada neutra, alterne os braços. Menos trapaço com o tronco que em pé.'},
+  {id:'e256',name:'Remada Baixa Pegada Aberta',muscle:'Costas',equipment:'Cabo',emoji:'🎣',obs:'Barra reta, pegada mais larga que os ombros. Mais foco em romboides e trapézio médio.'},
+  {id:'e257',name:'Flexão Relógio (Clock Push-up)',muscle:'Peito/Tríceps',equipment:'Peso Corporal',emoji:'🕐',obs:'Uma mão fixa no centro, a outra "caminha" ao redor como ponteiro de relógio. Trabalha peito em múltiplos ângulos.'},
+  {id:'e258',name:'Burpee Shuffle',muscle:'Corpo Todo/Cardio',equipment:'Peso Corporal',emoji:'💥',obs:'Burpee com deslocamento lateral entre repetições. Cardio + agilidade.'}
 ];
 
 const DG={
@@ -5789,7 +5795,7 @@ function renderPerfil(u){
 // ══ GIFS DE DEMONSTRAÇÃO DOS EXERCÍCIOS ══
 // Lista cresce conforme os gifs vão sendo adicionados à pasta /exercicios do repositório.
 // Fallback automático pro emoji+foto quando ausente.
-const EXERCICIOS_COM_GIF = new Set(['e001','e005','e006','e008','e010','e015','e018','e020','e022','e023','e024','e027','e041','e046','e061','e063','e075','e077','e079','e131','e136','e149','e196','e218','e225','e237','e238','e239','e240','e241','e242','e243','e244','e245','e246','e247','e248','e249','e250','e251','e252']);
+const EXERCICIOS_COM_GIF = new Set(['e001','e002','e003','e004','e005','e006','e007','e008','e009','e010','e011','e013','e014','e015','e016','e017','e018','e019','e020','e021','e022','e023','e024','e026','e027','e028','e030','e037','e041','e045','e046','e050','e051','e052','e053','e054','e061','e063','e075','e077','e079','e113','e120','e131','e136','e144','e149','e152','e182','e193','e196','e203','e217','e218','e225','e237','e238','e239','e240','e241','e242','e243','e244','e245','e246','e247','e248','e249','e250','e251','e252','e253','e254','e255','e256','e257','e258']);
 function temGifDemo(exId){ return EXERCICIOS_COM_GIF.has(exId); }
 function getExGif(exId){ return `exercicios/${exId}.gif`; }
 function renderExThumb(ex){
