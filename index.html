@@ -803,7 +803,7 @@ textarea.fi{resize:vertical;min-height:80px;}
       <option value="en">🇺🇸 EN</option>
     </select>
   </div>
-  <div id="fq-version-badge" style="position:absolute;bottom:8px;right:12px;font-size:9px;color:#333;font-weight:700;z-index:5">v112</div>
+  <div id="fq-version-badge" style="position:absolute;bottom:8px;right:12px;font-size:9px;color:#333;font-weight:700;z-index:5">v114</div>
   <img src="https://images.unsplash.com/photo-1517836357463-d25dfeac3438?w=800&q=80" alt="Fitness" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center top;filter:brightness(.35);z-index:0"/>
   <div class="splash-glow"></div>
   <div class="splash-noise"></div>
@@ -1240,7 +1240,10 @@ textarea.fi{resize:vertical;min-height:80px;}
 <!-- APP -->
 <div id="sc-app" class="screen">
   <nav class="app-nav" id="app-nav">
-    <div class="nav-logo"><span class="r">FIT</span>QUEST</div>
+    <div style="display:flex;align-items:center;gap:10px">
+      <button id="nav-back" onclick="voltarParaHome()" style="display:none;background:rgba(0,0,0,.45);border:1px solid rgba(255,255,255,.18);color:#fff;border-radius:10px;min-width:40px;min-height:40px;font-size:18px;cursor:pointer;align-items:center;justify-content:center;backdrop-filter:blur(8px);padding:0" aria-label="Voltar">←</button>
+      <div class="nav-logo"><span class="r">FIT</span>QUEST</div>
+    </div>
     <div class="nav-right">
       <div class="nav-streak">🔥 <span id="streak-val">1</span>d</div>
       <div class="nav-av" id="nav-av" onclick="toggleMenu()">?</div>
@@ -2359,7 +2362,7 @@ textarea.fi{resize:vertical;min-height:80px;}
 
 <script>
 // ══ SUPABASE ══
-const FQ_VERSION='v112';console.log('%cFitQuest '+FQ_VERSION,'color:#e50914;font-weight:bold;font-size:14px');
+const FQ_VERSION='v114';console.log('%cFitQuest '+FQ_VERSION,'color:#e50914;font-weight:bold;font-size:14px');
 // ══ PROXY DE IA (Cloudflare Worker) ══
 // Quando preenchido, a IA real funciona em produção com a chave protegida no servidor.
 // Deixe '' para usar o plano local (fallback). Ex: 'https://fitquest-ai.SEU-USUARIO.workers.dev'
@@ -2633,7 +2636,23 @@ let EXERCISE_BANK=[
   {id:'e231',name:'Salto Sobre a Caixa (Box Jump Over)',muscle:'Pliometria/Cardio',equipment:'Caixa',emoji:'📦',obs:'Salta e passa por cima da caixa.'},
   {id:'e232',name:'Burpee Pull-up',muscle:'Corpo Todo',equipment:'Barra Fixa',emoji:'🔥',obs:'Burpee terminando com barra fixa.'},
   {id:'e234',name:'Corda Naval - Ondas Duplas',muscle:'Cardio/Ombro',equipment:'Corda Naval',emoji:'🌊',obs:'Ondas simultâneas. 20-30s máximo.'},
-  {id:'e236',name:'Clean and Jerk',muscle:'Corpo Todo',equipment:'Barra',emoji:'🏋️',obs:'Técnica antes de carga. Movimento olímpico.'}
+  {id:'e236',name:'Clean and Jerk',muscle:'Corpo Todo',equipment:'Barra',emoji:'🏋️',obs:'Técnica antes de carga. Movimento olímpico.'},
+  {id:'e237',name:'Cadeira Extensora Unilateral',muscle:'Quadríceps',equipment:'Máquina',emoji:'🦵',obs:'Uma perna de cada vez. Corrige assimetrias entre as pernas.'},
+  {id:'e238',name:'Cadeira Abdutora',muscle:'Glúteo Médio',equipment:'Máquina',emoji:'🍑',obs:'Sentado, empurre os joelhos para fora contra a resistência. Fortalece glúteo médio.'},
+  {id:'e239',name:'Leg Press Horizontal',muscle:'Quadríceps/Glúteo',equipment:'Máquina',emoji:'🦵',obs:'Sentado, empurre a plataforma à frente. Amplitude controlada, sem travar o joelho.'},
+  {id:'e240',name:'Extensão Lombar (Hiperextensão)',muscle:'Lombar/Glúteo',equipment:'Banco Romano',emoji:'🔙',obs:'Quadril apoiado na almofada, desça controlado e suba até alinhar o tronco. Não hiperestenda.'},
+  {id:'e241',name:'Agachamento no Smith',muscle:'Quadríceps/Glúteo',equipment:'Smith',emoji:'🏛️',obs:'Barra guiada no trilho. Segurança para treinar próximo à falha sem spotter.'},
+  {id:'e242',name:'Agachamento Sumô no Smith',muscle:'Quadríceps/Glúteo/Adutores',equipment:'Smith',emoji:'🏛️',obs:'Pés bem abertos, pontas para fora. Barra guiada permite foco total na descida controlada.'},
+  {id:'e243',name:'Snatch Pull',muscle:'Corpo Todo/Costas',equipment:'Barra',emoji:'🏋️',obs:'Puxada explosiva de arranco sem o mergulho por baixo da barra. Trapézio, costas e pernas trabalham juntos.'},
+  {id:'e244',name:'Rosca Alternada no Banco Inclinado',muscle:'Bíceps',equipment:'Halteres',emoji:'🔄',obs:'Banco a 45-60°. Braços pendem atrás do tronco, alongamento maior da cabeça longa do bíceps.'},
+  {id:'e245',name:'Supino Reto com Halteres',muscle:'Peito',equipment:'Halteres',emoji:'🏋️',obs:'Halteres descem até o alongamento máximo do peito. Maior amplitude que a barra.'},
+  {id:'e246',name:'Rosca de Punho Invertida (Finger Curls)',muscle:'Antebraço',equipment:'Barra',emoji:'🤏',obs:'Antebraços apoiados nas coxas, barra rola até a ponta dos dedos e volta. Amplitude curta, foco total nos flexores.'},
+  {id:'e247',name:'Rosca de Punho em Pé com Halteres',muscle:'Antebraço',equipment:'Halteres',emoji:'🤏',obs:'Braços ao lado do corpo, flexione só o punho. Movimento pequeno e controlado.'},
+  {id:'e248',name:'Abdominal 3/4 (Sit-up Parcial)',muscle:'Abdômen',equipment:'Livre',emoji:'🎯',obs:'Sobe até 3/4 do caminho, sem encostar totalmente o tronco nas coxas. Mais amplitude que o crunch, menos que o sit-up completo.'},
+  {id:'e249',name:'Prancha com Salto 3 Apoios',muscle:'Core/Pliometria',equipment:'Peso Corporal',emoji:'🤸',obs:'Prancha de antebraço, salte alternando apoio de um pé de cada vez. Core rígido, sem balançar o quadril.'},
+  {id:'e250',name:'Alongamento Abdominal Deitado (Cobra)',muscle:'Mobilidade/Abdômen',equipment:'Peso Corporal',emoji:'🐍',obs:'Deitado de bruços, apoie os antebraços e eleve o tronco levemente. Alonga a parede abdominal e flexores de quadril.'},
+  {id:'e251',name:'Postura da Criança para Prancha (Mobilidade)',muscle:'Mobilidade/Ombro',equipment:'Peso Corporal',emoji:'🧘',obs:'Alterne entre postura da criança e prancha alta empurrando o chão. Ótimo aquecimento de ombro e coluna.'},
+  {id:'e252',name:'Rosca Drag (Drag Curl)',muscle:'Bíceps',equipment:'Barra',emoji:'🔽',obs:'A barra "arrasta" rente ao corpo subindo, cotovelos vão para trás. Remove a ajuda do deltoide, isola mais o bíceps.'}
 ];
 
 const DG={
@@ -3041,7 +3060,7 @@ function renovarMissoesSemanais(u){
   return true;
 }
 function rowToUser(data){
-  return{id:data.id,name:data.nome,email:data.email,plano:data.plano,trialInicio:data.trial_inicio,runInicio:data.run_inicio,assinaturaStatus:data.assinatura_status||'trial',assinaturaAte:data.assinatura_ate,diaConversao:data.dia_conversao,dataConversao:data.data_conversao,planoConversao:data.plano_conversao,trainApproved:data.treino_liberado,isAdmin:!!data.is_admin,aiPlan:data.ai_plan,anamnese:data.anamnese,anamneseDone:!!data.anamnese_geral,anamneseGeral:data.anamnese_geral||null,anamneseMusculacao:data.anamnese_musculacao||null,anamneseCorrida:data.anamnese_corrida||null,anamneseMuscDone:!!data.anamnese_musculacao,anamneseCorridaDone:!!data.anamnese_corrida,gymWeek:data.gym_week||1,runWeek:data.run_week||1,gymDone:data.gym_done||{},runDone:data.run_done||{},loadHistory:data.load_history||{},workoutHistory:data.workout_history||[],xp:data.xp||0,level:data.level||1,streak:data.streak||1,coins:data.coins||0,badges:data.badges||[],prs:data.prs||[],stats:data.stats||{treinos:0,distancia:0,semanas:0},purchases:data.purchases||[],pacoteEbooks:!!data.pacote_ebooks,programIntakes:data.program_intakes||{},avatar:data.avatar||null,evals:data.evals||[],missions:MISSOES_PADRAO.map(m=>({...m})),createdAt:data.criado_em,lastLogin:data.ultimo_acesso};
+  return{id:data.id,name:data.nome,email:data.email,plano:data.plano,trialInicio:data.trial_inicio,runInicio:data.run_inicio,assinaturaStatus:data.assinatura_status||'trial',assinaturaAte:data.assinatura_ate,diaConversao:data.dia_conversao,dataConversao:data.data_conversao,planoConversao:data.plano_conversao,precoTravado:data.preco_travado,promoFundador:!!data.promo_fundador,promoVaga:data.promo_vaga,trainApproved:data.treino_liberado,isAdmin:!!data.is_admin,aiPlan:data.ai_plan,anamnese:data.anamnese,anamneseDone:!!data.anamnese_geral,anamneseGeral:data.anamnese_geral||null,anamneseMusculacao:data.anamnese_musculacao||null,anamneseCorrida:data.anamnese_corrida||null,anamneseMuscDone:!!data.anamnese_musculacao,anamneseCorridaDone:!!data.anamnese_corrida,gymWeek:data.gym_week||1,runWeek:data.run_week||1,gymDone:data.gym_done||{},runDone:data.run_done||{},loadHistory:data.load_history||{},workoutHistory:data.workout_history||[],xp:data.xp||0,level:data.level||1,streak:data.streak||1,coins:data.coins||0,badges:data.badges||[],prs:data.prs||[],stats:data.stats||{treinos:0,distancia:0,semanas:0},purchases:data.purchases||[],pacoteEbooks:!!data.pacote_ebooks,programIntakes:data.program_intakes||{},avatar:data.avatar||null,evals:data.evals||[],missions:MISSOES_PADRAO.map(m=>({...m})),createdAt:data.criado_em,lastLogin:data.ultimo_acesso};
 }
 function userToRow(u){
   return{id:u.id,nome:u.name,email:u.email,plano:u.plano||'free',trial_inicio:u.trialInicio||new Date().toISOString(),run_inicio:u.runInicio||null,treino_liberado:u.trainApproved||false,ai_plan:u.aiPlan||null,anamnese:u.anamnese||null,anamnese_geral:u.anamneseGeral||null,anamnese_musculacao:u.anamneseMusculacao||null,anamnese_corrida:u.anamneseCorrida||null,gym_week:u.gymWeek||1,run_week:u.runWeek||1,gym_done:u.gymDone||{},run_done:u.runDone||{},load_history:u.loadHistory||{},workout_history:u.workoutHistory||[],xp:u.xp||0,level:u.level||1,streak:u.streak||1,coins:u.coins||0,badges:u.badges||[],prs:u.prs||[],stats:u.stats||{treinos:0,distancia:0,semanas:0},avatar:u.avatar||null,evals:u.evals||[],program_intakes:u.programIntakes||{},ultimo_acesso:new Date().toISOString(),updated_at:new Date().toISOString()};
@@ -3632,12 +3651,18 @@ const RD_ESTRUTURA={
 
 // ─── 3. SELEÇÃO DE EXERCÍCIOS (lesões + ambiente + variação) ───
 const RD_CONTRA={
-  // Joelho: impacto, flexão profunda sob carga, pliometria, unilateral extremo
-  joelho:/agachamento livre|agachamento frontal|hack|leg press|extensora|avanço|passada|búlgaro|sissy|step-?up|burpee|salto|jump|pliom|box|skater|pistol|thruster|wall ball|cossack|corrida estacion|sprint|escada|stair|corda|skipping|afundo/i,
-  // Lombar: flexão de coluna sob carga, extensão lombar, balísticos de quadril
-  lombar:/terra|stiff|good morning|remada curvada|agachamento livre|agachamento frontal|extensão lombar|superman|kettlebell swing|swing|snatch|clean|turkish|slam ball|wall ball|thruster|windshield|toes to bar|hanging leg|roda abdominal|ab wheel|landmine rotation/i,
-  // Ombro: elevação acima da cabeça, sustentação overhead, impacto no manguito
-  ombro:/desenvolvimento|arnold|elevação frontal|elevação lateral|supino inclinado|remada alta|flexão|barra fixa|dips|paralelas|snatch|turkish|overhead|thruster|wall ball|slam ball|battle rope|escápula push|l-sit|toes to bar|hanging|pliom|crab walk|bear crawl/i
+  // ── JOELHO ── bloqueia carga em flexão profunda, impacto e unilateral extremo.
+  // Libera: flexora, glúteo (hip thrust/ponte), abdutora, panturrilha, core.
+  joelho:/agachamento|squat|leg ?press|extensora|extensão de perna|avanço|passada|afundo|lunge|búlgaro|bulgaro|sissy|step.?up|subida no banco|hack|salto|jump|pliom|box|skater|pistol|burpee|thruster|wall ball|cossack|corrida|sprint|escada|stair|corda|skipping|polichinelo|mountain climber|wall sit|bear crawl|crab walk|man maker|devil press|clean|snatch|agachamento na parede/i,
+
+  // ── LOMBAR ── bloqueia carga axial, flexão/extensão de coluna sob carga e balísticos.
+  // Libera: máquinas com apoio de tronco, isolados sentado/deitado, glúteo em ponte.
+  lombar:/terra|deadlift|stiff|good ?morning|bom dia|remada curvada|remada cavalinho|remada t\b|t-?bar|remada unilateral|landmine|agachamento livre|agachamento frontal|front squat|extensão lombar|hiperextens|superman|swing|snatch|clean|turkish|slam ball|wall ball|thruster|windshield|toes to bar|hanging|elevação de pernas na barra|roda abdominal|ab ?wheel|rollout|man maker|devil press|burpee|bear crawl|farmer|agachamento búlgaro|sled/i,
+
+  // ── OMBRO ── bloqueia empurrar/puxar acima da cabeça, prensa horizontal e abertura profunda.
+  // Libera de propósito: rotação externa, face pull, Y-T-W, escápula, alongamento e
+  // foam roller — são exercícios de REABILITAÇÃO de ombro, não de risco.
+  ombro:/supino|bench ?press|crucifixo|voador|peck ?deck|fly\b|crossover|pullover|desenvolvimento|military|arnold|overhead|acima da cabeça|elevação lateral|elevação frontal|remada alta|upright|dips|paralelas|mergulho|barra fixa|pull-?up|chin-?up|australiana|puxada|pulldown|flexão|push-?up|snatch|clean|thruster|wall ball|slam ball|man maker|devil press|burpee|landmine press|turkish|battle rope|corda naval|l-?sit|toes to bar|hanging|bear crawl|crab walk|handstand|pino|remada alta/i
 };
 const RD_EQUIP={
   completa:null, // tudo liberado
@@ -5396,7 +5421,14 @@ function aplicarIdioma(){
 }
 
 const TRIAL_DIAS = 14;
-const PLANOS = {
+// ══ CAMPANHA DE LANÇAMENTO ══
+// Os primeiros N assinantes travam o preço promocional PARA SEMPRE.
+// Depois disso, os preços sobem automaticamente para quem entrar novo.
+const PROMO_LIMITE = 50;
+let PROMO_VAGAS_USADAS = 0;      // preenchido do banco ao abrir o app
+let PROMO_CONTAGEM_OK = false;   // se falhou a leitura, honramos a promo (ver nota abaixo)
+
+const PLANOS_PROMO = {
   mensal: {
     preco: 'R$14,90', precoDetalhe: '/mês', economia: null,
     link: 'https://mpago.la/1WnV2mh'
@@ -5406,6 +5438,52 @@ const PLANOS = {
     link: 'https://mpago.li/1ko8b92'
   }
 };
+
+const PLANOS_NORMAL = {
+  mensal: {
+    preco: 'R$19,90', precoDetalhe: '/mês', economia: null,
+    link: '' // TODO: criar link de R$19,90 no Mercado Pago e colar aqui
+  },
+  anual: {
+    preco: 'R$14,90', precoDetalhe: '/mês', economia: 'Economize 25% · R$178,80 (em até 12x)',
+    link: '' // TODO: criar link de R$178,80 no Mercado Pago e colar aqui
+  }
+};
+
+// A promo vale enquanto houver vaga. Se a contagem falhar (sem internet, etc.),
+// mantemos a promo: é melhor honrar o preço menor do que cobrar a mais de alguém
+// que viu o preço promocional na tela.
+function promoAtiva(){
+  if(!PROMO_CONTAGEM_OK) return true;
+  return PROMO_VAGAS_USADAS < PROMO_LIMITE;
+}
+function promoVagasRestantes(){
+  return Math.max(0, PROMO_LIMITE - PROMO_VAGAS_USADAS);
+}
+
+// PLANOS vira uma "janela" que aponta pro conjunto certo conforme a promo.
+// Todo o resto do app continua usando PLANOS.mensal / PLANOS.anual normalmente.
+const PLANOS = new Proxy({}, {
+  get(_, prop){
+    const fonte = promoAtiva() ? PLANOS_PROMO : PLANOS_NORMAL;
+    return fonte[prop];
+  },
+  ownKeys(){ return Object.keys(PLANOS_PROMO); },
+  getOwnPropertyDescriptor(){ return {enumerable:true, configurable:true}; }
+});
+
+// Busca no banco quantos alunos já assinaram (define se a promo ainda vale)
+async function carregarContagemPromo(){
+  try{
+    if(typeof sb==='undefined' || !sb) return;
+    const {count, error} = await sb.from('alunos')
+      .select('id', {count:'exact', head:true})
+      .eq('assinatura_status','ativa');
+    if(error) return;
+    PROMO_VAGAS_USADAS = count || 0;
+    PROMO_CONTAGEM_OK = true;
+  }catch(e){ /* mantém a promo por segurança */ }
+}
 const MENSALIDADE = PLANOS.mensal.preco; // mantido por compatibilidade com textos existentes
 
 function diasRestantesTrial(u){
@@ -5476,7 +5554,12 @@ function renderModalAssinatura(){
 let _planoSelecionado = 'anual'; // anual pré-selecionado (é o que queremos incentivar)
 
 function renderSeletorPlanos(){
-  return `<div style="display:flex;gap:10px;margin-bottom:16px">
+  const faixaPromo = promoAtiva() && PROMO_CONTAGEM_OK ? `
+    <div style="background:linear-gradient(135deg,rgba(243,156,18,.18),rgba(243,156,18,.05));border:1px solid rgba(243,156,18,.4);border-radius:10px;padding:11px 13px;margin-bottom:12px;text-align:center">
+      <div style="font-size:12px;font-weight:900;color:#f39c12">🔥 PREÇO DE FUNDADOR</div>
+      <div style="font-size:11px;color:var(--t2);margin-top:3px;line-height:1.45">Restam <strong style="color:#fff">${promoVagasRestantes()} de ${PROMO_LIMITE} vagas</strong> — e você mantém esse valor pra sempre.</div>
+    </div>` : '';
+  return faixaPromo + `<div style="display:flex;gap:10px;margin-bottom:16px">
     ${Object.entries(PLANOS).map(([id,p])=>{
       const sel = _planoSelecionado===id;
       return `<div onclick="selecionarPlano('${id}')" style="flex:1;position:relative;cursor:pointer;
@@ -5626,6 +5709,7 @@ function loadApp(email){
   // Render
   _safe(()=>renderMissions(u.missions||[]),'missions');
   _safe(()=>renderRankingCarousel(u,email,users),'rankCar');
+  carregarContagemPromo().then(()=>{ try{ if(typeof renderBannerTrial==='function') renderBannerTrial(u); }catch(e){} });
   carregarRanking().then(()=>{try{renderRankingCarousel(u,email,users);renderRankingFull(u,email,users);}catch(e){}});
   _safe(()=>renderHistory(u),'history');
   _safe(()=>renderGym(u),'gym');
@@ -5702,25 +5786,28 @@ function renderPerfil(u){
 
 // ══ EXERCISE IMAGES BY MUSCLE GROUP ══
 
-// ══ VÍDEOS DE DEMONSTRAÇÃO DOS EXERCÍCIOS ══
-// Lista cresce conforme os arquivos do pacote licenciado são processados e adicionados
-// à pasta /exercicios do repositório. Fallback automático pro emoji+foto quando ausente.
-const EXERCICIOS_COM_VIDEO = new Set(['e001','e003','e008','e014','e017','e051','e055','e121']);
-function fallbackExVideo(videoEl, exId, emoji, name, muscle){
-  const thumb = videoEl.closest('.ep-thumb');
-  if(!thumb) return;
-  const badge = document.getElementById('ep-badge-'+exId);
-  if(badge) badge.remove();
-  thumb.innerHTML = `
-    <img src="${getExImg(muscle)}" alt="${name}" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;filter:brightness(.4)"/>
+// ══ GIFS DE DEMONSTRAÇÃO DOS EXERCÍCIOS ══
+// Lista cresce conforme os gifs vão sendo adicionados à pasta /exercicios do repositório.
+// Fallback automático pro emoji+foto quando ausente.
+const EXERCICIOS_COM_GIF = new Set(['e001','e005','e006','e008','e010','e015','e018','e020','e022','e023','e024','e027','e041','e046','e061','e063','e075','e077','e079','e131','e136','e149','e196','e218','e225','e237','e238','e239','e240','e241','e242','e243','e244','e245','e246','e247','e248','e249','e250','e251','e252']);
+function temGifDemo(exId){ return EXERCICIOS_COM_GIF.has(exId); }
+function getExGif(exId){ return `exercicios/${exId}.gif`; }
+function renderExThumb(ex){
+  if(temGifDemo(ex.id)){
+    return `<img src="${getExGif(ex.id)}" alt="${ex.name}" loading="lazy" style="width:100%;height:100%;object-fit:contain;background:#f6f2e4"
+      onerror="this.closest('.ep-thumb').innerHTML=renderExThumbFallback('${ex.id}')"/>`;
+  }
+  return renderExThumbFallback(ex.id);
+}
+function renderExThumbFallback(exId){
+  const ex=getExById(exId);if(!ex)return '';
+  return `<img src="${getExImg(ex.muscle)}" alt="${ex.name}" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;filter:brightness(.4)"/>
     <div style="position:relative;z-index:1;display:flex;flex-direction:column;align-items:center;gap:6px">
-      <div style="font-size:44px;line-height:1;filter:drop-shadow(0 2px 8px rgba(0,0,0,.8))">${emoji}</div>
-      <div style="font-size:13px;font-weight:800;text-shadow:0 2px 8px rgba(0,0,0,.8)">${name}</div>
-      <div style="font-size:10px;color:var(--r);font-weight:700;background:rgba(229,9,20,.15);padding:3px 10px;border-radius:4px;border:1px solid rgba(229,9,20,.3)">${muscle}</div>
+      <div style="font-size:44px;line-height:1;filter:drop-shadow(0 2px 8px rgba(0,0,0,.8))">${ex.emoji||'🏋️'}</div>
+      <div style="font-size:13px;font-weight:800;text-shadow:0 2px 8px rgba(0,0,0,.8)">${ex.name}</div>
+      <div style="font-size:10px;color:var(--r);font-weight:700;background:rgba(229,9,20,.15);padding:3px 10px;border-radius:4px;border:1px solid rgba(229,9,20,.3)">${ex.muscle}</div>
     </div>`;
 }
-
-function temVideoDemo(exId){ return EXERCICIOS_COM_VIDEO.has(exId); }
 
 function getExImg(muscle){
   const m = (muscle||'').toLowerCase();
@@ -6084,12 +6171,7 @@ function renderGymDay(w,d,u){
       </div>
       <div class="ep-body">
         <div class="ep-thumb" style="position:relative;overflow:hidden">
-          <img src="${getExImg(ex.muscle)}" alt="${ex.name}" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;filter:brightness(.4)"/>
-          <div style="position:relative;z-index:1;display:flex;flex-direction:column;align-items:center;gap:6px">
-            <div style="font-size:44px;line-height:1;filter:drop-shadow(0 2px 8px rgba(0,0,0,.8))">${ex.emoji||'🏋️'}</div>
-            <div style="font-size:13px;font-weight:800;text-shadow:0 2px 8px rgba(0,0,0,.8)">${ex.name}</div>
-            <div style="font-size:10px;color:var(--r);font-weight:700;background:rgba(229,9,20,.15);padding:3px 10px;border-radius:4px;border:1px solid rgba(229,9,20,.3)">${ex.muscle}</div>
-          </div>
+          ${renderExThumb(ex)}
         </div>
         <div class="ep-obs">${ed.tecnica?`<div style="background:rgba(229,9,20,.1);border:1px solid rgba(229,9,20,.3);border-radius:6px;padding:10px 12px;margin-bottom:8px;font-size:12px;color:#ff8a90;font-weight:600">🔥 ${ed.tecnicaObs}</div>`:''}💡 ${ex.obs}</div>
         <table class="sets-tbl">
@@ -6319,6 +6401,21 @@ window.addEventListener('popstate', function(){
   // Caso contrário: deixa o navegador seguir o padrão dele (sair do app/PWA)
 });
 
+// ══ BOTÃO VOLTAR (barra superior) ══
+// Aparece em qualquer aba que não seja a Home e leva de volta pra ela.
+// Assim o aluno nunca precisa usar o botão do navegador pra navegar no app.
+function voltarParaHome(){
+  const btnHome = document.querySelectorAll('.nbtn')[0];
+  switchTab('home', btnHome);
+}
+function atualizarBotaoVoltar(){
+  const btn = document.getElementById('nav-back');
+  if(!btn) return;
+  const abaAtiva = document.querySelector('.tp.active');
+  const naHome = !abaAtiva || abaAtiva.id === 'tp-home';
+  btn.style.display = naHome ? 'none' : 'flex';
+}
+
 function switchTab(name,btn){
   document.querySelectorAll('.tp').forEach(p=>p.classList.remove('active'));
   document.querySelectorAll('.nbtn').forEach(b=>b.classList.remove('active'));
@@ -6328,6 +6425,7 @@ function switchTab(name,btn){
   // Home é a "raiz" da navegação — só registra no histórico quando sai dela,
   // assim o botão Voltar sempre retorna pra Home antes de tentar sair do app.
   if(name!=='home') _pushNavState('tab:'+name);
+  try{ atualizarBotaoVoltar(); }catch(e){}
   document.getElementById('nav-menu').classList.remove('open');
   // Na aba perfil: navbar transparente para não tampar a foto
   const nav=document.getElementById('app-nav');
@@ -9877,6 +9975,17 @@ async function admConfirmarPago(planoId){
     if(!jaConvertido){
       u.dataConversao = agora.toISOString();
       u.planoConversao = planoId;
+      // TRAVA O PREÇO: quem entrou na campanha paga esse valor pra sempre,
+      // mesmo depois que a promo acabar. Guardamos o preço e o número da vaga
+      // pra você ter o registro de quem entrou como fundador.
+      if(promoAtiva()){
+        u.precoTravado = (PLANOS_PROMO[planoId]||{}).preco || null;
+        u.promoFundador = true;
+        u.promoVaga = PROMO_VAGAS_USADAS + 1;
+      }else{
+        u.precoTravado = (PLANOS_NORMAL[planoId]||{}).preco || null;
+        u.promoFundador = false;
+      }
       if(u.trialInicio){
         const diasDesdeInicio = Math.floor((agora - new Date(u.trialInicio))/(1000*60*60*24));
         u.diaConversao = Math.max(0, diasDesdeInicio);
@@ -9888,7 +9997,8 @@ async function admConfirmarPago(planoId){
     if(window.ADM_CACHE){ const s=window.ADM_CACHE.find(a=>a.email===email); if(s){ s.assinaturaStatus='ativa'; s.assinaturaAte=u.assinaturaAte; s.plano=planoId; s.diaConversao=u.diaConversao; s.dataConversao=u.dataConversao; s.planoConversao=u.planoConversao; } }
     if(sb) await sb.from('alunos').update({
       assinatura_status:'ativa', assinatura_ate:u.assinaturaAte, plano:planoId,
-      dia_conversao:u.diaConversao ?? null, data_conversao:u.dataConversao ?? null, plano_conversao:u.planoConversao ?? null
+      dia_conversao:u.diaConversao ?? null, data_conversao:u.dataConversao ?? null, plano_conversao:u.planoConversao ?? null,
+      preco_travado:u.precoTravado ?? null, promo_fundador:u.promoFundador ?? false, promo_vaga:u.promoVaga ?? null
     }).eq('email',email);
 
     closeModal('modal-marcar-pago');
