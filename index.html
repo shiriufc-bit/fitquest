@@ -803,7 +803,7 @@ textarea.fi{resize:vertical;min-height:80px;}
       <option value="en">🇺🇸 EN</option>
     </select>
   </div>
-  <div id="fq-version-badge" style="position:absolute;bottom:8px;right:12px;font-size:9px;color:#333;font-weight:700;z-index:5">v115</div>
+  <div id="fq-version-badge" style="position:absolute;bottom:8px;right:12px;font-size:9px;color:#333;font-weight:700;z-index:5">v114</div>
   <img src="https://images.unsplash.com/photo-1517836357463-d25dfeac3438?w=800&q=80" alt="Fitness" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center top;filter:brightness(.35);z-index:0"/>
   <div class="splash-glow"></div>
   <div class="splash-noise"></div>
@@ -2105,12 +2105,6 @@ textarea.fi{resize:vertical;min-height:80px;}
 <!-- MODALS -->
 <div class="modal-ov" id="modal-student"><div class="modal-bx"><div class="modal-t"><span id="modal-st-name">Aluno</span><button class="modal-cl" onclick="closeModal('modal-student')">✕</button></div><div id="modal-st-content"></div></div></div>
 <div class="modal-ov" id="modal-anam"><div class="modal-bx"><div class="modal-t"><span>📋 Anamnese</span><button class="modal-cl" onclick="closeModal('modal-anam')">✕</button></div><div id="modal-anam-content"></div></div></div>
-<div class="modal-ov" id="modal-ficha-ex" style="align-items:flex-start">
-  <div class="modal-bx" style="max-width:480px;width:100%;max-height:92vh;overflow-y:auto;padding:0;border-radius:16px 16px 0 0;margin-top:auto">
-    <button class="modal-cl" onclick="closeModal('modal-ficha-ex')" style="position:absolute;top:14px;right:14px;z-index:5;background:rgba(0,0,0,.55);border-radius:50%;width:34px;height:34px;display:flex;align-items:center;justify-content:center">✕</button>
-    <div id="ficha-ex-content"></div>
-  </div>
-</div>
 <div class="modal-ov" id="modal-adm-ex"><div class="modal-bx"><div class="modal-t"><span id="modal-ex-title">➕ Exercício</span><button class="modal-cl" onclick="closeModal('modal-adm-ex')">✕</button></div><div id="modal-ex-content"></div></div></div>
 <div class="modal-ov" id="modal-timer">
   <div class="modal-bx">
@@ -2368,7 +2362,7 @@ textarea.fi{resize:vertical;min-height:80px;}
 
 <script>
 // ══ SUPABASE ══
-const FQ_VERSION='v115';console.log('%cFitQuest '+FQ_VERSION,'color:#e50914;font-weight:bold;font-size:14px');
+const FQ_VERSION='v114';console.log('%cFitQuest '+FQ_VERSION,'color:#e50914;font-weight:bold;font-size:14px');
 // ══ PROXY DE IA (Cloudflare Worker) ══
 // Quando preenchido, a IA real funciona em produção com a chave protegida no servidor.
 // Deixe '' para usar o plano local (fallback). Ex: 'https://fitquest-ai.SEU-USUARIO.workers.dev'
@@ -2658,7 +2652,39 @@ let EXERCISE_BANK=[
   {id:'e249',name:'Prancha com Salto 3 Apoios',muscle:'Core/Pliometria',equipment:'Peso Corporal',emoji:'🤸',obs:'Prancha de antebraço, salte alternando apoio de um pé de cada vez. Core rígido, sem balançar o quadril.'},
   {id:'e250',name:'Alongamento Abdominal Deitado (Cobra)',muscle:'Mobilidade/Abdômen',equipment:'Peso Corporal',emoji:'🐍',obs:'Deitado de bruços, apoie os antebraços e eleve o tronco levemente. Alonga a parede abdominal e flexores de quadril.'},
   {id:'e251',name:'Postura da Criança para Prancha (Mobilidade)',muscle:'Mobilidade/Ombro',equipment:'Peso Corporal',emoji:'🧘',obs:'Alterne entre postura da criança e prancha alta empurrando o chão. Ótimo aquecimento de ombro e coluna.'},
-  {id:'e252',name:'Rosca Drag (Drag Curl)',muscle:'Bíceps',equipment:'Barra',emoji:'🔽',obs:'A barra "arrasta" rente ao corpo subindo, cotovelos vão para trás. Remove a ajuda do deltoide, isola mais o bíceps.'}
+  {id:'e252',name:'Rosca Drag (Drag Curl)',muscle:'Bíceps',equipment:'Barra',emoji:'🔽',obs:'A barra "arrasta" rente ao corpo subindo, cotovelos vão para trás. Remove a ajuda do deltoide, isola mais o bíceps.'},
+  {id:'e253',name:'Crucifixo no Cabo (Altura Média)',muscle:'Peito',equipment:'Cabo',emoji:'✂️',obs:'Polias na altura do ombro, pegada neutra. Braços abrem e fecham em arco, sem dobrar o cotovelo.'},
+  {id:'e254',name:'Passada Estática no Smith (Split Squat)',muscle:'Quadríceps/Glúteo',equipment:'Smith',emoji:'🏛️',obs:'Passada dividida com a barra guiada, os dois pés no chão. Joelho traseiro quase toca o chão, tronco ereto.'},
+  {id:'e255',name:'Rosca Martelo Sentado',muscle:'Bíceps/Braquial',equipment:'Halteres',emoji:'🔨',obs:'Sentado no banco, pegada neutra, alterne os braços. Menos trapaço com o tronco que em pé.'},
+  {id:'e256',name:'Remada Baixa Pegada Aberta',muscle:'Costas',equipment:'Cabo',emoji:'🎣',obs:'Barra reta, pegada mais larga que os ombros. Mais foco em romboides e trapézio médio.'},
+  {id:'e257',name:'Flexão Relógio (Clock Push-up)',muscle:'Peito/Tríceps',equipment:'Peso Corporal',emoji:'🕐',obs:'Uma mão fixa no centro, a outra "caminha" ao redor como ponteiro de relógio. Trabalha peito em múltiplos ângulos.'},
+  {id:'e258',name:'Burpee Shuffle',muscle:'Corpo Todo/Cardio',equipment:'Peso Corporal',emoji:'💥',obs:'Burpee com deslocamento lateral entre repetições. Cardio + agilidade.'},
+  {id:'e259',name:'Flexão Inclinada em Paralelas',muscle:'Peito/Tríceps',equipment:'Barras Paralelas',emoji:'🙇',obs:'Mãos elevadas nas paralelas, pés no chão atrás do corpo. Maior amplitude que a flexão comum.'},
+  {id:'e260',name:'Desenvolvimento Landmine Ajoelhado Unilateral',muscle:'Ombro',equipment:'Landmine',emoji:'📐',obs:'Ajoelhado, um braço de cada vez. Exige estabilidade de core e evita compensação.'},
+  {id:'e261',name:'Squeeze Press Landmine (Ajoelhado)',muscle:'Peito',equipment:'Landmine',emoji:'🤝',obs:'Ajoelhado, mãos unidas apertando a ponta da barra. Empurre à frente comprimindo o peito o tempo todo.'},
+  {id:'e262',name:'Remada Curvada para Deltoide Posterior (Rear Delt Row)',muscle:'Ombro/Trapézio',equipment:'Barra',emoji:'🏹',obs:'Tronco bem inclinado à frente, pegada larga, puxe até a linha do umbigo com cotovelos altos. Foco no deltoide posterior.'},
+  {id:'e263',name:'Barra Fixa com Impulso (Jumping Pull-up)',muscle:'Costas/Bíceps',equipment:'Barra Fixa',emoji:'🦘',obs:'Use as pernas pra ajudar a subir e foque em controlar a descida. Boa progressão pra quem ainda não faz barra fixa completa.'},
+  {id:'e264',name:'Elevação Frontal Inclinada Unilateral',muscle:'Ombro Frontal',equipment:'Halteres',emoji:'📐',obs:'Apoie a mão livre em um rack e incline o corpo para trás. Tensão constante no deltoide anterior do início ao fim.'},
+  {id:'e265',name:'Desenvolvimento Militar Sentado Atrás da Nuca',muscle:'Ombro',equipment:'Barra',emoji:'🪑',obs:'Barra desce atrás da cabeça até a nuca. Amplitude reduzida — evite se sentir desconforto no ombro.'},
+  {id:'e266',name:'Desenvolvimento Militar Sentado com Barra',muscle:'Ombro',equipment:'Barra',emoji:'🎖️',obs:'Sentado com apoio nas costas, barra desce à frente até a altura do queixo. Mais estável que em pé.'},
+  {id:'e267',name:'Elevação Lateral Inclinada no Cabo',muscle:'Ombro Lateral',equipment:'Cabo',emoji:'🎚️',obs:'Incline o corpo para longe da polia baixa. Tensão máxima no deltoide lateral desde o início do movimento.'},
+  {id:'e268',name:'Elevação Frontal no Cabo',muscle:'Ombro Frontal',equipment:'Cabo',emoji:'🎚️',obs:'Polia baixa, puxe à frente até a altura do ombro. Tensão constante, sem alívio no ponto baixo.'},
+  {id:'e269',name:'Elevação em Y no Cabo (Y-Raise)',muscle:'Ombro Posterior/Trapézio',equipment:'Cabo',emoji:'🔤',obs:'Corda na polia baixa, puxe em diagonal formando um Y. Ativa trapézio inferior e deltoide posterior.'},
+  {id:'e270',name:'Crucifixo Inverso Unilateral Sentado (Máquina)',muscle:'Ombro Posterior',equipment:'Máquina',emoji:'🪑',obs:'Sentado de lado no aparelho, um braço de cada vez. Isola o deltoide posterior sem compensação do lado oposto.'},
+  {id:'e271',name:'Powell Raise Inclinado',muscle:'Ombro Posterior/Lateral',equipment:'Halteres',emoji:'📐',obs:'Apoiado de lado no banco inclinado, halter na mão de cima. Combina lateral e posterior do deltoide numa amplitude só.'},
+  {id:'e272',name:'Elevação Frontal Isométrica com Anilha',muscle:'Ombro Frontal',equipment:'Anilha',emoji:'⏱️',obs:'Segure a anilha à frente na altura dos ombros e sustente por tempo determinado. Isometria pura no deltoide anterior.'},
+  {id:'e273',name:'Elevação em Y Unilateral no Cabo Cross',muscle:'Ombro Posterior/Trapézio',equipment:'Cabo',emoji:'🔀',obs:'Um braço de cada vez, puxe na diagonal na polia dupla (cross). Isola um lado sem compensação do outro.'},
+  {id:'e274',name:'Agachamento Búlgaro Assistido (com Apoio)',muscle:'Quadríceps/Glúteo',equipment:'Halteres',emoji:'🤲',obs:'Apoie a mão livre em um suporte fixo para equilíbrio. Ideal pra quem ainda não domina o búlgaro livre.'},
+  {id:'e275',name:'Agachamento no Banco (Box Squat)',muscle:'Quadríceps/Glúteo',equipment:'Halteres',emoji:'🪑',obs:'Agache até encostar de leve no banco atrás, sem sentar todo o peso. Guia de profundidade e controle.'},
+  {id:'e276',name:'Afundo Lateral com Salto (Plyo Side Lunge)',muscle:'Adutores/Glúteo Médio/Pliometria',equipment:'Halteres',emoji:'⚡',obs:'Alterne de um lado pro outro com um pequeno salto entre as repetições. Potência lateral + agilidade.'},
+  {id:'e277',name:'Clean com Halteres',muscle:'Corpo Todo',equipment:'Halteres',emoji:'🔄',obs:'Puxada explosiva do chão até os ombros com halteres. Quadril gera a força, não os braços.'},
+  {id:'e278',name:'Clean and Press com Halteres',muscle:'Corpo Todo',equipment:'Halteres',emoji:'🏋️',obs:'Clean seguido de press acima da cabeça em sequência. Movimento completo de força e potência.'},
+  {id:'e279',name:'Afundo Cruzado (Curtsy Lunge)',muscle:'Glúteo Médio/Adutores',equipment:'Halteres',emoji:'🙇',obs:'Cruze uma perna por trás e na diagonal da outra, como uma reverência. Ativa o glúteo médio de um novo ângulo.'},
+  {id:'e280',name:'Terra com Halteres (Dumbbell Deadlift)',muscle:'Posterior/Glúteo',equipment:'Halteres',emoji:'🏆',obs:'Halteres ao lado do corpo, quadril pra trás, costas retas. Boa porta de entrada antes de usar barra.'},
+  {id:'e281',name:'Mesa Flexora com Halteres (Banco Declinado)',muscle:'Posterior',equipment:'Halteres',emoji:'🛏️',obs:'Deitado de bruços no banco declinado, halter preso entre os pés. Flexione os joelhos contra a gravidade.'},
+  {id:'e282',name:'Elevação Pélvica Sapo (Frog Pump)',muscle:'Glúteo/Adutores',equipment:'Halteres',emoji:'🐸',obs:'Deitado, solas dos pés unidas e joelhos abertos, anilha ou halter no quadril. Isola glúteo e adutores.'},
+  {id:'e283',name:'Puxada Supinada',muscle:'Costas/Bíceps',equipment:'Cabo',emoji:'🔃',obs:'Pegada supinada (por baixo), mãos próximas. Maior ativação de bíceps e dorsal inferior.'},
+  {id:'e284',name:'Remada Curvada Pegada Aberta',muscle:'Costas',equipment:'Barra',emoji:'🎣',obs:'Pegada bem mais aberta que os ombros, tronco inclinado ~45°. Recruta trapézio e romboides.'}
 ];
 
 const DG={
@@ -3012,163 +3038,6 @@ function closeModal(id){
   }
 }
 function getExById(id){return EXERCISE_BANK.find(e=>e.id===id)||null;}
-
-// ══════════════════════════════════════════════════════════════
-// FICHA DE EXERCÍCIO — Hero + Cards 1,2,3,5,16,20 (ver especificação)
-// Dados REAIS onde existem (histórico, contraindicação, GIF).
-// ex.dica é um campo editável pelo admin — começa vazio, Rennan
-// preenche aos poucos. Não inventamos 218 dicas de treinador.
-// ══════════════════════════════════════════════════════════════
-function fichaHistoricoExercicio(u, exId, exNomeAtual){
-  if(!u) return {pontos:[], maiorCarga:null, ultimaSemana:null, pr:null, vezes:0};
-  const pontos=[];
-  Object.entries(u.loadHistory||{}).forEach(([chave,valor])=>{
-    const partes=chave.split('_'); // formato: Semana N_Dia X_eYYY
-    if(partes[partes.length-1]!==exId) return;
-    const semM=chave.match(/Semana (\d+)/);
-    const num=parseFloat(String(valor).replace(/[^\d.,]/g,'').replace(',','.'));
-    if(semM && !isNaN(num)) pontos.push({semana:parseInt(semM[1]), carga:num, bruto:valor});
-  });
-  pontos.sort((a,b)=>a.semana-b.semana);
-  const maiorCarga = pontos.length ? Math.max(...pontos.map(p=>p.carga)) : null;
-  const ultimaSemana = pontos.length ? pontos[pontos.length-1].semana : null;
-  const pr = (u.prs||[]).find(p=>(p.exercise||'').toLowerCase().trim()===exNomeAtual.toLowerCase().trim()) || null;
-  const vezes = (u.workoutHistory||[]).filter(h=>(h.exercises||[]).some(e=>(e.name||'').toLowerCase().trim()===exNomeAtual.toLowerCase().trim())).length;
-  return {pontos, maiorCarga, ultimaSemana, pr, vezes};
-}
-
-// Quais categorias de lesão este exercício é contraindicado (reaproveita o
-// mesmo filtro de segurança já usado na geração do treino — nunca diverge)
-function fichaContraindicacoes(ex){
-  const cats=[];
-  if(RD_CONTRA.ombro.test(ex.name)) cats.push({id:'ombro', label:'Ombro', emoji:'🦾'});
-  if(RD_CONTRA.joelho.test(ex.name)) cats.push({id:'joelho', label:'Joelho', emoji:'🦵'});
-  if(RD_CONTRA.lombar.test(ex.name)) cats.push({id:'lombar', label:'Lombar', emoji:'🔵'});
-  return cats;
-}
-
-function abrirFichaExercicio(exId){
-  const ex = getExById(exId);
-  if(!ex){ fqToast('Exercício não encontrado.','warn'); return; }
-  const u = getU();
-  const nomeExibido = exNome(ex);
-  const nomeEN = (typeof EXERCISE_NAME_EN!=='undefined' && EXERCISE_NAME_EN[exId] && fqLangAtual()!=='en') ? EXERCISE_NAME_EN[exId] : null;
-
-  // Músculos: principal = primeiro do campo, secundários = resto
-  const musculos = ex.muscle.split('/').map(s=>s.trim());
-  const principal = musculos[0];
-  const secundarios = musculos.slice(1);
-
-  // Contraindicações — e se colide com lesão do ALUNO atual, alerta no topo
-  const contra = fichaContraindicacoes(ex);
-  const lesoesAluno = [];
-  if(u?.anamneseMusculacao?.temOmbro || u?.anamneseCorrida?.temOmbro) lesoesAluno.push('ombro');
-  if(u?.anamneseMusculacao?.temJoelho || u?.anamneseCorrida?.temJoelho) lesoesAluno.push('joelho');
-  if(u?.anamneseMusculacao?.temLombar || u?.anamneseCorrida?.temLombar) lesoesAluno.push('lombar');
-  const colideComAluno = contra.filter(c=>lesoesAluno.includes(c.id));
-
-  const hist = fichaHistoricoExercicio(u, exId, ex.name);
-
-  // Por que está no treino (conecta ao objetivo da anamnese, se existir)
-  const objetivos = u?.anamneseMusculacao?.obj || [];
-  const porqueTxt = objetivos.length ? `Está no seu treino porque você marcou <strong style="color:#fff">${objetivos.map(o=>o.split('(')[0].trim()).join(', ')}</strong>.` : '';
-
-  const el = document.getElementById('ficha-ex-content');
-  if(!el) return;
-
-  el.innerHTML = `
-    ${colideComAluno.length ? `
-    <div style="background:rgba(229,9,20,.14);border-bottom:1px solid rgba(229,9,20,.4);padding:12px 20px;font-size:12.5px;color:#ff8a90;font-weight:700;line-height:1.5">
-      ⚠️ Você reportou dor/lesão em ${colideComAluno.map(c=>c.emoji+' '+c.label).join(' e ')} — esse exercício normalmente não é recomendado. Se está no seu treino mesmo assim, converse com o Rennan antes de executar.
-    </div>` : ''}
-
-    <!-- HERO -->
-    <div class="ficha-hero-thumb" style="position:relative;width:100%;aspect-ratio:1/1;background:#f6f2e4;overflow:hidden">
-      ${(typeof temGifDemo==='function' && temGifDemo(ex.id)) ?
-        `<img src="${getExGif(ex.id)}" alt="${nomeExibido}" loading="lazy" style="position:absolute;inset:0;width:100%;height:100%;object-fit:contain;background:#f6f2e4" onerror="this.closest('.ficha-hero-thumb').innerHTML=renderExThumbFallback('${ex.id}')"/>`
-        : renderExThumbFallback(ex.id)}
-    </div>
-    <div style="padding:18px 20px 6px">
-      <h2 style="margin:0 0 3px;font-size:20px;font-weight:900;line-height:1.25">${nomeExibido}${nomeEN?` <span style="font-size:13px;color:var(--mu);font-weight:500">(${nomeEN})</span>`:''}</h2>
-      ${porqueTxt?`<div style="font-size:11.5px;color:var(--t2);margin-top:4px;line-height:1.5">${porqueTxt}</div>`:''}
-      <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:10px">
-        <span class="ep-chip">${principal}</span>
-        <span class="ep-chip">${ex.equipment}</span>
-        ${hist.vezes>0?`<span class="ep-chip" style="background:rgba(46,204,113,.15);color:#2ecc71">✅ Feito ${hist.vezes}x</span>`:`<span class="ep-chip" style="background:rgba(243,156,18,.15);color:#f39c12">🆕 Primeira vez</span>`}
-      </div>
-    </div>
-
-    <div style="padding:14px 20px 28px;display:flex;flex-direction:column;gap:14px">
-
-      <!-- CARD 1: Informações rápidas -->
-      <div class="an-sec">
-        <div class="an-stt">📋 Informações rápidas</div>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px">
-          <div><div style="font-size:10px;color:var(--mu);font-weight:700">GRUPO MUSCULAR</div><div style="font-size:13px;font-weight:700;margin-top:2px">${principal}</div></div>
-          <div><div style="font-size:10px;color:var(--mu);font-weight:700">EQUIPAMENTO</div><div style="font-size:13px;font-weight:700;margin-top:2px">${ex.equipment}</div></div>
-          ${secundarios.length?`<div style="grid-column:1/-1"><div style="font-size:10px;color:var(--mu);font-weight:700">TAMBÉM ATIVA</div><div style="font-size:13px;font-weight:700;margin-top:2px">${secundarios.join(', ')}</div></div>`:''}
-        </div>
-      </div>
-
-      <!-- CARD 2: Como executar -->
-      <div class="an-sec">
-        <div class="an-stt">📝 Como executar</div>
-        <div style="font-size:13px;color:var(--t2);line-height:1.6;margin-top:8px">${ex.obs || 'Execute com controle total, sem usar impulso.'}</div>
-      </div>
-
-      <!-- CARD 3: Músculos trabalhados -->
-      <div class="an-sec">
-        <div class="an-stt">🎯 Músculos trabalhados</div>
-        <div style="margin-top:10px;display:flex;flex-direction:column;gap:6px">
-          <div style="display:flex;align-items:center;gap:8px">
-            <div style="width:10px;height:10px;border-radius:50%;background:var(--r)"></div>
-            <div style="font-size:13px"><strong>${principal}</strong> <span style="color:var(--mu);font-size:11px">— principal</span></div>
-          </div>
-          ${secundarios.map(m=>`<div style="display:flex;align-items:center;gap:8px">
-            <div style="width:10px;height:10px;border-radius:50%;background:rgba(255,255,255,.25)"></div>
-            <div style="font-size:13px">${m} <span style="color:var(--mu);font-size:11px">— secundário</span></div>
-          </div>`).join('')}
-        </div>
-      </div>
-
-      <!-- CARD 5: Dica do treinador (editável pelo admin, vazio por padrão) -->
-      ${ex.dica ? `
-      <div class="an-sec" style="background:rgba(243,156,18,.06);border-color:rgba(243,156,18,.25)">
-        <div class="an-stt" style="color:#f39c12">💬 Dica do treinador</div>
-        <div style="font-size:13px;color:#fff;line-height:1.6;margin-top:8px;font-style:italic">"${ex.dica}"</div>
-      </div>` : ''}
-
-      <!-- CARD 16: Contraindicações -->
-      ${contra.length ? `
-      <div class="an-sec" style="background:rgba(229,9,20,.05);border-color:rgba(229,9,20,.2)">
-        <div class="an-stt" style="color:var(--r)">🚫 Contraindicações</div>
-        <div style="font-size:12.5px;color:var(--t2);line-height:1.6;margin-top:8px">Normalmente não recomendado para quem tem dor ativa em: <strong style="color:#fff">${contra.map(c=>c.emoji+' '+c.label).join(', ')}</strong>.</div>
-      </div>` : ''}
-
-      <!-- CARD 20: Histórico do aluno -->
-      <div class="an-sec">
-        <div class="an-stt">📈 Seu histórico</div>
-        ${hist.pontos.length ? `
-          <div style="display:flex;gap:10px;margin:10px 0">
-            <div style="flex:1;text-align:center"><div style="font-size:18px;font-weight:900;color:var(--r)">${hist.maiorCarga}</div><div style="font-size:9px;color:var(--mu);font-weight:700">MAIOR CARGA</div></div>
-            <div style="flex:1;text-align:center"><div style="font-size:18px;font-weight:900">S${hist.ultimaSemana}</div><div style="font-size:9px;color:var(--mu);font-weight:700">ÚLTIMA VEZ</div></div>
-            ${hist.pr?`<div style="flex:1;text-align:center"><div style="font-size:18px;font-weight:900;color:#f39c12">⭐</div><div style="font-size:9px;color:var(--mu);font-weight:700">RECORDE: ${hist.pr.value}</div></div>`:''}
-          </div>
-          <div style="display:flex;align-items:flex-end;gap:4px;height:60px;margin-top:12px">
-            ${hist.pontos.map(p=>{const alt=Math.max(12,Math.round((p.carga/hist.maiorCarga)*56));return `<div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:3px">
-              <div style="width:100%;background:var(--r);border-radius:3px 3px 0 0;height:${alt}px"></div>
-              <div style="font-size:8px;color:var(--mu)">S${p.semana}</div>
-            </div>`;}).join('')}
-          </div>
-        ` : `<div style="font-size:12px;color:var(--mu);text-align:center;padding:14px 0">Complete esse exercício pela primeira vez para começar seu histórico.</div>`}
-      </div>
-
-    </div>
-  `;
-  abrirModal('modal-ficha-ex');
-}
-
-
 function getU(){const e=DB.get('fq_cur');if(!e||e==='__admin__')return null;return(DB.get('fq_users')||{})[e]||null;}
 function saveU(u){const users=DB.get('fq_users')||{};users[u.email]=u;DB.set('fq_users',users);syncU(u);}
 function getGP(u){const g=u.aiPlan?.gym;return (g&&Object.keys(g).length)?g:DG;}
@@ -5527,7 +5396,7 @@ const FQ_I18N = {
 // O campo .name do banco fica SEMPRE em português, porque o motor usa ele
 // pra detectar exercícios compostos, pliometria e contraindicações por lesão.
 // Este mapa é só pra EXIBIÇÃO — traduzir o .name quebraria a lógica.
-const EXERCISE_NAME_EN = {"e001":"Flat Bench Press","e002":"Incline Bench Press","e003":"Dumbbell Fly","e004":"Pec Deck","e005":"Bent-Over Row","e006":"Lat Pulldown","e007":"Single-Arm Row","e008":"Pullover","e009":"Barbell Overhead Press","e010":"Dumbbell Shoulder Press","e011":"Lateral Raise","e012":"Front Raise","e013":"Barbell Curl","e014":"Alternating Curl","e015":"Preacher Curl","e016":"Cable Triceps Pushdown","e017":"Skull Crusher","e018":"Overhead Triceps Extension","e019":"Barbell Squat","e020":"Leg Press 45°","e021":"Stiff-Leg Deadlift","e022":"Forward Lunge","e023":"Leg Extension","e024":"Lying Leg Curl","e025":"Standing Calf Raise","e026":"Hack Squat","e027":"Hip Thrust","e028":"Crunch","e029":"Plank","e030":"Seated Cable Row","e031":"Single-Leg Hip Thrust","e032":"Sumo Squat","e033":"Quad Isometric Hold","e034":"Straight-Leg Raise","e035":"Banded Hip Abduction","e036":"Wall Sit","e037":"Step Up","e038":"Partial-Range Leg Press","e039":"Side Plank","e040":"Dead Bug","e041":"Superman","e042":"Dumbbell Bench Row","e043":"Seated Dumbbell Press","e044":"Shoulder External Rotation","e045":"Hammer Curl","e046":"Hip Adduction Machine","e047":"Quadruped Hip Extension","e048":"Goblet Squat","e049":"T-Bar Row (Chest-Supported)","e050":"Bench Dips","e051":"Decline Bench Press","e052":"Machine Bench Press","e053":"High Cable Crossover","e054":"Low Cable Crossover","e055":"Push-Up","e056":"Incline Push-Up","e057":"Pull-Up","e058":"Chin-Up","e059":"Close-Grip Pulldown","e060":"T-Bar Row","e061":"Hammer Strength Row","e062":"Shrug","e063":"Face Pull","e064":"Reverse Fly","e065":"Reverse Fly Machine","e066":"Arnold Press","e067":"Cable Lateral Raise","e068":"Incline Lateral Raise","e069":"Wide-Grip Upright Row","e070":"Concentration Curl","e071":"21s Curl","e072":"Cable Curl","e073":"Reverse Curl","e074":"Rope Triceps Pushdown","e075":"Triceps Kickback","e076":"Single-Arm Cable Triceps","e077":"Close-Grip Bench Press","e078":"Front Squat","e079":"Bulgarian Split Squat","e080":"Sissy Squat","e081":"Single-Leg Press","e082":"Walking Lunge","e083":"Seated Leg Curl","e084":"Single-Leg Stiff Deadlift","e086":"Hip Thrust Machine","e087":"Cable Glute Kickback","e088":"Cable Abduction","e089":"Donkey Calf Raise","e090":"Single-Leg Calf Raise","e091":"Hanging Knee Raise (Parallel Bars)","e092":"Ab Machine","e093":"Cable Crunch","e094":"Russian Twist","e095":"Ab Wheel Rollout","e096":"Mountain Climber","e097":"Burpee","e098":"Kettlebell Swing","e099":"Farmer Walk","e100":"Deadlift","e101":"Sumo Deadlift","e102":"Underhand Bent-Over Row","e103":"Cable Pullover","e104":"Smith Machine Calf Raise","e105":"Plank with Leg Lift","e106":"Kettlebell Goblet Squat","e107":"Turkish Get-Up","e108":"Kettlebell Clean","e109":"Kettlebell Snatch","e110":"Thruster","e111":"Wall Ball","e112":"Slam Ball","e113":"Battle Rope","e114":"Sled Push","e115":"Sled Pull","e116":"Box Jump","e117":"Squat Jump","e118":"Broad Jump","e119":"Skater Jump","e120":"Plyo Push-Up","e121":"Bear Crawl","e122":"Crab Walk","e123":"Bear to Plank","e124":"Bulgarian Split Squat Jump","e125":"Pistol Squat","e126":"High-Knee Step-Up","e127":"Reverse Lunge","e128":"Lateral Lunge","e129":"Cossack Squat","e130":"Single-Leg Glute Bridge","e131":"Nordic Curl","e132":"Copenhagen Plank","e133":"Plank Shoulder Tap","e134":"Pallof Press","e136":"Bird Dog","e137":"Hollow Body Hold","e138":"Up-Down Plank","e139":"Windshield Wiper","e141":"Toes to Bar","e142":"L-Sit","e143":"Burpee Box Jump","e144":"Jumping Jack","e145":"High-Knee Running in Place","e146":"Jump Rope","e147":"Treadmill Sprint","e148":"HIIT on Stationary Bike","e149":"Rowing Machine","e150":"StairMaster","e151":"Elliptical","e152":"Cat-Cow","e153":"Supine Thoracic Rotation","e154":"90/90 Hip Mobility","e155":"Hip Flexor Stretch","e156":"Shoulder Dislocate with Stick","e157":"Doorway Chest Stretch","e158":"Thoracic Foam Rolling","e159":"IT Band Foam Rolling","e160":"Wall Calf Stretch","e161":"Child's Pose","e162":"Downward-Facing Dog","e163":"Mini Band Glute Activation","e164":"Clamshell","e165":"Monster Walk","e166":"Banded External Rotation","e167":"Y-T-W on Bench","e168":"Face Pull with Rotation","e169":"Scapular Push-Up","e170":"Chin Tuck","e171":"Single-Arm Farmer Walk","e172":"Rack Carry","e173":"Overhead Carry","e174":"Landmine Press","e175":"Landmine Row","e176":"Landmine Rotation","e177":"Bulgarian Split Squat Isometric","e179":"Paused Bench Press Isometric","e180":"Paused Squat","e181":"Neutral-Grip Dumbbell Press","e182":"High Pulley Crossover","e183":"Low Pulley Crossover","e184":"Diamond Push-Up","e185":"Archer Push-Up","e187":"Chest Press Machine","e188":"Chest Fly Machine","e192":"Lying Lateral Raise","e193":"Military Press","e194":"Upright Row","e195":"Reverse Pec Deck","e196":"Plate Front Raise","e197":"Pike Push-Up","e198":"Dumbbell Stiff-Leg Deadlift","e199":"Single-Leg Leg Curl","e200":"Good Morning","e201":"Barbell Hip Thrust","e202":"Glute-Ham Raise","e203":"Seated Hamstring Curl","e204":"Single-Arm Kettlebell Swing","e205":"Leg Press Calf Raise","e206":"Seated Calf Raise","e208":"Calf Hops","e210":"Spider Curl","e212":"Machine Triceps Dip","e213":"Reverse-Grip Single-Arm Triceps","e214":"Cable Hammer Curl","e215":"Neutral-Grip Pulldown","e217":"Row Machine","e218":"Straight-Arm Pulldown","e219":"Australian Pull-Up","e220":"Neutral-Grip Pull-Up","e222":"High Cable Crunch","e225":"Hanging Leg Raise","e226":"Side Plank with Hip Raise","e227":"Dumbbell Thruster","e228":"Devil Press","e229":"Man Maker","e231":"Box Jump Over","e232":"Burpee Pull-Up","e234":"Battle Rope Double Waves","e236":"Clean and Jerk","e237":"Unilateral Leg Extension","e238":"Hip Abduction Machine","e239":"Horizontal Leg Press","e240":"Back Extension (Hyperextension)","e241":"Smith Machine Squat","e242":"Smith Machine Sumo Squat","e243":"Snatch Pull","e244":"Incline Bench Alternating Curl","e245":"Dumbbell Flat Bench Press","e246":"Reverse Wrist Curl","e247":"Standing Dumbbell Wrist Curl","e248":"3/4 Sit-Up","e249":"3-Point Plank Jump","e250":"Cobra Stretch","e251":"Child's Pose to Plank (Mobility)","e252":"Drag Curl"};
+const EXERCISE_NAME_EN = {"e001":"Flat Bench Press","e002":"Incline Bench Press","e003":"Dumbbell Fly","e004":"Pec Deck","e005":"Bent-Over Row","e006":"Lat Pulldown","e007":"Single-Arm Row","e008":"Pullover","e009":"Barbell Overhead Press","e010":"Dumbbell Shoulder Press","e011":"Lateral Raise","e012":"Front Raise","e013":"Barbell Curl","e014":"Alternating Curl","e015":"Preacher Curl","e016":"Cable Triceps Pushdown","e017":"Skull Crusher","e018":"Overhead Triceps Extension","e019":"Barbell Squat","e020":"Leg Press 45°","e021":"Stiff-Leg Deadlift","e022":"Forward Lunge","e023":"Leg Extension","e024":"Lying Leg Curl","e025":"Standing Calf Raise","e026":"Hack Squat","e027":"Hip Thrust","e028":"Crunch","e029":"Plank","e030":"Seated Cable Row","e031":"Single-Leg Hip Thrust","e032":"Sumo Squat","e033":"Quad Isometric Hold","e034":"Straight-Leg Raise","e035":"Banded Hip Abduction","e036":"Wall Sit","e037":"Step Up","e038":"Partial-Range Leg Press","e039":"Side Plank","e040":"Dead Bug","e041":"Superman","e042":"Dumbbell Bench Row","e043":"Seated Dumbbell Press","e044":"Shoulder External Rotation","e045":"Hammer Curl","e046":"Hip Adduction Machine","e047":"Quadruped Hip Extension","e048":"Goblet Squat","e049":"T-Bar Row (Chest-Supported)","e050":"Bench Dips","e051":"Decline Bench Press","e052":"Machine Bench Press","e053":"High Cable Crossover","e054":"Low Cable Crossover","e055":"Push-Up","e056":"Incline Push-Up","e057":"Pull-Up","e058":"Chin-Up","e059":"Close-Grip Pulldown","e060":"T-Bar Row","e061":"Hammer Strength Row","e062":"Shrug","e063":"Face Pull","e064":"Reverse Fly","e065":"Reverse Fly Machine","e066":"Arnold Press","e067":"Cable Lateral Raise","e068":"Incline Lateral Raise","e069":"Wide-Grip Upright Row","e070":"Concentration Curl","e071":"21s Curl","e072":"Cable Curl","e073":"Reverse Curl","e074":"Rope Triceps Pushdown","e075":"Triceps Kickback","e076":"Single-Arm Cable Triceps","e077":"Close-Grip Bench Press","e078":"Front Squat","e079":"Bulgarian Split Squat","e080":"Sissy Squat","e081":"Single-Leg Press","e082":"Walking Lunge","e083":"Seated Leg Curl","e084":"Single-Leg Stiff Deadlift","e086":"Hip Thrust Machine","e087":"Cable Glute Kickback","e088":"Cable Abduction","e089":"Donkey Calf Raise","e090":"Single-Leg Calf Raise","e091":"Hanging Knee Raise (Parallel Bars)","e092":"Ab Machine","e093":"Cable Crunch","e094":"Russian Twist","e095":"Ab Wheel Rollout","e096":"Mountain Climber","e097":"Burpee","e098":"Kettlebell Swing","e099":"Farmer Walk","e100":"Deadlift","e101":"Sumo Deadlift","e102":"Underhand Bent-Over Row","e103":"Cable Pullover","e104":"Smith Machine Calf Raise","e105":"Plank with Leg Lift","e106":"Kettlebell Goblet Squat","e107":"Turkish Get-Up","e108":"Kettlebell Clean","e109":"Kettlebell Snatch","e110":"Thruster","e111":"Wall Ball","e112":"Slam Ball","e113":"Battle Rope","e114":"Sled Push","e115":"Sled Pull","e116":"Box Jump","e117":"Squat Jump","e118":"Broad Jump","e119":"Skater Jump","e120":"Plyo Push-Up","e121":"Bear Crawl","e122":"Crab Walk","e123":"Bear to Plank","e124":"Bulgarian Split Squat Jump","e125":"Pistol Squat","e126":"High-Knee Step-Up","e127":"Reverse Lunge","e128":"Lateral Lunge","e129":"Cossack Squat","e130":"Single-Leg Glute Bridge","e131":"Nordic Curl","e132":"Copenhagen Plank","e133":"Plank Shoulder Tap","e134":"Pallof Press","e136":"Bird Dog","e137":"Hollow Body Hold","e138":"Up-Down Plank","e139":"Windshield Wiper","e141":"Toes to Bar","e142":"L-Sit","e143":"Burpee Box Jump","e144":"Jumping Jack","e145":"High-Knee Running in Place","e146":"Jump Rope","e147":"Treadmill Sprint","e148":"HIIT on Stationary Bike","e149":"Rowing Machine","e150":"StairMaster","e151":"Elliptical","e152":"Cat-Cow","e153":"Supine Thoracic Rotation","e154":"90/90 Hip Mobility","e155":"Hip Flexor Stretch","e156":"Shoulder Dislocate with Stick","e157":"Doorway Chest Stretch","e158":"Thoracic Foam Rolling","e159":"IT Band Foam Rolling","e160":"Wall Calf Stretch","e161":"Child's Pose","e162":"Downward-Facing Dog","e163":"Mini Band Glute Activation","e164":"Clamshell","e165":"Monster Walk","e166":"Banded External Rotation","e167":"Y-T-W on Bench","e168":"Face Pull with Rotation","e169":"Scapular Push-Up","e170":"Chin Tuck","e171":"Single-Arm Farmer Walk","e172":"Rack Carry","e173":"Overhead Carry","e174":"Landmine Press","e175":"Landmine Row","e176":"Landmine Rotation","e177":"Bulgarian Split Squat Isometric","e179":"Paused Bench Press Isometric","e180":"Paused Squat","e181":"Neutral-Grip Dumbbell Press","e182":"High Pulley Crossover","e183":"Low Pulley Crossover","e184":"Diamond Push-Up","e185":"Archer Push-Up","e187":"Chest Press Machine","e188":"Chest Fly Machine","e192":"Lying Lateral Raise","e193":"Military Press","e194":"Upright Row","e195":"Reverse Pec Deck","e196":"Plate Front Raise","e197":"Pike Push-Up","e198":"Dumbbell Stiff-Leg Deadlift","e199":"Single-Leg Leg Curl","e200":"Good Morning","e201":"Barbell Hip Thrust","e202":"Glute-Ham Raise","e203":"Seated Hamstring Curl","e204":"Single-Arm Kettlebell Swing","e205":"Leg Press Calf Raise","e206":"Seated Calf Raise","e208":"Calf Hops","e210":"Spider Curl","e212":"Machine Triceps Dip","e213":"Reverse-Grip Single-Arm Triceps","e214":"Cable Hammer Curl","e215":"Neutral-Grip Pulldown","e217":"Row Machine","e218":"Straight-Arm Pulldown","e219":"Australian Pull-Up","e220":"Neutral-Grip Pull-Up","e222":"High Cable Crunch","e225":"Hanging Leg Raise","e226":"Side Plank with Hip Raise","e227":"Dumbbell Thruster","e228":"Devil Press","e229":"Man Maker","e231":"Box Jump Over","e232":"Burpee Pull-Up","e234":"Battle Rope Double Waves","e236":"Clean and Jerk"};
 
 // Nome do exercício no idioma ativo (usar em toda exibição)
 function exNome(ex){
@@ -5952,7 +5821,7 @@ function renderPerfil(u){
 // ══ GIFS DE DEMONSTRAÇÃO DOS EXERCÍCIOS ══
 // Lista cresce conforme os gifs vão sendo adicionados à pasta /exercicios do repositório.
 // Fallback automático pro emoji+foto quando ausente.
-const EXERCICIOS_COM_GIF = new Set(['e001','e005','e006','e008','e010','e015','e018','e020','e022','e023','e024','e027','e041','e046','e061','e063','e075','e077','e079','e131','e136','e149','e196','e218','e225','e237','e238','e239','e240','e241','e242','e243','e244','e245','e246','e247','e248','e249','e250','e251','e252']);
+const EXERCICIOS_COM_GIF = new Set(['e001','e002','e003','e004','e005','e006','e007','e008','e009','e010','e011','e013','e014','e015','e016','e017','e018','e019','e020','e021','e022','e023','e024','e026','e027','e028','e030','e037','e041','e042','e045','e046','e050','e051','e052','e053','e054','e055','e056','e058','e061','e063','e075','e077','e079','e102','e113','e120','e131','e136','e144','e149','e152','e157','e174','e175','e179','e181','e182','e183','e184','e187','e188','e193','e196','e203','e217','e218','e225','e237','e238','e239','e240','e241','e242','e243','e244','e245','e246','e247','e248','e249','e250','e251','e252','e253','e254','e255','e256','e257','e258','e259','e260','e261','e262','e263','e103','e215','e059','e012','e062','e067','e194','e264','e265','e266','e267','e268','e269','e065','e195','e068','e192','e270','e271','e272','e070','e072','e214','e210','e168','e273','e064','e069','e044','e212','e076','e036','e032','e048','e129','e274','e275','e276','e277','e278','e279','e280','e281','e282','e074','e283','e284']);
 function temGifDemo(exId){ return EXERCICIOS_COM_GIF.has(exId); }
 function getExGif(exId){ return `exercicios/${exId}.gif`; }
 function renderExThumb(ex){
@@ -6328,7 +6197,7 @@ function renderGymDay(w,d,u){
     return `<div class="ep-card" id="ep-${i}">
       <div class="ep-header" onclick="togEp(${i})">
         <div class="ep-num ${dayDone?'done':''}">${i+1}</div>
-        <div class="ep-info"><div class="ep-title">${exNome(ex)} <button onclick="event.stopPropagation();abrirFichaExercicio('${ex.id}')" style="background:rgba(255,255,255,.08);border:1px solid var(--b);color:var(--t2);border-radius:50%;width:20px;height:20px;font-size:11px;cursor:pointer;vertical-align:middle;margin-left:4px;padding:0;line-height:1" title="Ver ficha completa">ℹ️</button></div><div class="ep-sub">${ex.muscle} · ${ex.equipment}</div></div>
+        <div class="ep-info"><div class="ep-title">${exNome(ex)}</div><div class="ep-sub">${ex.muscle} · ${ex.equipment}</div></div>
         <div class="ep-chips"><span class="ep-chip">${ed.sets}×${ed.reps}</span><span class="ep-chip">⏱${ed.rest||60}s</span>${ed.tecnica?`<span class="ep-chip" style="background:rgba(229,9,20,.18);color:#ff5a63;border:1px solid rgba(229,9,20,.35)">🔥 ${ed.tecnica}</span>`:''}</div>
         <span class="ep-chv">▾</span>
       </div>
@@ -7034,15 +6903,15 @@ function renderBank(){
 }
 function filterBank(){bankF=document.getElementById('bank-search').value;renderBank();}
 function openAddEx(id=null){
-  const ex=id?EXERCISE_BANK.find(e=>e.id===id):{id:'e'+String(EXERCISE_BANK.length+1).padStart(3,'0'),name:'',muscle:'',equipment:'',emoji:'🏋️',obs:'',dica:''};
+  const ex=id?EXERCISE_BANK.find(e=>e.id===id):{id:'e'+String(EXERCISE_BANK.length+1).padStart(3,'0'),name:'',muscle:'',equipment:'',emoji:'🏋️',obs:''};
   document.getElementById('modal-ex-title').textContent=id?'✏️ Editar':'➕ Novo Exercício';
-  document.getElementById('modal-ex-content').innerHTML=`<div class="fg"><label class="fl">Nome</label><input class="fi" id="ex-name" value="${ex.name}" placeholder="Ex: Supino Plano"/></div><div class="fr"><div class="fg"><label class="fl">Músculo</label><input class="fi" id="ex-muscle" value="${ex.muscle}" placeholder="Peito"/></div><div class="fg"><label class="fl">Equipamento</label><input class="fi" id="ex-equip" value="${ex.equipment}" placeholder="Barra"/></div></div><div class="fr"><div class="fg"><label class="fl">Emoji</label><input class="fi" id="ex-emoji" value="${ex.emoji||'🏋️'}" placeholder="🏋️"/></div></div><div class="fg"><label class="fl">Dica de execução (técnica)</label><textarea class="fi" id="ex-obs" placeholder="Descreva...">${ex.obs}</textarea></div><div class="fg"><label class="fl">💬 Dica do treinador <span style="font-weight:400;color:var(--mu)">(opcional — aparece na ficha do exercício como sua fala pessoal)</span></label><textarea class="fi" id="ex-dica" placeholder="Ex: Cuidado pra não deixar o cotovelo passar do ombro...">${ex.dica||''}</textarea></div><button class="btn-p" onclick="saveEx('${ex.id}')">💾 Salvar</button>`;
+  document.getElementById('modal-ex-content').innerHTML=`<div class="fg"><label class="fl">Nome</label><input class="fi" id="ex-name" value="${ex.name}" placeholder="Ex: Supino Plano"/></div><div class="fr"><div class="fg"><label class="fl">Músculo</label><input class="fi" id="ex-muscle" value="${ex.muscle}" placeholder="Peito"/></div><div class="fg"><label class="fl">Equipamento</label><input class="fi" id="ex-equip" value="${ex.equipment}" placeholder="Barra"/></div></div><div class="fr"><div class="fg"><label class="fl">Emoji</label><input class="fi" id="ex-emoji" value="${ex.emoji||'🏋️'}" placeholder="🏋️"/></div></div><div class="fg"><label class="fl">Dica de execução</label><textarea class="fi" id="ex-obs" placeholder="Descreva...">${ex.obs}</textarea></div><button class="btn-p" onclick="saveEx('${ex.id}')">💾 Salvar</button>`;
   abrirModal('modal-adm-ex');
 }
 function saveEx(id){
   const name=document.getElementById('ex-name').value.trim();const muscle=document.getElementById('ex-muscle').value.trim();
   if(!name||!muscle){fqToast('Nome e músculo obrigatórios.','warn');return;}
-  const obj={id,name,muscle,equipment:document.getElementById('ex-equip').value.trim(),emoji:document.getElementById('ex-emoji').value.trim()||'🏋️',obs:document.getElementById('ex-obs').value.trim(),dica:document.getElementById('ex-dica').value.trim()};
+  const obj={id,name,muscle,equipment:document.getElementById('ex-equip').value.trim(),emoji:document.getElementById('ex-emoji').value.trim()||'🏋️',obs:document.getElementById('ex-obs').value.trim()};
   const idx=EXERCISE_BANK.findIndex(e=>e.id===id);if(idx>=0)EXERCISE_BANK[idx]=obj;else EXERCISE_BANK.push(obj);
   closeModal('modal-adm-ex');renderBank();fqToast('✅ Exercício salvo!','ok');
 }
