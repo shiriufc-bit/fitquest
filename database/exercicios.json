@@ -1,0 +1,2282 @@
+[
+  {
+    "id": "e001",
+    "name": "Supino Reto",
+    "muscle": "Peito",
+    "equipment": "Barra/Halteres",
+    "emoji": "🏋️",
+    "obs": "Escápulas retraídas, cotovelos a 45°. Desça até tocar o peito."
+  },
+  {
+    "id": "e002",
+    "name": "Supino Inclinado",
+    "muscle": "Peito Superior",
+    "equipment": "Barra/Halteres",
+    "emoji": "📐",
+    "obs": "Banco a 30–45°. Foco no peito superior."
+  },
+  {
+    "id": "e003",
+    "name": "Crucifixo",
+    "muscle": "Peito",
+    "equipment": "Halteres",
+    "emoji": "🦋",
+    "obs": "Leve flexão nos cotovelos. Sinta o alongamento no peito."
+  },
+  {
+    "id": "e004",
+    "name": "Peck Deck",
+    "muscle": "Peito",
+    "equipment": "Máquina",
+    "emoji": "🤗",
+    "obs": "Contração no centro. Pausa de 1s."
+  },
+  {
+    "id": "e005",
+    "name": "Remada Curvada",
+    "muscle": "Costas",
+    "equipment": "Barra",
+    "emoji": "🎣",
+    "obs": "Costas retas, puxe até o umbigo."
+  },
+  {
+    "id": "e006",
+    "name": "Puxada Alta",
+    "muscle": "Costas/Bíceps",
+    "equipment": "Máquina",
+    "emoji": "⬇️",
+    "obs": "Puxe até o queixo, cotovelos para baixo."
+  },
+  {
+    "id": "e007",
+    "name": "Remada Unilateral",
+    "muscle": "Costas",
+    "equipment": "Halteres",
+    "emoji": "💪",
+    "obs": "Apoio no banco. Puxe o cotovelo para o teto."
+  },
+  {
+    "id": "e008",
+    "name": "Pullover",
+    "muscle": "Costas/Peito",
+    "equipment": "Halteres",
+    "emoji": "🌊",
+    "obs": "Cotovelos levemente flexionados. Amplitude máxima."
+  },
+  {
+    "id": "e009",
+    "name": "Desenvolvimento Barra",
+    "muscle": "Ombro",
+    "equipment": "Barra",
+    "emoji": "🏆",
+    "obs": "Cotovelos alinhados com os ombros."
+  },
+  {
+    "id": "e010",
+    "name": "Desenvolvimento Halteres",
+    "muscle": "Ombro",
+    "equipment": "Halteres",
+    "emoji": "🎯",
+    "obs": "Palmas para frente. Amplitude completa."
+  },
+  {
+    "id": "e011",
+    "name": "Elevação Lateral",
+    "muscle": "Ombro Lateral",
+    "equipment": "Halteres",
+    "emoji": "🦅",
+    "obs": "Cotovelos levemente flexionados. Isométrico de 1s no topo."
+  },
+  {
+    "id": "e012",
+    "name": "Elevação Frontal",
+    "muscle": "Ombro Frontal",
+    "equipment": "Halteres/Barra",
+    "emoji": "⬆️",
+    "obs": "Não balance o tronco."
+  },
+  {
+    "id": "e013",
+    "name": "Rosca Direta",
+    "muscle": "Bíceps",
+    "equipment": "Barra",
+    "emoji": "💪",
+    "obs": "Cotovelos fixos. Supine no topo."
+  },
+  {
+    "id": "e014",
+    "name": "Rosca Alternada",
+    "muscle": "Bíceps",
+    "equipment": "Halteres",
+    "emoji": "🔄",
+    "obs": "Supinação completa."
+  },
+  {
+    "id": "e015",
+    "name": "Rosca Scott",
+    "muscle": "Bíceps",
+    "equipment": "Máquina/Barra",
+    "emoji": "📐",
+    "obs": "Cotovelo apoiado. Amplitude total."
+  },
+  {
+    "id": "e016",
+    "name": "Tríceps Pulley",
+    "muscle": "Tríceps",
+    "equipment": "Cabo",
+    "emoji": "🔽",
+    "obs": "Cotovelos colados. Trave na extensão."
+  },
+  {
+    "id": "e017",
+    "name": "Tríceps Testa",
+    "muscle": "Tríceps",
+    "equipment": "Barra/Halteres",
+    "emoji": "🎭",
+    "obs": "Cotovelos apontando para cima."
+  },
+  {
+    "id": "e018",
+    "name": "Tríceps Francês",
+    "muscle": "Tríceps",
+    "equipment": "Halteres",
+    "emoji": "🥐",
+    "obs": "Acima da cabeça. Amplitude máxima."
+  },
+  {
+    "id": "e019",
+    "name": "Agachamento Livre",
+    "muscle": "Quadríceps/Glúteo",
+    "equipment": "Barra",
+    "emoji": "👑",
+    "obs": "Pés na largura dos ombros. Desça até 90°."
+  },
+  {
+    "id": "e020",
+    "name": "Leg Press 45°",
+    "muscle": "Quadríceps/Glúteo",
+    "equipment": "Máquina",
+    "emoji": "🦵",
+    "obs": "Não trave os joelhos. Amplitude completa."
+  },
+  {
+    "id": "e021",
+    "name": "Stiff",
+    "muscle": "Posterior/Glúteo",
+    "equipment": "Barra/Halteres",
+    "emoji": "🏹",
+    "obs": "Costas retas. Sinta o alongamento."
+  },
+  {
+    "id": "e022",
+    "name": "Avanço",
+    "muscle": "Glúteo/Quadríceps",
+    "equipment": "Halteres/Livre",
+    "emoji": "🚶",
+    "obs": "Passada longa. Joelho traseiro quase toca o chão."
+  },
+  {
+    "id": "e023",
+    "name": "Cadeira Extensora",
+    "muscle": "Quadríceps",
+    "equipment": "Máquina",
+    "emoji": "🪑",
+    "obs": "Pausa de 1s no topo."
+  },
+  {
+    "id": "e024",
+    "name": "Mesa Flexora",
+    "muscle": "Posterior",
+    "equipment": "Máquina",
+    "emoji": "🛏️",
+    "obs": "Amplitude total. Pausa na contração."
+  },
+  {
+    "id": "e025",
+    "name": "Panturrilha em Pé",
+    "muscle": "Panturrilha",
+    "equipment": "Máquina/Livre",
+    "emoji": "🦶",
+    "obs": "Amplitude máxima. Pausa de 2s no topo."
+  },
+  {
+    "id": "e026",
+    "name": "Hack Squat",
+    "muscle": "Quadríceps",
+    "equipment": "Máquina",
+    "emoji": "⚙️",
+    "obs": "Joelhos alinhados com os pés."
+  },
+  {
+    "id": "e027",
+    "name": "Hip Thrust",
+    "muscle": "Glúteo",
+    "equipment": "Barra/Halteres",
+    "emoji": "🍑",
+    "obs": "Ombros no banco. Empurre o quadril."
+  },
+  {
+    "id": "e028",
+    "name": "Abdominal Crunch",
+    "muscle": "Abdômen",
+    "equipment": "Livre",
+    "emoji": "🎯",
+    "obs": "Não puxe o pescoço."
+  },
+  {
+    "id": "e029",
+    "name": "Prancha",
+    "muscle": "Core/Abdômen",
+    "equipment": "Livre",
+    "emoji": "📏",
+    "obs": "Corpo reto. Não deixe o quadril cair."
+  },
+  {
+    "id": "e030",
+    "name": "Remada Baixa",
+    "muscle": "Costas",
+    "equipment": "Cabo",
+    "emoji": "🎣",
+    "obs": "Costas retas, puxe até o abdômen."
+  },
+  {
+    "id": "e031",
+    "name": "Hip Thrust Unilateral",
+    "muscle": "Glúteo",
+    "equipment": "Banco",
+    "emoji": "🍑",
+    "obs": "Uma perna só. Máxima ativação glútea. Ótimo para assimetrias."
+  },
+  {
+    "id": "e032",
+    "name": "Agachamento Sumô",
+    "muscle": "Quadríceps/Glúteo/Adutores",
+    "equipment": "Halteres/Barra",
+    "emoji": "🏋️",
+    "obs": "Pés abertos 45°. Joelhos apontam para fora. Menor stress patelofemoral."
+  },
+  {
+    "id": "e033",
+    "name": "Isométrico de Quadríceps",
+    "muscle": "Quadríceps",
+    "equipment": "Livre",
+    "emoji": "🦵",
+    "obs": "Deitado, joelho estendido, contraia o quadríceps por 10s. Ideal para condromalácia."
+  },
+  {
+    "id": "e034",
+    "name": "Elevação de Perna Estendida",
+    "muscle": "Quadríceps/Core",
+    "equipment": "Livre",
+    "emoji": "🦵",
+    "obs": "Deitado, levante a perna estendida a 45°. Sem estresse na patela. Fortalece VMO."
+  },
+  {
+    "id": "e035",
+    "name": "Abdução de Quadril (Elástico)",
+    "muscle": "Glúteo Médio",
+    "equipment": "Elástico/Livre",
+    "emoji": "🦴",
+    "obs": "Decúbito lateral, eleve a perna até 45°. Corrige valgo dinâmico. Protege o joelho."
+  },
+  {
+    "id": "e036",
+    "name": "Agachamento na Parede (Wall Sit)",
+    "muscle": "Quadríceps/Glúteo",
+    "equipment": "Livre",
+    "emoji": "🧱",
+    "obs": "Costas na parede, joelho a 60-90°. Segure até a falha. Zero impacto articular."
+  },
+  {
+    "id": "e037",
+    "name": "Step Up",
+    "muscle": "Quadríceps/Glúteo",
+    "equipment": "Banco/Caixa",
+    "emoji": "📦",
+    "obs": "Suba o degrau devagar. Controle a descida. Funcional e menor stress no joelho."
+  },
+  {
+    "id": "e038",
+    "name": "Leg Press Amplitude Parcial",
+    "muscle": "Quadríceps/Glúteo",
+    "equipment": "Máquina",
+    "emoji": "🦵",
+    "obs": "JOELHO LESIONADO: use amplitude 0-45° apenas. Sem dor = exercício correto."
+  },
+  {
+    "id": "e039",
+    "name": "Prancha Lateral",
+    "muscle": "Core/Oblíquos",
+    "equipment": "Livre",
+    "emoji": "📐",
+    "obs": "Corpo alinhado. 30-60s cada lado. Fortalece core sem compressão lombar."
+  },
+  {
+    "id": "e040",
+    "name": "Dead Bug",
+    "muscle": "Core/Abdômen",
+    "equipment": "Livre",
+    "emoji": "🐛",
+    "obs": "Lombar colada no chão. Braço e perna opostos. Excelente para hérnia de disco."
+  },
+  {
+    "id": "e041",
+    "name": "Superman",
+    "muscle": "Lombar/Glúteo",
+    "equipment": "Livre",
+    "emoji": "🦸",
+    "obs": "Deitado de bruços, eleve braços e pernas. Fortalece lombar sem carga axial."
+  },
+  {
+    "id": "e042",
+    "name": "Remada com Halteres no Banco",
+    "muscle": "Costas",
+    "equipment": "Halteres/Banco",
+    "emoji": "🏋️",
+    "obs": "Apoio total no banco. Sem stress lombar. Ótima alternativa para quem tem hérnia."
+  },
+  {
+    "id": "e043",
+    "name": "Desenvolvimento Sentado com Halteres",
+    "muscle": "Ombro",
+    "equipment": "Halteres",
+    "emoji": "💪",
+    "obs": "Sentado, palmas se encaram. Menor stress acromial que barra acima da cabeça."
+  },
+  {
+    "id": "e044",
+    "name": "Rotação Externa de Ombro",
+    "muscle": "Manguito Rotador",
+    "equipment": "Elástico/Cabo",
+    "emoji": "🔄",
+    "obs": "Cotovelo a 90°, elástico fixo. Fortalece manguito rotador. Previne lesão de ombro."
+  },
+  {
+    "id": "e045",
+    "name": "Rosca Martelo",
+    "muscle": "Bíceps/Braquial",
+    "equipment": "Halteres",
+    "emoji": "🔨",
+    "obs": "Pegada neutra. Menos stress no tendão do bíceps. Ótimo para quem tem cotovelo sensível."
+  },
+  {
+    "id": "e046",
+    "name": "Cadeira Adutora",
+    "muscle": "Adutores",
+    "equipment": "Máquina",
+    "emoji": "🦵",
+    "obs": "Fortalece adutores. Complementa o trabalho de estabilização do joelho."
+  },
+  {
+    "id": "e047",
+    "name": "Extensão de Quadril (4 apoios)",
+    "muscle": "Glúteo/Lombar",
+    "equipment": "Livre",
+    "emoji": "🍑",
+    "obs": "Em 4 apoios, extend uma perna para trás. Fortalece glúteo sem stress no joelho."
+  },
+  {
+    "id": "e048",
+    "name": "Agachamento Goblet",
+    "muscle": "Quadríceps/Glúteo/Core",
+    "equipment": "Halteres/Kettlebell",
+    "emoji": "🏆",
+    "obs": "Segurar peso na frente do peito. Postura forçada. Ótimo para iniciantes e joelho."
+  },
+  {
+    "id": "e049",
+    "name": "Remada Cavalinho",
+    "muscle": "Costas/Ombro Posterior",
+    "equipment": "Halteres",
+    "emoji": "🐴",
+    "obs": "Coxa como apoio, cotovelo alto. Trabalha romboide e trapézio. Postura."
+  },
+  {
+    "id": "e050",
+    "name": "Tríceps no Banco (Dips)",
+    "muscle": "Tríceps/Peito",
+    "equipment": "Banco",
+    "emoji": "🪑",
+    "obs": "Sem joelhos dobrados para evitar stress. Ótimo exercício de peso corporal."
+  },
+  {
+    "id": "e051",
+    "name": "Supino Declinado",
+    "muscle": "Peito Inferior",
+    "equipment": "Barra",
+    "emoji": "📉",
+    "obs": "Banco declinado 15-30°. Barra desce na linha inferior do peito. Menos stress no ombro."
+  },
+  {
+    "id": "e052",
+    "name": "Supino Máquina",
+    "muscle": "Peito",
+    "equipment": "Máquina",
+    "emoji": "🎛️",
+    "obs": "Ajuste o banco: pegadas na linha do peito. Ideal para iniciantes e drop-sets seguros."
+  },
+  {
+    "id": "e053",
+    "name": "Crossover Polia Alta",
+    "muscle": "Peito Inferior",
+    "equipment": "Cabo",
+    "emoji": "✂️",
+    "obs": "Puxe de cima para baixo cruzando na frente do quadril. Contração de pico 1s."
+  },
+  {
+    "id": "e054",
+    "name": "Crossover Polia Baixa",
+    "muscle": "Peito Superior",
+    "equipment": "Cabo",
+    "emoji": "📈",
+    "obs": "De baixo para cima, mãos terminam na altura dos olhos. Foco em peito superior."
+  },
+  {
+    "id": "e055",
+    "name": "Flexão de Braço",
+    "muscle": "Peito/Tríceps",
+    "equipment": "Peso Corporal",
+    "emoji": "🙇",
+    "obs": "Corpo em linha reta, mãos na largura dos ombros. Desça até 5cm do chão."
+  },
+  {
+    "id": "e056",
+    "name": "Flexão Inclinada",
+    "muscle": "Peito Inferior",
+    "equipment": "Peso Corporal",
+    "emoji": "⬆️",
+    "obs": "Mãos apoiadas em banco. Versão facilitada — ideal para progressão de iniciantes."
+  },
+  {
+    "id": "e057",
+    "name": "Barra Fixa (Pull-up)",
+    "muscle": "Costas/Bíceps",
+    "equipment": "Barra Fixa",
+    "emoji": "🧗",
+    "obs": "Pegada pronada largura dos ombros. Queixo acima da barra. Desça controlado 3s."
+  },
+  {
+    "id": "e058",
+    "name": "Barra Fixa Supinada (Chin-up)",
+    "muscle": "Costas/Bíceps",
+    "equipment": "Barra Fixa",
+    "emoji": "🤙",
+    "obs": "Pegada supinada mais fechada. Maior ativação de bíceps. Escápulas deprimem primeiro."
+  },
+  {
+    "id": "e059",
+    "name": "Puxada Triângulo",
+    "muscle": "Costas",
+    "equipment": "Cabo",
+    "emoji": "🔺",
+    "obs": "Pegada neutra fechada. Puxe até o peito, cotovelos rentes ao corpo. Bom para dorsais internas."
+  },
+  {
+    "id": "e060",
+    "name": "Remada T (T-Bar Row)",
+    "muscle": "Costas",
+    "equipment": "Barra T",
+    "emoji": "🅃",
+    "obs": "Peito apoiado ou livre. Puxe até o abdômen, aperte as escápulas 1s no topo."
+  },
+  {
+    "id": "e061",
+    "name": "Remada Máquina (Hammer)",
+    "muscle": "Costas",
+    "equipment": "Máquina",
+    "emoji": "🔨",
+    "obs": "Peito apoiado no suporte. Movimento unilateral ou bilateral. Excelente para iniciantes."
+  },
+  {
+    "id": "e062",
+    "name": "Encolhimento de Ombros",
+    "muscle": "Trapézio",
+    "equipment": "Halteres/Barra",
+    "emoji": "🤷",
+    "obs": "Suba os ombros em direção às orelhas, segure 2s no topo. NÃO rotacione."
+  },
+  {
+    "id": "e063",
+    "name": "Face Pull",
+    "muscle": "Ombro Posterior/Trapézio",
+    "equipment": "Cabo",
+    "emoji": "😤",
+    "obs": "Corda na altura do rosto. Puxe separando as mãos, cotovelos altos. Saúde do ombro."
+  },
+  {
+    "id": "e064",
+    "name": "Crucifixo Inverso",
+    "muscle": "Ombro Posterior",
+    "equipment": "Halteres",
+    "emoji": "🔄",
+    "obs": "Tronco inclinado 45°. Abra os braços como asas, cotovelos semi-flexionados fixos."
+  },
+  {
+    "id": "e065",
+    "name": "Crucifixo Inverso Máquina",
+    "muscle": "Ombro Posterior",
+    "equipment": "Máquina",
+    "emoji": "🦅",
+    "obs": "Peck deck invertido. Braços abrem para trás na linha dos ombros. Pico de 1s."
+  },
+  {
+    "id": "e066",
+    "name": "Desenvolvimento Arnold",
+    "muscle": "Ombro",
+    "equipment": "Halteres",
+    "emoji": "💫",
+    "obs": "Inicia com palmas para você, rotaciona durante a subida. Ativa os 3 feixes do deltóide."
+  },
+  {
+    "id": "e067",
+    "name": "Elevação Lateral Cabo",
+    "muscle": "Ombro Lateral",
+    "equipment": "Cabo",
+    "emoji": "🎚️",
+    "obs": "Tensão constante do cabo. Suba até a linha do ombro, punho neutro, sem balanço."
+  },
+  {
+    "id": "e068",
+    "name": "Elevação Lateral Inclinada",
+    "muscle": "Ombro Lateral",
+    "equipment": "Halteres",
+    "emoji": "📐",
+    "obs": "Deitado de lado em banco inclinado. Amplitude maior no início do movimento."
+  },
+  {
+    "id": "e069",
+    "name": "Remada Alta Pegada Aberta",
+    "muscle": "Ombro/Trapézio",
+    "equipment": "Barra/Cabo",
+    "emoji": "⚓",
+    "obs": "Pegada MAIS larga que os ombros (protege o manguito). Cotovelos até linha dos ombros."
+  },
+  {
+    "id": "e070",
+    "name": "Rosca Concentrada",
+    "muscle": "Bíceps",
+    "equipment": "Halteres",
+    "emoji": "🎯",
+    "obs": "Cotovelo apoiado na parte interna da coxa. Isolamento total. Contração de pico 1s."
+  },
+  {
+    "id": "e071",
+    "name": "Rosca 21",
+    "muscle": "Bíceps",
+    "equipment": "Barra",
+    "emoji": "2️⃣1️⃣",
+    "obs": "7 reps metade inferior + 7 metade superior + 7 completas. Use carga 40% menor."
+  },
+  {
+    "id": "e072",
+    "name": "Rosca Cabo",
+    "muscle": "Bíceps",
+    "equipment": "Cabo",
+    "emoji": "🪢",
+    "obs": "Tensão constante em toda amplitude. Cotovelos fixos, sem projetar para frente."
+  },
+  {
+    "id": "e073",
+    "name": "Rosca Inversa",
+    "muscle": "Antebraço/Braquial",
+    "equipment": "Barra",
+    "emoji": "🔃",
+    "obs": "Pegada pronada (palmas para baixo). Fortalece antebraço e braquiorradial."
+  },
+  {
+    "id": "e074",
+    "name": "Tríceps Corda",
+    "muscle": "Tríceps",
+    "equipment": "Cabo",
+    "emoji": "🧵",
+    "obs": "Abra a corda no final do movimento para fora. Máxima extensão da cabeça lateral."
+  },
+  {
+    "id": "e075",
+    "name": "Tríceps Coice (Kickback)",
+    "muscle": "Tríceps",
+    "equipment": "Halteres",
+    "emoji": "🐴",
+    "obs": "Tronco paralelo ao chão, cotovelo alto e fixo. Estenda até alinhamento total."
+  },
+  {
+    "id": "e076",
+    "name": "Tríceps Unilateral Cabo",
+    "muscle": "Tríceps",
+    "equipment": "Cabo",
+    "emoji": "1️⃣",
+    "obs": "Um braço por vez, pegada invertida. Corrige assimetrias de força."
+  },
+  {
+    "id": "e077",
+    "name": "Supino Fechado",
+    "muscle": "Tríceps/Peito",
+    "equipment": "Barra",
+    "emoji": "🤏",
+    "obs": "Pegada na largura dos ombros (não mais fechada). Cotovelos rentes ao corpo na descida."
+  },
+  {
+    "id": "e078",
+    "name": "Agachamento Frontal",
+    "muscle": "Quadríceps/Core",
+    "equipment": "Barra",
+    "emoji": "🏗️",
+    "obs": "Barra apoiada nos deltóides anteriores, cotovelos ALTOS. Tronco mais vertical que agachamento normal."
+  },
+  {
+    "id": "e079",
+    "name": "Agachamento Búlgaro",
+    "muscle": "Quadríceps/Glúteo",
+    "equipment": "Halteres",
+    "emoji": "🇧🇬",
+    "obs": "Pé de trás elevado no banco. 80% do peso na perna da frente. Desça vertical."
+  },
+  {
+    "id": "e080",
+    "name": "Agachamento Sissy",
+    "muscle": "Quadríceps",
+    "equipment": "Peso Corporal",
+    "emoji": "🎪",
+    "obs": "Joelhos avançam à frente, corpo inclina para trás. Isolamento extremo de quadríceps. AVANÇADOS."
+  },
+  {
+    "id": "e081",
+    "name": "Leg Press Unilateral",
+    "muscle": "Quadríceps/Glúteo",
+    "equipment": "Máquina",
+    "emoji": "🦵",
+    "obs": "Uma perna por vez. Corrige assimetrias. Pé centralizado na plataforma."
+  },
+  {
+    "id": "e082",
+    "name": "Passada (Walking Lunge)",
+    "muscle": "Quadríceps/Glúteo",
+    "equipment": "Halteres",
+    "emoji": "🚶",
+    "obs": "Passos longos alternados. Joelho de trás quase toca o chão. Tronco ereto sempre."
+  },
+  {
+    "id": "e083",
+    "name": "Cadeira Flexora",
+    "muscle": "Posterior",
+    "equipment": "Máquina",
+    "emoji": "💺",
+    "obs": "Sentado, flexione até 90°. Ajuste o encosto: joelho alinhado com eixo da máquina."
+  },
+  {
+    "id": "e084",
+    "name": "Stiff Unilateral",
+    "muscle": "Posterior/Glúteo",
+    "equipment": "Halteres",
+    "emoji": "🦩",
+    "obs": "Uma perna, halteres na mão oposta. Desafio de equilíbrio + isolamento posterior."
+  },
+  {
+    "id": "e086",
+    "name": "Elevação Pélvica Máquina",
+    "muscle": "Glúteo",
+    "equipment": "Máquina",
+    "emoji": "🍑",
+    "obs": "Hip thrust na máquina específica. Ajuste o apoio na dobra do quadril. Pico 2s no topo."
+  },
+  {
+    "id": "e087",
+    "name": "Coice no Cabo (Kickback Glúteo)",
+    "muscle": "Glúteo",
+    "equipment": "Cabo",
+    "emoji": "🦶",
+    "obs": "Tornozeleira no cabo baixo. Estenda o quadril para trás SEM curvar a lombar."
+  },
+  {
+    "id": "e088",
+    "name": "Abdução no Cabo",
+    "muscle": "Glúteo Médio",
+    "equipment": "Cabo",
+    "emoji": "↗️",
+    "obs": "Em pé, perna abre lateralmente contra resistência. Estabilização de quadril e joelho."
+  },
+  {
+    "id": "e089",
+    "name": "Panturrilha Burrinho",
+    "muscle": "Panturrilha",
+    "equipment": "Máquina",
+    "emoji": "🐴",
+    "obs": "Quadril flexionado alonga o gastrocnêmio. Amplitude total com pausa embaixo."
+  },
+  {
+    "id": "e090",
+    "name": "Panturrilha Unilateral",
+    "muscle": "Panturrilha",
+    "equipment": "Peso Corporal/Halteres",
+    "emoji": "🩰",
+    "obs": "Uma perna no degrau. Corrige assimetrias. 2s subida, 3s descida, pausa embaixo."
+  },
+  {
+    "id": "e091",
+    "name": "Abdominal Infra na Paralela",
+    "muscle": "Abdômen Inferior",
+    "equipment": "Paralelas",
+    "emoji": "🇻",
+    "obs": "Eleve as pernas até 90° SEM balanço. Pelve rotaciona levemente no topo."
+  },
+  {
+    "id": "e092",
+    "name": "Abdominal Máquina",
+    "muscle": "Abdômen",
+    "equipment": "Máquina",
+    "emoji": "⚙️",
+    "obs": "Carga ajustável — permite progressão real do abdômen. Expire na contração."
+  },
+  {
+    "id": "e093",
+    "name": "Abdominal Cabo (Crunch Polia)",
+    "muscle": "Abdômen",
+    "equipment": "Cabo",
+    "emoji": "🙏",
+    "obs": "Ajoelhado, corda atrás da cabeça. Flexione o tronco levando cotovelos aos joelhos."
+  },
+  {
+    "id": "e094",
+    "name": "Rotação Russa (Russian Twist)",
+    "muscle": "Oblíquos",
+    "equipment": "Peso/Bola",
+    "emoji": "🌀",
+    "obs": "Sentado, tronco 45°, gire tocando o peso no chão de cada lado. Pés elevados = mais difícil."
+  },
+  {
+    "id": "e095",
+    "name": "Roda Abdominal (Ab Wheel)",
+    "muscle": "Core Completo",
+    "equipment": "Roda",
+    "emoji": "☸️",
+    "obs": "Role para frente mantendo lombar NEUTRA. Vá só até onde controla a volta."
+  },
+  {
+    "id": "e096",
+    "name": "Mountain Climber",
+    "muscle": "Core/Cardio",
+    "equipment": "Peso Corporal",
+    "emoji": "⛰️",
+    "obs": "Posição de prancha, joelhos alternam ao peito rapidamente. Quadril estável, sem subir."
+  },
+  {
+    "id": "e097",
+    "name": "Burpee",
+    "muscle": "Corpo Todo/Cardio",
+    "equipment": "Peso Corporal",
+    "emoji": "💥",
+    "obs": "Agachamento → prancha → flexão → salto. Ritmo constante, técnica antes de velocidade."
+  },
+  {
+    "id": "e098",
+    "name": "Kettlebell Swing",
+    "muscle": "Posterior/Glúteo/Core",
+    "equipment": "Kettlebell",
+    "emoji": "🔔",
+    "obs": "Movimento de QUADRIL (não agachamento). KB sobe até linha do ombro pela extensão explosiva."
+  },
+  {
+    "id": "e099",
+    "name": "Farmer Walk",
+    "muscle": "Antebraço/Core/Trapézio",
+    "equipment": "Halteres",
+    "emoji": "👨‍🌾",
+    "obs": "Caminhe com halteres pesados nas mãos. Postura ereta, passos controlados. 20-40 metros."
+  },
+  {
+    "id": "e100",
+    "name": "Terra (Deadlift)",
+    "muscle": "Corpo Todo/Posterior",
+    "equipment": "Barra",
+    "emoji": "🏆",
+    "obs": "Barra rente à canela. Peito alto, lombar neutra. Empurre o chão, não puxe a barra."
+  },
+  {
+    "id": "e101",
+    "name": "Terra Sumô",
+    "muscle": "Glúteo/Adutores/Posterior",
+    "equipment": "Barra",
+    "emoji": "🥋",
+    "obs": "Pés bem afastados, pontas para fora. Tronco mais vertical. Joelhos seguem os pés."
+  },
+  {
+    "id": "e102",
+    "name": "Remada Curvada Supinada",
+    "muscle": "Costas/Bíceps",
+    "equipment": "Barra",
+    "emoji": "🔙",
+    "obs": "Pegada supinada largura dos ombros. Puxe ao umbigo. Maior ativação de dorsal inferior e bíceps."
+  },
+  {
+    "id": "e103",
+    "name": "Pullover no Cabo",
+    "muscle": "Costas/Serrátil",
+    "equipment": "Cabo",
+    "emoji": "🎣",
+    "obs": "Braços semi-estendidos, puxe a barra do alto até as coxas em arco. Isolamento de dorsais."
+  },
+  {
+    "id": "e104",
+    "name": "Panturrilha no Smith",
+    "muscle": "Panturrilha",
+    "equipment": "Smith",
+    "emoji": "🏛️",
+    "obs": "Antepé em step, barra nos ombros. Segurança do Smith permite cargas altas."
+  },
+  {
+    "id": "e105",
+    "name": "Prancha com Elevação de Perna",
+    "muscle": "Core/Glúteo",
+    "equipment": "Peso Corporal",
+    "emoji": "�959",
+    "obs": "Prancha estável + eleve uma perna 15cm por 2s alternando. Anti-rotação avançada."
+  },
+  {
+    "id": "e106",
+    "name": "Agachamento Goblet com Kettlebell",
+    "muscle": "Quadríceps/Glúteo/Core",
+    "equipment": "Kettlebell",
+    "emoji": "🔔",
+    "obs": "KB no peito, cotovelos dentro dos joelhos. Ensina o padrão de agachamento com tronco ereto."
+  },
+  {
+    "id": "e107",
+    "name": "Levantar Turco (Turkish Get-Up)",
+    "muscle": "Corpo Todo/Core",
+    "equipment": "Kettlebell",
+    "emoji": "🧎",
+    "obs": "Do chão até de pé com KB acima da cabeça. Movimento completo — comece com peso muito leve."
+  },
+  {
+    "id": "e108",
+    "name": "Clean com Kettlebell",
+    "muscle": "Corpo Todo",
+    "equipment": "Kettlebell",
+    "emoji": "🔄",
+    "obs": "Puxada explosiva do chão ao rack. Quadril gera a força, braço só guia."
+  },
+  {
+    "id": "e109",
+    "name": "Arranco com Kettlebell (Kettlebell Snatch)",
+    "muscle": "Corpo Todo",
+    "equipment": "Kettlebell",
+    "emoji": "💥",
+    "obs": "Do chão ao topo em um movimento. Avançado — domine o swing e o clean antes."
+  },
+  {
+    "id": "e110",
+    "name": "Agachamento com Desenvolvimento (Thruster)",
+    "muscle": "Corpo Todo",
+    "equipment": "Halteres/Barra",
+    "emoji": "🚀",
+    "obs": "Agachamento frontal + desenvolvimento em movimento único. Extremamente metabólico."
+  },
+  {
+    "id": "e111",
+    "name": "Arremesso na Parede (Wall Ball)",
+    "muscle": "Corpo Todo",
+    "equipment": "Medicine Ball",
+    "emoji": "🎯",
+    "obs": "Agache e arremesse a bola na parede. Pegue no ar e repita. Cardio + força."
+  },
+  {
+    "id": "e112",
+    "name": "Arremesso de Bola no Chão (Slam Ball)",
+    "muscle": "Core/Costas/Ombro",
+    "equipment": "Medicine Ball",
+    "emoji": "⚡",
+    "obs": "Erga acima da cabeça e arremesse no chão com força total. Potência e descarga."
+  },
+  {
+    "id": "e113",
+    "name": "Corda Naval (Battle Rope)",
+    "muscle": "Ombro/Core/Cardio",
+    "equipment": "Corda Naval",
+    "emoji": "🌊",
+    "obs": "Ondas alternadas ou simultâneas. 20-30s de esforço máximo. Cardio brutal sem impacto."
+  },
+  {
+    "id": "e114",
+    "name": "Empurrar Trenó (Sled Push)",
+    "muscle": "Corpo Todo/Quadríceps",
+    "equipment": "Trenó",
+    "emoji": "🛷",
+    "obs": "Empurre o trenó em posição inclinada, passos curtos e potentes. Zero impacto excêntrico."
+  },
+  {
+    "id": "e115",
+    "name": "Puxar Trenó (Sled Pull)",
+    "muscle": "Costas/Posterior",
+    "equipment": "Trenó",
+    "emoji": "🪢",
+    "obs": "Puxe o trenó caminhando para trás. Excelente para reabilitação de joelho."
+  },
+  {
+    "id": "e116",
+    "name": "Salto na Caixa (Box Jump)",
+    "muscle": "Quadríceps/Glúteo/Pliometria",
+    "equipment": "Caixa",
+    "emoji": "📦",
+    "obs": "Salte na caixa, DESÇA caminhando (não pule de volta). Aterrisse suave, joelhos alinhados."
+  },
+  {
+    "id": "e117",
+    "name": "Salto Agachado (Squat Jump)",
+    "muscle": "Quadríceps/Glúteo/Pliometria",
+    "equipment": "Peso Corporal",
+    "emoji": "🦘",
+    "obs": "Agache e exploda para cima. Aterrisse suave, absorvendo com os joelhos. Máx 8-10 reps."
+  },
+  {
+    "id": "e118",
+    "name": "Salto Amplo (Broad Jump)",
+    "muscle": "Glúteo/Posterior/Pliometria",
+    "equipment": "Peso Corporal",
+    "emoji": "➡️",
+    "obs": "Salto horizontal máximo. Braços impulsionam. Aterrisse em agachamento controlado."
+  },
+  {
+    "id": "e119",
+    "name": "Salto Lateral Skater (Skater Jump)",
+    "muscle": "Glúteo Médio/Pliometria",
+    "equipment": "Peso Corporal",
+    "emoji": "⛸️",
+    "obs": "Salto lateral de uma perna para a outra. Estabilize 1s antes do próximo. Anti-lesão de joelho."
+  },
+  {
+    "id": "e120",
+    "name": "Flexão Pliométrica",
+    "muscle": "Peito/Tríceps/Pliometria",
+    "equipment": "Peso Corporal",
+    "emoji": "👏",
+    "obs": "Flexão com as mãos saindo do chão. Avançado — domine 20 flexões normais antes."
+  },
+  {
+    "id": "e121",
+    "name": "Caminhada do Urso (Bear Crawl)",
+    "muscle": "Core/Ombro/Corpo Todo",
+    "equipment": "Peso Corporal",
+    "emoji": "🐻",
+    "obs": "Quatro apoios, joelhos a 3cm do chão. Braço e perna opostos avançam juntos. Core em fogo."
+  },
+  {
+    "id": "e122",
+    "name": "Caminhada do Caranguejo (Crab Walk)",
+    "muscle": "Tríceps/Glúteo/Core",
+    "equipment": "Peso Corporal",
+    "emoji": "🦀",
+    "obs": "De costas para o chão, quadril elevado. Caminhe para frente e para trás."
+  },
+  {
+    "id": "e123",
+    "name": "Urso para Prancha (Bear to Plank)",
+    "muscle": "Core/Ombro",
+    "equipment": "Peso Corporal",
+    "emoji": "🔀",
+    "obs": "Alterne entre posição de urso e prancha sem mover as mãos. Estabilidade dinâmica."
+  },
+  {
+    "id": "e124",
+    "name": "Agachamento Búlgaro com Salto",
+    "muscle": "Quadríceps/Glúteo/Pliometria",
+    "equipment": "Banco",
+    "emoji": "🇧🇬",
+    "obs": "Búlgaro explosivo com salto. Unilateral + pliometria. Muito avançado."
+  },
+  {
+    "id": "e125",
+    "name": "Agachamento Pistol (Pistol Squat)",
+    "muscle": "Quadríceps/Glúteo/Core",
+    "equipment": "Peso Corporal",
+    "emoji": "🔫",
+    "obs": "Agachamento em uma perna, outra estendida à frente. O rei dos unilaterais. Use apoio no início."
+  },
+  {
+    "id": "e126",
+    "name": "Step-Up com Joelho Alto",
+    "muscle": "Quadríceps/Glúteo/Core",
+    "equipment": "Caixa",
+    "emoji": "🪜",
+    "obs": "Suba no step e eleve o joelho oposto ao peito. Equilíbrio + força unilateral."
+  },
+  {
+    "id": "e127",
+    "name": "Afundo Reverso",
+    "muscle": "Quadríceps/Glúteo",
+    "equipment": "Halteres/Livre",
+    "emoji": "↩️",
+    "obs": "Passo para TRÁS (não à frente). Menos stress no joelho que o avanço tradicional."
+  },
+  {
+    "id": "e128",
+    "name": "Afundo Lateral",
+    "muscle": "Adutores/Glúteo Médio",
+    "equipment": "Halteres/Livre",
+    "emoji": "↔️",
+    "obs": "Passo lateral amplo, sente no quadril. Trabalha o plano frontal — esquecido pela maioria."
+  },
+  {
+    "id": "e129",
+    "name": "Agachamento Cossaco (Cossack Squat)",
+    "muscle": "Adutores/Quadríceps/Mobilidade",
+    "equipment": "Peso Corporal",
+    "emoji": "🕺",
+    "obs": "Agachamento lateral profundo com a outra perna estendida. Mobilidade + força de adutores."
+  },
+  {
+    "id": "e130",
+    "name": "Elevação Pélvica Unilateral",
+    "muscle": "Glúteo",
+    "equipment": "Peso Corporal",
+    "emoji": "🍑",
+    "obs": "Uma perna no chão, outra estendida. Corrige assimetria de glúteo. Aperte 2s no topo."
+  },
+  {
+    "id": "e131",
+    "name": "Flexão Nórdica (Nordic Curl)",
+    "muscle": "Posterior",
+    "equipment": "Peso Corporal",
+    "emoji": "🇳🇴",
+    "obs": "Ajoelhado, pés presos, desça controlando com o posterior. Reduz lesão de isquiotibiais em 51%."
+  },
+  {
+    "id": "e132",
+    "name": "Prancha de Copenhague (Copenhagen Plank)",
+    "muscle": "Adutores/Core",
+    "equipment": "Banco",
+    "emoji": "🇩🇰",
+    "obs": "Prancha lateral com a perna de cima apoiada no banco. Previne lesão de adutor (pubalgia)."
+  },
+  {
+    "id": "e133",
+    "name": "Prancha com Toque no Ombro",
+    "muscle": "Core/Anti-rotação",
+    "equipment": "Peso Corporal",
+    "emoji": "🤚",
+    "obs": "Em prancha, toque o ombro oposto alternadamente. Quadril NÃO gira. Anti-rotação puro."
+  },
+  {
+    "id": "e134",
+    "name": "Press Anti-Rotação (Pallof Press)",
+    "muscle": "Core/Anti-rotação",
+    "equipment": "Cabo",
+    "emoji": "🛡️",
+    "obs": "De lado ao cabo, empurre à frente resistindo à rotação. O melhor exercício de core funcional."
+  },
+  {
+    "id": "e136",
+    "name": "Prancha Quadrúpede (Bird Dog)",
+    "muscle": "Core/Lombar/Glúteo",
+    "equipment": "Peso Corporal",
+    "emoji": "🐦",
+    "obs": "Quatro apoios, estenda braço e perna opostos. Segure 3s. Estabilidade da coluna."
+  },
+  {
+    "id": "e137",
+    "name": "Isometria em C (Hollow Body Hold)",
+    "muscle": "Core Completo",
+    "equipment": "Peso Corporal",
+    "emoji": "🌙",
+    "obs": "Deitado, ombros e pernas fora do chão, lombar colada. Base da ginástica. Segure 20-40s."
+  },
+  {
+    "id": "e138",
+    "name": "Prancha Dinâmica (Up-Down)",
+    "muscle": "Core/Tríceps/Ombro",
+    "equipment": "Peso Corporal",
+    "emoji": "⬆️",
+    "obs": "Alterne entre prancha de antebraço e de mão. Quadril estável, sem balanço."
+  },
+  {
+    "id": "e139",
+    "name": "Limpador de Para-brisa (Windshield Wiper)",
+    "muscle": "Oblíquos/Core",
+    "equipment": "Peso Corporal",
+    "emoji": "🚗",
+    "obs": "Deitado, pernas a 90°, gire de um lado ao outro controlando. Avançado."
+  },
+  {
+    "id": "e141",
+    "name": "Pés na Barra (Toes to Bar)",
+    "muscle": "Core Completo",
+    "equipment": "Barra Fixa",
+    "emoji": "🎪",
+    "obs": "Pendurado, leve os pés até tocar a barra. Requer força e mobilidade. Muito avançado."
+  },
+  {
+    "id": "e142",
+    "name": "Vela em L (L-Sit)",
+    "muscle": "Core/Tríceps",
+    "equipment": "Paralelas",
+    "emoji": "🇱",
+    "obs": "Sustentado nas paralelas, pernas estendidas à frente formando L. Isometria brutal."
+  },
+  {
+    "id": "e143",
+    "name": "Burpee com Salto na Caixa",
+    "muscle": "Corpo Todo/Cardio",
+    "equipment": "Caixa",
+    "emoji": "📦",
+    "obs": "Burpee completo + box jump. Condicionamento máximo. Ritmo constante, técnica primeiro."
+  },
+  {
+    "id": "e144",
+    "name": "Polichinelo (Jumping Jack)",
+    "muscle": "Cardio/Corpo Todo",
+    "equipment": "Peso Corporal",
+    "emoji": "⭐",
+    "obs": "Clássico do aquecimento. Eleve a FC gradualmente. 30-60s."
+  },
+  {
+    "id": "e145",
+    "name": "Corrida Estacionária Alta",
+    "muscle": "Cardio/Core",
+    "equipment": "Peso Corporal",
+    "emoji": "🏃",
+    "obs": "Joelhos até a altura do quadril, ritmo acelerado. 30s de esforço."
+  },
+  {
+    "id": "e146",
+    "name": "Corrida com Elevação de Joelhos (Skipping)",
+    "muscle": "Cardio/Panturrilha",
+    "equipment": "Corda",
+    "emoji": "🪢",
+    "obs": "Pular corda: 10 min queimam o equivalente a 30 min de corrida. Aterrisse na ponta dos pés."
+  },
+  {
+    "id": "e147",
+    "name": "Sprint na Esteira",
+    "muscle": "Cardio/Quadríceps",
+    "equipment": "Esteira",
+    "emoji": "💨",
+    "obs": "Tiros de 20-30s em velocidade máxima, 90s de caminhada. Protocolo HIIT clássico."
+  },
+  {
+    "id": "e148",
+    "name": "Bike Ergométrica HIIT",
+    "muscle": "Cardio/Quadríceps",
+    "equipment": "Bike",
+    "emoji": "🚴",
+    "obs": "30s de sprint máximo + 90s leve. 8-10 rounds. Baixo impacto, alta intensidade."
+  },
+  {
+    "id": "e149",
+    "name": "Remo Ergômetro",
+    "muscle": "Corpo Todo/Cardio",
+    "equipment": "Remo",
+    "emoji": "🚣",
+    "obs": "Sequência: pernas → tronco → braços (e volta invertido). 85% do trabalho vem das pernas."
+  },
+  {
+    "id": "e150",
+    "name": "Escada (StairMaster)",
+    "muscle": "Glúteo/Quadríceps/Cardio",
+    "equipment": "Máquina",
+    "emoji": "🪜",
+    "obs": "Não se apoie nas alças! Postura ereta, passos completos. Cardio + glúteo."
+  },
+  {
+    "id": "e151",
+    "name": "Elíptico",
+    "muscle": "Cardio/Corpo Todo",
+    "equipment": "Elíptico",
+    "emoji": "🎿",
+    "obs": "Zero impacto articular. Ideal para quem tem lesão de joelho e precisa de cardio."
+  },
+  {
+    "id": "e152",
+    "name": "Gato-Vaca (Cat-Cow)",
+    "muscle": "Mobilidade/Coluna",
+    "equipment": "Peso Corporal",
+    "emoji": "🐱",
+    "obs": "Quatro apoios, alterne flexão e extensão da coluna. Aquecimento obrigatório para a lombar."
+  },
+  {
+    "id": "e153",
+    "name": "Rotação Torácica no Chão",
+    "muscle": "Mobilidade/Torácica",
+    "equipment": "Peso Corporal",
+    "emoji": "🌀",
+    "obs": "Deitado de lado, joelho apoiado, gire o braço de cima abrindo o peito. Postura de escritório."
+  },
+  {
+    "id": "e154",
+    "name": "Mobilidade de Quadril 90/90",
+    "muscle": "Mobilidade/Quadril",
+    "equipment": "Peso Corporal",
+    "emoji": "📐",
+    "obs": "Sentado, pernas a 90°, alterne os lados sem usar as mãos. Libera quadril travado."
+  },
+  {
+    "id": "e155",
+    "name": "Alongamento de Flexores de Quadril",
+    "muscle": "Mobilidade/Quadril",
+    "equipment": "Peso Corporal",
+    "emoji": "🧘",
+    "obs": "Ajoelhado, empurre o quadril à frente contraindo o glúteo. Antídoto para ficar sentado."
+  },
+  {
+    "id": "e156",
+    "name": "Dislocação de Ombro com Bastão",
+    "muscle": "Mobilidade/Ombro",
+    "equipment": "Bastão",
+    "emoji": "🏒",
+    "obs": "Pegada larga, passe o bastão de frente para trás com braços estendidos. Saúde do ombro."
+  },
+  {
+    "id": "e157",
+    "name": "Alongamento de Peitoral na Porta",
+    "muscle": "Mobilidade/Peito",
+    "equipment": "Peso Corporal",
+    "emoji": "🚪",
+    "obs": "Antebraço na batente, gire o corpo. 30s cada lado. Corrige ombros arredondados."
+  },
+  {
+    "id": "e158",
+    "name": "Foam Roller Torácico",
+    "muscle": "Mobilidade/Liberação",
+    "equipment": "Foam Roller",
+    "emoji": "🎳",
+    "obs": "Role a coluna torácica (nunca a lombar!). Libera tensão e melhora a extensão."
+  },
+  {
+    "id": "e159",
+    "name": "Foam Roller IT Band",
+    "muscle": "Mobilidade/Liberação",
+    "equipment": "Foam Roller",
+    "emoji": "🦵",
+    "obs": "Role a lateral da coxa. Dói, mas alivia joelho do corredor. 60s cada perna."
+  },
+  {
+    "id": "e160",
+    "name": "Alongamento de Panturrilha na Parede",
+    "muscle": "Mobilidade/Panturrilha",
+    "equipment": "Peso Corporal",
+    "emoji": "🧱",
+    "obs": "Perna de trás estendida, calcanhar no chão. Essencial para corredores e agachamento profundo."
+  },
+  {
+    "id": "e161",
+    "name": "Postura da Criança (Balasana)",
+    "muscle": "Mobilidade/Coluna",
+    "equipment": "Peso Corporal",
+    "emoji": "🧘",
+    "obs": "Ajoelhado, tronco sobre as coxas, braços estendidos. Descompressão lombar e respiração."
+  },
+  {
+    "id": "e162",
+    "name": "Cachorro Olhando para Baixo",
+    "muscle": "Mobilidade/Posterior",
+    "equipment": "Peso Corporal",
+    "emoji": "🐕",
+    "obs": "V invertido, calcanhares em direção ao chão. Alonga posterior, panturrilha e ombro."
+  },
+  {
+    "id": "e163",
+    "name": "Ativação de Glúteo com Mini Band",
+    "muscle": "Glúteo Médio/Ativação",
+    "equipment": "Mini Band",
+    "emoji": "🎀",
+    "obs": "Faixa acima dos joelhos, caminhada lateral. 20 passos cada lado ANTES de treinar pernas."
+  },
+  {
+    "id": "e164",
+    "name": "Concha (Clamshell)",
+    "muscle": "Glúteo Médio",
+    "equipment": "Mini Band",
+    "emoji": "🐚",
+    "obs": "Deitado de lado, abra o joelho de cima mantendo os pés juntos. Previne joelho valgo."
+  },
+  {
+    "id": "e165",
+    "name": "Caminhada do Monstro (Monster Walk)",
+    "muscle": "Glúteo Médio/Ativação",
+    "equipment": "Mini Band",
+    "emoji": "👹",
+    "obs": "Faixa nos tornozelos, caminhe em posição de semi-agachamento. Ativação pré-treino."
+  },
+  {
+    "id": "e166",
+    "name": "Rotação Externa com Elástico",
+    "muscle": "Manguito Rotador",
+    "equipment": "Elástico",
+    "emoji": "🔄",
+    "obs": "Cotovelo colado ao corpo a 90°, gire para fora. Prevenção de lesão de ombro. Sempre leve."
+  },
+  {
+    "id": "e167",
+    "name": "Y-T-W no Banco",
+    "muscle": "Ombro Posterior/Postura",
+    "equipment": "Halteres",
+    "emoji": "🔤",
+    "obs": "Deitado no banco inclinado, faça as letras Y, T e W com os braços. Pesos MUITO leves."
+  },
+  {
+    "id": "e168",
+    "name": "Face Pull com Rotação",
+    "muscle": "Manguito/Ombro Posterior",
+    "equipment": "Cabo",
+    "emoji": "😤",
+    "obs": "Face pull + rotação externa no final. O melhor exercício preventivo de ombro que existe."
+  },
+  {
+    "id": "e169",
+    "name": "Flexão Escapular (Scapular Push-up)",
+    "muscle": "Serrátil/Escápula",
+    "equipment": "Peso Corporal",
+    "emoji": "🦋",
+    "obs": "Em prancha, aproxime e afaste as escápulas SEM dobrar os cotovelos. Ativa o serrátil."
+  },
+  {
+    "id": "e170",
+    "name": "Retração Cervical (Chin Tuck)",
+    "muscle": "Cervical/Postura",
+    "equipment": "Peso Corporal",
+    "emoji": "😐",
+    "obs": "Empurre o queixo para trás (papada). Segure 5s. Corrige pescoço projetado do celular."
+  },
+  {
+    "id": "e171",
+    "name": "Farmer Walk Unilateral",
+    "muscle": "Core/Oblíquos/Antebraço",
+    "equipment": "Halteres",
+    "emoji": "⚖️",
+    "obs": "Peso em UMA mão só. O core trabalha para não deixar o tronco inclinar. Anti-flexão lateral."
+  },
+  {
+    "id": "e172",
+    "name": "Carregamento no Rack (Rack Carry)",
+    "muscle": "Core/Ombro",
+    "equipment": "Kettlebell",
+    "emoji": "🎒",
+    "obs": "KB no rack (frente do ombro), caminhe. Core e postura sob carga."
+  },
+  {
+    "id": "e173",
+    "name": "Carregamento Acima da Cabeça (Overhead Carry)",
+    "muscle": "Ombro/Core",
+    "equipment": "Kettlebell/Halteres",
+    "emoji": "🙌",
+    "obs": "Peso acima da cabeça, braço travado, caminhe. Estabilidade de ombro extrema."
+  },
+  {
+    "id": "e174",
+    "name": "Desenvolvimento com Landmine",
+    "muscle": "Ombro/Peito",
+    "equipment": "Landmine",
+    "emoji": "📐",
+    "obs": "Barra ancorada no chão, empurre na diagonal. Amigável ao ombro — ótima alternativa ao desenvolvimento."
+  },
+  {
+    "id": "e175",
+    "name": "Remada com Landmine",
+    "muscle": "Costas",
+    "equipment": "Landmine",
+    "emoji": "🎣",
+    "obs": "Remada com a barra ancorada. Amplitude excelente, menos stress lombar que a remada curvada."
+  },
+  {
+    "id": "e176",
+    "name": "Rotação com Landmine",
+    "muscle": "Core/Oblíquos",
+    "equipment": "Landmine",
+    "emoji": "🌪️",
+    "obs": "Barra na diagonal, gire o tronco de lado a lado. Rotação com carga — esporte específico."
+  },
+  {
+    "id": "e177",
+    "name": "Agachamento Búlgaro Isométrico",
+    "muscle": "Quadríceps/Glúteo",
+    "equipment": "Banco",
+    "emoji": "⏸️",
+    "obs": "Segure a posição baixa do búlgaro por 20-30s. Isometria = ganho de força na amplitude treinada."
+  },
+  {
+    "id": "e179",
+    "name": "Isometria de Supino (Pausa)",
+    "muscle": "Peito",
+    "equipment": "Barra",
+    "emoji": "⏱️",
+    "obs": "Pause 3s com a barra a 2cm do peito. Elimina o rebote e expõe o ponto fraco."
+  },
+  {
+    "id": "e180",
+    "name": "Agachamento com Pausa",
+    "muscle": "Quadríceps/Glúteo",
+    "equipment": "Barra",
+    "emoji": "⏸️",
+    "obs": "Pause 3s no fundo do agachamento. Força na posição mais difícil — sem usar o reflexo elástico."
+  },
+  {
+    "id": "e181",
+    "name": "Supino com Halteres Neutro",
+    "muscle": "Peito",
+    "equipment": "Halteres",
+    "emoji": "🤲",
+    "obs": "Palmas viradas uma pra outra. Menos estresse no ombro."
+  },
+  {
+    "id": "e182",
+    "name": "Crossover na Polia Alta",
+    "muscle": "Peito Inferior",
+    "equipment": "Cabo",
+    "emoji": "🔀",
+    "obs": "Cruze as mãos no fim. Contraia 1s."
+  },
+  {
+    "id": "e183",
+    "name": "Crossover na Polia Baixa",
+    "muscle": "Peito Superior",
+    "equipment": "Cabo",
+    "emoji": "🔀",
+    "obs": "Suba as mãos até a altura dos olhos."
+  },
+  {
+    "id": "e184",
+    "name": "Flexão Diamante",
+    "muscle": "Tríceps/Peito",
+    "equipment": "Peso Corporal",
+    "emoji": "💎",
+    "obs": "Mãos formando um losango. Cotovelos colados."
+  },
+  {
+    "id": "e185",
+    "name": "Flexão Archer",
+    "muscle": "Peito",
+    "equipment": "Peso Corporal",
+    "emoji": "🏹",
+    "obs": "Estende um braço lateralmente. Transição pro one-arm."
+  },
+  {
+    "id": "e187",
+    "name": "Supino na Máquina",
+    "muscle": "Peito",
+    "equipment": "Máquina",
+    "emoji": "🏗️",
+    "obs": "Ideal pra iniciante — trajetória guiada."
+  },
+  {
+    "id": "e188",
+    "name": "Voador Peitoral",
+    "muscle": "Peito",
+    "equipment": "Máquina",
+    "emoji": "🦋",
+    "obs": "Cotovelos levemente flexionados. Aperte no centro."
+  },
+  {
+    "id": "e192",
+    "name": "Elevação Lateral Inclinado",
+    "muscle": "Ombro Lateral",
+    "equipment": "Halteres",
+    "emoji": "📐",
+    "obs": "Deitado de lado no banco. Isola muito bem."
+  },
+  {
+    "id": "e193",
+    "name": "Desenvolvimento Militar",
+    "muscle": "Ombro",
+    "equipment": "Barra",
+    "emoji": "🎖️",
+    "obs": "Em pé, core firme. Não arqueie a lombar."
+  },
+  {
+    "id": "e194",
+    "name": "Remada Alta",
+    "muscle": "Ombro/Trapézio",
+    "equipment": "Barra",
+    "emoji": "⬆️",
+    "obs": "Cotovelos acima dos punhos. Pegada média."
+  },
+  {
+    "id": "e195",
+    "name": "Crucifixo Inverso na Máquina",
+    "muscle": "Ombro Posterior",
+    "equipment": "Máquina",
+    "emoji": "🔙",
+    "obs": "Aperte as escápulas. Movimento controlado."
+  },
+  {
+    "id": "e196",
+    "name": "Elevação Frontal com Anilha",
+    "muscle": "Ombro Frontal",
+    "equipment": "Anilha",
+    "emoji": "🥏",
+    "obs": "Segure a anilha pelas laterais."
+  },
+  {
+    "id": "e197",
+    "name": "Flexão Pike (Pike Push-up)",
+    "muscle": "Ombro",
+    "equipment": "Peso Corporal",
+    "emoji": "🔺",
+    "obs": "Quadril alto, empurre com os ombros. Progressão pro handstand."
+  },
+  {
+    "id": "e198",
+    "name": "Stiff com Halteres",
+    "muscle": "Posterior",
+    "equipment": "Halteres",
+    "emoji": "🦵",
+    "obs": "Quadril pra trás, joelhos levemente flexionados."
+  },
+  {
+    "id": "e199",
+    "name": "Mesa Flexora Unilateral",
+    "muscle": "Posterior",
+    "equipment": "Máquina",
+    "emoji": "1️⃣",
+    "obs": "Corrige assimetrias entre as pernas."
+  },
+  {
+    "id": "e200",
+    "name": "Bom Dia (Good Morning)",
+    "muscle": "Posterior/Lombar",
+    "equipment": "Barra",
+    "emoji": "🌅",
+    "obs": "Barra nas costas, quadril vai para trás, tronco inclina até 45°. Cargas LEVES sempre."
+  },
+  {
+    "id": "e201",
+    "name": "Elevação Pélvica com Barra",
+    "muscle": "Glúteo/Posterior",
+    "equipment": "Barra",
+    "emoji": "🌉",
+    "obs": "Queixo pro peito, aperte o glúteo no topo."
+  },
+  {
+    "id": "e202",
+    "name": "Elevação Glúteo-Isquiotibial (Glute-Ham Raise)",
+    "muscle": "Posterior/Glúteo",
+    "equipment": "Máquina",
+    "emoji": "💪",
+    "obs": "Extremamente eficaz pro posterior."
+  },
+  {
+    "id": "e203",
+    "name": "Cadeira Flexora Sentado",
+    "muscle": "Posterior",
+    "equipment": "Máquina",
+    "emoji": "🪑",
+    "obs": "Amplitude completa, sem balançar."
+  },
+  {
+    "id": "e204",
+    "name": "Kettlebell Swing Unilateral",
+    "muscle": "Posterior/Corpo Todo",
+    "equipment": "Kettlebell",
+    "emoji": "🔔",
+    "obs": "Um braço. Core trabalha contra a rotação."
+  },
+  {
+    "id": "e205",
+    "name": "Panturrilha no Leg Press",
+    "muscle": "Panturrilha",
+    "equipment": "Máquina",
+    "emoji": "🦿",
+    "obs": "Só a ponta do pé na plataforma."
+  },
+  {
+    "id": "e206",
+    "name": "Panturrilha Sentado",
+    "muscle": "Panturrilha",
+    "equipment": "Máquina",
+    "emoji": "🪑",
+    "obs": "Foco no sóleo. Joelho flexionado."
+  },
+  {
+    "id": "e208",
+    "name": "Salto na Panturrilha",
+    "muscle": "Panturrilha/Pliometria",
+    "equipment": "Peso Corporal",
+    "emoji": "🦘",
+    "obs": "Saltinhos rápidos, só com o tornozelo."
+  },
+  {
+    "id": "e210",
+    "name": "Rosca Spider",
+    "muscle": "Bíceps",
+    "equipment": "Halteres",
+    "emoji": "🕷️",
+    "obs": "Peito apoiado no banco inclinado."
+  },
+  {
+    "id": "e212",
+    "name": "Tríceps Mergulho na Máquina",
+    "muscle": "Tríceps",
+    "equipment": "Máquina",
+    "emoji": "🏗️",
+    "obs": "Cotovelos colados ao corpo."
+  },
+  {
+    "id": "e213",
+    "name": "Tríceps Unilateral Inverso",
+    "muscle": "Tríceps",
+    "equipment": "Cabo",
+    "emoji": "1️⃣",
+    "obs": "Pegada supinada, um braço."
+  },
+  {
+    "id": "e214",
+    "name": "Rosca Martelo no Cabo",
+    "muscle": "Bíceps/Antebraço",
+    "equipment": "Cabo",
+    "emoji": "🔨",
+    "obs": "Corda, pegada neutra."
+  },
+  {
+    "id": "e215",
+    "name": "Puxada Neutra",
+    "muscle": "Costas",
+    "equipment": "Cabo",
+    "emoji": "🤝",
+    "obs": "Pegada neutra, menos estresse no ombro."
+  },
+  {
+    "id": "e217",
+    "name": "Remada na Máquina",
+    "muscle": "Costas",
+    "equipment": "Máquina",
+    "emoji": "🏗️",
+    "obs": "Ideal pra iniciante. Postura guiada."
+  },
+  {
+    "id": "e218",
+    "name": "Pulldown com Braço Reto",
+    "muscle": "Costas",
+    "equipment": "Cabo",
+    "emoji": "📏",
+    "obs": "Braços retos. Isola o dorsal sem bíceps."
+  },
+  {
+    "id": "e219",
+    "name": "Barra Fixa Australiana",
+    "muscle": "Costas",
+    "equipment": "Barra Baixa",
+    "emoji": "🇦🇺",
+    "obs": "Corpo inclinado, pés no chão. Progressão pra barra fixa."
+  },
+  {
+    "id": "e220",
+    "name": "Barra Fixa Pegada Neutra",
+    "muscle": "Costas/Bíceps",
+    "equipment": "Barra Fixa",
+    "emoji": "🤝",
+    "obs": "Mais fácil que a pronada. Boa progressão."
+  },
+  {
+    "id": "e222",
+    "name": "Abdominal na Polia Alta",
+    "muscle": "Abdômen",
+    "equipment": "Cabo",
+    "emoji": "🙏",
+    "obs": "Ajoelhado. Flexione a coluna, não o quadril."
+  },
+  {
+    "id": "e225",
+    "name": "Elevação de Pernas na Barra",
+    "muscle": "Abdômen Inferior",
+    "equipment": "Barra Fixa",
+    "emoji": "🎯",
+    "obs": "Pendurado, eleve as pernas estendidas até 90°. Sem balanço. O padrão-ouro de core."
+  },
+  {
+    "id": "e226",
+    "name": "Prancha Lateral com Elevação",
+    "muscle": "Oblíquos",
+    "equipment": "Peso Corporal",
+    "emoji": "📐",
+    "obs": "Sobe e desce o quadril."
+  },
+  {
+    "id": "e227",
+    "name": "Thruster com Halteres",
+    "muscle": "Corpo Todo",
+    "equipment": "Halteres",
+    "emoji": "🚀",
+    "obs": "Agachamento + desenvolvimento em um movimento."
+  },
+  {
+    "id": "e228",
+    "name": "Burpee com Arranco de Halteres (Devil Press)",
+    "muscle": "Corpo Todo/Cardio",
+    "equipment": "Halteres",
+    "emoji": "😈",
+    "obs": "Burpee + snatch com halteres. Brutal."
+  },
+  {
+    "id": "e229",
+    "name": "Exercício Completo com Halteres (Man Maker)",
+    "muscle": "Corpo Todo",
+    "equipment": "Halteres",
+    "emoji": "🏗️",
+    "obs": "Flexão + remada + clean + press. O mais completo."
+  },
+  {
+    "id": "e231",
+    "name": "Salto Sobre a Caixa (Box Jump Over)",
+    "muscle": "Pliometria/Cardio",
+    "equipment": "Caixa",
+    "emoji": "📦",
+    "obs": "Salta e passa por cima da caixa."
+  },
+  {
+    "id": "e232",
+    "name": "Burpee Pull-up",
+    "muscle": "Corpo Todo",
+    "equipment": "Barra Fixa",
+    "emoji": "🔥",
+    "obs": "Burpee terminando com barra fixa."
+  },
+  {
+    "id": "e234",
+    "name": "Corda Naval - Ondas Duplas",
+    "muscle": "Cardio/Ombro",
+    "equipment": "Corda Naval",
+    "emoji": "🌊",
+    "obs": "Ondas simultâneas. 20-30s máximo."
+  },
+  {
+    "id": "e236",
+    "name": "Arremesso Olímpico (Clean and Jerk)",
+    "muscle": "Corpo Todo",
+    "equipment": "Barra",
+    "emoji": "🏋️",
+    "obs": "Técnica antes de carga. Movimento olímpico."
+  },
+  {
+    "id": "e237",
+    "name": "Cadeira Extensora Unilateral",
+    "muscle": "Quadríceps",
+    "equipment": "Máquina",
+    "emoji": "🦵",
+    "obs": "Uma perna de cada vez. Corrige assimetrias entre as pernas."
+  },
+  {
+    "id": "e238",
+    "name": "Cadeira Abdutora",
+    "muscle": "Glúteo Médio",
+    "equipment": "Máquina",
+    "emoji": "🍑",
+    "obs": "Sentado, empurre os joelhos para fora contra a resistência. Fortalece glúteo médio."
+  },
+  {
+    "id": "e239",
+    "name": "Leg Press Horizontal",
+    "muscle": "Quadríceps/Glúteo",
+    "equipment": "Máquina",
+    "emoji": "🦵",
+    "obs": "Sentado, empurre a plataforma à frente. Amplitude controlada, sem travar o joelho."
+  },
+  {
+    "id": "e240",
+    "name": "Extensão Lombar (Hiperextensão)",
+    "muscle": "Lombar/Glúteo",
+    "equipment": "Banco Romano",
+    "emoji": "🔙",
+    "obs": "Quadril apoiado na almofada, desça controlado e suba até alinhar o tronco. Não hiperestenda."
+  },
+  {
+    "id": "e241",
+    "name": "Agachamento no Smith",
+    "muscle": "Quadríceps/Glúteo",
+    "equipment": "Smith",
+    "emoji": "🏛️",
+    "obs": "Barra guiada no trilho. Segurança para treinar próximo à falha sem spotter."
+  },
+  {
+    "id": "e242",
+    "name": "Agachamento Sumô no Smith",
+    "muscle": "Quadríceps/Glúteo/Adutores",
+    "equipment": "Smith",
+    "emoji": "🏛️",
+    "obs": "Pés bem abertos, pontas para fora. Barra guiada permite foco total na descida controlada."
+  },
+  {
+    "id": "e243",
+    "name": "Snatch Pull",
+    "muscle": "Corpo Todo/Costas",
+    "equipment": "Barra",
+    "emoji": "🏋️",
+    "obs": "Puxada explosiva de arranco sem o mergulho por baixo da barra. Trapézio, costas e pernas trabalham juntos."
+  },
+  {
+    "id": "e244",
+    "name": "Rosca Alternada no Banco Inclinado",
+    "muscle": "Bíceps",
+    "equipment": "Halteres",
+    "emoji": "🔄",
+    "obs": "Banco a 45-60°. Braços pendem atrás do tronco, alongamento maior da cabeça longa do bíceps."
+  },
+  {
+    "id": "e245",
+    "name": "Supino Reto com Halteres",
+    "muscle": "Peito",
+    "equipment": "Halteres",
+    "emoji": "🏋️",
+    "obs": "Halteres descem até o alongamento máximo do peito. Maior amplitude que a barra."
+  },
+  {
+    "id": "e246",
+    "name": "Rosca de Punho Invertida (Finger Curls)",
+    "muscle": "Antebraço",
+    "equipment": "Barra",
+    "emoji": "🤏",
+    "obs": "Antebraços apoiados nas coxas, barra rola até a ponta dos dedos e volta. Amplitude curta, foco total nos flexores."
+  },
+  {
+    "id": "e247",
+    "name": "Rosca de Punho em Pé com Halteres",
+    "muscle": "Antebraço",
+    "equipment": "Halteres",
+    "emoji": "🤏",
+    "obs": "Braços ao lado do corpo, flexione só o punho. Movimento pequeno e controlado."
+  },
+  {
+    "id": "e248",
+    "name": "Abdominal 3/4 (Sit-up Parcial)",
+    "muscle": "Abdômen",
+    "equipment": "Livre",
+    "emoji": "🎯",
+    "obs": "Sobe até 3/4 do caminho, sem encostar totalmente o tronco nas coxas. Mais amplitude que o crunch, menos que o sit-up completo."
+  },
+  {
+    "id": "e249",
+    "name": "Prancha com Salto 3 Apoios",
+    "muscle": "Core/Pliometria",
+    "equipment": "Peso Corporal",
+    "emoji": "🤸",
+    "obs": "Prancha de antebraço, salte alternando apoio de um pé de cada vez. Core rígido, sem balançar o quadril."
+  },
+  {
+    "id": "e250",
+    "name": "Alongamento Abdominal Deitado (Cobra)",
+    "muscle": "Mobilidade/Abdômen",
+    "equipment": "Peso Corporal",
+    "emoji": "🐍",
+    "obs": "Deitado de bruços, apoie os antebraços e eleve o tronco levemente. Alonga a parede abdominal e flexores de quadril."
+  },
+  {
+    "id": "e251",
+    "name": "Postura da Criança para Prancha (Mobilidade)",
+    "muscle": "Mobilidade/Ombro",
+    "equipment": "Peso Corporal",
+    "emoji": "🧘",
+    "obs": "Alterne entre postura da criança e prancha alta empurrando o chão. Ótimo aquecimento de ombro e coluna."
+  },
+  {
+    "id": "e252",
+    "name": "Rosca Drag (Drag Curl)",
+    "muscle": "Bíceps",
+    "equipment": "Barra",
+    "emoji": "🔽",
+    "obs": "A barra \"arrasta\" rente ao corpo subindo, cotovelos vão para trás. Remove a ajuda do deltoide, isola mais o bíceps."
+  },
+  {
+    "id": "e253",
+    "name": "Crucifixo no Cabo (Altura Média)",
+    "muscle": "Peito",
+    "equipment": "Cabo",
+    "emoji": "✂️",
+    "obs": "Polias na altura do ombro, pegada neutra. Braços abrem e fecham em arco, sem dobrar o cotovelo."
+  },
+  {
+    "id": "e254",
+    "name": "Passada Estática no Smith (Split Squat)",
+    "muscle": "Quadríceps/Glúteo",
+    "equipment": "Smith",
+    "emoji": "🏛️",
+    "obs": "Passada dividida com a barra guiada, os dois pés no chão. Joelho traseiro quase toca o chão, tronco ereto."
+  },
+  {
+    "id": "e255",
+    "name": "Rosca Martelo Sentado",
+    "muscle": "Bíceps/Braquial",
+    "equipment": "Halteres",
+    "emoji": "🔨",
+    "obs": "Sentado no banco, pegada neutra, alterne os braços. Menos trapaço com o tronco que em pé."
+  },
+  {
+    "id": "e256",
+    "name": "Remada Baixa Pegada Aberta",
+    "muscle": "Costas",
+    "equipment": "Cabo",
+    "emoji": "🎣",
+    "obs": "Barra reta, pegada mais larga que os ombros. Mais foco em romboides e trapézio médio."
+  },
+  {
+    "id": "e257",
+    "name": "Flexão Relógio (Clock Push-up)",
+    "muscle": "Peito/Tríceps",
+    "equipment": "Peso Corporal",
+    "emoji": "🕐",
+    "obs": "Uma mão fixa no centro, a outra \"caminha\" ao redor como ponteiro de relógio. Trabalha peito em múltiplos ângulos."
+  },
+  {
+    "id": "e258",
+    "name": "Burpee Shuffle",
+    "muscle": "Corpo Todo/Cardio",
+    "equipment": "Peso Corporal",
+    "emoji": "💥",
+    "obs": "Burpee com deslocamento lateral entre repetições. Cardio + agilidade."
+  },
+  {
+    "id": "e259",
+    "name": "Flexão Inclinada em Paralelas",
+    "muscle": "Peito/Tríceps",
+    "equipment": "Barras Paralelas",
+    "emoji": "🙇",
+    "obs": "Mãos elevadas nas paralelas, pés no chão atrás do corpo. Maior amplitude que a flexão comum."
+  },
+  {
+    "id": "e260",
+    "name": "Desenvolvimento Landmine Ajoelhado Unilateral",
+    "muscle": "Ombro",
+    "equipment": "Landmine",
+    "emoji": "📐",
+    "obs": "Ajoelhado, um braço de cada vez. Exige estabilidade de core e evita compensação."
+  },
+  {
+    "id": "e261",
+    "name": "Squeeze Press Landmine (Ajoelhado)",
+    "muscle": "Peito",
+    "equipment": "Landmine",
+    "emoji": "🤝",
+    "obs": "Ajoelhado, mãos unidas apertando a ponta da barra. Empurre à frente comprimindo o peito o tempo todo."
+  },
+  {
+    "id": "e262",
+    "name": "Remada Curvada para Deltoide Posterior (Rear Delt Row)",
+    "muscle": "Ombro/Trapézio",
+    "equipment": "Barra",
+    "emoji": "🏹",
+    "obs": "Tronco bem inclinado à frente, pegada larga, puxe até a linha do umbigo com cotovelos altos. Foco no deltoide posterior."
+  },
+  {
+    "id": "e263",
+    "name": "Barra Fixa com Impulso (Jumping Pull-up)",
+    "muscle": "Costas/Bíceps",
+    "equipment": "Barra Fixa",
+    "emoji": "🦘",
+    "obs": "Use as pernas pra ajudar a subir e foque em controlar a descida. Boa progressão pra quem ainda não faz barra fixa completa."
+  },
+  {
+    "id": "e264",
+    "name": "Elevação Frontal Inclinada Unilateral",
+    "muscle": "Ombro Frontal",
+    "equipment": "Halteres",
+    "emoji": "📐",
+    "obs": "Apoie a mão livre em um rack e incline o corpo para trás. Tensão constante no deltoide anterior do início ao fim."
+  },
+  {
+    "id": "e265",
+    "name": "Desenvolvimento Militar Sentado Atrás da Nuca",
+    "muscle": "Ombro",
+    "equipment": "Barra",
+    "emoji": "🪑",
+    "obs": "Barra desce atrás da cabeça até a nuca. Amplitude reduzida — evite se sentir desconforto no ombro."
+  },
+  {
+    "id": "e266",
+    "name": "Desenvolvimento Militar Sentado com Barra",
+    "muscle": "Ombro",
+    "equipment": "Barra",
+    "emoji": "🎖️",
+    "obs": "Sentado com apoio nas costas, barra desce à frente até a altura do queixo. Mais estável que em pé."
+  },
+  {
+    "id": "e267",
+    "name": "Elevação Lateral Inclinada no Cabo",
+    "muscle": "Ombro Lateral",
+    "equipment": "Cabo",
+    "emoji": "🎚️",
+    "obs": "Incline o corpo para longe da polia baixa. Tensão máxima no deltoide lateral desde o início do movimento."
+  },
+  {
+    "id": "e268",
+    "name": "Elevação Frontal no Cabo",
+    "muscle": "Ombro Frontal",
+    "equipment": "Cabo",
+    "emoji": "🎚️",
+    "obs": "Polia baixa, puxe à frente até a altura do ombro. Tensão constante, sem alívio no ponto baixo."
+  },
+  {
+    "id": "e269",
+    "name": "Elevação em Y no Cabo (Y-Raise)",
+    "muscle": "Ombro Posterior/Trapézio",
+    "equipment": "Cabo",
+    "emoji": "🔤",
+    "obs": "Corda na polia baixa, puxe em diagonal formando um Y. Ativa trapézio inferior e deltoide posterior."
+  },
+  {
+    "id": "e270",
+    "name": "Crucifixo Inverso Unilateral Sentado (Máquina)",
+    "muscle": "Ombro Posterior",
+    "equipment": "Máquina",
+    "emoji": "🪑",
+    "obs": "Sentado de lado no aparelho, um braço de cada vez. Isola o deltoide posterior sem compensação do lado oposto."
+  },
+  {
+    "id": "e271",
+    "name": "Powell Raise Inclinado",
+    "muscle": "Ombro Posterior/Lateral",
+    "equipment": "Halteres",
+    "emoji": "📐",
+    "obs": "Apoiado de lado no banco inclinado, halter na mão de cima. Combina lateral e posterior do deltoide numa amplitude só."
+  },
+  {
+    "id": "e272",
+    "name": "Elevação Frontal Isométrica com Anilha",
+    "muscle": "Ombro Frontal",
+    "equipment": "Anilha",
+    "emoji": "⏱️",
+    "obs": "Segure a anilha à frente na altura dos ombros e sustente por tempo determinado. Isometria pura no deltoide anterior."
+  },
+  {
+    "id": "e273",
+    "name": "Elevação em Y Unilateral no Cabo Cross",
+    "muscle": "Ombro Posterior/Trapézio",
+    "equipment": "Cabo",
+    "emoji": "🔀",
+    "obs": "Um braço de cada vez, puxe na diagonal na polia dupla (cross). Isola um lado sem compensação do outro."
+  },
+  {
+    "id": "e274",
+    "name": "Agachamento Búlgaro Assistido (com Apoio)",
+    "muscle": "Quadríceps/Glúteo",
+    "equipment": "Halteres",
+    "emoji": "🤲",
+    "obs": "Apoie a mão livre em um suporte fixo para equilíbrio. Ideal pra quem ainda não domina o búlgaro livre."
+  },
+  {
+    "id": "e275",
+    "name": "Agachamento no Banco (Box Squat)",
+    "muscle": "Quadríceps/Glúteo",
+    "equipment": "Halteres",
+    "emoji": "🪑",
+    "obs": "Agache até encostar de leve no banco atrás, sem sentar todo o peso. Guia de profundidade e controle."
+  },
+  {
+    "id": "e276",
+    "name": "Afundo Lateral com Salto (Plyo Side Lunge)",
+    "muscle": "Adutores/Glúteo Médio/Pliometria",
+    "equipment": "Halteres",
+    "emoji": "⚡",
+    "obs": "Alterne de um lado pro outro com um pequeno salto entre as repetições. Potência lateral + agilidade."
+  },
+  {
+    "id": "e277",
+    "name": "Clean com Halteres",
+    "muscle": "Corpo Todo",
+    "equipment": "Halteres",
+    "emoji": "🔄",
+    "obs": "Puxada explosiva do chão até os ombros com halteres. Quadril gera a força, não os braços."
+  },
+  {
+    "id": "e278",
+    "name": "Clean and Press com Halteres",
+    "muscle": "Corpo Todo",
+    "equipment": "Halteres",
+    "emoji": "🏋️",
+    "obs": "Clean seguido de press acima da cabeça em sequência. Movimento completo de força e potência."
+  },
+  {
+    "id": "e279",
+    "name": "Afundo Cruzado (Curtsy Lunge)",
+    "muscle": "Glúteo Médio/Adutores",
+    "equipment": "Halteres",
+    "emoji": "🙇",
+    "obs": "Cruze uma perna por trás e na diagonal da outra, como uma reverência. Ativa o glúteo médio de um novo ângulo."
+  },
+  {
+    "id": "e280",
+    "name": "Terra com Halteres (Dumbbell Deadlift)",
+    "muscle": "Posterior/Glúteo",
+    "equipment": "Halteres",
+    "emoji": "🏆",
+    "obs": "Halteres ao lado do corpo, quadril pra trás, costas retas. Boa porta de entrada antes de usar barra."
+  },
+  {
+    "id": "e281",
+    "name": "Mesa Flexora com Halteres (Banco Declinado)",
+    "muscle": "Posterior",
+    "equipment": "Halteres",
+    "emoji": "🛏️",
+    "obs": "Deitado de bruços no banco declinado, halter preso entre os pés. Flexione os joelhos contra a gravidade."
+  },
+  {
+    "id": "e282",
+    "name": "Elevação Pélvica Sapo (Frog Pump)",
+    "muscle": "Glúteo/Adutores",
+    "equipment": "Halteres",
+    "emoji": "🐸",
+    "obs": "Deitado, solas dos pés unidas e joelhos abertos, anilha ou halter no quadril. Isola glúteo e adutores."
+  },
+  {
+    "id": "e283",
+    "name": "Puxada Supinada",
+    "muscle": "Costas/Bíceps",
+    "equipment": "Cabo",
+    "emoji": "🔃",
+    "obs": "Pegada supinada (por baixo), mãos próximas. Maior ativação de bíceps e dorsal inferior."
+  },
+  {
+    "id": "e284",
+    "name": "Remada Curvada Pegada Aberta",
+    "muscle": "Costas",
+    "equipment": "Barra",
+    "emoji": "🎣",
+    "obs": "Pegada bem mais aberta que os ombros, tronco inclinado ~45°. Recruta trapézio e romboides."
+  },
+  {
+    "id": "e285",
+    "name": "Ciclismo ao Ar Livre",
+    "muscle": "Cardio/Quadríceps",
+    "equipment": "Bicicleta",
+    "emoji": "🚵",
+    "obs": "Pedalada ao ar livre, ritmo e resistência variam com o terreno. Baixo impacto nas articulações."
+  },
+  {
+    "id": "e286",
+    "name": "Corrida ao Ar Livre",
+    "muscle": "Cardio/Quadríceps",
+    "equipment": "Peso Corporal",
+    "emoji": "🏃‍♂️",
+    "obs": "Corrida contínua sem equipamento. Ajuste o ritmo pela sensação de esforço (RPE)."
+  },
+  {
+    "id": "e287",
+    "name": "Pular Corda Lateral (Side-to-Side)",
+    "muscle": "Cardio/Panturrilha",
+    "equipment": "Corda",
+    "emoji": "↔️",
+    "obs": "Pule alternando o corpo de um lado pro outro sobre a corda. Trabalha estabilidade lateral além do cardio."
+  },
+  {
+    "id": "e288",
+    "name": "Sprint ao Ar Livre",
+    "muscle": "Cardio/Quadríceps/Glúteo",
+    "equipment": "Peso Corporal",
+    "emoji": "🏁",
+    "obs": "Tiros curtos em velocidade máxima ao ar livre. Técnica de braçada e passada importam tanto quanto o esforço."
+  },
+  {
+    "id": "e289",
+    "name": "Bike Estacionária (Ritmo Constante)",
+    "muscle": "Cardio/Quadríceps",
+    "equipment": "Bike",
+    "emoji": "🚲",
+    "obs": "Ritmo constante e moderado, sem picos de intensidade. Bom pra recuperação ativa ou cardio de base."
+  },
+  {
+    "id": "e290",
+    "name": "Caminhada Reversa na Esteira",
+    "muscle": "Cardio/Quadríceps/Isquiotibial",
+    "equipment": "Esteira",
+    "emoji": "⏪",
+    "obs": "Ande de costas na esteira em velocidade baixa. Ativa o posterior de coxa de um jeito diferente."
+  },
+  {
+    "id": "e291",
+    "name": "Caminhada Inclinada na Esteira",
+    "muscle": "Cardio/Glúteo/Quadríceps",
+    "equipment": "Esteira",
+    "emoji": "⛰️",
+    "obs": "Esteira inclinada, passos completos. Simula subida e aumenta o gasto calórico sem precisar correr."
+  },
+  {
+    "id": "e292",
+    "name": "Caminhada na Esteira",
+    "muscle": "Cardio",
+    "equipment": "Esteira",
+    "emoji": "🚶",
+    "obs": "Caminhada em ritmo constante na esteira, base de qualquer protocolo de cardio."
+  },
+  {
+    "id": "e293",
+    "name": "Wave Machine (Treino Ondulado)",
+    "muscle": "Cardio/Corpo Todo",
+    "equipment": "Máquina",
+    "emoji": "🌊",
+    "obs": "Pés se movem em padrão ondulado alternado. Trabalha estabilizadores de quadril de forma diferente do elíptico tradicional."
+  },
+  {
+    "id": "e294",
+    "name": "Afundo Alternado com Salto (Split Jump)",
+    "muscle": "Quadríceps/Pliometria",
+    "equipment": "Peso Corporal",
+    "emoji": "🔀",
+    "obs": "Alterne as pernas no ar entre uma passada e outra. Potência e coordenação em pé cruzado."
+  },
+  {
+    "id": "e295",
+    "name": "Agachamento Lento-Explosivo (Tempo Squat)",
+    "muscle": "Quadríceps/Pliometria",
+    "equipment": "Peso Corporal",
+    "emoji": "🐌",
+    "obs": "Desça devagar (3-4s), suba o mais explosivo possível. Combina controle excêntrico com potência concêntrica."
+  },
+  {
+    "id": "e296",
+    "name": "Agachamento com Desenvolvimento (Peso Corporal)",
+    "muscle": "Corpo Todo",
+    "equipment": "Peso Corporal",
+    "emoji": "🙌",
+    "obs": "Agache e finalize com um press acima da cabeça, sem peso. Ótimo pra aprender o padrão do thruster antes de adicionar carga."
+  },
+  {
+    "id": "e297",
+    "name": "Agachamento com Deslocamento Lateral (Squat Shuffle)",
+    "muscle": "Quadríceps/Glúteo/Pliometria",
+    "equipment": "Peso Corporal",
+    "emoji": "🦀",
+    "obs": "Agache e desloque lateralmente entre uma repetição e outra. Agilidade + força de perna."
+  },
+  {
+    "id": "e298",
+    "name": "Agachamento com Chute Frontal (Squat to Front Kick)",
+    "muscle": "Quadríceps/Core",
+    "equipment": "Peso Corporal",
+    "emoji": "🥋",
+    "obs": "Agache e, ao subir, chute a perna à frente. Equilíbrio, quadríceps e core trabalhando juntos."
+  },
+  {
+    "id": "e299",
+    "name": "Agachamento na Cadeira com Balanço de Panturrilha",
+    "muscle": "Panturrilha/Glúteo",
+    "equipment": "Peso Corporal",
+    "emoji": "🪑",
+    "obs": "Agache como se fosse sentar numa cadeira, e no fundo balance nas pontas dos pés. Combina agachamento com ativação de panturrilha."
+  },
+  {
+    "id": "e300",
+    "name": "Coice Lateral Ajoelhado (Fire Hydrant)",
+    "muscle": "Glúteo Médio",
+    "equipment": "Peso Corporal",
+    "emoji": "🚒",
+    "obs": "Ajoelhado em 4 apoios, eleve o joelho para o lado mantendo a flexão. Ativa glúteo médio sem carga."
+  },
+  {
+    "id": "e301",
+    "name": "Extensão de Quadril com Chute Lateral (Back-to-Side Kick)",
+    "muscle": "Glúteo/Glúteo Médio",
+    "equipment": "Peso Corporal",
+    "emoji": "🦵",
+    "obs": "Estenda a perna pra trás e depois leve para o lado, sem tocar o chão entre os movimentos. Combina extensão e abdução de quadril."
+  },
+  {
+    "id": "e302",
+    "name": "Elevação Pélvica em Figura 4 (Cruzada)",
+    "muscle": "Glúteo/Adutores",
+    "equipment": "Peso Corporal",
+    "emoji": "4️⃣",
+    "obs": "Deitado, cruze o tornozelo sobre o joelho oposto e eleve o quadril. Ativa glúteo e piriforme com mais amplitude."
+  },
+  {
+    "id": "e303",
+    "name": "Círculo de Quadril Deitado (Hip CARs)",
+    "muscle": "Mobilidade/Quadril",
+    "equipment": "Peso Corporal",
+    "emoji": "🔄",
+    "obs": "Deitado, joelho flexionado ao peito, guie a perna em círculos com a mão. Libera a articulação do quadril em todas as direções."
+  }
+]
