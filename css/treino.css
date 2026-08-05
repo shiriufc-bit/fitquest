@@ -1,0 +1,39 @@
+/* ═══════════════════════════════════════════
+   FITQUEST — treino.css
+   Tela de musculação: card de exercício (episódio),
+   séries, cargas, checkboxes de conclusão.
+   ═══════════════════════════════════════════ */
+
+/* EPISODE CARD (Exercise) */
+.ep-card{background:var(--s);border-radius:8px;overflow:hidden;margin-bottom:10px;cursor:pointer;transition:background .2s;}
+.ep-card:hover{background:var(--s2);}
+.ep-card.open{border:1px solid rgba(229,9,20,.3);}
+.ep-header{padding:14px 16px;display:flex;align-items:center;gap:12px;}
+.ep-num{width:32px;height:32px;border-radius:4px;background:var(--r);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:900;color:#fff;flex-shrink:0;}
+.ep-num.done{background:rgba(46,204,113,.2);color:#2ecc71;}
+.ep-info{flex:1;}
+.ep-title{font-size:14px;font-weight:800;}
+.ep-sub{font-size:10px;color:var(--t2);margin-top:2px;}
+.ep-chips{display:flex;gap:5px;}
+.ep-chip{background:rgba(255,255,255,.07);border-radius:4px;padding:3px 8px;font-size:10px;font-weight:700;color:var(--t2);}
+.ep-chv{font-size:14px;color:var(--mu);transition:transform .2s;}
+.ep-card.open .ep-chv{transform:rotate(180deg);color:var(--r);}
+.ep-body{display:none;padding:0 16px 16px;}
+.ep-card.open .ep-body{display:block;}
+.ep-thumb{border-radius:8px;background:linear-gradient(135deg,#1a0000,#0d0000);aspect-ratio:16/9;display:flex;flex-direction:column;align-items:center;justify-content:center;margin-bottom:12px;gap:6px;border:1px solid rgba(229,9,20,.15);overflow:hidden;box-shadow:0 4px 20px rgba(0,0,0,.4);}
+.ep-obs{background:rgba(229,9,20,.05);border:1px solid rgba(229,9,20,.1);border-radius:6px;padding:10px 14px;font-size:12px;color:var(--t2);line-height:1.6;margin-bottom:12px;}
+.sets-tbl{width:100%;border-collapse:collapse;margin-bottom:12px;}
+.sets-tbl th{font-size:9px;color:var(--mu);font-weight:800;text-transform:uppercase;letter-spacing:1px;padding:0 0 8px;text-align:center;}
+.sets-tbl th:first-child{text-align:left;}
+.set-row{border-top:1px solid var(--b);}
+.set-row td{padding:9px 4px;text-align:center;font-size:13px;font-weight:700;}
+.set-row td:first-child{text-align:left;font-size:11px;color:var(--t2);}
+.set-row.done td{opacity:.4;}
+.carga-inp{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);border-radius:6px;padding:6px 8px;color:var(--t);font-size:13px;font-weight:700;width:70px;text-align:center;outline:none;transition:all .2s;}
+.carga-inp:focus{border-color:var(--r);}
+.set-chk{width:30px;height:30px;border-radius:6px;border:2px solid rgba(255,255,255,.15);background:rgba(0,0,0,.2);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:14px;margin:0 auto;transition:all .2s;}
+.set-chk:hover{border-color:var(--r);}
+.set-chk.ck{background:var(--r);border-color:var(--r);color:#fff;}
+.btn-ep-done{width:100%;padding:14px;background:var(--r);border:none;border-radius:6px;color:#fff;font-size:14px;font-weight:900;cursor:pointer;margin-top:8px;box-shadow:0 4px 20px var(--rg);transition:all .2s;}
+.btn-ep-done:disabled{opacity:.4;cursor:not-allowed;}
+
