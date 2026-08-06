@@ -152,6 +152,8 @@ textarea.fi{resize:vertical;min-height:80px;}
 .ro.sel{background:rgba(229,9,20,.15);border-color:var(--r);color:#fff;}
 .cg{display:flex;flex-direction:column;gap:7px;margin-top:6px;}
 .co{display:flex;align-items:center;gap:10px;padding:11px 14px;background:rgba(255,255,255,.05);border:1.5px solid rgba(255,255,255,.1);border-radius:6px;cursor:pointer;font-size:13px;color:var(--t2);transition:all .2s;user-select:none;-webkit-user-select:none;}
+.fq-lock-badge{display:none;margin-left:auto;font-size:12px;opacity:.7;}
+.co[data-premium]:not(.fq-desbloqueado) .fq-lock-badge{display:inline;}
 .co.sel{background:rgba(229,9,20,.1);border-color:var(--r);color:#fff;}
 .co input{display:none;}
 .cb{width:20px;height:20px;border-radius:4px;border:2px solid rgba(255,255,255,.2);background:rgba(0,0,0,.3);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:11px;transition:all .2s;}
@@ -803,7 +805,7 @@ textarea.fi{resize:vertical;min-height:80px;}
       <option value="en">🇺🇸 EN</option>
     </select>
   </div>
-  <div id="fq-version-badge" style="position:absolute;bottom:8px;right:12px;font-size:9px;color:#333;font-weight:700;z-index:5">v117</div>
+  <div id="fq-version-badge" style="position:absolute;bottom:8px;right:12px;font-size:9px;color:#333;font-weight:700;z-index:5">v120</div>
   <img src="https://images.unsplash.com/photo-1517836357463-d25dfeac3438?w=800&q=80" alt="Fitness" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center top;filter:brightness(.35);z-index:0"/>
   <div class="splash-glow"></div>
   <div class="splash-noise"></div>
@@ -1159,8 +1161,8 @@ textarea.fi{resize:vertical;min-height:80px;}
           <label class="co"><input type="checkbox" value="Não pratico corrida"><span class="cb"></span><span data-i18n="anam.993fb364e2">🚫 Não pratico corrida</span></label>
           <label class="co"><input type="checkbox" value="Completar 5km"><span class="cb"></span><span data-i18n="anam.19d87865d0">🏃 Completar 5 km</span></label>
           <label class="co"><input type="checkbox" value="Completar 10km"><span class="cb"></span><span data-i18n="anam.c1ef4c1421">🏃 Completar 10 km</span></label>
-          <label class="co"><input type="checkbox" value="Meia maratona (21km)"><span class="cb"></span><span data-i18n="anam.8fcd391a0b">🏅 Meia maratona (21 km)</span></label>
-          <label class="co"><input type="checkbox" value="Maratona (42km)"><span class="cb"></span><span data-i18n="anam.0a5af4cec7">🏆 Maratona (42 km)</span></label>
+          <label class="co" data-premium="corrida"><input type="checkbox" value="Meia maratona (21km)"><span class="cb"></span><span data-i18n="anam.8fcd391a0b">🏅 Meia maratona (21 km)</span><span class="fq-lock-badge">🔒</span></label>
+          <label class="co" data-premium="corrida"><input type="checkbox" value="Maratona (42km)"><span class="cb"></span><span data-i18n="anam.0a5af4cec7">🏆 Maratona (42 km)</span><span class="fq-lock-badge">🔒</span></label>
           <label class="co"><input type="checkbox" value="Melhorar pace/velocidade"><span class="cb"></span><span data-i18n="anam.df19338074">⚡ Melhorar pace / velocidade</span></label>
           <label class="co"><input type="checkbox" value="Correr sem dor ou lesão"><span class="cb"></span><span data-i18n="anam.fe6ce781a9">🩺 Correr sem dor ou lesão</span></label>
         </div>
@@ -2368,7 +2370,7 @@ textarea.fi{resize:vertical;min-height:80px;}
 
 <script>
 // ══ SUPABASE ══
-const FQ_VERSION='v117';console.log('%cFitQuest '+FQ_VERSION,'color:#e50914;font-weight:bold;font-size:14px');
+const FQ_VERSION='v120';console.log('%cFitQuest '+FQ_VERSION,'color:#e50914;font-weight:bold;font-size:14px');
 // ══ PROXY DE IA (Cloudflare Worker) ══
 // Quando preenchido, a IA real funciona em produção com a chave protegida no servidor.
 // Deixe '' para usar o plano local (fallback). Ex: 'https://fitquest-ai.SEU-USUARIO.workers.dev'
@@ -3462,7 +3464,23 @@ function initAnam(tipo){
   const raiz=document.getElementById('sc-anam-'+tipo);
   if(!raiz) return;
   raiz.querySelectorAll('.rg').forEach(g=>{g.querySelectorAll('.ro').forEach(o=>o.addEventListener('click',()=>{g.querySelectorAll('.ro').forEach(x=>x.classList.remove('sel'));o.classList.add('sel');o.querySelector('input').checked=true;}));});
-  raiz.querySelectorAll('.cg').forEach(g=>{g.querySelectorAll('.co').forEach(o=>o.addEventListener('click',()=>{o.classList.toggle('sel');const cb=o.querySelector('input');cb.checked=!cb.checked;o.querySelector('.cb').textContent=cb.checked?'✓':'';}));});
+  // Opções premium (meia/maratona): só quem já é ASSINANTE PAGO pode marcar — mesmo
+  // dentro do teste grátis, esses dois planos ficam bloqueados até o pagamento real.
+  const uAtual=getU();
+  const ehPago=statusAssinatura(uAtual)==='ativa';
+  raiz.querySelectorAll('.cg').forEach(g=>{g.querySelectorAll('.co').forEach(o=>{
+    const premium=o.hasAttribute('data-premium');
+    if(premium && ehPago) o.classList.add('fq-desbloqueado');
+    o.addEventListener('click',(ev)=>{
+      if(premium && !ehPago){
+        ev.preventDefault(); // impede o toggle nativo do checkbox (senão marca mesmo bloqueado)
+        fqToast('🔒 Meia maratona e maratona são liberadas só para assinantes.','warn');
+        abrirAssinatura();
+        return;
+      }
+      o.classList.toggle('sel');const cb=o.querySelector('input');cb.checked=!cb.checked;o.querySelector('.cb').textContent=cb.checked?'✓':'';
+    });
+  });});
   try{ aplicarIdioma(); }catch(e){}
 }
 function updAnam(tipo){
@@ -3563,14 +3581,26 @@ async function submitAnamCorrida(){
   const gr=n=>{const e=document.querySelector(`input[name="${n}"]:checked`);return e?e.value:'';};
   const gc=id=>Array.from(document.querySelectorAll(`#${id} input:checked`)).map(e=>e.value);
   const gv=id=>{const el=document.getElementById(id);return el?el.value:'';};
+  // Camada 2 de defesa: mesmo que o clique tenha sido contornado, meia/maratona
+  // nunca chegam a virar plano pra quem não é assinante pago.
+  const ehPagoAgora = statusAssinatura(users[email])==='ativa';
+  let mcBruto = gc('cg-mc');
+  const PREMIUM_MC = ['Meia maratona (21km)','Maratona (42km)'];
+  const tinhaPremium = mcBruto.some(v=>PREMIUM_MC.includes(v));
+  if(!ehPagoAgora) mcBruto = mcBruto.filter(v=>!PREMIUM_MC.includes(v));
   const especifica={
-    mc:gc('cg-mc'),nivelCorrida:gr('nivelcorrida'),ritmoAtual:gv('a-ritmoatual'),
+    mc:mcBruto,nivelCorrida:gr('nivelcorrida'),ritmoAtual:gv('a-ritmoatual'),
     lesoes:gc('cg-lesoes-corrida'),dorInt:gr('dorint-corrida'),dorTempo:gr('dortempo-corrida'),
     temJoelho:gc('cg-lesoes-corrida').some(l=>l.includes('Joelho')),
     temLombar:gc('cg-lesoes-corrida').some(l=>l.includes('Lombar')||l.includes('Hérnia')),
     temOmbro:gc('cg-lesoes-corrida').some(l=>l.includes('Ombro')),
     at:new Date().toISOString()
   };
+  if(tinhaPremium && !ehPagoAgora){
+    fqToast('🔒 Meia maratona e maratona são liberadas só para assinantes.','warn');
+    abrirAssinatura();
+    return;
+  }
   users[email].anamneseCorrida=especifica;
   users[email].anamneseCorridaDone=true;
   const anCompleta=mesclarAnamnese(users[email],especifica);
@@ -3936,18 +3966,87 @@ function RD_pool(grupo,p){
 }
 
 // Rotação por semana: varia exercícios (evita adaptação e monotonia)
+// ══════════════════════════════════════════════════════════════
+// MÓDULO 3 (parte 2) — PONTUAÇÃO DE EXERCÍCIOS
+// Depois que a segurança já EXCLUIU o que é contraindicado (RD_pool/RD_CONTRA
+// continuam sendo a barreira dura, intocável), a pontuação decide o MELHOR
+// exercício entre os que sobraram — não é uma segunda camada de segurança,
+// é refinamento de qualidade sobre um conjunto já seguro.
+// ══════════════════════════════════════════════════════════════
+
+// Detecta exercício composto (multiarticular) — usado em vários pontos do motor,
+// centralizado aqui pra não haver 3 cópias divergentes da mesma regra.
+function RD_ehComposto(nome){
+  return /supino|agachamento|hack squat|terra|remada|desenvolvimento|puxada|barra fixa|leg press|stiff|thruster|burpee|clean|snatch|devil press|man maker/i.test(nome);
+}
+
+// Nível técnico exigido (1=básico → 4=avançado), derivado do equipamento e
+// padrão de movimento — não é um campo novo por exercício (evita fabricar
+// dado que ninguém validou), é uma heurística sobre o que já existe.
+function RD_nivelTecnico(ex){
+  const n=ex.name.toLowerCase(), eq=(ex.equipment||'').toLowerCase();
+  if(/clean|snatch|thruster|turkish get|man maker|devil press|muscle.?up|pistol/.test(n))return 4; // olímpico/alta coordenação
+  if(/livre|barra\b/.test(eq) && RD_ehComposto(ex.name))return 3; // composto com barra livre
+  if(/halter|kettlebell/.test(eq))return 2.5;
+  if(/máquina|maquina|cabo|polia/.test(eq))return 1.5; // trajetória guiada = mais fácil de executar com segurança
+  if(/peso corporal/.test(eq))return 2; // varia, mas médio como padrão
+  return 2;
+}
+
+// Pontuação de 0-100. Quanto maior, mais adequado pra ESTE aluno neste slot.
+function RD_scoreExercicio(ex,p,grupo,ehAncoraSlot){
+  let score=50; // base neutra
+
+  // 1) Nível técnico vs experiência do aluno — penaliza os dois extremos
+  // (exercício difícil demais é inseguro; fácil demais sub-estimula quem já evoluiu)
+  const nivelAluno={destreinado:1,iniciante:1.5,intermediario:2.5,avancado:4}[p.nivel]||2;
+  const nivelEx=RD_nivelTecnico(ex);
+  score-=Math.abs(nivelEx-nivelAluno)*9;
+
+  // 2) Objetivo — compostos valem mais pra força/funcional; isolados valem mais
+  // quando o aluno tem prioridade muscular específica (foco)
+  const composto=RD_ehComposto(ex.name);
+  if((p.objetivo==='forca'||p.objetivo==='funcional') && composto)score+=14;
+  if(p.objetivo==='hipertrofia' && !composto)score+=6;
+
+  // 3) Foco do aluno (prioridade muscular que ele mesmo escolheu)
+  if(p.foco && p.foco.some(f=>ex.muscle.toLowerCase().includes(f)))score+=18;
+
+  // 4) Precaução residual: mesmo exercícios que PASSARAM no filtro de segurança
+  // podem tangenciar uma articulação flagada sem serem tecnicamente contraindicados
+  // (ex: exercício sentado/com apoio numa área com dor leve) — prefere opções mais
+  // "distantes" da queixa quando existir alternativa igualmente boa.
+  const flagsAtivas=Object.entries(p.lesoes||{}).filter(([k,v])=>v && k!=='obesidade' && k!=='osteoporose' && k!=='hipertensao' && k!=='diabetes' && k!=='cardiaco').map(([k])=>k);
+  flagsAtivas.forEach(art=>{ if(ex.muscle.toLowerCase().includes(art))score-=6; });
+
+  // 5) Âncora: prioriza compostos de padrão fundamental (já filtrado antes de chamar
+  // esta função pra esse slot, aqui só reforça a ordenação entre os candidatos)
+  if(ehAncoraSlot && composto)score+=10;
+
+  return score;
+}
+
 function RD_escolhe(grupo,n,p,semana,excluir,ancora){
   let pool=RD_pool(grupo,p);
-  // Fallback 1: relaxa o grupo, MAS mantém equipamento e lesões (nunca prescreve o que o aluno não pode fazer)
+  // Fallback 1: relaxa o grupo, MAS mantém equipamento e TODAS as lesões/condições
+  // (nunca prescreve o que o aluno não pode fazer — mesmo filtro completo do RD_pool)
   if(!pool.length){
     const eq=RD_EQUIP[p.ambiente];
     const contra=[];
+    if(p.lesoes.hernia)contra.push(RD_CONTRA.hernia);
+    else if(p.lesoes.lombar)contra.push(RD_CONTRA.lombar);
     if(p.lesoes.joelho)contra.push(RD_CONTRA.joelho);
-    if(p.lesoes.lombar)contra.push(RD_CONTRA.lombar);
     if(p.lesoes.ombro)contra.push(RD_CONTRA.ombro);
+    if(p.lesoes.cervical)contra.push(RD_CONTRA.cervical);
+    if(p.lesoes.cotovelo)contra.push(RD_CONTRA.cotovelo);
+    if(p.lesoes.punho)contra.push(RD_CONTRA.punho);
+    if(p.lesoes.quadril)contra.push(RD_CONTRA.quadril);
+    if(p.lesoes.tornozelo)contra.push(RD_CONTRA.tornozelo);
+    if(p.lesoes.obesidade)contra.push(/salto|jump|pliom|box|skater|pistol|burpee|corrida|sprint|thruster|wall ball|man maker|devil press/i);
+    if(p.lesoes.osteoporose)contra.push(/roda abdominal|ab ?wheel|rollout|abdominal|crunch|sit-?up|russian twist|toes to bar|windshield|salto|jump|pliom|box|skater|terra|deadlift|good ?morning/i);
     pool=EXERCISE_BANK.filter(e=>{
       if(eq&&!eq.test(e.equipment||''))return false;
-      if(contra.some(rx=>rx.test(e.name)))return false;
+      if(contra.some(rx=>rx&&rx.test(e.name)))return false;
       return true;
     });
   }
@@ -3957,22 +4056,34 @@ function RD_escolhe(grupo,n,p,semana,excluir,ancora){
   // ÂNCORA: o exercício principal (composto) NÃO rotaciona AO LONGO DAS SEMANAS do mesmo
   // aluno — especificidade gera força (Kassiano 2022). Evidência: variar vs. manter exercícios
   // dá hipertrofia SIMILAR, mas força exige repetir o movimento.
-  // Porém ENTRE alunos diferentes, a escolha varia pela "assinatura" de cada um (p.seed) — sem
-  // isso, todo aluno com perfil parecido (mesmo nível/equipamento) cairia sempre na mesma opção.
+  // Escolhe pelo MAIOR SCORE (nível técnico compatível + objetivo) — a "assinatura" do
+  // aluno (p.seed) só desempata entre os melhores, não decide sozinha mais.
   if(ancora){
     const candidatosAncora=pool.filter(e=>/supino|agachamento|hack squat|terra|remada curvada|remada t\b|cavalinho|remada baixa|desenvolvimento|puxada|barra fixa|leg press|stiff|thruster|burpee|clean|snatch|devil press|man maker|turkish get|wall ball|sled push/i.test(e.name)&&!/pausa|isometr|wall sit/i.test(e.name)&&!usados.has(e.id));
     if(candidatosAncora.length){
-      const idx=(p&&p.seed?p.seed:0)%candidatosAncora.length;
-      const comp=candidatosAncora[idx];
+      const pontuados=candidatosAncora.map(e=>({e,score:RD_scoreExercicio(e,p,grupo,true)}));
+      const maxScore=Math.max(...pontuados.map(x=>x.score));
+      // "Empate técnico": tudo dentro de 6 pontos do melhor é igualmente bom pra esse aluno —
+      // dentro desse grupo, a assinatura dele decide, preservando variedade entre alunos parecidos.
+      const melhores=pontuados.filter(x=>x.score>=maxScore-6).map(x=>x.e);
+      const idx=(p&&p.seed?p.seed:0)%melhores.length;
+      const comp=melhores[idx];
       usados.add(comp.id);out.push(comp);
     }
   }
-  // ACESSÓRIOS: rotacionam a cada 2 semanas (variedade sustenta adesão e cobre ângulos diferentes),
-  // e cada aluno começa esse giro num ponto diferente (mesma logica da assinatura acima)
-  const semOffset=(p&&p.seed?p.seed:0)%Math.max(1,pool.length);
-  const off=(Math.floor((semana-1)/2)+semOffset)%Math.max(1,pool.length);
-  for(let i=0;i<pool.length&&out.length<n;i++){
-    const e=pool[(off+i)%pool.length];
+  // ACESSÓRIOS: entre os candidatos com boa pontuação, rotacionam a cada 2 semanas
+  // (variedade sustenta adesão e cobre ângulos diferentes do mesmo músculo).
+  const restantes=pool.filter(e=>!usados.has(e.id));
+  const pontuadosAc=restantes.map(e=>({e,score:RD_scoreExercicio(e,p,grupo,false)})).sort((a,b)=>b.score-a.score);
+  // Pega os melhores (pelo menos o dobro do necessário, ou metade do pool — o que for maior)
+  // pra sobrar variedade real de rotação sem cair pro fim da lista, que pontua pior.
+  const cortePos=Math.max(n*2, Math.ceil(pontuadosAc.length/2));
+  const bons=pontuadosAc.slice(0,cortePos).map(x=>x.e);
+  const listaRotacao=bons.length?bons:restantes; // rede de segurança: nunca fica vazio se n>0
+  const semOffset=(p&&p.seed?p.seed:0)%Math.max(1,listaRotacao.length);
+  const off=(Math.floor((semana-1)/2)+semOffset)%Math.max(1,listaRotacao.length);
+  for(let i=0;i<listaRotacao.length&&out.length<n;i++){
+    const e=listaRotacao[(off+i)%listaRotacao.length];
     if(usados.has(e.id))continue;
     usados.add(e.id);out.push(e);
   }
@@ -4591,11 +4702,8 @@ function RD_parseTreino(codigo,testPace){
 function RD_limparTexto(txt){
   if(!txt) return '';
   let t = String(txt).toUpperCase().trim();
-  t = t.replace(/\s*\(Z\d(?:\s*\/\s*Z\d)?\)/g, '');   // (Z4), (Z1/Z2)
-  t = t.replace(/\s+EM\s+Z\d\b/g, '');                   // "EM Z3"
-  t = t.replace(/\s+ENTRE\s+Z\d\s+E\s+Z\d\b/g, '');   // "ENTRE Z2 E Z3"
-  t = t.replace(/\bZ\d\s*\/\s*Z\d\b/g, '');            // Z1/Z2 solto
-  t = t.replace(/\bZ\d\b/g, '');                          // Z3 solto
+  // Mantém a notação de zona (Z1-Z5) — igual ao texto original da planilha do Rennan.
+  // Só limpa espaçamento/pontuação sobrando, não remove informação.
   t = t.replace(/\s*-\s*$/,'');
   t = t.replace(/\s{2,}/g,' ').replace(/\s+\)/g,')').replace(/\(\s+/g,'(');
   return t.replace(/\s*,\s*$/,'').trim();
