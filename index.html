@@ -803,7 +803,7 @@ textarea.fi{resize:vertical;min-height:80px;}
       <option value="en">🇺🇸 EN</option>
     </select>
   </div>
-  <div id="fq-version-badge" style="position:absolute;bottom:8px;right:12px;font-size:9px;color:#333;font-weight:700;z-index:5">v115</div>
+  <div id="fq-version-badge" style="position:absolute;bottom:8px;right:12px;font-size:9px;color:#333;font-weight:700;z-index:5">v116</div>
   <img src="https://images.unsplash.com/photo-1517836357463-d25dfeac3438?w=800&q=80" alt="Fitness" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center top;filter:brightness(.35);z-index:0"/>
   <div class="splash-glow"></div>
   <div class="splash-noise"></div>
@@ -2368,7 +2368,7 @@ textarea.fi{resize:vertical;min-height:80px;}
 
 <script>
 // ══ SUPABASE ══
-const FQ_VERSION='v115';console.log('%cFitQuest '+FQ_VERSION,'color:#e50914;font-weight:bold;font-size:14px');
+const FQ_VERSION='v116';console.log('%cFitQuest '+FQ_VERSION,'color:#e50914;font-weight:bold;font-size:14px');
 // ══ PROXY DE IA (Cloudflare Worker) ══
 // Quando preenchido, a IA real funciona em produção com a chave protegida no servidor.
 // Deixe '' para usar o plano local (fallback). Ex: 'https://fitquest-ai.SEU-USUARIO.workers.dev'
@@ -6143,7 +6143,7 @@ function renderMeuTreino(u){
           </div>
           <div style="background:var(--r);color:#fff;border-radius:6px;min-width:24px;height:24px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:900;flex-shrink:0">${i+1}</div>
           <div style="flex:1;min-width:0">
-            <div style="font-size:13px;font-weight:800;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${ex.nome}</div>
+            <div style="font-size:13px;font-weight:800;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${ex.nome}${!ex.custom?` <button onclick="abrirFichaExercicio('${ex.id}')" style="background:rgba(255,255,255,.08);border:1px solid var(--b);color:var(--t2);border-radius:50%;width:20px;height:20px;font-size:11px;cursor:pointer;vertical-align:middle;margin-left:4px;padding:0;line-height:1" title="Ver ficha completa">ℹ️</button>`:''}</div>
             ${ex.custom?'<div style="font-size:9px;color:#f39c12;font-weight:700">✏️ SEU EXERCÍCIO</div>':''}
           </div>
           <button onclick="mtRemoverEx(${i})" style="background:rgba(229,9,20,.1);border:1px solid rgba(229,9,20,.25);color:var(--r);border-radius:6px;width:28px;height:28px;font-size:14px;cursor:pointer;flex-shrink:0">✕</button>
