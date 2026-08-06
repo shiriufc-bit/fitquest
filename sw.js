@@ -1,8 +1,10 @@
-// ══ FitQuest Service Worker v45 ══
-// Atualizado em: 06/08/2026 — CSS com cores de reserva (fallback) no
-// body/telas principais, pra nunca mais cair em fundo branco se a
-// variável --bg falhar de carregar por qualquer motivo (cache, rede).
-const CACHE_NAME = 'fitquest-v119';
+// ══ FitQuest Service Worker v46 ══
+// Atualizado em: 06/08/2026 — de volta pra estrutura de arquivo único,
+// DEFINITIVAMENTE. index.html contém HTML+CSS+JS+dados inline; só os
+// gifs (assets/gifs/) continuam como arquivos externos, por serem
+// binários. Menos arquivos = menos chance de algo ficar desalinhado
+// no deploy manual.
+const CACHE_NAME = 'fitquest-v120';
 
 const ASSETS = [
   '/fitquest/',
@@ -10,32 +12,9 @@ const ASSETS = [
   '/fitquest/manifest.json',
   '/fitquest/icon-192.png',
   '/fitquest/icon-512.png',
-
-  // CSS
-  '/fitquest/css/app.css',
-  '/fitquest/css/auth.css',
-  '/fitquest/css/treino.css',
-  '/fitquest/css/admin.css',
-  '/fitquest/css/corrida.css',
-
-  // JS
-  '/fitquest/js/supabase.js',
-  '/fitquest/js/app.js',
-  '/fitquest/js/auth.js',
-  '/fitquest/js/treino.js',
-  '/fitquest/js/corrida.js',
-  '/fitquest/js/admin.js',
-  '/fitquest/js/financeiro.js',
-  '/fitquest/js/ebook.js',
-
-  // Banco de dados (exercícios, treinos padrão, ebooks)
-  '/fitquest/database/exercicios.json',
-  '/fitquest/database/treinos.json',
-  '/fitquest/database/ebooks.json',
-
-  // Os gifs de exercícios (assets/gifs/*.gif) NÃO entram aqui de propósito:
-  // são ~94 arquivos e crescendo. Ficam cacheados sob demanda pelo handler
-  // de fetch abaixo, conforme o aluno realmente visualiza cada um.
+  // Os gifs de exercício NÃO entram aqui de propósito: são ~94 arquivos
+  // e crescendo. Ficam cacheados sob demanda pelo handler de fetch
+  // abaixo, conforme o aluno realmente visualiza cada um.
 ];
 
 self.addEventListener('install', e => {
