@@ -978,7 +978,7 @@ const TRIAL_DIAS = 14;
 // Fallback automático pro emoji+foto quando ausente.
 const EXERCICIOS_COM_GIF = new Set(['e001','e002','e003','e004','e005','e006','e007','e008','e009','e010','e011','e013','e014','e015','e016','e017','e018','e019','e020','e021','e022','e023','e024','e026','e027','e028','e030','e037','e041','e042','e045','e046','e050','e051','e052','e053','e054','e055','e056','e058','e061','e063','e075','e077','e079','e102','e113','e120','e131','e136','e144','e149','e152','e157','e174','e175','e179','e181','e182','e183','e184','e187','e188','e193','e196','e203','e217','e218','e225','e237','e238','e239','e240','e241','e242','e243','e244','e245','e246','e247','e248','e249','e250','e251','e252','e253','e254','e255','e256','e257','e258','e259','e260','e261','e262','e263','e103','e215','e059','e012','e062','e067','e194','e264','e265','e266','e267','e268','e269','e065','e195','e068','e192','e270','e271','e272','e070','e072','e214','e210','e168','e273','e064','e069','e044','e212','e076','e036','e032','e048','e129','e274','e275','e276','e277','e278','e279','e280','e281','e282','e074','e283','e284','e083','e199','e147','e148','e150','e151','e285','e286','e287','e288','e289','e290','e291','e292','e293','e098','e121','e294','e295','e296','e297','e298','e299','e057','e300','e301','e302','e303','e025','e198']);
 function temGifDemo(exId){ return EXERCICIOS_COM_GIF.has(exId); }
-function getExGif(exId){ return `assets/gifs/${exId}.gif`; }
+function getExGif(exId){ return `${exId}.gif`; }
 function renderExThumb(ex){
   if(temGifDemo(ex.id)){
     return `<img src="${getExGif(ex.id)}" alt="${ex.name}" loading="lazy" style="width:100%;height:100%;object-fit:contain;background:#f6f2e4"
@@ -1243,10 +1243,9 @@ function concluirTreinoProprio(){
   const exs=(u.meuTreino?.dias?.[MT_DIA_ATUAL])||[];
   if(!exs.length){ fqToast('Adicione exercícios antes de concluir.','warn'); return; }
 
-  u.xp=(u.xp||0)+40;
   u.coins=(u.coins||0)+8;
   u.stats=u.stats||{}; u.stats.treinos=(u.stats.treinos||0)+1;
-  u.level=Math.max(1,Math.floor((u.xp||0)/500)+1);
+  fqAdicionarXP(u,40);
   u.workoutHistory=u.workoutHistory||[];
   u.workoutHistory.push({date:new Date().toISOString(), day:MT_DIA_ATUAL+' (meu treino)', exercises:exs.map(e=>e.nome)});
   atualizarStreak(u);
@@ -1362,6 +1361,8 @@ function atualizarStreak(u){
   if([7,14,21,30,50,60,100,150,200,365].includes(u.streak)){
     try{registrarEventoComunidade('streak',{nome:u.name,dias:u.streak,titulo:tituloAtual(u)?.emoji});}catch(e){}
     try{dispararConfete(24);}catch(e){}
+    try{fqCelebrarStreak(u.streak);}catch(e){}
+    fqVibrar([50,80,50,80,100]);
   }
 }
 
@@ -1369,15 +1370,14 @@ function completeWk(w,d){
   const email=DB.get('fq_cur');const users=DB.get('fq_users')||{};const u=users[email];if(!u)return;
   const dk=`${w}_${d}`;if(u.gymDone&&u.gymDone[dk])return;
   if(!u.gymDone)u.gymDone={};u.gymDone[dk]=true;
-  u.stats.treinos=(u.stats.treinos||0)+1;u.xp=(u.xp||0)+80;u.coins=(u.coins||0)+15;
+  u.stats.treinos=(u.stats.treinos||0)+1;u.coins=(u.coins||0)+15;fqAdicionarXP(u,80);
   atualizarStreak(u);
   try{registrarEventoComunidade('treino',{nome:u.name,nome_treino:d,titulo:tituloAtual(u)?.emoji});}catch(e){}
   const P=getGP(u);const exs=P[w].days[d];
   if(!u.workoutHistory)u.workoutHistory=[];
   u.workoutHistory.push({week:w,day:d,date:new Date().toLocaleDateString('pt-BR'),exercises:exs.map(e=>{const ex=getExById(e.id);return{name:ex?.name||e.id,load:u.loadHistory?.[`${w}_${d}_${e.id}`]||''};})});
   const allDays=Object.keys(P[w].days);const tw=Object.keys(P).length;
-  if(allDays.every(dd=>u.gymDone[`${w}_${dd}`])){const wn=parseInt(w.split(' ')[1]);if(wn===(u.gymWeek||1)&&(u.gymWeek||1)<tw){u.gymWeek=(u.gymWeek||1)+1;u.xp+=200;u.coins+=50;u.stats.semanas++;}}
-  if((u.xp||0)>=(u.level||1)*1000){u.level=(u.level||1)+1;u.xp=0;setTimeout(()=>fqToast('🎉 Subiu para o Nível '+(u.level||1)+'!','ok',5000),200);try{dispararConfete(40);}catch(e){}}
+  if(allDays.every(dd=>u.gymDone[`${w}_${dd}`])){const wn=parseInt(w.split(' ')[1]);if(wn===(u.gymWeek||1)&&(u.gymWeek||1)<tw){u.gymWeek=(u.gymWeek||1)+1;u.coins+=50;fqAdicionarXP(u,200);u.stats.semanas++;}}
   DB.set('fq_users',users);loadApp(email);switchTab('gym',document.querySelectorAll('.nbtn')[1]);
 }
 
@@ -1391,7 +1391,7 @@ function logPR(){
   const ex=prompt('Exercício (ex: Supino, Corrida 5km):');if(!ex)return;
   const val=prompt('Resultado (ex: 90kg, 24:30):');if(!val)return;
   if(!u.prs)u.prs=[];u.prs.push({exercise:ex,value:val,date:new Date().toLocaleDateString('pt-BR',{day:'2-digit',month:'2-digit'}),icon:'⭐'});
-  u.xp=(u.xp||0)+100;u.coins=(u.coins||0)+20;DB.set('fq_users',users);
+  u.coins=(u.coins||0)+20;fqAdicionarXP(u,100);DB.set('fq_users',users);
   try{registrarEventoComunidade('pr',{nome:u.name,ex:ex,titulo:tituloAtual(u)?.emoji});}catch(e){}
   try{dispararConfete(36);}catch(e){}
   loadApp(email);
@@ -1461,5 +1461,6 @@ function checarTreinoPendente(){
 }
 // Rodar checagem ao carregar o app
 setTimeout(checarTreinoPendente, 5000);
+
 
 
