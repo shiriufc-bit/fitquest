@@ -1,7 +1,8 @@
-// ══ FitQuest Service Worker v42 ══
-// Atualizado em: 05/08/2026 — inclui os arquivos da reestruturação
-// (css/, js/, database/) que antes viviam dentro do index.html.
-const CACHE_NAME = 'fitquest-v116';
+// ══ FitQuest Service Worker v45 ══
+// Atualizado em: 06/08/2026 — CSS com cores de reserva (fallback) no
+// body/telas principais, pra nunca mais cair em fundo branco se a
+// variável --bg falhar de carregar por qualquer motivo (cache, rede).
+const CACHE_NAME = 'fitquest-v119';
 
 const ASSETS = [
   '/fitquest/',
@@ -33,9 +34,8 @@ const ASSETS = [
   '/fitquest/database/ebooks.json',
 
   // Os gifs de exercícios (assets/gifs/*.gif) NÃO entram aqui de propósito:
-  // são ~90+ arquivos e crescendo. Eles são cacheados sob demanda pelo
-  // handler de fetch abaixo, conforme o aluno realmente visualiza cada um —
-  // isso evita inflar o cache inicial com gifs que a pessoa nunca abre.
+  // são ~94 arquivos e crescendo. Ficam cacheados sob demanda pelo handler
+  // de fetch abaixo, conforme o aluno realmente visualiza cada um.
 ];
 
 self.addEventListener('install', e => {
@@ -75,9 +75,6 @@ self.addEventListener('fetch', e => {
         caches.open(CACHE_NAME).then(cache => cache.put(e.request, clone));
         return response;
       }).catch(() => {
-        // Só cai pro shell (index.html) em navegação de página — uma
-        // imagem, script ou JSON que falhar offline deve falhar mesmo,
-        // não voltar HTML no lugar (isso quebraria o parse do JS/JSON).
         if(e.request.mode === 'navigate') return caches.match('/fitquest/');
       });
     })
