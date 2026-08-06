@@ -803,7 +803,7 @@ textarea.fi{resize:vertical;min-height:80px;}
       <option value="en">🇺🇸 EN</option>
     </select>
   </div>
-  <div id="fq-version-badge" style="position:absolute;bottom:8px;right:12px;font-size:9px;color:#333;font-weight:700;z-index:5">v116</div>
+  <div id="fq-version-badge" style="position:absolute;bottom:8px;right:12px;font-size:9px;color:#333;font-weight:700;z-index:5">v117</div>
   <img src="https://images.unsplash.com/photo-1517836357463-d25dfeac3438?w=800&q=80" alt="Fitness" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center top;filter:brightness(.35);z-index:0"/>
   <div class="splash-glow"></div>
   <div class="splash-noise"></div>
@@ -2368,7 +2368,7 @@ textarea.fi{resize:vertical;min-height:80px;}
 
 <script>
 // ══ SUPABASE ══
-const FQ_VERSION='v116';console.log('%cFitQuest '+FQ_VERSION,'color:#e50914;font-weight:bold;font-size:14px');
+const FQ_VERSION='v117';console.log('%cFitQuest '+FQ_VERSION,'color:#e50914;font-weight:bold;font-size:14px');
 // ══ PROXY DE IA (Cloudflare Worker) ══
 // Quando preenchido, a IA real funciona em produção com a chave protegida no servidor.
 // Deixe '' para usar o plano local (fallback). Ex: 'https://fitquest-ai.SEU-USUARIO.workers.dev'
@@ -3223,10 +3223,10 @@ function renovarMissoesSemanais(u){
   return true;
 }
 function rowToUser(data){
-  return{id:data.id,name:data.nome,email:data.email,plano:data.plano,trialInicio:data.trial_inicio,runInicio:data.run_inicio,assinaturaStatus:data.assinatura_status||'trial',assinaturaAte:data.assinatura_ate,diaConversao:data.dia_conversao,dataConversao:data.data_conversao,planoConversao:data.plano_conversao,precoTravado:data.preco_travado,promoFundador:!!data.promo_fundador,promoVaga:data.promo_vaga,trainApproved:data.treino_liberado,isAdmin:!!data.is_admin,aiPlan:data.ai_plan,anamnese:data.anamnese,anamneseDone:!!data.anamnese_geral,anamneseGeral:data.anamnese_geral||null,anamneseMusculacao:data.anamnese_musculacao||null,anamneseCorrida:data.anamnese_corrida||null,anamneseMuscDone:!!data.anamnese_musculacao,anamneseCorridaDone:!!data.anamnese_corrida,gymWeek:data.gym_week||1,runWeek:data.run_week||1,gymDone:data.gym_done||{},runDone:data.run_done||{},loadHistory:data.load_history||{},workoutHistory:data.workout_history||[],xp:data.xp||0,level:data.level||1,streak:data.streak||1,coins:data.coins||0,badges:data.badges||[],prs:data.prs||[],stats:data.stats||{treinos:0,distancia:0,semanas:0},purchases:data.purchases||[],pacoteEbooks:!!data.pacote_ebooks,programIntakes:data.program_intakes||{},avatar:data.avatar||null,evals:data.evals||[],missions:MISSOES_PADRAO.map(m=>({...m})),createdAt:data.criado_em,lastLogin:data.ultimo_acesso};
+  return{id:data.id,name:data.nome,email:data.email,plano:data.plano,trialInicio:data.trial_inicio,runInicio:data.run_inicio,runAjusteLesao:!!data.run_ajuste_lesao,assinaturaStatus:data.assinatura_status||'trial',assinaturaAte:data.assinatura_ate,diaConversao:data.dia_conversao,dataConversao:data.data_conversao,planoConversao:data.plano_conversao,precoTravado:data.preco_travado,promoFundador:!!data.promo_fundador,promoVaga:data.promo_vaga,trainApproved:data.treino_liberado,isAdmin:!!data.is_admin,aiPlan:data.ai_plan,anamnese:data.anamnese,anamneseDone:!!data.anamnese_geral,anamneseGeral:data.anamnese_geral||null,anamneseMusculacao:data.anamnese_musculacao||null,anamneseCorrida:data.anamnese_corrida||null,anamneseMuscDone:!!data.anamnese_musculacao,anamneseCorridaDone:!!data.anamnese_corrida,gymWeek:data.gym_week||1,runWeek:data.run_week||1,gymDone:data.gym_done||{},runDone:data.run_done||{},loadHistory:data.load_history||{},workoutHistory:data.workout_history||[],xp:data.xp||0,level:data.level||1,streak:data.streak||1,coins:data.coins||0,badges:data.badges||[],prs:data.prs||[],stats:data.stats||{treinos:0,distancia:0,semanas:0},purchases:data.purchases||[],pacoteEbooks:!!data.pacote_ebooks,programIntakes:data.program_intakes||{},avatar:data.avatar||null,evals:data.evals||[],missions:MISSOES_PADRAO.map(m=>({...m})),createdAt:data.criado_em,lastLogin:data.ultimo_acesso};
 }
 function userToRow(u){
-  return{id:u.id,nome:u.name,email:u.email,plano:u.plano||'free',trial_inicio:u.trialInicio||new Date().toISOString(),run_inicio:u.runInicio||null,treino_liberado:u.trainApproved||false,ai_plan:u.aiPlan||null,anamnese:u.anamnese||null,anamnese_geral:u.anamneseGeral||null,anamnese_musculacao:u.anamneseMusculacao||null,anamnese_corrida:u.anamneseCorrida||null,gym_week:u.gymWeek||1,run_week:u.runWeek||1,gym_done:u.gymDone||{},run_done:u.runDone||{},load_history:u.loadHistory||{},workout_history:u.workoutHistory||[],xp:u.xp||0,level:u.level||1,streak:u.streak||1,coins:u.coins||0,badges:u.badges||[],prs:u.prs||[],stats:u.stats||{treinos:0,distancia:0,semanas:0},avatar:u.avatar||null,evals:u.evals||[],program_intakes:u.programIntakes||{},ultimo_acesso:new Date().toISOString(),updated_at:new Date().toISOString()};
+  return{id:u.id,nome:u.name,email:u.email,plano:u.plano||'free',trial_inicio:u.trialInicio||new Date().toISOString(),run_inicio:u.runInicio||null,run_ajuste_lesao:u.runAjusteLesao||false,treino_liberado:u.trainApproved||false,ai_plan:u.aiPlan||null,anamnese:u.anamnese||null,anamnese_geral:u.anamneseGeral||null,anamnese_musculacao:u.anamneseMusculacao||null,anamnese_corrida:u.anamneseCorrida||null,gym_week:u.gymWeek||1,run_week:u.runWeek||1,gym_done:u.gymDone||{},run_done:u.runDone||{},load_history:u.loadHistory||{},workout_history:u.workoutHistory||[],xp:u.xp||0,level:u.level||1,streak:u.streak||1,coins:u.coins||0,badges:u.badges||[],prs:u.prs||[],stats:u.stats||{treinos:0,distancia:0,semanas:0},avatar:u.avatar||null,evals:u.evals||[],program_intakes:u.programIntakes||{},ultimo_acesso:new Date().toISOString(),updated_at:new Date().toISOString()};
   // Obs.: purchases/pacote_ebooks/is_admin/plano NÃO são enviados pelo aluno — são protegidos no banco e só mudam via webhook de pagamento ou admin.
 }
 async function syncU(u){if(!sb||!u||!u.id)return;try{await sb.from('alunos').upsert(userToRow(u),{onConflict:'id'});}catch(e){console.warn('sync:',e.message);}}
@@ -3733,11 +3733,48 @@ function RD_perfil(an,semente){
   // Exercícios que o aluno prefere evitar (por preferência, não por lesão)
   const evitar=(an.evitar||'').toLowerCase().split(',').map(s=>s.trim()).filter(Boolean);
 
+  // ══════════════════════════════════════════════════════════════
+  // MÓDULO 1 — FLAGS CLÍNICAS (interpreta 100% da anamnese, não só 3 campos)
+  // Usa os dados que a anamnese JÁ coleta (lesões e condições de saúde),
+  // sem precisar de nenhuma pergunta nova. lesoes/saude chegam como arrays
+  // de texto (checkboxes) — aqui viram flags booleanas que o resto do
+  // motor consulta.
+  // ══════════════════════════════════════════════════════════════
+  const lesTxt=(an.lesoes||[]).join(' | ');
+  const saudeTxt=(an.saude||[]).join(' | ');
+  const peso=parseFloat(an.peso)||75;
+  const altura=parseFloat(an.altura)||170;
+  const imc=altura>0?peso/Math.pow(altura/100,2):null;
+
+  const flags={
+    // Articulares — vêm do checklist de lesões (cg-lesoes)
+    joelho:/joelho/i.test(lesTxt),
+    lombar:/lombar/i.test(lesTxt),
+    hernia:/h[ée]rnio? de disco/i.test(lesTxt), // mais grave que lombar comum — regra mais estrita
+    ombro:/ombro/i.test(lesTxt),
+    cervical:/cervical/i.test(lesTxt),
+    cotovelo:/cotovelo/i.test(lesTxt),
+    punho:/punho/i.test(lesTxt),
+    quadril:/quadril/i.test(lesTxt),
+    tornozelo:/tornozelo/i.test(lesTxt),
+    // Clínicas — vêm do checklist de saúde (cg-saude)
+    hipertensao:/hipertens[ãa]o/i.test(saudeTxt),
+    diabetes:/diabetes/i.test(saudeTxt),
+    cardiaco:/card[ií]ac/i.test(saudeTxt),
+    osteoporose:/osteoporose|osteopenia/i.test(saudeTxt),
+    // Obesidade: usa o checkbox OU o IMC calculado (rede de segurança —
+    // protege mesmo se o aluno não marcar a caixa por não se identificar
+    // com a palavra "obesidade")
+    obesidade:/obesidade/i.test(saudeTxt) || (imc!==null && imc>=30),
+  };
+
   return {nivel,dias,dur,objetivo,idade,fcMax,recup,ambiente,corrida,foco,
     nivelCorrida,ritmoAtual,cargaSupino,cargaAgacho,evitar,
     seed:RD_hashSemente(semente),
-    lesoes:{joelho:!!an.temJoelho,lombar:!!an.temLombar,ombro:!!an.temOmbro},
-    peso:parseFloat(an.peso)||75};
+    lesoes:flags, // todas as flags clínicas — RD_pool consulta cada uma delas
+    flags,
+    imc,
+    peso};
 }
 
 // ─── 2. DIVISÃO INTELIGENTE (nível decide, não só os dias) ───
@@ -3822,10 +3859,35 @@ const RD_CONTRA={
   // Libera: máquinas com apoio de tronco, isolados sentado/deitado, glúteo em ponte.
   lombar:/terra|deadlift|stiff|good ?morning|bom dia|remada curvada|remada cavalinho|remada t\b|t-?bar|remada unilateral|landmine|agachamento livre|agachamento frontal|front squat|extensão lombar|hiperextens|superman|swing|snatch|clean|turkish|slam ball|wall ball|thruster|windshield|toes to bar|hanging|elevação de pernas na barra|roda abdominal|ab ?wheel|rollout|man maker|devil press|burpee|bear crawl|farmer|agachamento búlgaro|sled/i,
 
+  // ── HÉRNIA DE DISCO ── regra mais estrita que lombar comum: bloqueia TODA
+  // carga axial na coluna, mesmo variações "leves" que a lombar comum libera
+  // (ex: agachamento no Smith, que lombar comum não bloqueia mas hérnia sim).
+  hernia:/terra|deadlift|stiff|good ?morning|bom dia|remada curvada|remada cavalinho|remada t\b|t-?bar|landmine|agachamento|squat|hack|smith|extensão lombar|hiperextens|superman|swing|snatch|clean|turkish|windshield|toes to bar|hanging|elevação de pernas|roda abdominal|ab ?wheel|rollout|farmer|sled|leg ?press|salto|jump|pliom/i,
+
   // ── OMBRO ── bloqueia empurrar/puxar acima da cabeça, prensa horizontal e abertura profunda.
   // Libera de propósito: rotação externa, face pull, Y-T-W, escápula, alongamento e
   // foam roller — são exercícios de REABILITAÇÃO de ombro, não de risco.
-  ombro:/supino|bench ?press|crucifixo|voador|peck ?deck|fly\b|crossover|pullover|desenvolvimento|military|arnold|overhead|acima da cabeça|elevação lateral|elevação frontal|remada alta|upright|dips|paralelas|mergulho|barra fixa|pull-?up|chin-?up|australiana|puxada|pulldown|flexão|push-?up|snatch|clean|thruster|wall ball|slam ball|man maker|devil press|burpee|landmine press|turkish|battle rope|corda naval|l-?sit|toes to bar|hanging|bear crawl|crab walk|handstand|pino|remada alta/i
+  ombro:/supino|bench ?press|crucifixo|voador|peck ?deck|fly\b|crossover|pullover|desenvolvimento|military|arnold|overhead|acima da cabeça|elevação lateral|elevação frontal|remada alta|upright|dips|paralelas|mergulho|barra fixa|pull-?up|chin-?up|australiana|puxada|pulldown|flexão|push-?up|snatch|clean|thruster|wall ball|slam ball|man maker|devil press|burpee|landmine press|turkish|battle rope|corda naval|l-?sit|toes to bar|hanging|bear crawl|crab walk|handstand|pino|remada alta/i,
+
+  // ── CERVICAL ── bloqueia carga acima da cabeça, extensão de pescoço sob carga
+  // e inversões (cabeça pra baixo). Libera fortalecimento de trapézio leve/isolado.
+  cervical:/desenvolvimento|military|overhead|acima da cabeça|arnold|encolhimento|shrug|remada alta|upright|handstand|pino|parada de m[ãa]o|mergulho|paralelas|dips|barra fixa|pull-?up|puxada atr[áa]s|thruster|clean|snatch|wall ball/i,
+
+  // ── COTOVELO (epicondilite/epitrocleíte) ── bloqueia flexão/extensão de
+  // cotovelo sob carga pesada e pegadas que sobrecarregam antebraço.
+  cotovelo:/rosca|curl|tríceps|triceps|skull ?crusher|testa|kickback|mergulho|paralelas|dips|supino fechado|close-?grip|barra fixa|pull-?up|chin-?up|remada|row|puxada|pulldown|farmer|drag curl/i,
+
+  // ── PUNHO/MÃO ── bloqueia apoio direto do punho sob carga (flexão/extensão
+  // forçada) e pegadas pesadas. Libera pegada neutra e máquinas com apoio.
+  punho:/flexão|push-?up|prancha|plank|front squat|rosca|curl|supino com barra|remada com barra|farmer|kettlebell|snatch|clean|handstand|pino|mergulho|paralelas|dips/i,
+
+  // ── QUADRIL ── bloqueia flexão profunda de quadril sob carga e movimentos
+  // balísticos de quadril. Libera abdução/adução controlada e ponte.
+  quadril:/agachamento|squat|afundo|lunge|passada|avanço|búlgaro|step.?up|leg ?press|salto|jump|pliom|box|skater|pistol|terra|deadlift|stiff|swing|thruster|burpee|clean|snatch|corrida|sprint/i,
+
+  // ── TORNOZELO/PÉ ── bloqueia impacto, salto e mudança brusca de direção.
+  // Libera trabalho de panturrilha controlado e isométricos.
+  tornozelo:/salto|jump|pliom|box|skater|pistol|corrida|sprint|escada|stair|corda|skipping|polichinelo|burpee|agachamento b[úu]lgaro|afundo|lunge|passada|mountain climber|bear crawl|crab walk/i,
 };
 const RD_EQUIP={
   completa:null, // tudo liberado
@@ -3837,16 +3899,30 @@ const RD_EQUIP={
 
 function RD_pool(grupo,p){
   const contra=[];
+  // Hérnia de disco usa a regra mais estrita (substitui, não soma, a de lombar comum
+  // — a de hérnia já é um superconjunto dela, evita filtrar duas vezes à toa).
+  if(p.lesoes.hernia)contra.push(RD_CONTRA.hernia);
+  else if(p.lesoes.lombar)contra.push(RD_CONTRA.lombar);
   if(p.lesoes.joelho)contra.push(RD_CONTRA.joelho);
-  if(p.lesoes.lombar)contra.push(RD_CONTRA.lombar);
   if(p.lesoes.ombro)contra.push(RD_CONTRA.ombro);
+  if(p.lesoes.cervical)contra.push(RD_CONTRA.cervical);
+  if(p.lesoes.cotovelo)contra.push(RD_CONTRA.cotovelo);
+  if(p.lesoes.punho)contra.push(RD_CONTRA.punho);
+  if(p.lesoes.quadril)contra.push(RD_CONTRA.quadril);
+  if(p.lesoes.tornozelo)contra.push(RD_CONTRA.tornozelo);
+  // Obesidade (checkbox OU IMC≥30): reduz impacto e movimentos balísticos,
+  // mesmo sem lesão articular reportada — protege a articulação por sobrecarga de peso.
+  if(p.lesoes.obesidade)contra.push(/salto|jump|pliom|box|skater|pistol|burpee|corrida|sprint|thruster|wall ball|man maker|devil press/i);
+  // Osteoporose/osteopenia: nunca flexão de coluna carregada nem alto impacto —
+  // fratura por compressão é o risco real aqui, regra clínica bem estabelecida.
+  if(p.lesoes.osteoporose)contra.push(/roda abdominal|ab ?wheel|rollout|abdominal|crunch|sit-?up|russian twist|toes to bar|windshield|salto|jump|pliom|box|skater|terra|deadlift|good ?morning/i);
   const eq=RD_EQUIP[p.ambiente];
   const g=grupo.toLowerCase();
   const evitar=p.evitar||[];
   let filtrado=EXERCISE_BANK.filter(e=>{
     if(!e.muscle)return false;
     if(!e.muscle.toLowerCase().includes(g))return false;
-    if(contra.some(rx=>rx.test(e.name)))return false;      // lesão contraindica
+    if(contra.some(rx=>rx&&rx.test(e.name)))return false;    // lesão/condição contraindica
     if(eq&&!eq.test(e.equipment||''))return false;          // equipamento indisponível
     return true;
   });
@@ -4010,15 +4086,23 @@ const RD_MOBILIDADE_FIM=['e161','e162','e157','e160'];
 function RD_bloco(ids,p,tipo,semana,excluir){
   const byId=Object.fromEntries(EXERCISE_BANK.map(e=>[e.id,e]));
   const contra=[];
+  if(p.lesoes.hernia)contra.push(RD_CONTRA.hernia);
+  else if(p.lesoes.lombar)contra.push(RD_CONTRA.lombar);
   if(p.lesoes.joelho)contra.push(RD_CONTRA.joelho);
-  if(p.lesoes.lombar)contra.push(RD_CONTRA.lombar);
   if(p.lesoes.ombro)contra.push(RD_CONTRA.ombro);
+  if(p.lesoes.cervical)contra.push(RD_CONTRA.cervical);
+  if(p.lesoes.cotovelo)contra.push(RD_CONTRA.cotovelo);
+  if(p.lesoes.punho)contra.push(RD_CONTRA.punho);
+  if(p.lesoes.quadril)contra.push(RD_CONTRA.quadril);
+  if(p.lesoes.tornozelo)contra.push(RD_CONTRA.tornozelo);
+  if(p.lesoes.obesidade)contra.push(/salto|jump|pliom|box|skater|pistol|burpee|corrida|sprint|thruster|wall ball|man maker|devil press/i);
+  if(p.lesoes.osteoporose)contra.push(/roda abdominal|ab ?wheel|rollout|abdominal|crunch|sit-?up|russian twist|toes to bar|windshield|salto|jump|pliom|box|skater|terra|deadlift|good ?morning/i);
   const eq=RD_EQUIP[p.ambiente];
   const usados=new Set(excluir||[]);
   return ids.map(id=>byId[id]).filter(e=>{
     if(!e)return false;
     if(usados.has(e.id))return false;                 // já está no treino
-    if(contra.some(rx=>rx.test(e.name)))return false;
+    if(contra.some(rx=>rx&&rx.test(e.name)))return false;
     if(eq&&!eq.test(e.equipment||''))return false;
     return true;
   }).map(e=>({
@@ -4217,7 +4301,10 @@ function RD_gerarGym(p){
       // (Evidência já usada no motor: ganhos de FORÇA não se beneficiam de treinar
       // até a falha — por isso essas técnicas ficam restritas ao objetivo hipertrofia.)
       const blocoAtual=Math.ceil(s/2); // mesmo cálculo usado dentro de RD_prescricao
-      if(p.objetivo==='hipertrofia' && !ehDeload && blocoAtual>=2 && ultimoAcessorioElegivel){
+      // Cardiopatia/hipertensão: técnicas de falha envolvem esforço quase-máximo
+      // e risco de manobra de Valsalva — contraindicado, mesmo em hipertrofia.
+      const semRiscoCardiaco = !p.lesoes.cardiaco && !p.lesoes.hipertensao;
+      if(p.objetivo==='hipertrofia' && semRiscoCardiaco && !ehDeload && blocoAtual>=2 && ultimoAcessorioElegivel){
         const tecnica=RD_TECNICAS[(s+di)%RD_TECNICAS.length]; // alterna pra variar entre semanas
         ultimoAcessorioElegivel.tecnica=tecnica.nome;
         ultimoAcessorioElegivel.tecnicaObs=tecnica.obs;
@@ -4576,7 +4663,16 @@ function RD_gerarRun(p){
   const distKey=distMap[p.corrida]||'10';
   const nivelMap={destreinado:'ini',iniciante:'ini',intermediario:'int',avancado:'ava'};
   // Usa o NÍVEL DE CORRIDA especificamente informado (pode ser diferente do nível de musculação)
-  const nivelParaPlano=p.nivelCorrida||p.nivel;
+  let nivelParaPlano=p.nivelCorrida||p.nivel;
+  // Lesão em joelho/tornozelo/quadril: rebaixa um nível no plano — isso reduz volume
+  // total E frequência de tiros ao mesmo tempo (os planos já são escalonados assim),
+  // seguindo a lógica clínica de reduzir impacto e progredir mais devagar.
+  let ajusteLesaoRun=false;
+  if(p.lesoes && (p.lesoes.joelho||p.lesoes.tornozelo||p.lesoes.quadril)){
+    const escada=['avancado','intermediario','iniciante'];
+    const i=escada.indexOf(nivelParaPlano);
+    if(i>=0 && i<escada.length-1){ nivelParaPlano=escada[i+1]; ajusteLesaoRun=true; }
+  }
   const nivelKey=nivelMap[nivelParaPlano]||'int';
   const planoReal=RD_PLANOS_CORRIDA[nivelKey+distKey];
   if(!planoReal)return {};
@@ -4657,6 +4753,9 @@ function gerarTreinoFallback(email,an,tipo){
       // Marca quando o plano de corrida começou — é a partir daqui que as
       // semanas seguintes vão liberando (1 por semana real)
       if(!users[email].runInicio) users[email].runInicio=new Date().toISOString();
+      // Transparência: se a lesão fez o motor rebaixar o nível do plano de corrida,
+      // registra isso pra explicar ao aluno na tela (nunca ajustar em silêncio).
+      users[email].runAjusteLesao = !!(p.lesoes && (p.lesoes.joelho||p.lesoes.tornozelo||p.lesoes.quadril));
     }
     users[email].aiPlan=novoPlano;
     users[email].fcMax=p.fcMax;
@@ -6442,10 +6541,15 @@ function renderRun(u){
   // Aviso de quando a próxima semana abre (só se ainda houver semana bloqueada)
   const elAviso=document.getElementById('run-unlock-info');
   if(elAviso){
+    let avisos='';
+    if(u.runAjusteLesao){
+      avisos+=`<div style="background:rgba(243,156,18,.08);border:1px solid rgba(243,156,18,.3);border-radius:8px;padding:10px 12px;margin:0 20px 8px;font-size:11.5px;color:#f39c12;line-height:1.5">⚠️ Ajustamos seu plano de corrida (volume e frequência de tiros reduzidos) por causa da lesão que você reportou na anamnese — priorizando sua segurança.</div>`;
+    }
     if(liberadaAte < wks.length){
       const d=runDiasProxSemana(u);
-      elAviso.innerHTML=`<div style="background:rgba(255,255,255,.04);border:1px solid var(--b);border-radius:8px;padding:10px 12px;margin:0 20px 12px;font-size:11.5px;color:var(--t2);line-height:1.5">🔒 A <strong style="color:#fff">Semana ${liberadaAte+1}</strong> abre em ${d} ${d===1?'dia':'dias'} — a recuperação entre semanas faz parte do treino.</div>`;
-    } else { elAviso.innerHTML=''; }
+      avisos+=`<div style="background:rgba(255,255,255,.04);border:1px solid var(--b);border-radius:8px;padding:10px 12px;margin:0 20px 12px;font-size:11.5px;color:var(--t2);line-height:1.5">🔒 A <strong style="color:#fff">Semana ${liberadaAte+1}</strong> abre em ${d} ${d===1?'dia':'dias'} — a recuperação entre semanas faz parte do treino.</div>`;
+    }
+    elAviso.innerHTML=avisos;
   }
   renderRunWeek(cw,u);
 }
