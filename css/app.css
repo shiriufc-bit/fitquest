@@ -5,7 +5,6 @@
    toasts, evolução, loja, whatsapp flutuante.
    ═══════════════════════════════════════════ */
 
-<style>
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
 :root{
   --bg:#0a0a0a;
@@ -23,8 +22,8 @@
   --b2:rgba(255,255,255,.15);
   --gr:linear-gradient(135deg,#e50914,#b00710);
 }
-*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}html{overscroll-behavior:none;}
-body{background:var(--bg);color:var(--t);font-family:"Inter",system-ui,sans-serif;min-height:100vh;overflow-x:hidden;-webkit-text-size-adjust:100%;text-size-adjust:100%;}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}html{overscroll-behavior:none;background:#0a0a0a;}
+body{background:#0a0a0a;background:var(--bg);color:#fff;color:var(--t);font-family:"Inter",system-ui,sans-serif;min-height:100vh;overflow-x:hidden;-webkit-text-size-adjust:100%;text-size-adjust:100%;}
 #sc-app{background:radial-gradient(ellipse at 50% 0%,rgba(229,9,20,.04) 0%,transparent 60%),var(--bg);}
 input,button,select,textarea{font-family:"Inter",system-ui,sans-serif;}
 .screen{display:none;}.screen.active{display:block;}
@@ -51,7 +50,7 @@ input,button,select,textarea{font-family:"Inter",system-ui,sans-serif;}
 .btn-splash-secondary{padding:15px;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);border-radius:6px;color:#fff;font-size:15px;font-weight:700;cursor:pointer;transition:all .2s;backdrop-filter:blur(10px);}
 
 /* ══ APP ══ */
-#sc-app{display:none;flex-direction:column;background:var(--bg);}
+#sc-app{display:none;flex-direction:column;background:#0a0a0a;background:var(--bg);}
 #sc-app.active{display:flex;}
 
 /* NETFLIX NAV */
@@ -187,7 +186,7 @@ input,button,select,textarea{font-family:"Inter",system-ui,sans-serif;}
 .nbtn.active .nico{filter:drop-shadow(0 0 6px var(--rg));}
 
 /* ADMIN */
-#sc-adm{display:none;flex-direction:column;background:var(--bg);}
+#sc-adm{display:none;flex-direction:column;background:#0a0a0a;background:var(--bg);}
 #sc-adm.active{display:flex;}
 /* ══ POSTER CARD (Home) ══ */
 .poster-card{flex-shrink:0;width:130px;border-radius:10px;overflow:hidden;cursor:pointer;position:relative;transition:transform .25s;background:#111;box-shadow:0 4px 20px rgba(0,0,0,.5)}
@@ -497,4 +496,49 @@ input,button,select,textarea{font-family:"Inter",system-ui,sans-serif;}
 .eb-nav-btn.primary{background:var(--eb-cor,#e50914);border-color:var(--eb-cor,#e50914);color:#fff}
 .eb-nav-btn:disabled{opacity:.3;cursor:default}
 
-</style>
+/* ══ LOJA DE RECOMPENSAS (molduras de avatar + consumíveis) ══ */
+.avframe-bronze{box-shadow:0 0 0 3px #cd7f32,0 0 12px rgba(205,127,50,.5)!important}
+.avframe-prata{box-shadow:0 0 0 3px #c0c0c0,0 0 12px rgba(192,192,192,.5)!important}
+.avframe-ouro{box-shadow:0 0 0 3px #ffd700,0 0 14px rgba(255,215,0,.6)!important}
+.avframe-fogo{animation:avframeFogo 2s ease-in-out infinite}
+@keyframes avframeFogo{
+  0%,100%{box-shadow:0 0 0 3px #ff6b00,0 0 16px rgba(255,107,0,.7)}
+  50%{box-shadow:0 0 0 3px #ffcc00,0 0 20px rgba(255,204,0,.9)}
+}
+.avframe-diamante{animation:avframeDiamante 3s linear infinite}
+@keyframes avframeDiamante{
+  0%{box-shadow:0 0 0 3px #ff00e5,0 0 18px rgba(255,0,229,.7)}
+  25%{box-shadow:0 0 0 3px #00e5ff,0 0 18px rgba(0,229,255,.7)}
+  50%{box-shadow:0 0 0 3px #00ff88,0 0 18px rgba(0,255,136,.7)}
+  75%{box-shadow:0 0 0 3px #ffee00,0 0 18px rgba(255,238,0,.7)}
+  100%{box-shadow:0 0 0 3px #ff00e5,0 0 18px rgba(255,0,229,.7)}
+}
+.loja-item{background:var(--s);border:1px solid var(--b);border-radius:14px;padding:14px;margin-bottom:10px;display:flex;align-items:center;gap:12px}
+.loja-item.owned{opacity:.55}
+.loja-item-icon{width:52px;height:52px;border-radius:50%;background:var(--s2);display:flex;align-items:center;justify-content:center;font-size:26px;flex-shrink:0}
+.loja-item-info{flex:1;min-width:0}
+.loja-item-nome{font-size:14px;font-weight:800}
+.loja-item-desc{font-size:11px;color:var(--t2);margin-top:2px}
+.loja-item-btn{flex-shrink:0;padding:9px 14px;border-radius:9px;font-size:12px;font-weight:800;cursor:pointer;border:1px solid rgba(243,156,18,.35);background:rgba(243,156,18,.12);color:#f39c12;white-space:nowrap}
+.loja-item-btn:disabled{opacity:.35;cursor:default;border-color:var(--b);background:var(--s2);color:var(--mu)}
+.loja-item-btn.owned-tag{background:rgba(46,204,113,.12);border-color:rgba(46,204,113,.3);color:#2ecc71;cursor:default}
+
+/* ══ POPUP DE XP FLUTUANTE (feedback de ganho, dispara a cada fqAdicionarXP) ══ */
+#fq-xp-popups{position:fixed;bottom:96px;left:50%;transform:translateX(-50%);z-index:99998;pointer-events:none;display:flex;flex-direction:column;align-items:center;gap:2px}
+.fq-xp-pop{font-size:16px;font-weight:900;color:#f39c12;text-shadow:0 2px 10px rgba(0,0,0,.7),0 0 12px rgba(243,156,18,.5);opacity:0;white-space:nowrap;animation:fqXpFloat 1.7s ease-out forwards}
+@keyframes fqXpFloat{
+  0%{opacity:0;transform:translateY(8px) scale(.75)}
+  15%{opacity:1;transform:translateY(0) scale(1.15)}
+  30%{transform:translateY(-4px) scale(1)}
+  78%{opacity:1;transform:translateY(-38px) scale(1)}
+  100%{opacity:0;transform:translateY(-54px) scale(.92)}
+}
+
+/* ══ CELEBRAÇÃO DE MARCO DE STREAK (7/14/21/30/50/60/100/150/200/365 dias) ══ */
+.fq-streak-celebra{position:fixed;inset:0;z-index:99997;display:flex;align-items:center;justify-content:center;pointer-events:none;opacity:0;animation:fqStreakFade 2.2s ease-out forwards}
+.fq-streak-celebra-card{background:linear-gradient(135deg,rgba(243,156,18,.95),rgba(229,9,20,.95));border-radius:20px;padding:28px 36px;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,.5);transform:scale(.7);animation:fqStreakPop 2.2s ease-out forwards}
+.fq-streak-celebra-emoji{font-size:52px;margin-bottom:8px}
+.fq-streak-celebra-txt{font-size:20px;font-weight:900;color:#fff;text-shadow:0 2px 6px rgba(0,0,0,.3)}
+@keyframes fqStreakFade{0%{opacity:0}12%{opacity:1}82%{opacity:1}100%{opacity:0}}
+@keyframes fqStreakPop{0%{transform:scale(.6)}15%{transform:scale(1.08)}25%{transform:scale(1)}85%{transform:scale(1)}100%{transform:scale(.94)}}
+

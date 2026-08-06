@@ -4,7 +4,7 @@
    ═══════════════════════════════════════════ */
 
 /* ══ AUTH ══ */
-#sc-auth{min-height:100vh;display:none;flex-direction:column;background:var(--bg);position:relative;}
+#sc-auth{min-height:100vh;display:none;flex-direction:column;background:#0a0a0a;background:var(--bg);position:relative;}
 #sc-auth.active{display:flex;}
 .auth-bg{position:absolute;inset:0;background:radial-gradient(ellipse at 50% 0%,rgba(229,9,20,.1),transparent 60%);}
 .auth-wrap{position:relative;z-index:1;flex:1;display:flex;flex-direction:column;align-items:center;padding:40px 24px;}
@@ -29,7 +29,7 @@ textarea.fi{resize:vertical;min-height:80px;}
 .auth-back{position:absolute;top:16px;left:16px;background:rgba(255,255,255,.1);border:1px solid var(--b);border-radius:6px;padding:8px 14px;color:var(--t2);font-size:13px;font-weight:600;cursor:pointer;}
 
 /* ══ ANAMNESE ══ */
-#sc-anam,#sc-anam-geral,#sc-anam-musc,#sc-anam-corrida{min-height:100vh;padding:0 0 80px;display:none;background:var(--bg);}
+#sc-anam,#sc-anam-geral,#sc-anam-musc,#sc-anam-corrida{min-height:100vh;padding:0 0 80px;display:none;background:#0a0a0a;background:var(--bg);}
 #sc-anam.active,#sc-anam-geral.active,#sc-anam-musc.active,#sc-anam-corrida.active{display:block;}
 .an-hdr{background:linear-gradient(135deg,rgba(229,9,20,.15),transparent);border-bottom:1px solid var(--b);padding:24px 20px 20px;}
 .an-hdr h1{font-size:22px;font-weight:900;margin-bottom:4px;}
@@ -63,5 +63,6 @@ textarea.fi{resize:vertical;min-height:80px;}
 @keyframes pop{0%{transform:scale(.3);opacity:0;}100%{transform:scale(1);opacity:1;}}
 .ok-title{font-size:26px;font-weight:900;margin-bottom:10px;}
 .ok-sub{font-size:14px;color:var(--t2);line-height:1.7;margin-bottom:32px;max-width:300px;}
+
 
 
