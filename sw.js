@@ -1,10 +1,6 @@
-// ══ FitQuest Service Worker v46 ══
-// Atualizado em: 06/08/2026 — de volta pra estrutura de arquivo único,
-// DEFINITIVAMENTE. index.html contém HTML+CSS+JS+dados inline; só os
-// gifs (assets/gifs/) continuam como arquivos externos, por serem
-// binários. Menos arquivos = menos chance de algo ficar desalinhado
-// no deploy manual.
-const CACHE_NAME = 'fitquest-v120';
+// ══ FitQuest Service Worker v41 ══
+// Gerado em: 05/07/2026
+const CACHE_NAME = 'fitquest-v115';
 
 const ASSETS = [
   '/fitquest/',
@@ -12,9 +8,6 @@ const ASSETS = [
   '/fitquest/manifest.json',
   '/fitquest/icon-192.png',
   '/fitquest/icon-512.png',
-  // Os gifs de exercício NÃO entram aqui de propósito: são ~94 arquivos
-  // e crescendo. Ficam cacheados sob demanda pelo handler de fetch
-  // abaixo, conforme o aluno realmente visualiza cada um.
 ];
 
 self.addEventListener('install', e => {
@@ -42,8 +35,7 @@ self.addEventListener('fetch', e => {
     url.hostname.includes('mercadopago') ||
     url.hostname.includes('mpago') ||
     url.hostname.includes('googleapis.com') ||
-    url.hostname.includes('jsdelivr.net') ||
-    url.hostname.includes('cloudflare.com')
+    url.hostname.includes('jsdelivr.net')
   ) return;
   e.respondWith(
     caches.match(e.request).then(cached => {
@@ -53,9 +45,7 @@ self.addEventListener('fetch', e => {
         const clone = response.clone();
         caches.open(CACHE_NAME).then(cache => cache.put(e.request, clone));
         return response;
-      }).catch(() => {
-        if(e.request.mode === 'navigate') return caches.match('/fitquest/');
-      });
+      }).catch(() => caches.match('/fitquest/'));
     })
   );
 });
