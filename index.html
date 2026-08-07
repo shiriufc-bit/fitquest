@@ -805,7 +805,7 @@ textarea.fi{resize:vertical;min-height:80px;}
       <option value="en">🇺🇸 EN</option>
     </select>
   </div>
-  <div id="fq-version-badge" style="position:absolute;bottom:8px;right:12px;font-size:9px;color:#333;font-weight:700;z-index:5">v122</div>
+  <div id="fq-version-badge" style="position:absolute;bottom:8px;right:12px;font-size:9px;color:#333;font-weight:700;z-index:5">v123</div>
   <img src="https://images.unsplash.com/photo-1517836357463-d25dfeac3438?w=800&q=80" alt="Fitness" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center top;filter:brightness(.35);z-index:0"/>
   <div class="splash-glow"></div>
   <div class="splash-noise"></div>
@@ -848,6 +848,7 @@ textarea.fi{resize:vertical;min-height:80px;}
         <div class="fg"><label class="fl" data-i18n="auth.field.pass">Senha</label><input id="reg-pass" class="fi" type="password" placeholder="Mínimo 6 caracteres"/></div>
         <div class="fg"><label class="fl" data-i18n="auth.field.pass2">Confirmar senha</label><input id="reg-pass2" class="fi" type="password" placeholder="Repita a senha"/></div>
         <button class="btn-p" id="btn-reg" data-i18n="auth.btn.register" onclick="doRegister()">Começar meus 14 dias grátis</button>
+        <div style="font-size:10.5px;color:var(--mu);text-align:center;margin-top:12px;line-height:1.6" data-i18n="auth.privacidade">Ao criar sua conta, você concorda com nossa <a href="privacidade.html" target="_blank" style="color:var(--r)">Política de Privacidade</a>. Coletamos informações de saúde para montar um treino seguro para você.</div>
       </div>
     </div>
   </div>
@@ -1973,6 +1974,14 @@ textarea.fi{resize:vertical;min-height:80px;}
             </div>
             <span style="color:var(--mu);font-size:18px">›</span>
           </div>
+          <div onclick="window.open('privacidade.html','_blank')" style="padding:14px 16px;display:flex;align-items:center;gap:12px;cursor:pointer;border-bottom:1px solid var(--b)">
+            <span style="font-size:20px">🔒</span>
+            <div style="flex:1">
+              <div style="font-size:13px;font-weight:700">Política de Privacidade</div>
+              <div style="font-size:10px;color:var(--mu)">Como seus dados são usados e protegidos</div>
+            </div>
+            <span style="color:var(--mu);font-size:18px">›</span>
+          </div>
           <div onclick="doLogout()" style="padding:14px 16px;display:flex;align-items:center;gap:12px;cursor:pointer">
             <span style="font-size:20px">🚪</span>
             <div style="flex:1">
@@ -2370,7 +2379,7 @@ textarea.fi{resize:vertical;min-height:80px;}
 
 <script>
 // ══ SUPABASE ══
-const FQ_VERSION='v122';console.log('%cFitQuest '+FQ_VERSION,'color:#e50914;font-weight:bold;font-size:14px');
+const FQ_VERSION='v123';console.log('%cFitQuest '+FQ_VERSION,'color:#e50914;font-weight:bold;font-size:14px');
 // ══ PROXY DE IA (Cloudflare Worker) ══
 // Quando preenchido, a IA real funciona em produção com a chave protegida no servidor.
 // Deixe '' para usar o plano local (fallback). Ex: 'https://fitquest-ai.SEU-USUARIO.workers.dev'
@@ -5345,6 +5354,7 @@ const FQ_I18N = {
     'home.wantgym.sub': 'Responda 3 etapas rápidas',
     'home.wantrun.sub': 'Só 2 etapas — bem rápido',
     'home.addplan': '➕ Adicionar ao seu plano',
+    'auth.privacidade': 'Ao criar sua conta, você concorda com nossa <a href="privacidade.html" target="_blank" style="color:var(--r)">Política de Privacidade</a>. Coletamos informações de saúde para montar um treino seguro para você.',
     // ── Anamnese ──
     'anam.71ef84890d': "Data de nascimento",
     'anam.5c7d7a110a': "Sexo biológico",
@@ -5579,6 +5589,7 @@ const FQ_I18N = {
     'home.wantgym.sub': 'Answer 3 quick steps',
     'home.wantrun.sub': 'Just 2 steps — very quick',
     'home.addplan': '➕ Add to your plan',
+    'auth.privacidade': 'By creating your account, you agree to our <a href="privacidade.html" target="_blank" style="color:var(--r)">Privacy Policy</a>. We collect health information to build a safe workout for you.',
     // ── Anamnese ──
     'anam.71ef84890d': "Date of birth",
     'anam.5c7d7a110a': "Biological sex",
