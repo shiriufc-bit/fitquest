@@ -1982,6 +1982,14 @@ textarea.fi{resize:vertical;min-height:80px;}
             </div>
             <span style="color:var(--mu);font-size:18px">›</span>
           </div>
+          <div onclick="doExcluirConta()" style="padding:14px 16px;border-bottom:1px solid var(--b);display:flex;align-items:center;gap:12px;cursor:pointer">
+            <span style="font-size:20px">🗑️</span>
+            <div style="flex:1">
+              <div style="font-size:13px;font-weight:700;color:#ff6b6b">Excluir minha conta</div>
+              <div style="font-size:10px;color:var(--mu)">Apaga sua conta e todos os seus dados permanentemente</div>
+            </div>
+            <span style="color:var(--mu);font-size:18px">›</span>
+          </div>
           <div onclick="doLogout()" style="padding:14px 16px;display:flex;align-items:center;gap:12px;cursor:pointer">
             <span style="font-size:20px">🚪</span>
             <div style="flex:1">
@@ -3696,6 +3704,53 @@ async function doLogout(){
   if(!await fqConfirm('Sair da conta','Deseja realmente sair?','Sair','👋'))return;
   try{if(sb)await sb.auth.signOut();}catch(e){}
   DB.del('fq_cur');show('sc-splash');
+}
+
+// ══ EXCLUSÃO DE CONTA (exigência da Play Store / LGPD) ══
+// Apaga a conta de login (Supabase Auth) + todos os dados do aluno, via Edge Function
+// server-side (precisa da service_role key, que NUNCA pode rodar no navegador).
+// Dupla confirmação porque é irreversível — não tem como desfazer nem recuperar depois.
+async function doExcluirConta(){
+  const u=getU();
+  if(!u){fqAlert('Ops','Você precisa estar logado para excluir a conta.','😕');return;}
+  const ok1=await fqConfirm(
+    'Excluir minha conta',
+    'Isso vai apagar PERMANENTEMENTE sua conta, seu histórico de treinos, conquistas, XP e qualquer compra registrada. Essa ação não pode ser desfeita.\n\nTem certeza que quer continuar?',
+    'Continuar','⚠️'
+  );
+  if(!ok1)return;
+  const ok2=await fqConfirm(
+    'Tem certeza mesmo?',
+    'Última confirmação: sua conta e todos os seus dados serão apagados agora, para sempre.',
+    'Sim, excluir minha conta definitivamente','🗑️'
+  );
+  if(!ok2)return;
+
+  fqToast('Excluindo sua conta...','info',5000);
+  try{
+    if(!sb)throw new Error('offline');
+    const{data:{session}}=await sb.auth.getSession();
+    if(!session)throw new Error('sem-sessao');
+    const res=await fetch(FN_URL+'/delete-account',{
+      method:'POST',
+      headers:{'Content-Type':'application/json','Authorization':'Bearer '+session.access_token},
+    });
+    if(!res.ok){
+      const body=await res.json().catch(()=>({}));
+      throw new Error(body.error||('fn-'+res.status));
+    }
+    // Limpa tudo localmente e sai
+    try{await sb.auth.signOut();}catch(e){}
+    const users=DB.get('fq_users')||{};
+    delete users[u.email];
+    DB.set('fq_users',users);
+    DB.del('fq_cur');
+    await fqAlert('Conta excluída','Sua conta e todos os seus dados foram apagados permanentemente. Sentiremos sua falta! 👋','✅');
+    show('sc-splash');
+  }catch(e){
+    console.warn('Erro ao excluir conta:',e.message);
+    fqAlert('Não foi possível excluir agora','Verifique sua conexão e tente novamente. Se o problema continuar, envie um email para rennan@rennandias.com.br pedindo a exclusão manual da sua conta.','😕');
+  }
 }
 
 // ══ ANAMNESE ══

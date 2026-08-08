@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Excluir Conta — FitQuest</title>
+<style>
+  :root{
+    --r:#e50914; --rg:rgba(229,9,20,.35);
+    --bg:#0a0a0a; --s:#161616; --b:#2a2a2a;
+    --t:#f5f5f5; --t2:#c9c9c9; --mu:#8a8a8a;
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0; background:var(--bg); color:var(--t);
+    font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
+    line-height:1.6;
+  }
+  .wrap{max-width:640px;margin:0 auto;padding:32px 20px 60px}
+  .logo{font-size:15px;font-weight:900;letter-spacing:1px;color:var(--r);text-transform:uppercase;margin-bottom:6px}
+  h1{font-size:24px;font-weight:900;margin:0 0 6px}
+  .sub{color:var(--mu);font-size:13px;margin-bottom:28px}
+  .card{background:var(--s);border:1px solid var(--b);border-radius:14px;padding:20px;margin-bottom:16px}
+  .card h2{font-size:15px;margin:0 0 10px;display:flex;align-items:center;gap:8px}
+  .card p, .card li{font-size:13.5px;color:var(--t2)}
+  ul{margin:8px 0;padding-left:20px}
+  li{margin-bottom:6px}
+  .btn{
+    display:inline-block;background:var(--r);color:#fff;text-decoration:none;
+    font-weight:700;font-size:14px;padding:13px 22px;border-radius:10px;
+    box-shadow:0 4px 14px var(--rg);
+  }
+  .btn.sec{background:transparent;border:1px solid var(--b);color:var(--t)}
+  .row{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}
+  .warn{border-left:3px solid var(--r);padding-left:12px}
+  footer{text-align:center;color:var(--mu);font-size:11px;margin-top:30px}
+  a{color:var(--r)}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="logo">FitQuest</div>
+  <h1>Excluir minha conta</h1>
+  <div class="sub">Assessoria fitness Rennan Dias — como pedir a exclusão da sua conta e dos seus dados</div>
+
+  <div class="card">
+    <h2>📱 Já tem o app instalado?</h2>
+    <p>O jeito mais rápido é direto pelo app — a exclusão é imediata e automática:</p>
+    <ul>
+      <li>Abra o FitQuest e entre com sua conta</li>
+      <li>Vá em <strong>Perfil → Excluir minha conta</strong></li>
+      <li>Confirme duas vezes (a ação é permanente)</li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <h2>✉️ Não tem o app ou não consegue entrar?</h2>
+    <p>Sem problema — envie um pedido de exclusão pelo email abaixo, usando o mesmo email cadastrado na sua conta. Vamos confirmar a identidade e processar a exclusão em até <strong>5 dias úteis</strong>.</p>
+    <div class="row">
+      <a class="btn" href="mailto:rennan@rennandias.com.br?subject=Exclus%C3%A3o%20de%20conta%20-%20FitQuest&body=Ol%C3%A1%2C%20gostaria%20de%20solicitar%20a%20exclus%C3%A3o%20permanente%20da%20minha%20conta%20do%20FitQuest.%0A%0AEmail%20cadastrado%20na%20conta%3A%20">📧 Pedir exclusão por email</a>
+    </div>
+  </div>
+
+  <div class="card warn">
+    <h2>🗑️ O que é apagado</h2>
+    <ul>
+      <li>Sua conta de login (email e senha)</li>
+      <li>Perfil, anamnese e histórico de saúde/treino</li>
+      <li>Treinos gerados, cargas registradas e progresso</li>
+      <li>XP, nível, moedas, badges e molduras</li>
+      <li>Histórico de compras dentro do app</li>
+    </ul>
+    <p style="margin-top:10px">A exclusão é <strong>permanente e não pode ser desfeita</strong>. Registros financeiros que a lei exige manter para fins fiscais/contábeis podem ser retidos de forma anonimizada, sem vincular ao seu nome ou email.</p>
+  </div>
+
+  <footer>
+    FitQuest — Rennan Dias · <a href="privacidade.html">Política de Privacidade</a> · rennan@rennandias.com.br
+  </footer>
+</div>
+</body>
+</html>
