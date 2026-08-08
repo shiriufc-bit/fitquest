@@ -4272,6 +4272,11 @@ function RD_scoreExercicio(ex,p,grupo,ehAncoraSlot){
   // esta função pra esse slot, aqui só reforça a ordenação entre os candidatos)
   if(ehAncoraSlot && composto)score+=10;
 
+  // 6) Preferência por exercícios com gif de demonstração — ajuda o aluno a executar
+  // certo, mas é só uma preferência: nunca exclui o exercício, só o favorece no desempate
+  // contra outro de mérito técnico parecido. Vale sempre a especificidade do aluno acima disso.
+  if(EXERCICIOS_COM_GIF.has(ex.id))score+=7;
+
   return score;
 }
 
