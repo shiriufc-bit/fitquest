@@ -277,6 +277,8 @@ textarea.fi{resize:vertical;min-height:80px;}
 /* WORKOUT PAGE (Netflix episode style) */
 .wk-page{background:var(--bg);}
 .wk-hero{position:relative;height:65vw;max-height:380px;overflow:hidden;background:#000;}
+.treino-select-card{transition:transform .15s ease, box-shadow .15s ease;}
+.treino-select-card:active{transform:scale(.96);box-shadow:0 0 0 2px var(--r);}
 .wk-hero-bg{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:160px;opacity:.1;}
 .wk-hero-glow{position:absolute;inset:0;background:linear-gradient(135deg,rgba(229,9,20,.2),transparent);}
 .wk-hero-overlay{position:absolute;bottom:0;left:0;right:0;height:60%;background:linear-gradient(transparent,var(--bg));}
@@ -1254,7 +1256,7 @@ textarea.fi{resize:vertical;min-height:80px;}
     <div class="nav-menu" id="nav-menu">
       <div class="nav-menu-item" onclick="switchTab('evo',null);document.getElementById('nav-menu').classList.remove('open')">📈 Evolução</div>
       <div class="nav-menu-item" onclick="switchTab('home',document.querySelectorAll('.nbtn')[0]);toggleMenu()">🏠 Início</div>
-      <div class="nav-menu-item" onclick="switchTab('gym',document.querySelectorAll('.nbtn')[1]);toggleMenu()">🏋️ Treino</div>
+      <div class="nav-menu-item" onclick="switchTab('treinos',document.querySelectorAll('.nbtn')[1]);toggleMenu()">🏋️ Treinos</div>
       <div class="nav-menu-item" onclick="switchTab('prs',document.querySelectorAll('.nbtn')[3]);toggleMenu()">⭐ Meus PRs</div>
       <div class="nav-menu-item" onclick="doLogout()">Sair da conta</div>
     </div>
@@ -1291,8 +1293,8 @@ textarea.fi{resize:vertical;min-height:80px;}
           <div class="hero-title" id="hero-title">Seu treino<br>de hoje</div>
           <div class="hero-sub" id="hero-sub">Montado especialmente para o seu perfil por Rennan Dias</div>
           <div class="hero-btns">
-            <button class="btn-hero-play" onclick="switchTab('gym',document.querySelectorAll('.nbtn')[1])">▶ Iniciar treino</button>
-            <button class="btn-hero-info" onclick="switchTab('home',document.querySelectorAll('.nbtn')[0])">ℹ Mais info</button>
+            <button class="btn-hero-play" onclick="switchTab('treinos',document.querySelectorAll('.nbtn')[1])">▶ Iniciar treino</button>
+            <button class="btn-hero-info" onclick="abrirModal('modal-sobre-app')">ℹ Mais info</button>
           </div>
         </div>
       </div>
@@ -1414,6 +1416,63 @@ textarea.fi{resize:vertical;min-height:80px;}
         <div class="carousel" id="history-carousel"></div>
       </div>
 
+    </div>
+
+    <!-- TREINOS — seleção de tipo (Musculação / Corrida) -->
+    <div class="tp" id="tp-treinos">
+      <div style="padding:26px 18px 40px;min-height:100%;display:flex;flex-direction:column">
+        <div style="text-align:center;margin-bottom:8px">
+          <div style="font-size:11px;font-weight:800;color:var(--r);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:6px">FitQuest</div>
+          <div style="font-size:22px;font-weight:900;letter-spacing:-.4px">Qual treino hoje?</div>
+          <div style="font-size:12.5px;color:var(--t2);margin-top:4px">Escolha uma modalidade pra continuar</div>
+        </div>
+
+        <div style="display:flex;gap:14px;margin-top:26px;flex:1;align-items:stretch">
+
+          <div class="treino-select-card" onclick="switchTab('gym',document.querySelectorAll('.nbtn')[1])" style="flex:1;position:relative;border-radius:18px;overflow:hidden;cursor:pointer;min-height:340px;background:#111;border:1px solid var(--b)">
+            <img src="https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=600&q=80" alt="Musculação" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;filter:brightness(.5)"/>
+            <div style="position:absolute;inset:0;background:linear-gradient(180deg,transparent 40%,rgba(0,0,0,.85) 100%)"></div>
+            <div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;padding:22px 14px;text-align:center">
+              <div style="font-size:44px;margin-bottom:10px">🏋️</div>
+              <div style="font-size:17px;font-weight:900;color:#fff;letter-spacing:-.2px">Musculação</div>
+              <div style="font-size:11px;color:var(--t2);margin-top:4px">Seu programa de força</div>
+            </div>
+          </div>
+
+          <div class="treino-select-card" onclick="switchTab('run',document.querySelectorAll('.nbtn')[1])" style="flex:1;position:relative;border-radius:18px;overflow:hidden;cursor:pointer;min-height:340px;background:#111;border:1px solid var(--b)">
+            <img src="https://images.unsplash.com/photo-1476480862126-209bfaa8edc8?w=600&q=80" alt="Corrida" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;filter:brightness(.5)"/>
+            <div style="position:absolute;inset:0;background:linear-gradient(180deg,transparent 40%,rgba(0,0,0,.85) 100%)"></div>
+            <div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;padding:22px 14px;text-align:center">
+              <div style="font-size:44px;margin-bottom:10px">🏃</div>
+              <div style="font-size:17px;font-weight:900;color:#fff;letter-spacing:-.2px">Corrida</div>
+              <div style="font-size:11px;color:var(--t2);margin-top:4px">Seu plano de corrida</div>
+            </div>
+          </div>
+
+        </div>
+
+        <div class="treino-select-card" onclick="switchTab('mobilidade',document.querySelectorAll('.nbtn')[1])" style="margin-top:14px;position:relative;border-radius:18px;overflow:hidden;cursor:pointer;min-height:110px;background:#111;border:1px solid var(--b);display:flex;align-items:center;gap:16px;padding:16px 18px">
+          <img src="https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?w=600&q=80" alt="Alongamento e Mobilidade" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;filter:brightness(.35)"/>
+          <div style="position:absolute;inset:0;background:linear-gradient(90deg,rgba(0,0,0,.55),rgba(0,0,0,.85))"></div>
+          <div style="position:relative;font-size:36px;flex-shrink:0">🧘</div>
+          <div style="position:relative;text-align:left;flex:1">
+            <div style="font-size:16px;font-weight:900;color:#fff;letter-spacing:-.2px;display:flex;align-items:center;gap:6px">Alongamento & Mobilidade <span id="mob-lock-badge" style="display:none;font-size:11px;background:rgba(229,9,20,.9);padding:2px 8px;border-radius:99px;font-weight:800">🔒 Assinantes</span></div>
+            <div style="font-size:11.5px;color:var(--t2);margin-top:2px">Rotinas prontas pra dores, mobilidade e relaxamento</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ALONGAMENTO & MOBILIDADE — lista de rotinas -->
+    <div class="tp" id="tp-mobilidade">
+      <div style="padding:22px 16px 40px">
+        <div style="margin-bottom:18px">
+          <div style="font-size:11px;font-weight:800;color:var(--r);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:6px">FitQuest</div>
+          <div style="font-size:20px;font-weight:900;letter-spacing:-.3px">Alongamento & Mobilidade</div>
+          <div style="font-size:12px;color:var(--t2);margin-top:4px">Escolha uma rotina pelo seu objetivo do momento</div>
+        </div>
+        <div id="mob-rotinas-list" style="display:flex;flex-direction:column;gap:12px"></div>
+      </div>
     </div>
 
     <!-- GYM -->
@@ -2005,7 +2064,7 @@ textarea.fi{resize:vertical;min-height:80px;}
   <!-- BOTTOM NAV -->
   <div class="bnav">
     <button class="nbtn active" onclick="switchTab('home',this)"><span class="nico">🏠</span><span class="nlbl" data-i18n="nav.home">Início</span><div class="ndot"></div></button>
-    <button class="nbtn" onclick="switchTab('gym',this)"><span class="nico">🏋️</span><span class="nlbl" data-i18n="nav.train">Treino</span><div class="ndot"></div></button>
+    <button class="nbtn" onclick="switchTab('treinos',this)"><span class="nico">🏋️</span><span class="nlbl" data-i18n="nav.train">Treinos</span><div class="ndot"></div></button>
     <button class="nbtn" onclick="switchTab('store',this)"><span class="nico">🎬</span><span class="nlbl" data-i18n="nav.store">Loja</span><div class="ndot"></div></button>
     <button class="nbtn" onclick="switchTab('consult',this)"><span class="nico">⭐</span><span class="nlbl" data-i18n="nav.coach">Coach</span><div class="ndot"></div></button>
     <button class="nbtn" onclick="switchTab('com',this)"><span class="nico">🌍</span><span class="nlbl" data-i18n="nav.social">Social</span><div class="ndot"></div></button>
@@ -3271,6 +3330,185 @@ function closeModal(id){
   }
 }
 function getExById(id){return EXERCISE_BANK.find(e=>e.id===id)||null;}
+
+// ══ ALONGAMENTO & MOBILIDADE — rotinas prontas por objetivo ══
+// Diferente de Musculação/Corrida, aqui não tem anamnese nem plano gerado por IA:
+// são rotinas curadas, a pessoa escolhe pelo objetivo e segue direto.
+// IMPORTANTE: isso é orientação geral de bem-estar, não tratamento médico — o aviso
+// fica visível na tela de detalhe de cada rotina.
+const ALONGAMENTO_ROTINAS=[
+  {
+    id:'lombar', nome:'Alívio de Dor Lombar', emoji:'🩹', nivel:'Suave',
+    desc:'Mobilidade de coluna e quadril pra soltar a tensão na lombar.',
+    exs:[
+      {id:'e152',tempo:'8-10 repetições'},
+      {id:'e374',tempo:'30s cada lado'},
+      {id:'e161',tempo:'45-60s'},
+      {id:'e378',tempo:'30s cada lado'},
+      {id:'e153',tempo:'8 repetições cada lado'},
+      {id:'e358',tempo:'8-10 repetições'},
+    ]
+  },
+  {
+    id:'ombro-pescoco', nome:'Alívio de Ombro e Pescoço', emoji:'🧘', nivel:'Suave',
+    desc:'Pra quem passa o dia sentado ou no computador — solta ombro, cervical e postura.',
+    exs:[
+      {id:'e170',tempo:'10 repetições'},
+      {id:'e156',tempo:'8-10 repetições'},
+      {id:'e167',tempo:'10 repetições'},
+      {id:'e157',tempo:'30s cada lado'},
+      {id:'e251',tempo:'45-60s'},
+    ]
+  },
+  {
+    id:'quadril', nome:'Mobilidade de Quadril Completa', emoji:'🦵', nivel:'Moderado',
+    desc:'Rotina focada em soltar e ganhar amplitude de quadril — ótima pra quem treina perna ou fica muito sentado.',
+    exs:[
+      {id:'e154',tempo:'8 repetições cada lado'},
+      {id:'e347',tempo:'45-60s cada lado'},
+      {id:'e385',tempo:'45-60s'},
+      {id:'e365',tempo:'45-60s'},
+      {id:'e346',tempo:'30s cada lado'},
+      {id:'e391',tempo:'30-45s'},
+    ]
+  },
+  {
+    id:'joelho', nome:'Suporte pra Dor no Joelho', emoji:'🦿', nivel:'Suave',
+    desc:'Flexibilidade nos músculos ao redor do joelho (panturrilha, posterior, quadril) — não mobiliza o joelho diretamente.',
+    exs:[
+      {id:'e160',tempo:'30s cada lado'},
+      {id:'e346',tempo:'30s cada lado'},
+      {id:'e159',tempo:'45-60s cada lado'},
+      {id:'e345',tempo:'10 repetições cada lado'},
+      {id:'e155',tempo:'30s cada lado'},
+    ]
+  },
+  {
+    id:'terceira-idade', nome:'Terceira Idade / Baixo Impacto', emoji:'🌿', nivel:'Muito suave',
+    desc:'Movimentos leves, sem impacto, a maioria pode ser feita sentado ou apoiado. Sempre respeitando o limite do dia.',
+    exs:[
+      {id:'e152',tempo:'6-8 repetições, ritmo lento'},
+      {id:'e170',tempo:'8 repetições'},
+      {id:'e161',tempo:'45-60s'},
+      {id:'e160',tempo:'20-30s cada lado'},
+      {id:'e361',tempo:'6 repetições cada lado'},
+      {id:'e381',tempo:'6 repetições cada lado'},
+    ]
+  },
+  {
+    id:'pos-treino', nome:'Alongamento Pós-Treino Completo', emoji:'✅', nivel:'Moderado',
+    desc:'Corpo todo — a rotina ideal pra fechar qualquer treino de musculação ou corrida.',
+    exs:[
+      {id:'e161',tempo:'45s'},
+      {id:'e162',tempo:'30-45s'},
+      {id:'e385',tempo:'45s'},
+      {id:'e160',tempo:'30s cada lado'},
+      {id:'e157',tempo:'30s cada lado'},
+      {id:'e378',tempo:'30s cada lado'},
+      {id:'e153',tempo:'8 repetições cada lado'},
+    ]
+  },
+  {
+    id:'matinal', nome:'Mobilidade Matinal — Ative o Corpo', emoji:'🌅', nivel:'Moderado',
+    desc:'Pra acordar o corpo antes do treino ou começar o dia com mais disposição.',
+    exs:[
+      {id:'e152',tempo:'10 repetições'},
+      {id:'e377',tempo:'8 repetições'},
+      {id:'e355',tempo:'6 repetições cada lado'},
+      {id:'e361',tempo:'8 repetições cada lado'},
+      {id:'e369',tempo:'6-8 passos cada direção'},
+      {id:'e353',tempo:'6-8 repetições'},
+    ]
+  },
+  {
+    id:'corredores', nome:'Alongamento para Corredores', emoji:'🏃', nivel:'Moderado',
+    desc:'Foco em panturrilha, posterior de coxa e IT band — os pontos que mais pedem socorro depois de correr.',
+    exs:[
+      {id:'e160',tempo:'30s cada lado'},
+      {id:'e346',tempo:'30s cada lado'},
+      {id:'e347',tempo:'45s cada lado'},
+      {id:'e159',tempo:'45-60s cada lado'},
+      {id:'e155',tempo:'30s cada lado'},
+      {id:'e345',tempo:'10 repetições cada lado'},
+    ]
+  },
+];
+function getRotinaById(id){return ALONGAMENTO_ROTINAS.find(r=>r.id===id)||null;}
+
+function renderMobRotinas(){
+  const el=document.getElementById('mob-rotinas-list');
+  if(!el)return;
+  const pago=typeof statusAssinatura==='function'&&statusAssinatura(getU())==='ativa';
+  if(!pago){
+    el.innerHTML=`
+      <div style="text-align:center;padding:10px 6px 4px">
+        <div style="font-size:40px;margin-bottom:10px">🔒</div>
+        <div style="font-size:15px;font-weight:800">Recurso de assinante</div>
+        <div style="font-size:12.5px;color:var(--t2);margin-top:6px;line-height:1.5">As rotinas de Alongamento & Mobilidade fazem parte do plano pago do FitQuest. Assine pra desbloquear todas as ${ALONGAMENTO_ROTINAS.length} rotinas.</div>
+        <button onclick="abrirAssinatura()" style="margin-top:18px;width:100%;background:var(--r);color:#fff;border:none;border-radius:12px;padding:15px;font-size:14.5px;font-weight:800;cursor:pointer">⭐ Assinar FitQuest</button>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:10px;margin-top:22px;opacity:.5;pointer-events:none">
+        ${ALONGAMENTO_ROTINAS.map(r=>`
+          <div style="display:flex;align-items:center;gap:14px;background:var(--s);border:1px solid var(--b);border-radius:14px;padding:14px 16px">
+            <div style="font-size:26px;flex-shrink:0">${r.emoji}</div>
+            <div style="flex:1">
+              <div style="font-size:13.5px;font-weight:800">${r.nome}</div>
+              <div style="font-size:10.5px;color:var(--mu);margin-top:2px">${r.exs.length} exercícios · ${r.nivel}</div>
+            </div>
+            <span style="font-size:16px">🔒</span>
+          </div>
+        `).join('')}
+      </div>`;
+    return;
+  }
+  el.innerHTML=ALONGAMENTO_ROTINAS.map(r=>`
+    <div onclick="abrirRotina('${r.id}')" style="display:flex;align-items:center;gap:14px;background:var(--s);border:1px solid var(--b);border-radius:14px;padding:14px 16px;cursor:pointer">
+      <div style="font-size:30px;flex-shrink:0">${r.emoji}</div>
+      <div style="flex:1">
+        <div style="font-size:14.5px;font-weight:800">${r.nome}</div>
+        <div style="font-size:11.5px;color:var(--t2);margin-top:2px">${r.desc}</div>
+        <div style="font-size:10px;color:var(--mu);margin-top:5px">${r.exs.length} exercícios · ${r.nivel}</div>
+      </div>
+      <span style="color:var(--mu);font-size:18px;flex-shrink:0">›</span>
+    </div>
+  `).join('');
+}
+
+function abrirRotina(id){
+  const pago=typeof statusAssinatura==='function'&&statusAssinatura(getU())==='ativa';
+  if(!pago){abrirAssinatura();return;}
+  const r=getRotinaById(id);
+  if(!r)return;
+  const itens=r.exs.map(item=>{
+    const ex=getExById(item.id);
+    if(!ex)return '';
+    const thumb=temGifDemo(ex.id)
+      ?`<img src="${getExGif(ex.id)}" alt="${ex.name}" loading="lazy" style="width:56px;height:56px;object-fit:cover;border-radius:10px;background:#f6f2e4;flex-shrink:0" onerror="gifFallback(this,'${ex.id}','.mob-ex-thumb')"/>`
+      :`<div style="width:56px;height:56px;flex-shrink:0">${renderExThumbFallback(ex.id)}</div>`;
+    return `
+      <div style="display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--b)">
+        <div class="mob-ex-thumb" style="width:56px;height:56px;border-radius:10px;overflow:hidden;flex-shrink:0">${thumb}</div>
+        <div style="flex:1">
+          <div style="font-size:13.5px;font-weight:700">${ex.name}</div>
+          <div style="font-size:11px;color:var(--t2);margin-top:2px">${item.tempo}</div>
+        </div>
+      </div>`;
+  }).join('');
+
+  document.getElementById('modal-rotina-content').innerHTML=`
+    <div style="padding:24px 20px 8px">
+      <div style="font-size:38px;margin-bottom:8px">${r.emoji}</div>
+      <div style="font-size:19px;font-weight:900;letter-spacing:-.3px">${r.nome}</div>
+      <div style="font-size:12.5px;color:var(--t2);margin-top:4px">${r.desc}</div>
+      <div style="font-size:10.5px;color:var(--mu);margin-top:6px">${r.exs.length} exercícios · Nível: ${r.nivel}</div>
+    </div>
+    <div style="margin:14px 20px;padding:11px 13px;background:rgba(229,9,20,.08);border:1px solid rgba(229,9,20,.2);border-radius:10px;font-size:11px;color:var(--t2);line-height:1.5">
+      ⚠️ Orientação geral de bem-estar, não substitui avaliação médica ou fisioterapêutica. Se a dor for forte, persistente ou piorar durante o movimento, pare e procure um profissional.
+    </div>
+    <div style="padding:0 20px 28px">${itens}</div>
+  `;
+  abrirModal('modal-rotina');
+}
 
 // ══════════════════════════════════════════════════════════════
 // FICHA DE EXERCÍCIO — Hero + Cards 1,2,3,5,16,20 (ver especificação)
@@ -5595,7 +5833,7 @@ const FQ_I18N = {
 
     // ── Navegação ──
     'nav.home': 'Início',
-    'nav.train': 'Treino',
+    'nav.train': 'Treinos',
     'nav.store': 'Loja',
     'nav.coach': 'Coach',
     'nav.social': 'Social',
@@ -7135,6 +7373,11 @@ function switchTab(name,btn){
     }
   }
   if(name==='missoes'&&typeof renderMissoes==='function')renderMissoes();
+  if(name==='mobilidade'&&typeof renderMobRotinas==='function')renderMobRotinas();
+  if(name==='treinos'){
+    const badge=document.getElementById('mob-lock-badge');
+    if(badge){const pago=typeof statusAssinatura==='function'&&statusAssinatura(getU())==='ativa';badge.style.display=pago?'none':'inline';}
+  }
 }
 
 // ══ ADMIN (dados vêm do Supabase — todos os alunos, de qualquer aparelho) ══
@@ -11057,6 +11300,79 @@ function renderHomeMissoesCard(){
 <div id="sc-expirado" class="screen">
   <div style="min-height:100vh;display:flex;flex-direction:column;justify-content:center;background:var(--bg)">
     <div id="expirado-content"></div>
+  </div>
+</div>
+
+<!-- ══ MODAL: DETALHE DA ROTINA DE ALONGAMENTO/MOBILIDADE ══ -->
+<div class="modal-ov" id="modal-rotina" style="align-items:flex-start">
+  <div class="modal-bx" style="max-width:480px;width:100%;max-height:92vh;overflow-y:auto;padding:0;border-radius:16px 16px 0 0;margin-top:auto">
+    <button class="modal-cl" onclick="closeModal('modal-rotina')" style="position:absolute;top:14px;right:14px;z-index:5;background:rgba(0,0,0,.55);border-radius:50%;width:34px;height:34px;display:flex;align-items:center;justify-content:center">✕</button>
+    <div id="modal-rotina-content"></div>
+  </div>
+</div>
+
+<!-- ══ MODAL: SOBRE O APP (botão "Mais info" da home) ══ -->
+<div class="modal-ov" id="modal-sobre-app" style="align-items:flex-end">
+  <div class="modal-bx" style="max-width:520px;width:100%;max-height:88vh;overflow-y:auto;padding:0;border-radius:20px 20px 0 0;margin-top:auto">
+    <div style="position:relative;padding:28px 22px 20px;background:linear-gradient(135deg,rgba(229,9,20,.18),transparent)">
+      <button class="modal-cl" onclick="closeModal('modal-sobre-app')" style="position:absolute;top:14px;right:14px">✕</button>
+      <div style="font-size:11px;font-weight:800;color:var(--r);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:6px">FitQuest</div>
+      <div style="font-size:22px;font-weight:900;letter-spacing:-.4px;line-height:1.15">Tudo que você encontra<br>dentro do app</div>
+      <div style="font-size:12.5px;color:var(--t2);margin-top:8px">Sua assessoria fitness completa, com o acompanhamento de Rennan Dias — musculação e corrida, no seu ritmo.</div>
+    </div>
+
+    <div style="padding:4px 22px 28px;display:flex;flex-direction:column;gap:14px">
+
+      <div style="display:flex;gap:14px;align-items:flex-start">
+        <div style="font-size:26px;flex-shrink:0">🏋️</div>
+        <div>
+          <div style="font-size:14px;font-weight:800">Treinos sob medida</div>
+          <div style="font-size:12.5px;color:var(--t2);margin-top:2px">Montados a partir da sua anamnese — nível, objetivo, equipamento disponível e histórico de lesões. O plano evolui junto com você.</div>
+        </div>
+      </div>
+
+      <div style="display:flex;gap:14px;align-items:flex-start">
+        <div style="font-size:26px;flex-shrink:0">🎬</div>
+        <div>
+          <div style="font-size:14px;font-weight:800">Vídeo de cada exercício</div>
+          <div style="font-size:12.5px;color:var(--t2);margin-top:2px">Nada de ficar na dúvida se a execução tá certa — cada exercício tem uma demonstração visual mostrando o movimento e o músculo trabalhado.</div>
+        </div>
+      </div>
+
+      <div style="display:flex;gap:14px;align-items:flex-start">
+        <div style="font-size:26px;flex-shrink:0">🏃</div>
+        <div>
+          <div style="font-size:14px;font-weight:800">Planos de corrida</div>
+          <div style="font-size:12.5px;color:var(--t2);margin-top:2px">Treinos de corrida integrados ao seu plano, do iniciante que quer sair do sedentarismo até quem treina pra uma prova.</div>
+        </div>
+      </div>
+
+      <div style="display:flex;gap:14px;align-items:flex-start">
+        <div style="font-size:26px;flex-shrink:0">⚡</div>
+        <div>
+          <div style="font-size:14px;font-weight:800">XP, níveis e streak</div>
+          <div style="font-size:12.5px;color:var(--t2);margin-top:2px">Cada treino concluído rende experiência. Suba de nível, mantenha sua sequência de dias treinados e acompanhe sua evolução de verdade.</div>
+        </div>
+      </div>
+
+      <div style="display:flex;gap:14px;align-items:flex-start">
+        <div style="font-size:26px;flex-shrink:0">🏆</div>
+        <div>
+          <div style="font-size:14px;font-weight:800">Conquistas e recompensas</div>
+          <div style="font-size:12.5px;color:var(--t2);margin-top:2px">17 badges pra desbloquear (algumas secretas 👀) e uma loja pra trocar moedas por molduras de avatar e congelamentos de streak.</div>
+        </div>
+      </div>
+
+      <div style="display:flex;gap:14px;align-items:flex-start">
+        <div style="font-size:26px;flex-shrink:0">👨‍🏫</div>
+        <div>
+          <div style="font-size:14px;font-weight:800">Acompanhamento real</div>
+          <div style="font-size:12.5px;color:var(--t2);margin-top:2px">Por trás do app tem o Rennan Dias de verdade, ajustando seu plano e acompanhando seu progresso — não é só um gerador automático.</div>
+        </div>
+      </div>
+
+      <button onclick="closeModal('modal-sobre-app');switchTab('treinos',document.querySelectorAll('.nbtn')[1])" style="margin-top:8px;background:var(--r);color:#fff;border:none;border-radius:12px;padding:15px;font-size:14.5px;font-weight:800;cursor:pointer">▶ Começar meu treino de hoje</button>
+    </div>
   </div>
 </div>
 
