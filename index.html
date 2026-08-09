@@ -163,7 +163,7 @@ textarea.fi{resize:vertical;min-height:80px;}
 .co input{display:none;}
 .cb{width:20px;height:20px;border-radius:4px;border:2px solid rgba(255,255,255,.2);background:rgba(0,0,0,.3);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:11px;transition:all .2s;}
 .co.sel .cb{background:var(--r);border-color:var(--r);color:#fff;}
-.an-nav{position:fixed;bottom:0;left:0;right:0;background:rgba(10,10,10,.98);border-top:1px solid var(--b);padding:12px 20px 28px;display:flex;gap:10px;backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);}
+.an-nav{position:fixed;bottom:0;left:0;right:0;background:rgba(10,10,10,.98);border-top:1px solid var(--b);padding:12px 20px 28px;padding-bottom:max(28px,env(safe-area-inset-bottom));display:flex;gap:10px;backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);z-index:50;}
 .btn-bk{flex:1;padding:13px;background:rgba(255,255,255,.08);border:1px solid var(--b);border-radius:6px;color:var(--t2);font-size:14px;font-weight:700;cursor:pointer;}
 .btn-nx{flex:2;padding:13px;background:var(--r);border:none;border-radius:6px;color:#fff;font-size:14px;font-weight:800;cursor:pointer;box-shadow:0 4px 16px var(--rg);}
 
@@ -372,7 +372,7 @@ textarea.fi{resize:vertical;min-height:80px;}
 .adm-logo-badge{background:var(--r);border-radius:5px;padding:2px 7px;font-size:9px;font-weight:900;color:#fff;letter-spacing:1px;}
 .adm-body{flex:1;padding:0 0 90px;max-width:680px;width:100%;margin:0 auto;overflow-y:auto;}
 .adm-panel{display:none;}.adm-panel.active{display:block;}
-.adm-nav{position:fixed;bottom:0;left:0;right:0;background:rgba(8,8,8,.98);border-top:1px solid rgba(229,9,20,.15);display:flex;padding:8px 4px 22px;z-index:10;backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);}
+.adm-nav{position:fixed;bottom:0;left:0;right:0;background:rgba(8,8,8,.98);border-top:1px solid rgba(229,9,20,.15);display:flex;padding:8px 4px 22px;padding-bottom:max(22px,env(safe-area-inset-bottom));z-index:50;backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);}
 /* Dashboard header */
 .adm-dash-header{background:linear-gradient(135deg,rgba(229,9,20,.12) 0%,rgba(0,0,0,0) 60%),#0d0d0d;padding:18px 16px 14px;border-bottom:1px solid rgba(255,255,255,.05);}
 .adm-welcome{font-size:11px;color:var(--t2);font-weight:600;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:4px;}
@@ -794,7 +794,7 @@ textarea.fi{resize:vertical;min-height:80px;}
 .eb-tabela-aviso{background:rgba(243,156,18,.1) !important;color:#f39c12 !important;font-weight:700}
 .eb-tabela-pr{font-size:9.5px;color:#2ecc71;display:block;margin-top:2px}
 
-.eb-nav{position:fixed;bottom:0;left:0;right:0;background:rgba(10,10,10,.97);backdrop-filter:blur(20px);border-top:1px solid var(--b);padding:12px 20px;display:flex;gap:10px;z-index:10}
+.eb-nav{position:fixed;bottom:0;left:0;right:0;background:rgba(10,10,10,.97);backdrop-filter:blur(20px);border-top:1px solid var(--b);padding:12px 20px;padding-bottom:max(12px,env(safe-area-inset-bottom));display:flex;gap:10px;z-index:50}
 .eb-nav-btn{flex:1;background:var(--s2);border:1px solid var(--b);border-radius:10px;padding:12px;color:var(--t);font-size:13px;font-weight:800;cursor:pointer;text-align:center}
 .eb-nav-btn.primary{background:var(--eb-cor,#e50914);border-color:var(--eb-cor,#e50914);color:#fff}
 .eb-nav-btn:disabled{opacity:.3;cursor:default}
@@ -813,7 +813,7 @@ textarea.fi{resize:vertical;min-height:80px;}
       <option value="es">🇪🇸 ES</option>
     </select>
   </div>
-  <div id="fq-version-badge" style="position:absolute;bottom:8px;right:12px;font-size:9px;color:#333;font-weight:700;z-index:5">v126</div>
+  <div id="fq-version-badge" style="position:absolute;bottom:8px;right:12px;font-size:9px;color:#333;font-weight:700;z-index:5">v127</div>
   <img src="https://images.unsplash.com/photo-1517836357463-d25dfeac3438?w=800&q=80" alt="Fitness" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center top;filter:brightness(.35);z-index:0"/>
   <div class="splash-glow"></div>
   <div class="splash-noise"></div>
