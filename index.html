@@ -120,6 +120,11 @@ input,button,select,textarea{font-family:"Inter",system-ui,sans-serif;}
 .auth-tab{flex:1;padding:10px;border:none;background:transparent;color:var(--mu);font-size:13px;font-weight:700;border-radius:4px;cursor:pointer;transition:all .2s;}
 .auth-tab.active{background:var(--r);color:#fff;box-shadow:0 2px 10px var(--rg);}
 .fg{margin-bottom:14px;}
+.fg.anam-err{animation:anamShake .35s;}
+.fg.anam-err .fl{color:#ff5a63;}
+.fg.anam-err .fi{border-color:#ff5a63!important;box-shadow:0 0 0 1px #ff5a63;}
+.fg.anam-err .cg,.fg.anam-err .rg{border:1px solid #ff5a63;border-radius:10px;padding:6px}
+@keyframes anamShake{0%,100%{transform:translateX(0)}20%{transform:translateX(-6px)}40%{transform:translateX(6px)}60%{transform:translateX(-4px)}80%{transform:translateX(4px)}}
 .fl{display:block;font-size:11px;font-weight:600;color:var(--t2);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px;}
 .fi{width:100%;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);border-radius:6px;padding:13px 16px;color:var(--t);font-size:16px;outline:none;transition:all .2s;-webkit-appearance:none;appearance:none;}
 .fi:focus{border-color:var(--r);background:rgba(229,9,20,.05);}
@@ -869,15 +874,15 @@ textarea.fi{resize:vertical;min-height:80px;}
     <div class="an-sec"><div class="an-stt" data-i18n="anam.sec.1">👤 Dados Pessoais</div>
     <div class="an-sec"><div class="an-stt" data-i18n="anam.sec.1">👤 Dados Pessoais</div>
       <div class="fr">
-        <div class="fg"><label class="fl" data-i18n="anam.71ef84890d">Data de nascimento</label><input class="fi" type="date" id="a-nasc"/></div>
-        <div class="fg"><label class="fl" data-i18n="anam.5c7d7a110a">Sexo biológico</label><select class="fi" id="a-sexo"><option value="" data-i18n="anam.sel.placeholder">Selecionar</option><option data-i18n="anam.sel.male">Masculino</option><option data-i18n="anam.sel.female">Feminino</option></select></div>
+        <div class="fg"><label class="fl" data-i18n="anam.71ef84890d">Data de nascimento *</label><input class="fi" type="date" id="a-nasc"/></div>
+        <div class="fg"><label class="fl" data-i18n="anam.5c7d7a110a">Sexo biológico *</label><select class="fi" id="a-sexo"><option value="" data-i18n="anam.sel.placeholder">Selecionar</option><option data-i18n="anam.sel.male">Masculino</option><option data-i18n="anam.sel.female">Feminino</option></select></div>
       </div>
       <div class="fr">
-        <div class="fg"><label class="fl" data-i18n="anam.f7feaa2728">Peso atual (kg)</label><input class="fi" type="number" id="a-peso" placeholder="75"/></div>
-        <div class="fg"><label class="fl" data-i18n="anam.80ee53f0ef">Altura (cm)</label><input class="fi" type="number" id="a-altura" placeholder="175"/></div>
+        <div class="fg"><label class="fl" data-i18n="anam.f7feaa2728">Peso atual (kg) *</label><input class="fi" type="number" id="a-peso" placeholder="75"/></div>
+        <div class="fg"><label class="fl" data-i18n="anam.80ee53f0ef">Altura (cm) *</label><input class="fi" type="number" id="a-altura" placeholder="175"/></div>
       </div>
       <div class="fg"><label class="fl" data-i18n="anam.4651e8843c">Profissão / Ocupação</label><input class="fi" type="text" id="a-prof" placeholder="Ex: Professor, Escritório, Operário..."/></div>
-      <div class="fg"><label class="fl" data-i18n="anam.f6b32d6786">WhatsApp para contato</label><input class="fi" type="tel" id="a-fone" placeholder="(11) 99999-9999"/></div>
+      <div class="fg"><label class="fl" data-i18n="anam.f6b32d6786">WhatsApp para contato *</label><input class="fi" type="tel" id="a-fone" placeholder="(11) 99999-9999"/></div>
       <div class="fg"><label class="fl" data-i18n="anam.8040f51044">Nível de atividade no trabalho</label>
         <div class="rg" id="rg-atv-trab">
           <label class="ro"><input type="radio" name="atvtrab" value="Sedentário (sentado o dia todo)"><span data-i18n="anam.7e3fe3c227">🪑 Sentado o dia todo</span></label>
@@ -3740,7 +3745,23 @@ function userToRow(u){
   return{id:u.id,nome:u.name,email:u.email,plano:u.plano||'free',trial_inicio:u.trialInicio||new Date().toISOString(),run_inicio:u.runInicio||null,run_ajuste_lesao:u.runAjusteLesao||false,treino_liberado:u.trainApproved||false,ai_plan:u.aiPlan||null,anamnese:u.anamnese||null,anamnese_geral:u.anamneseGeral||null,anamnese_musculacao:u.anamneseMusculacao||null,anamnese_corrida:u.anamneseCorrida||null,gym_week:u.gymWeek||1,run_week:u.runWeek||1,gym_done:u.gymDone||{},run_done:u.runDone||{},load_history:u.loadHistory||{},workout_history:u.workoutHistory||[],xp:u.xp||0,level:u.level||1,streak:u.streak||1,coins:u.coins||0,badges:u.badges||[],prs:u.prs||[],stats:u.stats||{treinos:0,distancia:0,semanas:0},avatar:u.avatar||null,evals:u.evals||[],program_intakes:u.programIntakes||{},ultimo_acesso:new Date().toISOString(),updated_at:new Date().toISOString()};
   // Obs.: purchases/pacote_ebooks/is_admin/plano NÃO são enviados pelo aluno — são protegidos no banco e só mudam via webhook de pagamento ou admin.
 }
-async function syncU(u){if(!sb||!u||!u.id)return;try{await sb.from('alunos').upsert(userToRow(u),{onConflict:'id'});}catch(e){console.warn('sync:',e.message);}}
+async function syncU(u){
+  if(!sb||!u){console.warn('sync: sem sb ou sem usuário');return;}
+  if(!u.id){console.warn('sync: usuário sem id, não sincroniza');return;}
+  try{
+    const{error}=await sb.from('alunos').upsert(userToRow(u),{onConflict:'id'});
+    if(error){
+      console.error('sync falhou:',error.message,error);
+      // Não deixa o erro passar em silêncio — se a anamnese/plano não salvou no
+      // servidor, o aluno some com tudo assim que limpar o cache ou trocar de
+      // aparelho. Melhor avisar na hora do que descobrir dias depois.
+      fqToast('⚠️ Não foi possível salvar no servidor: '+error.message,'warn',6000);
+    }
+  }catch(e){
+    console.error('sync falhou (exceção):',e.message,e);
+    fqToast('⚠️ Não foi possível salvar no servidor: '+e.message,'warn',6000);
+  }
+}
 async function loadUDB(userId){if(!sb||!userId)return null;try{const{data}=await sb.from('alunos').select('*').eq('id',userId).single();if(!data)return null;return rowToUser(data);}catch(e){return null;}}
 
 // ══ AUTH (Supabase Auth — senhas nunca ficam no código nem no navegador) ══
@@ -4051,8 +4072,64 @@ function updAnam(tipo){
   const back=document.getElementById('btn-back-'+tipo); if(back) back.style.display=step>1?'block':'none';
   const nxt=document.getElementById('btn-nxt-'+tipo); if(nxt) nxt.textContent=step===TOTAL?t('anam.btn.submit'):t('anam.btn.next');
 }
+// ══ VALIDAÇÃO DE CAMPOS OBRIGATÓRIOS DA ANAMNESE ══
+// Só trava o que o motor (RD_perfil/RD_gerarGym/RD_gerarRun) realmente precisa
+// pra gerar o treino, mais o WhatsApp (contato do aluno). Estilo de vida,
+// composição corporal e preferências continuam opcionais.
+function anamRadioMarcado(nome){ return !!document.querySelector(`input[name="${nome}"]:checked`); }
+function anamCheckboxTemAlgum(id){ const el=document.getElementById(id); return !!(el && el.querySelector('input:checked')); }
+function anamCampoPreenchido(id){ const el=document.getElementById(id); return !!(el && el.value && el.value.trim()); }
+
+function anamMostrarErro(fgSelector, msg){
+  const fg=document.querySelector(fgSelector);
+  if(fg){
+    fg.classList.add('anam-err');
+    fg.scrollIntoView({behavior:'smooth',block:'center'});
+    setTimeout(()=>fg.classList.remove('anam-err'),1200);
+  }
+  fqToast(msg,'warn');
+}
+
+// Retorna true se o passo está OK pra avançar; senão mostra o erro e retorna false.
+function anamValidarStep(tipo, step){
+  if(tipo==='geral' && step===1){
+    if(!anamCampoPreenchido('a-nasc'))  return anamMostrarErro('#anam-geral-step-1 .fg:has(#a-nasc)', 'Preencha sua data de nascimento.'), false;
+    if(!anamCampoPreenchido('a-sexo'))  return anamMostrarErro('#anam-geral-step-1 .fg:has(#a-sexo)', 'Selecione seu sexo biológico.'), false;
+    if(!anamCampoPreenchido('a-peso'))  return anamMostrarErro('#anam-geral-step-1 .fg:has(#a-peso)', 'Preencha seu peso atual.'), false;
+    if(!anamCampoPreenchido('a-altura'))return anamMostrarErro('#anam-geral-step-1 .fg:has(#a-altura)', 'Preencha sua altura.'), false;
+    if(!anamCampoPreenchido('a-fone'))  return anamMostrarErro('#anam-geral-step-1 .fg:has(#a-fone)', 'Preencha seu WhatsApp para contato.'), false;
+    return true;
+  }
+  if(tipo==='musc' && step===1){
+    if(!anamRadioMarcado('tempo')) return anamMostrarErro('#anam-musc-step-1 .fg:has([name="tempo"])','Selecione seu nível de treino.'), false;
+    if(!anamRadioMarcado('dias'))  return anamMostrarErro('#anam-musc-step-1 .fg:has([name="dias"])','Selecione quantos dias por semana você pode treinar.'), false;
+    if(!anamRadioMarcado('dur'))   return anamMostrarErro('#anam-musc-step-1 .fg:has([name="dur"])','Selecione a duração disponível por treino.'), false;
+    if(!anamRadioMarcado('local')) return anamMostrarErro('#anam-musc-step-1 .fg:has([name="local"])','Selecione onde você vai treinar.'), false;
+    return true;
+  }
+  if(tipo==='musc' && step===2){
+    if(!anamCheckboxTemAlgum('cg-obj')) return anamMostrarErro('#anam-musc-step-2 .fg:has(#cg-obj)','Selecione pelo menos um objetivo.'), false;
+    return true;
+  }
+  if(tipo==='musc' && step===3){
+    if(!anamCheckboxTemAlgum('cg-lesoes')) return anamMostrarErro('#anam-musc-step-3 .fg:has(#cg-lesoes)','Marque suas dores/lesões, ou "Nenhuma dor ou lesão" se não tiver.'), false;
+    return true;
+  }
+  if(tipo==='corrida' && step===1){
+    if(!anamCheckboxTemAlgum('cg-mc')) return anamMostrarErro('#anam-corrida-step-1 .fg:has(#cg-mc)','Selecione pelo menos uma meta de corrida.'), false;
+    if(!anamRadioMarcado('nivelcorrida')) return anamMostrarErro('#anam-corrida-step-1 .fg:has([name="nivelcorrida"])','Selecione seu nível na corrida.'), false;
+    return true;
+  }
+  if(tipo==='corrida' && step===2){
+    if(!anamCheckboxTemAlgum('cg-lesoes-corrida')) return anamMostrarErro('#anam-corrida-step-2 .fg:has(#cg-lesoes-corrida)','Marque suas dores/lesões, ou "Nenhuma dor ou lesão" se não tiver.'), false;
+    return true;
+  }
+  return true; // demais passos (estilo de vida, composição, preferências) são opcionais
+}
+
 function anamNext(tipo){
   tipo=tipo||'geral';
+  if(!anamValidarStep(tipo, anamStepState[tipo])) return;
   if(anamStepState[tipo]<ANAM_TOTAL[tipo]){ anamStepState[tipo]++; updAnam(tipo); window.scrollTo(0,0); }
   else{
     if(tipo==='geral') submitAnamGeral();
@@ -4067,6 +4144,7 @@ function anamPrev(tipo){
 // ── ANAMNESE GERAL — obrigatória logo após cadastro, vai direto pra Home (sem gerar plano) ──
 async function submitAnamGeral(){
   const email=DB.get('fq_cur');const users=DB.get('fq_users')||{};if(!users[email])return;
+  if(!anamValidarStep('geral',1))return;
   const gr=n=>{const e=document.querySelector(`input[name="${n}"]:checked`);return e?e.value:'';};
   const gc=id=>Array.from(document.querySelectorAll(`#${id} input:checked`)).map(e=>e.value);
   const gv=id=>{const el=document.getElementById(id);return el?el.value:'';};
@@ -4095,6 +4173,7 @@ function mesclarAnamnese(u, especifica){
 // ── ANAMNESE MUSCULAÇÃO — ao clicar "Quero treino de musculação" na Home ──
 async function submitAnamMusc(){
   const email=DB.get('fq_cur');const users=DB.get('fq_users')||{};if(!users[email])return;
+  if(!anamValidarStep('musc',1)||!anamValidarStep('musc',2)||!anamValidarStep('musc',3))return;
   const gr=n=>{const e=document.querySelector(`input[name="${n}"]:checked`);return e?e.value:'';};
   const gc=id=>Array.from(document.querySelectorAll(`#${id} input:checked`)).map(e=>e.value);
   const gv=id=>{const el=document.getElementById(id);return el?el.value:'';};
@@ -4113,7 +4192,11 @@ async function submitAnamMusc(){
   users[email].anamneseMusculacao=especifica;
   users[email].anamneseMuscDone=true;
   const anCompleta=mesclarAnamnese(users[email],especifica);
+  users[email].anamnese=anCompleta; // usado por PDF, painel admin, Turbo e regeração de plano
   DB.set('fq_users',users);
+  // Sincroniza a anamnese em si AGORA, sem depender da geração do treino —
+  // assim, mesmo se o motor der erro lá na frente, o "já respondi" não se perde.
+  if(typeof sb!=='undefined'&&sb&&typeof syncU==='function')syncU(users[email]).catch(()=>{});
   show('sc-ok');
   document.getElementById('btn-go-app').style.display='none';
   document.getElementById('ok-sub').textContent='Montando seu treino de musculação... 🤖';
@@ -4134,6 +4217,7 @@ async function submitAnamMusc(){
 // ── ANAMNESE CORRIDA — ao clicar "Quero treino de corrida" na Home ──
 async function submitAnamCorrida(){
   const email=DB.get('fq_cur');const users=DB.get('fq_users')||{};if(!users[email])return;
+  if(!anamValidarStep('corrida',1)||!anamValidarStep('corrida',2))return;
   const gr=n=>{const e=document.querySelector(`input[name="${n}"]:checked`);return e?e.value:'';};
   const gc=id=>Array.from(document.querySelectorAll(`#${id} input:checked`)).map(e=>e.value);
   const gv=id=>{const el=document.getElementById(id);return el?el.value:'';};
@@ -4160,7 +4244,10 @@ async function submitAnamCorrida(){
   users[email].anamneseCorrida=especifica;
   users[email].anamneseCorridaDone=true;
   const anCompleta=mesclarAnamnese(users[email],especifica);
+  users[email].anamnese=anCompleta; // usado por PDF, painel admin, Turbo e regeração de plano
   DB.set('fq_users',users);
+  // Mesma blindagem: sincroniza a anamnese já aqui, não só depois do plano.
+  if(typeof sb!=='undefined'&&sb&&typeof syncU==='function')syncU(users[email]).catch(()=>{});
   show('sc-ok');
   document.getElementById('btn-go-app').style.display='none';
   document.getElementById('ok-sub').textContent='Montando seu plano de corrida... 🤖';
@@ -5479,6 +5566,9 @@ function gerarTreinoFallback(email,an,tipo){
     users[email].aiPlan=novoPlano;
     users[email].trainApproved=true;
     DB.set('fq_users',users);
+    // Mesmo no caminho de erro, sincroniza — sem isso, a anamnese que já foi
+    // marcada como respondida ficaria presa só localmente.
+    if(typeof sb!=='undefined'&&sb&&typeof syncU==='function')syncU(users[email]).catch(()=>{});
   }
 }
 
@@ -5945,12 +6035,12 @@ const FQ_I18N = {
     'home.addplan': '➕ Adicionar ao seu plano',
     'auth.privacidade': 'Ao criar sua conta, você concorda com nossa <a href="privacidade.html" target="_blank" style="color:var(--r)">Política de Privacidade</a>. Coletamos informações de saúde para montar um treino seguro para você.',
     // ── Anamnese ──
-    'anam.71ef84890d': "Data de nascimento",
-    'anam.5c7d7a110a': "Sexo biológico",
-    'anam.f7feaa2728': "Peso atual (kg)",
-    'anam.80ee53f0ef': "Altura (cm)",
+    'anam.71ef84890d': "Data de nascimento *",
+    'anam.5c7d7a110a': "Sexo biológico *",
+    'anam.f7feaa2728': "Peso atual (kg) *",
+    'anam.80ee53f0ef': "Altura (cm) *",
     'anam.4651e8843c': "Profissão / Ocupação",
-    'anam.f6b32d6786': "WhatsApp para contato",
+    'anam.f6b32d6786': "WhatsApp para contato *",
     'anam.8040f51044': "Nível de atividade no trabalho",
     'anam.450040215f': "Tempo de experiência com exercícios",
     'anam.3da77dcc0f': "Carga aproximada no Supino (kg) <span style=\"font-weight:400;color:var(--mu)\">(pode chutar, opcional)</span>",
@@ -6448,12 +6538,12 @@ const FQ_I18N = {
     'home.addplan': '➕ Add to your plan',
     'auth.privacidade': 'By creating your account, you agree to our <a href="privacidade.html" target="_blank" style="color:var(--r)">Privacy Policy</a>. We collect health information to build a safe workout for you.',
     // ── Anamnese ──
-    'anam.71ef84890d': "Date of birth",
-    'anam.5c7d7a110a': "Biological sex",
-    'anam.f7feaa2728': "Current weight (kg)",
-    'anam.80ee53f0ef': "Height (cm)",
+    'anam.71ef84890d': "Date of birth *",
+    'anam.5c7d7a110a': "Biological sex *",
+    'anam.f7feaa2728': "Current weight (kg) *",
+    'anam.80ee53f0ef': "Height (cm) *",
     'anam.4651e8843c': "Occupation",
-    'anam.f6b32d6786': "WhatsApp for contact",
+    'anam.f6b32d6786': "WhatsApp for contact *",
     'anam.8040f51044': "Activity level at work",
     'anam.450040215f': "Training experience",
     'anam.3da77dcc0f': "Approximate Bench Press load (kg) <span style=\"font-weight:400;color:var(--mu)\">(rough guess is fine, optional)</span>",
@@ -6940,12 +7030,12 @@ const FQ_I18N = {
     'home.wantrun.sub': 'Solo 2 pasos — muy rápido',
     'home.addplan': '➕ Añade a tu plan',
     'auth.privacidade': 'Al crear tu cuenta, aceptas nuestra <a href="privacidade.html" target="_blank" style="color:var(--r)">Política de Privacidad</a>. Recopilamos información de salud para armar un entrenamiento seguro para ti.',
-    'anam.71ef84890d': "Fecha de nacimiento",
-    'anam.5c7d7a110a': "Sexo biológico",
-    'anam.f7feaa2728': "Peso actual (kg)",
-    'anam.80ee53f0ef': "Estatura (cm)",
+    'anam.71ef84890d': "Fecha de nacimiento *",
+    'anam.5c7d7a110a': "Sexo biológico *",
+    'anam.f7feaa2728': "Peso actual (kg) *",
+    'anam.80ee53f0ef': "Estatura (cm) *",
     'anam.4651e8843c': "Profesión / Ocupación",
-    'anam.f6b32d6786': "WhatsApp de contacto",
+    'anam.f6b32d6786': "WhatsApp de contacto *",
     'anam.8040f51044': "Nivel de actividad en el trabajo",
     'anam.450040215f': "Tiempo de experiencia con ejercicios",
     'anam.3da77dcc0f': "Carga aproximada en Press de Banca (kg) <span style=\"font-weight:400;color:var(--mu)\">(puedes estimar, opcional)</span>",
@@ -8202,16 +8292,16 @@ function renderGymDay(w,d,u){
   const turbo = fqTurboOn();
   let turboAplicados = 0;
   if(turbo){
-    const an = u.anamneseMusculacao || u.anamnese || {};
-    const objRaw = ((an.objetivos&&an.objetivos[0]) || an.objetivo || '').toLowerCase();
+    const an = u.anamnese || {};
+    const objRaw = ((an.obj && an.obj.join(' ')) || '').toLowerCase();
     let obj = 'saude';
     if(/hipertrofia|massa/.test(objRaw)) obj='hipertrofia';
-    else if(/for[çc]a|pot[êe]ncia/.test(objRaw)) obj='forca';
-    else if(/emagrec|gordura|definic/.test(objRaw)) obj='emagrecimento';
-    else if(/resist[êe]ncia|condicion|f[ôo]lego/.test(objRaw)) obj='resistencia';
-    const lesoes = (an.lesoes||[]).join(' ').toLowerCase();
-    const cond = (an.condicoes||[]).join(' ').toLowerCase();
-    const riscoCardiaco = /card[íi]ac|hipertens|press[ãa]o/.test(lesoes+' '+cond);
+    else if(/for[çc]a/.test(objRaw)) obj='forca';
+    else if(/emagre|gordura|perder/.test(objRaw)) obj='emagrecimento';
+    else if(/resist|condicion/.test(objRaw)) obj='resistencia';
+    const lesoesRaw = ((an.lesoes && an.lesoes.join(' ')) || '').toLowerCase();
+    const saudeRaw = ((an.saude && an.saude.join(' ')) || '').toLowerCase();
+    const riscoCardiaco = /card[íi]ac/.test(saudeRaw) || /hipertens[ãa]o/.test(saudeRaw) || /card[íi]ac|hipertens[ãa]o/.test(lesoesRaw);
     if(!riscoCardiaco){
       const lista = RD_TURBO_TECNICAS[obj] || RD_TURBO_TECNICAS.saude;
       exs.forEach((ed,i)=>{
