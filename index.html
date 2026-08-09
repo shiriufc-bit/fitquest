@@ -851,7 +851,7 @@ textarea.fi{resize:vertical;min-height:80px;}
       <option value="es">🇪🇸 ES</option>
     </select>
   </div>
-  <div id="fq-version-badge" style="position:absolute;bottom:8px;right:12px;font-size:9px;color:#333;font-weight:700;z-index:5">v130</div>
+  <div id="fq-version-badge" style="position:absolute;bottom:8px;right:12px;font-size:9px;color:#333;font-weight:700;z-index:5">v131</div>
   <img src="https://images.unsplash.com/photo-1517836357463-d25dfeac3438?w=800&q=80" alt="Fitness" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center top;filter:brightness(.35);z-index:0"/>
   <div class="splash-glow"></div>
   <div class="splash-noise"></div>
@@ -12861,6 +12861,20 @@ function renderHomeMissoesCard(){
      o que funciona em qualquer WebView que suporte <canvas> (universal).
      Hospedado no mesmo domínio (não em CDN externo) porque WebViews de apps
      empacotados costumam bloquear scripts de domínios de fora. -->
+<!-- Substitui requestAnimationFrame por um temporizador simples (setTimeout).
+     Suspeita: nessa WebView empacotada, o requestAnimationFrame pode nunca
+     disparar o callback (bug conhecido em WebViews mais restritas/antigas),
+     o que faria a lib de gif "decodificar" o quadro com sucesso mas nunca
+     de fato desenhar na tela — sem erro nenhum, porque tecnicamente nada quebrou,
+     só nunca foi chamado. Isso troca por um timer garantido (~60fps). -->
+<script>
+(function(){
+  var usaTimer = function(cb){ return setTimeout(function(){ cb(Date.now()); }, 16); };
+  window.requestAnimationFrame = usaTimer;
+  window.webkitRequestAnimationFrame = usaTimer;
+  console.error('DEBUG: requestAnimationFrame substituído por setTimeout como teste.');
+})();
+</script>
 <script src="gifler.min.js"></script>
 </body>
 </html>
