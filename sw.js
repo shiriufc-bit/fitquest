@@ -1,6 +1,6 @@
-// ══ FitQuest Service Worker v45 ══
+// ══ FitQuest Service Worker v46 ══
 // Gerado em: 09/08/2026 (correção botão anamnese)
-const CACHE_NAME = 'fitquest-v127';
+const CACHE_NAME = 'fitquest-v128';
 
 const ASSETS = [
   '/fitquest/',
