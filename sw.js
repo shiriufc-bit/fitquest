@@ -1,23 +1,18 @@
-// ══ FitQuest Service Worker v51 ══
-// Cache seguro para GitHub Pages + Android/WebView.
-// Regra principal: conteúdo dinâmico (HTML/JS/GIF) tenta a rede primeiro.
-// Nunca devolver index.html como fallback para uma imagem/GIF.
+// ══ FitQuest Service Worker — cache seguro para Android/WebView ══
 const CACHE_NAME = 'fitquest-v140';
-
-const ASSETS = [
+const APP_SHELL = [
   '/fitquest/',
   '/fitquest/index.html',
   '/fitquest/manifest.json',
   '/fitquest/icon-192.png',
-  '/fitquest/icon-512.png',
-  '/fitquest/gifler.min.js',
+  '/fitquest/icon-512.png'
 ];
 
 self.addEventListener('install', event => {
   event.waitUntil(
     caches.open(CACHE_NAME)
-      .then(cache => cache.addAll(ASSETS))
-      .catch(err => console.warn('FitQuest SW precache:', err))
+      .then(cache => cache.addAll(APP_SHELL))
+      .catch(err => console.warn('SW install cache:', err))
   );
   self.skipWaiting();
 });
@@ -25,84 +20,52 @@ self.addEventListener('install', event => {
 self.addEventListener('activate', event => {
   event.waitUntil(
     caches.keys().then(keys =>
-      Promise.all(
-        keys
-          .filter(key => key !== CACHE_NAME)
-          .map(key => caches.delete(key))
-      )
+      Promise.all(keys.filter(k => k !== CACHE_NAME).map(k => caches.delete(k)))
     ).then(() => self.clients.claim())
   );
 });
 
-function isExternalBackend(url){
-  return (
-    url.hostname.includes('supabase.co') ||
-    url.hostname.includes('anthropic.com') ||
-    url.hostname.includes('mercadopago') ||
-    url.hostname.includes('mpago') ||
-    url.hostname.includes('googleapis.com')
-  );
-}
-
-function isDynamicAsset(request, url){
-  const p=url.pathname.toLowerCase();
-  return (
-    request.mode === 'navigate' ||
-    request.destination === 'script' ||
-    request.destination === 'style' ||
-    request.destination === 'image' ||
-    request.destination === 'font' ||
-    p.endsWith('.html') ||
-    p.endsWith('.js') ||
-    p.endsWith('.json') ||
-    p.endsWith('.gif') ||
-    p.endsWith('.png') ||
-    p.endsWith('.jpg') ||
-    p.endsWith('.jpeg') ||
-    p.endsWith('.webp')
-  );
+function isExternalDynamic(url){
+  return url.hostname.includes('supabase.co') ||
+         url.hostname.includes('jsdelivr.net') ||
+         url.hostname.includes('unpkg.com') ||
+         url.hostname.includes('cdnjs.cloudflare.com') ||
+         url.hostname.includes('googleapis.com') ||
+         url.hostname.includes('mercadopago') ||
+         url.hostname.includes('mpago') ||
+         url.hostname.includes('anthropic.com');
 }
 
 self.addEventListener('fetch', event => {
-  const request=event.request;
-  if(request.method !== 'GET') return;
+  if(event.request.method !== 'GET') return;
+  const url = new URL(event.request.url);
+  if(url.origin !== self.location.origin || isExternalDynamic(url)) return;
 
-  const url=new URL(request.url);
-  if(isExternalBackend(url)) return;
-  if(url.origin !== self.location.origin) return;
+  const isNavigation = event.request.mode === 'navigate';
+  const isGif = url.pathname.toLowerCase().endsWith('.gif');
 
-  if(isDynamicAsset(request,url)){
-    event.respondWith(
-      fetch(request,{cache:'no-store'}).then(response => {
-        if(response && response.ok){
-          const clone=response.clone();
-          caches.open(CACHE_NAME).then(cache => cache.put(request,clone)).catch(()=>{});
-        }
-        return response;
-      }).catch(() =>
-        caches.match(request).then(cached => {
-          if(cached) return cached;
-          // Somente navegação pode usar a página principal como fallback.
-          if(request.mode === 'navigate'){
-            return caches.match('/fitquest/index.html');
-          }
-          return Response.error();
-        })
-      )
-    );
-    return;
-  }
+  event.respondWith((async()=>{
+    try{
+      // Para HTML e GIF, rede primeiro: evita Android preso em cache antigo.
+      const network = await fetch(event.request, {cache:'no-store'});
+      if(network && network.ok){
+        const cache = await caches.open(CACHE_NAME);
+        cache.put(event.request, network.clone()).catch(()=>{});
+        return network;
+      }
+    }catch(e){}
 
-  // Outros arquivos: cache primeiro, rede como fallback.
-  event.respondWith(
-    caches.match(request).then(cached =>
-      cached || fetch(request).then(response => {
-        if(response && response.ok){
-          const clone=response.clone();
-          caches.open(CACHE_NAME).then(cache => cache.put(request,clone)).catch(()=>{});
-        }
-        return response;
-      })
-    )
-  );
+    // Só usamos cache como fallback para o próprio recurso solicitado.
+    const cached = await caches.match(event.request);
+    if(cached) return cached;
+
+    // Apenas navegações podem cair no shell do app.
+    if(isNavigation){
+      const shell = await caches.match('/fitquest/index.html');
+      if(shell) return shell;
+    }
+
+    // Nunca devolver index.html para GIF, JS, CSS, imagem etc.
+    return new Response('', {status:404, statusText:'Offline'});
+  })());
 });

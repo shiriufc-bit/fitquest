@@ -59,7 +59,22 @@ function liberarPacoteEbooks(u) {
   _safe(()=>renderStore(u),'store');
 }
 </script>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" onerror="console.warn('Supabase CDN failed')"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" onerror="console.warn('Supabase jsDelivr failed; trying fallback')"></script>
+<script>
+/* Fallback do Supabase CDN para WebView/Android.
+   Se o primeiro CDN falhar, carrega a mesma biblioteca pelo unpkg. */
+(function(){
+  function loadFallback(){
+    if(window.supabase && window.supabase.createClient) return;
+    var s=document.createElement('script');
+    s.src='https://unpkg.com/@supabase/supabase-js@2';
+    s.onerror=function(){console.error('Supabase: nenhum CDN respondeu');};
+    document.head.appendChild(s);
+  }
+  if(window.supabase && window.supabase.createClient) return;
+  setTimeout(loadFallback,1200);
+})();
+</script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js" onerror="console.warn('jsPDF CDN failed')"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js" onerror="console.warn('jsPDF-AutoTable CDN failed')"></script>
 <style>
@@ -2465,7 +2480,7 @@ textarea.fi{resize:vertical;min-height:80px;}
 
 <script>
 // ══ SUPABASE ══
-const FQ_VERSION='v124';console.log('%cFitQuest '+FQ_VERSION,'color:#e50914;font-weight:bold;font-size:14px');
+const FQ_VERSION='v123';console.log('%cFitQuest '+FQ_VERSION,'color:#e50914;font-weight:bold;font-size:14px');
 // ══ PROXY DE IA (Cloudflare Worker) ══
 // Quando preenchido, a IA real funciona em produção com a chave protegida no servidor.
 // Deixe '' para usar o plano local (fallback). Ex: 'https://fitquest-ai.SEU-USUARIO.workers.dev'
@@ -2485,11 +2500,36 @@ try{
         storageKey:'fitquest-supabase-auth'
       }
     });
-    console.log('Supabase connected with persistent session');
+    console.log('Supabase connected');
   }
 }catch(e){console.warn('Supabase init failed, running offline:',e.message);}
 
 const DB={get(k){try{return JSON.parse(localStorage.getItem(k));}catch{return null;}},set(k,v){localStorage.setItem(k,JSON.stringify(v));},del(k){localStorage.removeItem(k);}};
+// Recupera a sessão do Supabase ao abrir/reabrir o app.
+// O WebView pode manter a página viva ou restaurá-la do cache; não dependemos
+// do fq_cur para considerar o usuário autenticado.
+async function fqRestoreSession(){
+  if(!sb) return;
+  try{
+    const {data:{session}}=await sb.auth.getSession();
+    if(!session?.user) return;
+    let u=await loadUDB(session.user.id);
+    if(!u){
+      const pending=DB.get('fq_pending_register');
+      const email=(session.user.email||'').toLowerCase();
+      const nome=(pending&&pending.email===email?pending.name:null)
+        ||session.user.user_metadata?.nome
+        ||email.split('@')[0];
+      u=novoPerfilLocal(session.user.id,nome,email);
+      if(email===ADMIN_EMAIL)u.isAdmin=true;
+      const {error}=await sb.from('alunos').upsert(userToRow(u),{onConflict:'id'});
+      if(error){console.error('Restore profile error:',error);return;}
+      DB.del('fq_pending_register');
+    }
+    if(!DB.get('fq_cur')) await entrarComPerfil(u);
+  }catch(e){console.warn('Falha ao restaurar sessão:',e);}
+}
+
 
 // ══ UI KIT: TOASTS + MODAIS (substituem alert/confirm nativos) ══
 function fqToast(msg,type='info',ms=4000){
@@ -3755,62 +3795,24 @@ function userToRow(u){
   return{id:u.id,nome:u.name,email:u.email,plano:u.plano||'free',trial_inicio:u.trialInicio||new Date().toISOString(),run_inicio:u.runInicio||null,run_ajuste_lesao:u.runAjusteLesao||false,treino_liberado:u.trainApproved||false,ai_plan:u.aiPlan||null,anamnese:u.anamnese||null,anamnese_geral:u.anamneseGeral||null,anamnese_musculacao:u.anamneseMusculacao||null,anamnese_corrida:u.anamneseCorrida||null,gym_week:u.gymWeek||1,run_week:u.runWeek||1,gym_done:u.gymDone||{},run_done:u.runDone||{},load_history:u.loadHistory||{},workout_history:u.workoutHistory||[],xp:u.xp||0,level:u.level||1,streak:u.streak||1,coins:u.coins||0,badges:u.badges||[],prs:u.prs||[],stats:u.stats||{treinos:0,distancia:0,semanas:0},avatar:u.avatar||null,evals:u.evals||[],program_intakes:u.programIntakes||{},ultimo_acesso:new Date().toISOString(),updated_at:new Date().toISOString()};
   // Obs.: purchases/pacote_ebooks/is_admin/plano NÃO são enviados pelo aluno — são protegidos no banco e só mudam via webhook de pagamento ou admin.
 }
-async function syncU(u, options={}){
-  if(!sb||!u){console.warn('sync: sem sb ou sem usuário');return {ok:false,error:'supabase-offline'};}
-  if(!u.id){console.warn('sync: usuário sem id, não sincroniza');return {ok:false,error:'missing-user-id'};}
+async function syncU(u){
+  if(!sb||!u){console.warn('sync: sem sb ou sem usuário');return;}
+  if(!u.id){console.warn('sync: usuário sem id, não sincroniza');return;}
   try{
-    const{data,error}=await sb.from('alunos').upsert(userToRow(u),{onConflict:'id'}).select('id').single();
+    const{error}=await sb.from('alunos').upsert(userToRow(u),{onConflict:'id'});
     if(error){
       console.error('sync falhou:',error.message,error);
-      if(!options.silent) fqToast('⚠️ Não foi possível salvar no servidor: '+error.message,'warn',6000);
-      return {ok:false,error:error.message};
+      // Não deixa o erro passar em silêncio — se a anamnese/plano não salvou no
+      // servidor, o aluno some com tudo assim que limpar o cache ou trocar de
+      // aparelho. Melhor avisar na hora do que descobrir dias depois.
+      fqToast('⚠️ Não foi possível salvar no servidor: '+error.message,'warn',6000);
     }
-    return {ok:true,data};
   }catch(e){
     console.error('sync falhou (exceção):',e.message,e);
-    if(!options.silent) fqToast('⚠️ Não foi possível salvar no servidor: '+e.message,'warn',6000);
-    return {ok:false,error:e.message};
+    fqToast('⚠️ Não foi possível salvar no servidor: '+e.message,'warn',6000);
   }
 }
-async function loadUDB(userId){
-  if(!sb||!userId)return null;
-  try{
-    const{data,error}=await sb.from('alunos').select('*').eq('id',userId).maybeSingle();
-    if(error){ console.warn('loadUDB falhou:',error.message); return null; }
-    if(!data)return null;
-    return rowToUser(data);
-  }catch(e){
-    console.warn('loadUDB exceção:',e.message);
-    return null;
-  }
-}
-// Garante que toda conta Auth tenha também seu perfil em "alunos".
-// Isso cobre cadastro com confirmação de e-mail, primeiro login e recuperação
-// de sessão no Android/WebView.
-async function ensureProfileForAuthUser(authUser, fallbackName){
-  if(!sb||!authUser?.id)return {ok:false,error:'missing-auth-user'};
-  const email=(authUser.email||'').trim().toLowerCase();
-  let existing=await loadUDB(authUser.id);
-  if(existing)return {ok:true,user:existing,created:false};
-
-  const pending=DB.get('fq_pending_profile')||{};
-  const name=(fallbackName||authUser.user_metadata?.nome||pending.name||email.split('@')[0]||'Aluno').trim();
-  const u=novoPerfilLocal(authUser.id,name,email);
-  if(email===ADMIN_EMAIL)u.isAdmin=true;
-
-  const result=await syncU(u,{silent:true});
-  if(!result.ok){
-    console.error('ensureProfileForAuthUser: não foi possível criar alunos:',result.error);
-    return {ok:false,error:result.error,user:u};
-  }
-
-  // Confirma que o registro realmente ficou disponível para a sessão atual.
-  const fresh=await loadUDB(authUser.id);
-  if(!fresh){
-    return {ok:false,error:'perfil-criado-mas-nao-pode-ser-lido',user:u};
-  }
-  return {ok:true,user:fresh,created:true};
-}
+async function loadUDB(userId){if(!sb||!userId)return null;try{const{data}=await sb.from('alunos').select('*').eq('id',userId).single();if(!data)return null;return rowToUser(data);}catch(e){return null;}}
 
 // ══ AUTH (Supabase Auth — senhas nunca ficam no código nem no navegador) ══
 // Admin identificado por hash — e-mail real nunca exposto no fonte
@@ -3869,36 +3871,53 @@ async function doLogin(){
   const pass=document.getElementById('login-pass').value;
   const rateErr=_checkLoginRateLimit(email); if(rateErr){showErr(rateErr);return;}
   if(!email||!pass){showErr('Preencha e-mail e senha.');return;}
-  if(!sb){showErr('Sem conexão com o servidor. Verifique sua internet e recarregue a página.');return;}
+  if(!sb){showErr('O servidor de autenticação não carregou. Verifique a internet e recarregue a página.');return;}
+
   const btn=document.getElementById('btn-login');btn.textContent='Entrando...';btn.disabled=true;
   try{
     const{data,error}=await sb.auth.signInWithPassword({email,password:pass});
     if(error){
-      const m=/invalid/i.test(error.message)?'E-mail ou senha incorretos.':(/confirm/i.test(error.message)?'Confirme seu e-mail antes de entrar (verifique sua caixa de entrada).':'Não foi possível entrar: '+error.message);
+      console.error('Supabase signIn:',error);
+      const m=/invalid/i.test(error.message)
+        ?'E-mail ou senha incorretos.'
+        :(/confirm/i.test(error.message)
+          ?'Confirme seu e-mail antes de entrar. Verifique também a pasta de spam.'
+          :'Não foi possível entrar: '+error.message);
       showErr(m);return;
     }
-    const pending=DB.get('fq_pending_profile')||{};
-    const ensured=await ensureProfileForAuthUser(
-      data.user,
-      pending.email===email ? pending.name : (data.user.user_metadata?.nome||email.split('@')[0])
-    );
-    if(!ensured.ok){
-      showErr('Login realizado, mas o perfil não pôde ser salvo no servidor. Tente novamente. Erro: '+ensured.error);
-      return;
+
+    const pending=DB.get('fq_pending_register');
+    let u=await loadUDB(data.user.id);
+
+    if(!u){
+      const nome=(pending && pending.email===email ? pending.name : null)
+        || data.user.user_metadata?.nome
+        || email.split('@')[0];
+      u=novoPerfilLocal(data.user.id,nome,email);
+      if(email===ADMIN_EMAIL)u.isAdmin=true;
+
+      const{error:profileError}=await sb.from('alunos').upsert(userToRow(u),{onConflict:'id'});
+      if(profileError){
+        console.error('Erro criando perfil após login:',profileError);
+        showErr('Login realizado, mas não consegui salvar seu perfil no banco. Verifique as políticas da tabela "alunos" no Supabase. Detalhe: '+profileError.message);
+        return;
+      }
+      DB.del('fq_pending_register');
+    }else if(pending && pending.email===email){
+      DB.del('fq_pending_register');
     }
-    let u=ensured.user;
-    DB.del('fq_pending_profile');
-    if(email===ADMIN_EMAIL)u.isAdmin=true; // garante admin mesmo se o banco não tiver a flag
-    const users=DB.get('fq_users')||{};users[email]=u;DB.set('fq_users',users);DB.set('fq_cur',email);
+
+    if(email===ADMIN_EMAIL)u.isAdmin=true;
     await entrarComPerfil(u);
   }catch(e){
     console.error('Login error:',e);
     const isNet=/fetch|network|failed|load/i.test(e?.message||'');
     showErr(isNet
-      ?'⚠️ Servidor indisponível. O projeto Supabase pode estar pausado — acesse app.supabase.com e clique em Restore/Resume.'
+      ?'⚠️ Servidor indisponível. Verifique sua internet e tente novamente.'
       :'Erro ao entrar: '+(e?.message||'tente novamente'));
+  }finally{
+    btn.textContent='Entrar';btn.disabled=false;
   }
-  finally{btn.textContent='Entrar';btn.disabled=false;}
 }
 function novoPerfilLocal(id,name,email){
   return{id,name,email,anamneseDone:false,anamneseMuscDone:false,anamneseCorridaDone:false,anamneseGeral:null,anamneseMusculacao:null,anamneseCorrida:null,createdAt:new Date().toISOString(),plano:'free',trialInicio:new Date().toISOString(),assinaturaStatus:'trial',trainApproved:true,isAdmin:false,xp:0,level:1,streak:1,coins:0,stats:{treinos:0,distancia:0,semanas:0},badges:[],missions:MISSOES_PADRAO.map(m=>({...m})),prs:[],gymWeek:1,gymDone:{},runWeek:1,runDone:{},aiPlan:null,workoutHistory:[],loadHistory:{},purchases:[],pacoteEbooks:false,programIntakes:{},evals:[]};
@@ -3981,52 +4000,82 @@ async function doRegister(){
   if(!valEmail.ok){
     if(valEmail.sugestao){
       showErr(`${valEmail.msg} <button onclick="aplicarSugestaoEmail('reg-email','${valEmail.sugestao}')" style="background:none;border:none;color:var(--r);font-weight:800;text-decoration:underline;cursor:pointer;font-size:inherit;padding:0;margin-left:4px">Corrigir</button>`, true);
-    } else {
-      showErr(valEmail.msg.replace(/<[^>]*>/g,''));  // sem HTML nas demais mensagens
-    }
+    } else showErr(valEmail.msg.replace(/<[^>]*>/g,''));
     return;
   }
-  if(!sb){showErr('Sem conexão com o servidor. Verifique sua internet e recarregue a página.');return;}
-  const btn=document.getElementById('btn-reg');btn.textContent='Criando...';btn.disabled=true;
-  try{
-    const{data,error}=await sb.auth.signUp({email,password:pass,options:{data:{nome:name},emailRedirectTo:'https://shiriufc-bit.github.io/fitquest/'}});
-    if(error){
-      const m=/already|registered/i.test(error.message)?'E-mail já cadastrado. Use "Entrar".':'Não foi possível criar a conta: '+error.message;
-      showErr(m);return;
-    }
-    // O Supabase pode exigir confirmação de e-mail. Nesse caso não existe
-    // sessão ainda, então guardamos somente os dados não sensíveis necessários
-    // para completar a criação do perfil no primeiro login.
-    if(!data.session){
-      DB.set('fq_pending_profile',{name,email,userId:data.user?.id||null,createdAt:new Date().toISOString()});
-      showErr('Conta criada! Enviamos um link de confirmação para o seu e-mail. Confirme e depois faça login.');
-      switchAuth('login');return;
-    }
+  if(!sb){showErr('O servidor de autenticação não carregou. Verifique a internet, feche e abra o app e tente novamente.');return;}
 
-    const ensured=await ensureProfileForAuthUser(data.user,name);
-    if(!ensured.ok){
-      showErr('Sua conta foi criada, mas não conseguimos salvar o perfil no servidor. Tente entrar novamente. Erro: '+ensured.error);
+  const btn=document.getElementById('btn-reg');
+  btn.textContent='Criando...';btn.disabled=true;
+  try{
+    const{data,error}=await sb.auth.signUp({
+      email,
+      password:pass,
+      options:{
+        data:{nome:name},
+        emailRedirectTo:'https://shiriufc-bit.github.io/fitquest/'
+      }
+    });
+
+    if(error){
+      console.error('Supabase signUp:',error);
+      const msg=(error.message||'').toLowerCase();
+      if(/already|registered|user already/i.test(msg)){
+        showErr('Este e-mail já está cadastrado. Use "Entrar".');
+      }else if(/rate limit|too many/i.test(msg)){
+        showErr('Muitas tentativas de cadastro. Aguarde alguns minutos e tente novamente.');
+      }else{
+        showErr('Não foi possível criar a conta: '+error.message);
+      }
       return;
     }
-    const u=ensured.user;
-    DB.del('fq_pending_profile');
-    const users=DB.get('fq_users')||{};users[email]=u;DB.set('fq_users',users);DB.set('fq_cur',email);
-    enviarEmailBoasVindas(name, email); // e-mail de boas-vindas (não bloqueia)
-    // NOTA: o aviso pra você (admin) de novo cadastro NÃO é mais disparado daqui.
-    // Isso agora acontece pelo servidor (função notificar-novo-aluno + Database
-    // Webhook), que é mais confiável — funciona mesmo se o aluno fechar o app
-    // logo após se cadastrar. Ver notificarAdminNovoAluno() abaixo, mantida só
-    // como reserva manual (não é mais chamada automaticamente).
+
+    /* Guarda os dados mínimos localmente até existir uma sessão autenticada.
+       Isso é necessário quando o Supabase exige confirmação de e-mail:
+       nessa situação signUp retorna session=null e a tabela alunos não pode
+       ser escrita com RLS antes do primeiro login. */
+    const pending={
+      id:data?.user?.id||null,
+      name,email,
+      createdAt:new Date().toISOString()
+    };
+    DB.set('fq_pending_register',pending);
+
+    if(!data.session){
+      showErr('Cadastro criado. Verifique seu e-mail e clique no link de confirmação. Depois volte aqui e entre com seu e-mail e senha.');
+      switchAuth('login');
+      document.getElementById('login-email').value=email;
+      document.getElementById('login-pass').value='';
+      return;
+    }
+
+    let u=novoPerfilLocal(data.user.id,name,email);
+    if(email===ADMIN_EMAIL)u.isAdmin=true;
+    const{error:profileError}=await sb.from('alunos').upsert(userToRow(u),{onConflict:'id'});
+    if(profileError){
+      console.error('Erro criando perfil alunos:',profileError);
+      DB.set('fq_pending_register',pending);
+      showErr('Sua conta foi criada, mas o perfil ainda não pôde ser salvo. Entre novamente para concluir o cadastro. Detalhe: '+profileError.message);
+      switchAuth('login');
+      document.getElementById('login-email').value=email;
+      return;
+    }
+
+    DB.del('fq_pending_register');
+    const users=DB.get('fq_users')||{};
+    users[email]=u;DB.set('fq_users',users);DB.set('fq_cur',email);
+    enviarEmailBoasVindas(name,email);
     if(u.isAdmin){await loadAdmin();show('sc-adm');return;}
     initAnam('geral');show('sc-anam-geral');
   }catch(e){
     console.error('Register error:',e);
-    const isNet=/fetch|network|failed|load/i.test(e?.message||'');
+    const isNet=/fetch|network|failed|load|cdn/i.test(e?.message||'');
     showErr(isNet
-      ?'⚠️ Servidor indisponível. O projeto Supabase pode estar pausado — acesse app.supabase.com e clique em Restore/Resume.'
+      ?'⚠️ Não foi possível conectar ao servidor. Verifique sua internet e tente novamente.'
       :'Erro ao criar conta: '+(e?.message||'tente novamente'));
+  }finally{
+    btn.textContent='Criar conta grátis';btn.disabled=false;
   }
-  finally{btn.textContent='Criar conta grátis';btn.disabled=false;}
 }
 function checkAdminBtn() {
   const u = getU();
@@ -7968,19 +8017,14 @@ function temGifDemo(exId){ return EXERCICIOS_COM_GIF.has(exId); }
 // Tenta o gif em várias pastas do repo, na ordem abaixo, antes de cair no ícone de reserva.
 // Isso cobre uploads que acabaram indo parar em pastas diferentes ao longo do tempo.
 const GIF_SEARCH_PATHS=['exercicios/','assets/gifs/',''];
-function gifUrl(exId,tentativa=0){
-  const rel=GIF_SEARCH_PATHS[tentativa]+exId+'.gif';
-  try{return new URL(rel,document.baseURI).href;}catch(e){return rel;}
-}
-function getExGif(exId){ return gifUrl(exId,0); }
+function getExGif(exId){ return GIF_SEARCH_PATHS[0]+exId+'.gif'; }
 function gifFallback(imgEl,exId,containerSelector){
   const tentativa=(parseInt(imgEl.dataset.gifAttempt||'0',10))+1;
   if(tentativa<GIF_SEARCH_PATHS.length){
     imgEl.dataset.gifAttempt=tentativa;
-    imgEl.src=gifUrl(exId,tentativa);
+    imgEl.src=GIF_SEARCH_PATHS[tentativa]+exId+'.gif';
   } else {
-    const cont=imgEl.closest(containerSelector);
-    if(cont)cont.innerHTML=renderExThumbFallback(exId);
+    imgEl.closest(containerSelector).innerHTML=renderExThumbFallback(exId);
   }
 }
 
@@ -8001,7 +8045,7 @@ function gifCanvasTentar(cv, exId, containerSelector, tentativa){
     if(cont) cont.innerHTML = renderExThumbFallback(exId);
     return;
   }
-  const url = gifUrl(exId,tentativa);
+  const url = GIF_SEARCH_PATHS[tentativa]+exId+'.gif';
   if(typeof gifler === 'undefined'){
     console.warn('GIF: gifler não carregou — usando <img> como alternativa.');
     // Lib não carregou (ex: sem internet no instante do load) — tenta o jeito
@@ -11306,12 +11350,7 @@ function showIntakeResult(plan, p, u){
 }
 
 // ══ PWA ══
-if('serviceWorker' in navigator)window.addEventListener('load',async()=>{
-  try{
-    const reg=await navigator.serviceWorker.register('sw.js',{updateViaCache:'none'});
-    try{await reg.update();}catch(e){}
-  }catch(e){console.warn('Service Worker indisponível:',e.message);}
-});
+if('serviceWorker' in navigator)window.addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}));
 let deferredPrompt=null;
 window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();deferredPrompt=e;setTimeout(()=>{if(!localStorage.getItem('pwa-dismissed'))document.getElementById('pwa-banner').style.display='block';},5000);});
 function installPWA(){if(deferredPrompt){deferredPrompt.prompt();deferredPrompt.userChoice.then(()=>{deferredPrompt=null;dismissBanner();});}else{fqAlert('Instalar no iPhone',t('msg.15e1b9d7f2'),'📱');dismissBanner();}}
@@ -11333,20 +11372,7 @@ function dismissBanner(){document.getElementById('pwa-banner').style.display='no
     if(sb){
       const{data:{session}}=await sb.auth.getSession();
       if(session&&session.user){
-        let fresh=await loadUDB(session.user.id);
-        if(!fresh){
-          const pending=DB.get('fq_pending_profile')||{};
-          const ensured=await ensureProfileForAuthUser(
-            session.user,
-            pending.email===session.user.email ? pending.name : (session.user.user_metadata?.nome||session.user.email?.split('@')[0])
-          );
-          if(ensured.ok){
-            fresh=ensured.user;
-            DB.del('fq_pending_profile');
-          }else{
-            console.warn('Sessão existe, mas perfil ainda não está disponível:',ensured.error);
-          }
-        }
+        const fresh=await loadUDB(session.user.id);
         if(fresh){
           if(fresh.email===ADMIN_EMAIL)fresh.isAdmin=true; // admin pelo e-mail, sempre
           const users=DB.get('fq_users')||{};
@@ -12919,5 +12945,8 @@ function renderHomeMissoesCard(){
 })();
 </script>
 <script src="gifler.min.js"></script>
+<script>
+window.addEventListener('load',function(){setTimeout(fqRestoreSession,250);});
+</script>
 </body>
 </html>
