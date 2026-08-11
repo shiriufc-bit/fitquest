@@ -1,6 +1,8 @@
-// ══ FitQuest Service Worker v50 ══
-// Gerado em: 09/08/2026 
-const CACHE_NAME = 'fitquest-v132';
+// ══ FitQuest Service Worker v51 ══
+// Cache seguro para GitHub Pages + Android/WebView.
+// Regra principal: conteúdo dinâmico (HTML/JS/GIF) tenta a rede primeiro.
+// Nunca devolver index.html como fallback para uma imagem/GIF.
+const CACHE_NAME = 'fitquest-v140';
 
 const ASSETS = [
   '/fitquest/',
@@ -8,44 +10,99 @@ const ASSETS = [
   '/fitquest/manifest.json',
   '/fitquest/icon-192.png',
   '/fitquest/icon-512.png',
+  '/fitquest/gifler.min.js',
 ];
 
-self.addEventListener('install', e => {
-  e.waitUntil(
-    caches.open(CACHE_NAME).then(cache => cache.addAll(ASSETS)).catch(()=>{})
+self.addEventListener('install', event => {
+  event.waitUntil(
+    caches.open(CACHE_NAME)
+      .then(cache => cache.addAll(ASSETS))
+      .catch(err => console.warn('FitQuest SW precache:', err))
   );
   self.skipWaiting();
 });
 
-self.addEventListener('activate', e => {
-  e.waitUntil(
+self.addEventListener('activate', event => {
+  event.waitUntil(
     caches.keys().then(keys =>
-      Promise.all(keys.filter(k => k !== CACHE_NAME).map(k => caches.delete(k)))
-    )
+      Promise.all(
+        keys
+          .filter(key => key !== CACHE_NAME)
+          .map(key => caches.delete(key))
+      )
+    ).then(() => self.clients.claim())
   );
-  self.clients.claim();
 });
 
-self.addEventListener('fetch', e => {
-  if(e.request.method !== 'GET') return;
-  const url = new URL(e.request.url);
-  if(
+function isExternalBackend(url){
+  return (
     url.hostname.includes('supabase.co') ||
     url.hostname.includes('anthropic.com') ||
     url.hostname.includes('mercadopago') ||
     url.hostname.includes('mpago') ||
-    url.hostname.includes('googleapis.com') ||
-    url.hostname.includes('jsdelivr.net')
-  ) return;
-  e.respondWith(
-    caches.match(e.request).then(cached => {
-      if(cached) return cached;
-      return fetch(e.request).then(response => {
-        if(!response || response.status !== 200 || response.type !== 'basic') return response;
-        const clone = response.clone();
-        caches.open(CACHE_NAME).then(cache => cache.put(e.request, clone));
+    url.hostname.includes('googleapis.com')
+  );
+}
+
+function isDynamicAsset(request, url){
+  const p=url.pathname.toLowerCase();
+  return (
+    request.mode === 'navigate' ||
+    request.destination === 'script' ||
+    request.destination === 'style' ||
+    request.destination === 'image' ||
+    request.destination === 'font' ||
+    p.endsWith('.html') ||
+    p.endsWith('.js') ||
+    p.endsWith('.json') ||
+    p.endsWith('.gif') ||
+    p.endsWith('.png') ||
+    p.endsWith('.jpg') ||
+    p.endsWith('.jpeg') ||
+    p.endsWith('.webp')
+  );
+}
+
+self.addEventListener('fetch', event => {
+  const request=event.request;
+  if(request.method !== 'GET') return;
+
+  const url=new URL(request.url);
+  if(isExternalBackend(url)) return;
+  if(url.origin !== self.location.origin) return;
+
+  if(isDynamicAsset(request,url)){
+    event.respondWith(
+      fetch(request,{cache:'no-store'}).then(response => {
+        if(response && response.ok){
+          const clone=response.clone();
+          caches.open(CACHE_NAME).then(cache => cache.put(request,clone)).catch(()=>{});
+        }
         return response;
-      }).catch(() => caches.match('/fitquest/'));
-    })
+      }).catch(() =>
+        caches.match(request).then(cached => {
+          if(cached) return cached;
+          // Somente navegação pode usar a página principal como fallback.
+          if(request.mode === 'navigate'){
+            return caches.match('/fitquest/index.html');
+          }
+          return Response.error();
+        })
+      )
+    );
+    return;
+  }
+
+  // Outros arquivos: cache primeiro, rede como fallback.
+  event.respondWith(
+    caches.match(request).then(cached =>
+      cached || fetch(request).then(response => {
+        if(response && response.ok){
+          const clone=response.clone();
+          caches.open(CACHE_NAME).then(cache => cache.put(request,clone)).catch(()=>{});
+        }
+        return response;
+      })
+    )
   );
 });
