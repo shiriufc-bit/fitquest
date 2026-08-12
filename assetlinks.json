@@ -1,8 +1,0 @@
-[{
-      "relation": ["delegate_permission/common.handle_all_urls"],
-      "target": {
-        "namespace": "android_app",
-        "package_name": "com.fitquest.meuapp",
-        "sha256_cert_fingerprints": ["92:78:0C:32:68:55:F2:26:A7:BF:8C:7D:B9:0A:78:C1:7C:18:AA:B2:03:C8:80:A3:49:C4:1C:24:DE:88:E7:80"]
-      }
-    }]
