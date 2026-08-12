@@ -1,8 +1,0 @@
-[{
-      "relation": ["delegate_permission/common.handle_all_urls"],
-      "target": {
-        "namespace": "android_app",
-        "package_name": "io.github.shiriufc_bit.twa",
-        "sha256_cert_fingerprints": ["B1:34:F4:9A:90:D7:5C:61:26:6C:76:ED:A6:75:E6:B4:D6:E0:68:B8:45:3B:06:99:14:2C:E8:E3:1B:CA:A1:0A"]
-      }
-    }]
