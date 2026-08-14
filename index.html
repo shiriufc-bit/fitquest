@@ -59,22 +59,7 @@ function liberarPacoteEbooks(u) {
   _safe(()=>renderStore(u),'store');
 }
 </script>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" onerror="console.warn('Supabase jsDelivr failed; trying fallback')"></script>
-<script>
-/* Fallback do Supabase CDN para WebView/Android.
-   Se o primeiro CDN falhar, carrega a mesma biblioteca pelo unpkg. */
-(function(){
-  function loadFallback(){
-    if(window.supabase && window.supabase.createClient) return;
-    var s=document.createElement('script');
-    s.src='https://unpkg.com/@supabase/supabase-js@2';
-    s.onerror=function(){console.error('Supabase: nenhum CDN respondeu');};
-    document.head.appendChild(s);
-  }
-  if(window.supabase && window.supabase.createClient) return;
-  setTimeout(loadFallback,1200);
-})();
-</script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" onerror="console.warn('Supabase CDN failed')"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js" onerror="console.warn('jsPDF CDN failed')"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js" onerror="console.warn('jsPDF-AutoTable CDN failed')"></script>
 <style>
@@ -2491,45 +2476,12 @@ const FN_URL=SUPABASE_URL+'/functions/v1';
 let sb=null;
 try{
   if(typeof supabase!=='undefined' && supabase.createClient){
-    sb=supabase.createClient(SUPABASE_URL,SUPABASE_KEY,{
-      auth:{
-        persistSession:true,
-        autoRefreshToken:true,
-        detectSessionInUrl:true,
-        storage:window.localStorage,
-        storageKey:'fitquest-supabase-auth'
-      }
-    });
+    sb=supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
     console.log('Supabase connected');
   }
 }catch(e){console.warn('Supabase init failed, running offline:',e.message);}
 
 const DB={get(k){try{return JSON.parse(localStorage.getItem(k));}catch{return null;}},set(k,v){localStorage.setItem(k,JSON.stringify(v));},del(k){localStorage.removeItem(k);}};
-// Recupera a sessão do Supabase ao abrir/reabrir o app.
-// O WebView pode manter a página viva ou restaurá-la do cache; não dependemos
-// do fq_cur para considerar o usuário autenticado.
-async function fqRestoreSession(){
-  if(!sb) return;
-  try{
-    const {data:{session}}=await sb.auth.getSession();
-    if(!session?.user) return;
-    let u=await loadUDB(session.user.id);
-    if(!u){
-      const pending=DB.get('fq_pending_register');
-      const email=(session.user.email||'').toLowerCase();
-      const nome=(pending&&pending.email===email?pending.name:null)
-        ||session.user.user_metadata?.nome
-        ||email.split('@')[0];
-      u=novoPerfilLocal(session.user.id,nome,email);
-      if(email===ADMIN_EMAIL)u.isAdmin=true;
-      const {error}=await sb.from('alunos').upsert(userToRow(u),{onConflict:'id'});
-      if(error){console.error('Restore profile error:',error);return;}
-      DB.del('fq_pending_register');
-    }
-    if(!DB.get('fq_cur')) await entrarComPerfil(u);
-  }catch(e){console.warn('Falha ao restaurar sessão:',e);}
-}
-
 
 // ══ UI KIT: TOASTS + MODAIS (substituem alert/confirm nativos) ══
 function fqToast(msg,type='info',ms=4000){
@@ -3816,7 +3768,7 @@ async function loadUDB(userId){if(!sb||!userId)return null;try{const{data}=await
 
 // ══ AUTH (Supabase Auth — senhas nunca ficam no código nem no navegador) ══
 // Admin identificado por hash — e-mail real nunca exposto no fonte
-const _AH = btoa('rennan@rennandias.com.br'); // base64 — não é segurança absoluta mas evita scraping trivial
+const _AH = btoa('rennandg2012@hotmail.com'); // base64 — não é segurança absoluta mas evita scraping trivial
 const ADMIN_EMAIL = atob(_AH); // reconstruído em runtime
 function goAuth(mode){show('sc-auth');switchAuth(mode);_pushNavState('screen:auth');}
 // Aplica o idioma escolhido assim que a página carrega
@@ -3871,53 +3823,32 @@ async function doLogin(){
   const pass=document.getElementById('login-pass').value;
   const rateErr=_checkLoginRateLimit(email); if(rateErr){showErr(rateErr);return;}
   if(!email||!pass){showErr('Preencha e-mail e senha.');return;}
-  if(!sb){showErr('O servidor de autenticação não carregou. Verifique a internet e recarregue a página.');return;}
-
+  if(!sb){showErr('Sem conexão com o servidor. Verifique sua internet e recarregue a página.');return;}
   const btn=document.getElementById('btn-login');btn.textContent='Entrando...';btn.disabled=true;
   try{
     const{data,error}=await sb.auth.signInWithPassword({email,password:pass});
     if(error){
-      console.error('Supabase signIn:',error);
-      const m=/invalid/i.test(error.message)
-        ?'E-mail ou senha incorretos.'
-        :(/confirm/i.test(error.message)
-          ?'Confirme seu e-mail antes de entrar. Verifique também a pasta de spam.'
-          :'Não foi possível entrar: '+error.message);
+      const m=/invalid/i.test(error.message)?'E-mail ou senha incorretos.':(/confirm/i.test(error.message)?'Confirme seu e-mail antes de entrar (verifique sua caixa de entrada).':'Não foi possível entrar: '+error.message);
       showErr(m);return;
     }
-
-    const pending=DB.get('fq_pending_register');
     let u=await loadUDB(data.user.id);
-
     if(!u){
-      const nome=(pending && pending.email===email ? pending.name : null)
-        || data.user.user_metadata?.nome
-        || email.split('@')[0];
-      u=novoPerfilLocal(data.user.id,nome,email);
+      // Primeiro login sem perfil ainda (conta criada antes ou pelo painel) — cria o perfil
+      u=novoPerfilLocal(data.user.id,data.user.user_metadata?.nome||email.split('@')[0],email);
       if(email===ADMIN_EMAIL)u.isAdmin=true;
-
-      const{error:profileError}=await sb.from('alunos').upsert(userToRow(u),{onConflict:'id'});
-      if(profileError){
-        console.error('Erro criando perfil após login:',profileError);
-        showErr('Login realizado, mas não consegui salvar seu perfil no banco. Verifique as políticas da tabela "alunos" no Supabase. Detalhe: '+profileError.message);
-        return;
-      }
-      DB.del('fq_pending_register');
-    }else if(pending && pending.email===email){
-      DB.del('fq_pending_register');
+      await sb.from('alunos').upsert(userToRow(u),{onConflict:'id'});
+      const fresh=await loadUDB(data.user.id);if(fresh)u=fresh;
     }
-
-    if(email===ADMIN_EMAIL)u.isAdmin=true;
+    if(email===ADMIN_EMAIL)u.isAdmin=true; // garante admin mesmo se o banco não tiver a flag
     await entrarComPerfil(u);
   }catch(e){
     console.error('Login error:',e);
     const isNet=/fetch|network|failed|load/i.test(e?.message||'');
     showErr(isNet
-      ?'⚠️ Servidor indisponível. Verifique sua internet e tente novamente.'
+      ?'⚠️ Servidor indisponível. O projeto Supabase pode estar pausado — acesse app.supabase.com e clique em Restore/Resume.'
       :'Erro ao entrar: '+(e?.message||'tente novamente'));
-  }finally{
-    btn.textContent='Entrar';btn.disabled=false;
   }
+  finally{btn.textContent='Entrar';btn.disabled=false;}
 }
 function novoPerfilLocal(id,name,email){
   return{id,name,email,anamneseDone:false,anamneseMuscDone:false,anamneseCorridaDone:false,anamneseGeral:null,anamneseMusculacao:null,anamneseCorrida:null,createdAt:new Date().toISOString(),plano:'free',trialInicio:new Date().toISOString(),assinaturaStatus:'trial',trainApproved:true,isAdmin:false,xp:0,level:1,streak:1,coins:0,stats:{treinos:0,distancia:0,semanas:0},badges:[],missions:MISSOES_PADRAO.map(m=>({...m})),prs:[],gymWeek:1,gymDone:{},runWeek:1,runDone:{},aiPlan:null,workoutHistory:[],loadHistory:{},purchases:[],pacoteEbooks:false,programIntakes:{},evals:[]};
@@ -4000,82 +3931,43 @@ async function doRegister(){
   if(!valEmail.ok){
     if(valEmail.sugestao){
       showErr(`${valEmail.msg} <button onclick="aplicarSugestaoEmail('reg-email','${valEmail.sugestao}')" style="background:none;border:none;color:var(--r);font-weight:800;text-decoration:underline;cursor:pointer;font-size:inherit;padding:0;margin-left:4px">Corrigir</button>`, true);
-    } else showErr(valEmail.msg.replace(/<[^>]*>/g,''));
+    } else {
+      showErr(valEmail.msg.replace(/<[^>]*>/g,''));  // sem HTML nas demais mensagens
+    }
     return;
   }
-  if(!sb){showErr('O servidor de autenticação não carregou. Verifique a internet, feche e abra o app e tente novamente.');return;}
-
-  const btn=document.getElementById('btn-reg');
-  btn.textContent='Criando...';btn.disabled=true;
+  if(!sb){showErr('Sem conexão com o servidor. Verifique sua internet e recarregue a página.');return;}
+  const btn=document.getElementById('btn-reg');btn.textContent='Criando...';btn.disabled=true;
   try{
-    const{data,error}=await sb.auth.signUp({
-      email,
-      password:pass,
-      options:{
-        data:{nome:name},
-        emailRedirectTo:'https://shiriufc-bit.github.io/fitquest/'
-      }
-    });
-
+    const{data,error}=await sb.auth.signUp({email,password:pass,options:{data:{nome:name},emailRedirectTo:'https://shiriufc-bit.github.io/fitquest/'}});
     if(error){
-      console.error('Supabase signUp:',error);
-      const msg=(error.message||'').toLowerCase();
-      if(/already|registered|user already/i.test(msg)){
-        showErr('Este e-mail já está cadastrado. Use "Entrar".');
-      }else if(/rate limit|too many/i.test(msg)){
-        showErr('Muitas tentativas de cadastro. Aguarde alguns minutos e tente novamente.');
-      }else{
-        showErr('Não foi possível criar a conta: '+error.message);
-      }
-      return;
+      const m=/already|registered/i.test(error.message)?'E-mail já cadastrado. Use "Entrar".':'Não foi possível criar a conta: '+error.message;
+      showErr(m);return;
     }
-
-    /* Guarda os dados mínimos localmente até existir uma sessão autenticada.
-       Isso é necessário quando o Supabase exige confirmação de e-mail:
-       nessa situação signUp retorna session=null e a tabela alunos não pode
-       ser escrita com RLS antes do primeiro login. */
-    const pending={
-      id:data?.user?.id||null,
-      name,email,
-      createdAt:new Date().toISOString()
-    };
-    DB.set('fq_pending_register',pending);
-
     if(!data.session){
-      showErr('Cadastro criado. Verifique seu e-mail e clique no link de confirmação. Depois volte aqui e entre com seu e-mail e senha.');
-      switchAuth('login');
-      document.getElementById('login-email').value=email;
-      document.getElementById('login-pass').value='';
-      return;
+      showErr('Conta criada! Enviamos um link de confirmação para o seu e-mail. Confirme e depois faça login.');
+      switchAuth('login');return;
     }
-
-    let u=novoPerfilLocal(data.user.id,name,email);
+    const u=novoPerfilLocal(data.user.id,name,email);
     if(email===ADMIN_EMAIL)u.isAdmin=true;
-    const{error:profileError}=await sb.from('alunos').upsert(userToRow(u),{onConflict:'id'});
-    if(profileError){
-      console.error('Erro criando perfil alunos:',profileError);
-      DB.set('fq_pending_register',pending);
-      showErr('Sua conta foi criada, mas o perfil ainda não pôde ser salvo. Entre novamente para concluir o cadastro. Detalhe: '+profileError.message);
-      switchAuth('login');
-      document.getElementById('login-email').value=email;
-      return;
-    }
-
-    DB.del('fq_pending_register');
-    const users=DB.get('fq_users')||{};
-    users[email]=u;DB.set('fq_users',users);DB.set('fq_cur',email);
-    enviarEmailBoasVindas(name,email);
+    await sb.from('alunos').upsert(userToRow(u),{onConflict:'id'});
+    const users=DB.get('fq_users')||{};users[email]=u;DB.set('fq_users',users);DB.set('fq_cur',email);
+    enviarEmailBoasVindas(name, email); // e-mail de boas-vindas (não bloqueia)
+    // NOTA: o aviso pra você (admin) de novo cadastro NÃO é mais disparado daqui.
+    // Isso agora acontece pelo servidor (função notificar-novo-aluno + Database
+    // Webhook), que é mais confiável — funciona mesmo se o aluno fechar o app
+    // logo após se cadastrar. Ver notificarAdminNovoAluno() abaixo, mantida só
+    // como reserva manual (não é mais chamada automaticamente).
     if(u.isAdmin){await loadAdmin();show('sc-adm');return;}
     initAnam('geral');show('sc-anam-geral');
   }catch(e){
     console.error('Register error:',e);
-    const isNet=/fetch|network|failed|load|cdn/i.test(e?.message||'');
+    const isNet=/fetch|network|failed|load/i.test(e?.message||'');
     showErr(isNet
-      ?'⚠️ Não foi possível conectar ao servidor. Verifique sua internet e tente novamente.'
+      ?'⚠️ Servidor indisponível. O projeto Supabase pode estar pausado — acesse app.supabase.com e clique em Restore/Resume.'
       :'Erro ao criar conta: '+(e?.message||'tente novamente'));
-  }finally{
-    btn.textContent='Criar conta grátis';btn.disabled=false;
   }
+  finally{btn.textContent='Criar conta grátis';btn.disabled=false;}
 }
 function checkAdminBtn() {
   const u = getU();
@@ -4304,22 +4196,20 @@ async function submitAnamMusc(){
   const anCompleta=mesclarAnamnese(users[email],especifica);
   users[email].anamnese=anCompleta; // usado por PDF, painel admin, Turbo e regeração de plano
   DB.set('fq_users',users);
-  // Sincroniza a anamnese em si AGORA, sem depender da geração do treino —
-  // assim, mesmo se o motor der erro lá na frente, o "já respondi" não se perde.
+  // Sincroniza a anamnese em si AGORA — o treino em si só é gerado quando o
+  // aluno tocar em "Gerar meu treino", não automaticamente aqui.
   if(typeof sb!=='undefined'&&sb&&typeof syncU==='function')syncU(users[email]).catch(()=>{});
   show('sc-ok');
-  document.getElementById('btn-go-app').style.display='none';
-  document.getElementById('ok-sub').textContent='Montando seu treino de musculação... 🤖';
-  try{ gerarTreinoFallback(email,anCompleta,'gym'); }catch(e){ console.error('Erro ao gerar musculação:',e); }
-  // O botão SEMPRE aparece — nenhum erro acima pode prender o aluno aqui
   try{
-    const ico=document.querySelector('.ok-ico');if(ico)ico.textContent='💪';
-    const tit=document.getElementById('ok-title');if(tit)tit.textContent='Treino pronto!';
-    const sub=document.getElementById('ok-sub');if(sub)sub.textContent='Seu treino de musculação foi gerado 🎬';
+    const ico=document.querySelector('.ok-ico');if(ico)ico.textContent='📋';
+    const tit=document.getElementById('ok-title');if(tit)tit.textContent='Anamnese registrada!';
+    const sub=document.getElementById('ok-sub');if(sub)sub.textContent='Toque abaixo para gerar seu treino de musculação';
   }catch(e){ console.error('Erro ao atualizar tela de sucesso:',e); }
-  finally{
-    const btn=document.getElementById('btn-go-app');
-    if(btn){btn.style.display='block';btn.textContent='Ver meu treino 🚀';}
+  const btn=document.getElementById('btn-go-app');
+  if(btn){
+    btn.style.display='block';
+    btn.textContent='🤖 Gerar meu treino agora';
+    btn.setAttribute('onclick',"gerarTreinoAgora('gym')");
   }
   try{ aplicarIdioma(); }catch(e){}
 }
@@ -4359,20 +4249,58 @@ async function submitAnamCorrida(){
   // Mesma blindagem: sincroniza a anamnese já aqui, não só depois do plano.
   if(typeof sb!=='undefined'&&sb&&typeof syncU==='function')syncU(users[email]).catch(()=>{});
   show('sc-ok');
-  document.getElementById('btn-go-app').style.display='none';
-  document.getElementById('ok-sub').textContent='Montando seu plano de corrida... 🤖';
-  try{ gerarTreinoFallback(email,anCompleta,'run'); }catch(e){ console.error('Erro ao gerar corrida:',e); }
-  // O botão SEMPRE aparece — nenhum erro acima pode prender o aluno aqui
   try{
-    const ico=document.querySelector('.ok-ico');if(ico)ico.textContent='🏃';
-    const tit=document.getElementById('ok-title');if(tit)tit.textContent='Plano pronto!';
-    const sub=document.getElementById('ok-sub');if(sub)sub.textContent='Seu plano de corrida foi gerado 🎬';
+    const ico=document.querySelector('.ok-ico');if(ico)ico.textContent='📋';
+    const tit=document.getElementById('ok-title');if(tit)tit.textContent='Anamnese registrada!';
+    const sub=document.getElementById('ok-sub');if(sub)sub.textContent='Toque abaixo para gerar seu plano de corrida';
   }catch(e){ console.error('Erro ao atualizar tela de sucesso:',e); }
-  finally{
-    const btn=document.getElementById('btn-go-app');
-    if(btn){btn.style.display='block';btn.textContent='Ver meu plano 🚀';}
+  const btn=document.getElementById('btn-go-app');
+  if(btn){
+    btn.style.display='block';
+    btn.textContent='🤖 Gerar meu plano agora';
+    btn.setAttribute('onclick',"gerarTreinoAgora('run')");
   }
   try{ aplicarIdioma(); }catch(e){}
+}
+
+// ══ Geração do treino sob demanda — chamada só quando o aluno toca no botão,
+// nunca automaticamente ao terminar a anamnese. ══
+// Mesma geração sob demanda, mas chamada de DENTRO do app (não da tela de
+// sucesso da anamnese) — pro caso do aluno ter saído sem gerar na hora e
+// voltado depois pra tocar em "Gerar meu treino" direto na aba.
+function gerarTreinoAgoraNaTela(tipo){
+  const email=DB.get('fq_cur');const users=DB.get('fq_users')||{};const u=users[email];
+  if(!u)return;
+  const an=u.anamnese||{};
+  fqToast(tipo==='gym' ? '🤖 Montando seu treino...' : '🤖 Montando seu plano...','info',4000);
+  setTimeout(()=>{
+    try{ gerarTreinoFallback(email,an,tipo); }
+    catch(e){ console.error('Erro ao gerar treino:',e); fqToast(t('msg.929abf4871'),'warn'); return; }
+    const uAtualizado=(DB.get('fq_users')||{})[email];
+    if(tipo==='gym' && typeof renderGym==='function') renderGym(uAtualizado);
+    if(tipo==='run' && typeof renderRun==='function') renderRun(uAtualizado);
+  }, 300);
+}
+
+function gerarTreinoAgora(tipo){
+  const email=DB.get('fq_cur');const users=DB.get('fq_users')||{};const u=users[email];
+  if(!u){ fqToast(t('msg.929abf4871'),'warn'); return; }
+  const an=u.anamnese||{};
+  const btn=document.getElementById('btn-go-app');
+  if(btn){ btn.disabled=true; btn.textContent = tipo==='gym' ? 'Montando seu treino... 🤖' : 'Montando seu plano... 🤖'; }
+  const sub=document.getElementById('ok-sub');
+  if(sub) sub.textContent = tipo==='gym' ? 'Analisando sua anamnese e montando seu treino...' : 'Analisando sua anamnese e montando seu plano de corrida...';
+  // Pequeno atraso só pra o texto "montando..." aparecer de fato na tela
+  // antes do processamento síncrono do motor (senão passa despercebido).
+  setTimeout(()=>{
+    try{ gerarTreinoFallback(email,an,tipo); }
+    catch(e){ console.error('Erro ao gerar treino:',e); }
+    goToApp();
+    if(typeof switchTab==='function'){
+      const idx = tipo==='gym' ? 1 : 1;
+      switchTab(tipo, document.querySelectorAll('.nbtn')[idx]);
+    }
+  }, 300);
 }
 
 // Chamadas pelos cards da Home — abrem a anamnese específica certa
@@ -4821,9 +4749,14 @@ function RD_escolhe(grupo,n,p,semana,excluir,ancora){
     if(candidatosAncora.length){
       const pontuados=candidatosAncora.map(e=>({e,score:RD_scoreExercicio(e,p,grupo,true)}));
       const maxScore=Math.max(...pontuados.map(x=>x.score));
-      // "Empate técnico": tudo dentro de 6 pontos do melhor é igualmente bom pra esse aluno —
-      // dentro desse grupo, a assinatura dele decide, preservando variedade entre alunos parecidos.
-      const melhores=pontuados.filter(x=>x.score>=maxScore-6).map(x=>x.e);
+      // "Empate técnico": ampliado de 6 para 18 pontos — a faixa de 6 quase sempre
+      // deixava só 1 candidato de fato (o score varia bastante entre exercícios),
+      // então a "assinatura" do aluno nunca tinha opção real pra escolher, e todo
+      // mundo com o mesmo nível/objetivo caía no mesmíssimo exercício âncora.
+      // 18 pontos ainda respeita a ordem de mérito (não deixa entrar nada ruim
+      // pro aluno) mas garante 2-4 alternativas de qualidade equivalente na maioria
+      // dos grupos, dando à semente algo de verdade pra decidir.
+      const melhores=pontuados.filter(x=>x.score>=maxScore-18).map(x=>x.e);
       const idx=(p&&p.seed?p.seed:0)%melhores.length;
       const comp=melhores[idx];
       usados.add(comp.id);out.push(comp);
@@ -4831,8 +4764,17 @@ function RD_escolhe(grupo,n,p,semana,excluir,ancora){
   }
   // ACESSÓRIOS: entre os candidatos com boa pontuação, rotacionam a cada 2 semanas
   // (variedade sustenta adesão e cobre ângulos diferentes do mesmo músculo).
+  // Reforço de variedade entre alunos: um "chacoalhão" pequeno (até 6 pontos),
+  // gerado a partir da assinatura de CADA aluno + CADA exercício — reordena só
+  // quem já estava tecnicamente empatado/próximo, nunca põe um exercício fraco
+  // na frente de um forte. Sem isso, dois alunos com o mesmo perfil viam a
+  // MESMA lista ordenada, só começando em pontos diferentes dela.
   const restantes=pool.filter(e=>!usados.has(e.id));
-  const pontuadosAc=restantes.map(e=>({e,score:RD_scoreExercicio(e,p,grupo,false)})).sort((a,b)=>b.score-a.score);
+  const pontuadosAc=restantes.map(e=>{
+    const semente=(p&&p.seed?p.seed:0);
+    const chacoalhao=(RD_hashSemente(semente+'_'+e.id)%1000)/1000*6;
+    return {e,score:RD_scoreExercicio(e,p,grupo,false)+chacoalhao};
+  }).sort((a,b)=>b.score-a.score);
   // Pega os melhores (pelo menos o dobro do necessário, ou metade do pool — o que for maior)
   // pra sobrar variedade real de rotação sem cair pro fim da lista, que pontua pior.
   const cortePos=Math.max(n*2, Math.ceil(pontuadosAc.length/2));
@@ -5603,8 +5545,32 @@ function RD_gerarRun(p){
   const totalSemanas=semanasOrdenadas.length;
   const run={};
 
+  // ── VARIAÇÃO ENTRE ALUNOS: em qual dia da semana cada sessão cai ──
+  // O CONTEÚDO de cada semana (volume, intensidade, taper) é trabalho de
+  // periodização do Rennan — não mexe. O que varia é só o rótulo do dia:
+  // desloca o padrão inteiro mantendo o MESMO espaçamento entre sessões
+  // (a ciência de recuperação continua igual) e sempre termina o fim de
+  // semana com a sessão mais longa (convenção padrão de corredor).
+  const ORDEM_DIAS=['segunda','terça','quarta','quinta','sexta','sábado','domingo'];
+  function RD_rotacionaDiasSemana(diasOriginais,seed){
+    const idxOriginais=diasOriginais.map(d=>ORDEM_DIAS.indexOf(d));
+    if(idxOriginais.some(i=>i<0))return diasOriginais; // dia não reconhecido — não mexe
+    const idxUltimo=idxOriginais[idxOriginais.length-1];
+    const deslocaveis=[];
+    for(let desloc=0;desloc<7;desloc++){
+      const novoUltimo=(idxUltimo+desloc)%7;
+      if(novoUltimo===5||novoUltimo===6) deslocaveis.push(desloc); // 5=sábado,6=domingo
+    }
+    if(!deslocaveis.length) return diasOriginais;
+    const escolhido=deslocaveis[(seed||0)%deslocaveis.length];
+    return idxOriginais.map(i=>ORDEM_DIAS[(i+escolhido)%7]);
+  }
+  const seedDias=(p&&p.seed?p.seed:0);
+
   semanasOrdenadas.forEach((wn)=>{
-    const sessoesReais=planoReal[String(wn)];
+    const sessoesReaisOrig=planoReal[String(wn)];
+    const diasRotacionados=RD_rotacionaDiasSemana(sessoesReaisOrig.map(sr=>sr.dia),seedDias);
+    const sessoesReais=sessoesReaisOrig.map((sr,i)=>({...sr,dia:diasRotacionados[i]}));
     const sessions=sessoesReais.map(sr=>{
       const m=RD_montarSessao(sr.codigo,RD_DIA_ABREV[sr.dia]||sr.dia,testPace);
       if(!m)return null;
@@ -8421,6 +8387,25 @@ function renderGym(u){
     renderMeuTreino(u);
     return;
   }
+  // Anamnese de musculação já respondida, mas o treino ainda não foi gerado
+  // (o aluno precisa tocar em "Gerar meu treino" — não é mais automático).
+  const jaTemPlanoGym = u.aiPlan?.gym && Object.keys(u.aiPlan.gym).length;
+  if(u.anamneseMuscDone && !jaTemPlanoGym){
+    document.getElementById('gym-hero-tag').textContent='PRONTO PARA COMEÇAR';
+    document.getElementById('gym-hero-title').textContent='Sua anamnese está pronta';
+    document.getElementById('gym-hero-sub').textContent='Toque no botão para montar seu treino';
+    document.getElementById('gym-prog-bar').style.width='0%';
+    document.getElementById('gym-wtabs').innerHTML='';
+    document.getElementById('gym-day-btns').innerHTML='';
+    document.getElementById('gym-exercises').innerHTML=`<div style="text-align:center;padding:40px 20px">
+      <div style="font-size:52px;margin-bottom:16px">🤖</div>
+      <div style="font-size:16px;font-weight:800;margin-bottom:8px">Vamos montar seu treino!</div>
+      <div style="font-size:13px;color:var(--t2);line-height:1.6;margin-bottom:20px">Já temos sua anamnese. Toque abaixo pra gerar seu treino de musculação agora.</div>
+      <button onclick="gerarTreinoAgoraNaTela('gym')" style="background:var(--r);color:#fff;border:none;border-radius:12px;padding:14px 28px;font-size:14.5px;font-weight:800;cursor:pointer">🤖 Gerar meu treino</button>
+    </div>`;
+    document.getElementById('gym-complete-btn').innerHTML='';
+    return;
+  }
   const P=getGP(u);const wks=Object.keys(P);curGymWeek=`Semana ${u.gymWeek||1}`;const prog=P[curGymWeek]||P[wks[0]]||{fase:'',days:{}};if(!P[curGymWeek]&&wks[0])curGymWeek=wks[0];
   if(!u.trainApproved){
     document.getElementById('gym-hero-tag').textContent='EM BREVE';
@@ -8639,6 +8624,22 @@ function runDiasProxSemana(u){
 }
 
 function renderRun(u){
+  const jaTemPlanoRun = u.aiPlan?.run && Object.keys(u.aiPlan.run).length;
+  if(u.anamneseCorridaDone && !jaTemPlanoRun){
+    document.getElementById('run-tag').textContent='🏃 CORRIDA';
+    document.getElementById('run-title').textContent='Sua anamnese está pronta';
+    document.getElementById('run-sub').textContent='Toque no botão para montar seu plano';
+    document.getElementById('run-prog').style.width='0%';
+    document.getElementById('run-wtabs').innerHTML='';
+    const elAviso=document.getElementById('run-unlock-info'); if(elAviso) elAviso.innerHTML='';
+    document.getElementById('run-sessions').innerHTML=`<div style="text-align:center;padding:40px 20px">
+      <div style="font-size:48px;margin-bottom:12px">🤖</div>
+      <div style="font-size:16px;font-weight:800;margin-bottom:8px">Vamos montar seu plano!</div>
+      <div style="font-size:13px;color:var(--t2);line-height:1.6;margin-bottom:20px">Já temos sua anamnese de corrida. Toque abaixo pra gerar seu plano agora.</div>
+      <button onclick="gerarTreinoAgoraNaTela('run')" style="background:var(--r);color:#fff;border:none;border-radius:12px;padding:14px 28px;font-size:14.5px;font-weight:800;cursor:pointer">🤖 Gerar meu plano</button>
+    </div>`;
+    return;
+  }
   const R=getRP(u);const wks=Object.keys(R);const cw=`Semana ${u.runWeek||1}`;const prog=R[cw]||R[wks[0]]||{meta:'',sessions:[]};
   if(!u.trainApproved){document.getElementById('run-sessions').innerHTML=`<div style="text-align:center;padding:40px 20px"><div style="font-size:48px;margin-bottom:12px">⏳</div><div style="font-size:16px;font-weight:800;margin-bottom:8px">Programa de corrida em preparação</div><div style="font-size:13px;color:var(--t2)">Rennan está elaborando seu plano de corrida personalizado!</div></div>`;return;}
   document.getElementById('run-tag').textContent='🏃 CORRIDA';
@@ -11552,7 +11553,7 @@ const EMAILJS_CONFIG = {
   templateId: 'SEU_TEMPLATE_ID',      // ex: template_xyz789 — boas-vindas pro aluno
   templateIdAdmin: 'SEU_TEMPLATE_ADMIN_ID', // template separado — notificação pra você
   publicKey: 'SUA_PUBLIC_KEY',        // ex: AbCdEfGh123
-  adminEmail: 'rennan@rennandias.com.br'    // pra onde a notificação de novo aluno vai
+  adminEmail: 'rennandg2012@hotmail.com'    // pra onde a notificação de novo aluno vai
 };
 
 async function notificarAdminNovoAluno(nome, email){
@@ -12945,8 +12946,5 @@ function renderHomeMissoesCard(){
 })();
 </script>
 <script src="gifler.min.js"></script>
-<script>
-window.addEventListener('load',function(){setTimeout(fqRestoreSession,250);});
-</script>
 </body>
 </html>
