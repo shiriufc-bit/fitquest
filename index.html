@@ -3836,7 +3836,11 @@ async function doLogin(){
       // Primeiro login sem perfil ainda (conta criada antes ou pelo painel) — cria o perfil
       u=novoPerfilLocal(data.user.id,data.user.user_metadata?.nome||email.split('@')[0],email);
       if(email===ADMIN_EMAIL)u.isAdmin=true;
-      await sb.from('alunos').upsert(userToRow(u),{onConflict:'id'});
+      const{error:erroSalvar}=await sb.from('alunos').upsert(userToRow(u),{onConflict:'id'});
+      if(erroSalvar){
+        console.error('Erro ao recriar perfil no Supabase:',erroSalvar.message,erroSalvar);
+        fqToast('⚠️ Não foi possível salvar seus dados no servidor agora.','warn',6000);
+      }
       const fresh=await loadUDB(data.user.id);if(fresh)u=fresh;
     }
     if(email===ADMIN_EMAIL)u.isAdmin=true; // garante admin mesmo se o banco não tiver a flag
@@ -3950,7 +3954,11 @@ async function doRegister(){
     }
     const u=novoPerfilLocal(data.user.id,name,email);
     if(email===ADMIN_EMAIL)u.isAdmin=true;
-    await sb.from('alunos').upsert(userToRow(u),{onConflict:'id'});
+    const{error:erroSalvar}=await sb.from('alunos').upsert(userToRow(u),{onConflict:'id'});
+    if(erroSalvar){
+      console.error('Erro ao salvar novo aluno no Supabase:',erroSalvar.message,erroSalvar);
+      showErr('⚠️ Sua conta foi criada, mas não foi possível salvar seus dados no servidor agora ('+erroSalvar.message+'). Tente sair e entrar de novo em alguns instantes.');
+    }
     const users=DB.get('fq_users')||{};users[email]=u;DB.set('fq_users',users);DB.set('fq_cur',email);
     enviarEmailBoasVindas(name, email); // e-mail de boas-vindas (não bloqueia)
     // NOTA: o aviso pra você (admin) de novo cadastro NÃO é mais disparado daqui.
