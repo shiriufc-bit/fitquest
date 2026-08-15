@@ -813,7 +813,7 @@ textarea.fi{resize:vertical;min-height:80px;}
       <option value="es">🇪🇸 ES</option>
     </select>
   </div>
-  <div id="fq-version-badge" style="position:absolute;bottom:8px;right:12px;font-size:9px;color:#333;font-weight:700;z-index:5">v132</div>
+  <div id="fq-version-badge" style="position:absolute;bottom:8px;right:12px;font-size:9px;color:#333;font-weight:700;z-index:5">v139</div>
   <img src="https://images.unsplash.com/photo-1517836357463-d25dfeac3438?w=800&q=80" alt="Fitness" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center top;filter:brightness(.35);z-index:0"/>
   <div class="splash-glow"></div>
   <div class="splash-noise"></div>
@@ -834,7 +834,6 @@ textarea.fi{resize:vertical;min-height:80px;}
 <!-- AUTH -->
 <div id="sc-auth" class="screen">
   <div class="auth-bg"></div>
-  <button class="auth-back" onclick="show('sc-splash')">← Voltar</button>
   <div class="auth-wrap">
     <div class="auth-logo-sm"><span class="r">FIT</span>QUEST</div>
     <div class="auth-box">
@@ -4079,7 +4078,7 @@ function updAnam(tipo){
   const lbl=document.getElementById('step-label-'+tipo); if(lbl) lbl.textContent=t('anam.stepcount',{n:step,total:TOTAL});
   const pctEl=document.getElementById('step-pct-'+tipo); if(pctEl) pctEl.textContent=pct+'%';
   document.querySelectorAll('#sc-anam-'+tipo+' .anam-step').forEach((s,i)=>s.style.display=(i+1===step)?'block':'none');
-  const back=document.getElementById('btn-back-'+tipo); if(back) back.style.display=step>1?'block':'none';
+  const back=document.getElementById('btn-back-'+tipo); if(back) back.style.display='block';
   const nxt=document.getElementById('btn-nxt-'+tipo); if(nxt) nxt.textContent=step===TOTAL?t('anam.btn.submit'):t('anam.btn.next');
 }
 // ══ VALIDAÇÃO DE CAMPOS OBRIGATÓRIOS DA ANAMNESE ══
@@ -4150,6 +4149,7 @@ function anamNext(tipo){
 function anamPrev(tipo){
   tipo=tipo||'geral';
   if(anamStepState[tipo]>1){ anamStepState[tipo]--; updAnam(tipo); window.scrollTo(0,0); }
+  else{ show('sc-auth'); } // primeiro passo — "Voltar" leva pro login, não fica sem função
 }
 // ── ANAMNESE GERAL — obrigatória logo após cadastro, vai direto pra Home (sem gerar plano) ──
 async function submitAnamGeral(){
@@ -8897,7 +8897,14 @@ async function admTrocarTreino(email){
     u.aiPlan['Semana '+semanaAtual]={...planoAtual, days:novosDays};
     users[email]=u; DB.set('fq_users',users);
     if(window.ADM_CACHE){const s=window.ADM_CACHE.find(a=>a.email===email);if(s)s.aiPlan=u.aiPlan;}
-    if(sb) await sb.from('alunos').update({ai_plan:u.aiPlan}).eq('email',email);
+    if(sb){
+      const{error:erroTrocaEx}=await sb.from('alunos').update({ai_plan:u.aiPlan}).eq('email',email);
+      if(erroTrocaEx){
+        console.error('Erro ao salvar troca de exercício:',erroTrocaEx.message,erroTrocaEx);
+        fqToast('⚠️ A troca não foi salva no servidor: '+erroTrocaEx.message,'warn',6000);
+        return;
+      }
+    }
 
     fqToast(t('msg.65bd239a67')+u.name+t('msg.c00cfba8cf'),'ok');
     renderTrocarTreinos(document.getElementById('treinos-search')?.value||'');
@@ -8913,7 +8920,7 @@ async function loadAdmin(){
   if(sb){
     try{
       const{data,error}=await sb.from('alunos').select('*').order('criado_em',{ascending:false});
-      if(!error&&data)all=data.map(rowToUser).filter(u=>!u.isAdmin);
+      if(!error&&data)all=data.map(rowToUser).map(u=>{if(u.email===ADMIN_EMAIL)u.isAdmin=true;return u;}).filter(u=>!u.isAdmin);
       const{data:compras}=await sb.from('compras').select('*').order('criado_em',{ascending:false});
       window.ADM_COMPRAS=compras||[];
     }catch(e){console.warn('Admin load:',e);}
@@ -9018,7 +9025,7 @@ async function admDelLead(idx){
   const lead = leads[idx];
   if(!lead)return;
   if(!await fqConfirm('Excluir lead','Remover este lead da lista?','Excluir','🗑️'))return;
-  if(lead.id&&sb){try{await sb.from('consultoria_leads').delete().eq('id',lead.id);}catch(e){}}
+  if(lead.id&&sb){const{error}=await sb.from('consultoria_leads').delete().eq('id',lead.id);if(error)console.error('Erro ao excluir lead:',error.message);}
   else{const local=DB.get('fq_consult_leads')||[];local.splice(idx,1);DB.set('fq_consult_leads',local);}
   admRenderLeads();
 }
@@ -9217,7 +9224,14 @@ function admSearch(q){
 async function admGiveAllEbooks(email){
   if(!await fqConfirm('Liberar e-books',`Liberar todos os 10 e-books para ${email}?`,'Liberar','📚')) return;
   const all=['hypertrophy','elderly','pregnancy','disabled','fatburn','running10k','posture','stress','technique','nutrition'];
-  if(sb){try{await sb.from('alunos').update({purchases:all,pacote_ebooks:true}).eq('email',email);}catch(e){}}
+  if(sb){
+    const{error:erroEbooks}=await sb.from('alunos').update({purchases:all,pacote_ebooks:true}).eq('email',email);
+    if(erroEbooks){
+      console.error('Erro ao liberar e-books:',erroEbooks.message,erroEbooks);
+      fqToast('⚠️ Não foi salvo no servidor: '+erroEbooks.message,'warn',6000);
+      return;
+    }
+  }
   const users=DB.get('fq_users')||{};
   if(users[email]){users[email].purchases=all;users[email].pacoteEbooks=true;DB.set('fq_users',users);}
   await loadAdmin();
@@ -9239,7 +9253,14 @@ function admExportCSV(){
 
 async function admSendAll(){
   if(!await fqConfirm('Liberar todos',t('msg.5f5f890fbe'),'Liberar todos','🚀')) return;
-  if(sb){try{await sb.from('alunos').update({treino_liberado:true}).eq('treino_liberado',false);}catch(e){}}
+  if(sb){
+    const{error:erroSendAll}=await sb.from('alunos').update({treino_liberado:true}).eq('treino_liberado',false);
+    if(erroSendAll){
+      console.error('Erro ao liberar todos:',erroSendAll.message,erroSendAll);
+      fqToast('⚠️ Não foi salvo no servidor: '+erroSendAll.message,'warn',6000);
+      return;
+    }
+  }
   const users=DB.get('fq_users')||{};
   Object.keys(users).forEach(e=>{if(users[e].email!==ADMIN_EMAIL) users[e].trainApproved=true;});
   DB.set('fq_users',users);
@@ -9247,9 +9268,29 @@ async function admSendAll(){
   fqToast('✅ Todos os alunos foram liberados!','ok');
 }
 
-async function admApprove(e){if(sb)await sb.from('alunos').update({treino_liberado:true}).eq('email',e);const users=DB.get('fq_users')||{};if(users[e]){users[e].trainApproved=true;DB.set('fq_users',users);}await loadAdmin();fqToast('✅ Aluno liberado!','ok');}
-async function admRevoke(e){if(!await fqConfirm('Revogar acesso',`Revogar o acesso de ${e}?`,'Revogar','🚫'))return;if(sb)await sb.from('alunos').update({treino_liberado:false}).eq('email',e);const users=DB.get('fq_users')||{};if(users[e]){users[e].trainApproved=false;DB.set('fq_users',users);}await loadAdmin();}
-async function admDel(e){if(!await fqConfirm('Excluir aluno',`Excluir ${e} definitivamente? Os dados de treino serão perdidos.`,'Excluir','🗑️'))return;if(sb){try{await sb.from('alunos').delete().eq('email',e);}catch(err){}}const users=DB.get('fq_users')||{};delete users[e];DB.set('fq_users',users);await loadAdmin();}
+async function admApprove(e){
+  if(sb){
+    const{error}=await sb.from('alunos').update({treino_liberado:true}).eq('email',e);
+    if(error){ console.error('Erro ao liberar aluno:',error.message,error); fqToast('⚠️ Não foi salvo no servidor: '+error.message,'warn',6000); return; }
+  }
+  const users=DB.get('fq_users')||{};if(users[e]){users[e].trainApproved=true;DB.set('fq_users',users);}await loadAdmin();fqToast('✅ Aluno liberado!','ok');
+}
+async function admRevoke(e){
+  if(!await fqConfirm('Revogar acesso',`Revogar o acesso de ${e}?`,'Revogar','🚫'))return;
+  if(sb){
+    const{error}=await sb.from('alunos').update({treino_liberado:false}).eq('email',e);
+    if(error){ console.error('Erro ao revogar aluno:',error.message,error); fqToast('⚠️ Não foi salvo no servidor: '+error.message,'warn',6000); return; }
+  }
+  const users=DB.get('fq_users')||{};if(users[e]){users[e].trainApproved=false;DB.set('fq_users',users);}await loadAdmin();
+}
+async function admDel(e){
+  if(!await fqConfirm('Excluir aluno',`Excluir ${e} definitivamente? Os dados de treino serão perdidos.`,'Excluir','🗑️'))return;
+  if(sb){
+    const{error}=await sb.from('alunos').delete().eq('email',e);
+    if(error){ console.error('Erro ao excluir aluno:',error.message,error); fqToast('⚠️ Não foi possível excluir no servidor: '+error.message,'warn',6000); return; }
+  }
+  const users=DB.get('fq_users')||{};delete users[e];DB.set('fq_users',users);await loadAdmin();
+}
 
 // BANK
 let bankF='';let muscF='';
@@ -10641,8 +10682,11 @@ async function admGrantProgram(email, programId){
   const st=(window.ADM_CACHE||[]).find(a=>a.email===email);
   const atual=st?(st.purchases||[]):((users[email]&&users[email].purchases)||[]);
   const novas=[...new Set([...atual,programId])];
+  if(sb){
+    const{error}=await sb.from('alunos').update({purchases:novas,pacote_ebooks:novas.length>=10}).eq('email',email);
+    if(error){ console.error('Erro ao liberar programa:',error.message,error); fqToast('⚠️ Não foi salvo no servidor: '+error.message,'warn',6000); return; }
+  }
   if(users[email]){users[email].purchases=novas;users[email].pacoteEbooks=novas.length>=10;DB.set('fq_users',users);}
-  if(sb) await sb.from('alunos').update({purchases:novas,pacote_ebooks:novas.length>=10}).eq('email',email);
   if(window.ADM_CACHE){const s=window.ADM_CACHE.find(a=>a.email===email);if(s){s.purchases=novas;s.pacoteEbooks=novas.length>=10;}}
 }
 
@@ -10651,8 +10695,11 @@ async function admRevokeProgram(email, programId){
   const st=(window.ADM_CACHE||[]).find(a=>a.email===email);
   const atual=st?(st.purchases||[]):((users[email]&&users[email].purchases)||[]);
   const novas=atual.filter(p=>p!==programId);
+  if(sb){
+    const{error}=await sb.from('alunos').update({purchases:novas,pacote_ebooks:false}).eq('email',email);
+    if(error){ console.error('Erro ao revogar programa:',error.message,error); fqToast('⚠️ Não foi salvo no servidor: '+error.message,'warn',6000); return; }
+  }
   if(users[email]){users[email].purchases=novas;users[email].pacoteEbooks=false;DB.set('fq_users',users);}
-  if(sb) await sb.from('alunos').update({purchases:novas,pacote_ebooks:false}).eq('email',email);
   if(window.ADM_CACHE){const s=window.ADM_CACHE.find(a=>a.email===email);if(s){s.purchases=novas;s.pacoteEbooks=false;}}
 }
 
@@ -11448,7 +11495,7 @@ function enviarConsultoria() {
   const leads = DB.get('fq_consult_leads') || [];
   leads.push({ nome, fone, obj, modalidade: consultModal, plano: consultPlan, data: new Date().toISOString(), status: 'novo' });
   DB.set('fq_consult_leads', leads);
-  if (sb) { try { sb.from('consultoria_leads').insert({ nome, telefone: fone, objetivo: obj, modalidade: consultModal, plano: consultPlan, criado_em: new Date().toISOString() }).then(()=>{}).catch(()=>{}); } catch(e) {} }
+  if (sb) { sb.from('consultoria_leads').insert({ nome, telefone: fone, objetivo: obj, modalidade: consultModal, plano: consultPlan, criado_em: new Date().toISOString() }).then(({error})=>{if(error)console.error('Erro ao salvar lead de consultoria:',error.message,'— o interessado pode não aparecer na sua lista de leads.');}); }
   const modalLabel = consultModal === 'musculacao' ? 'Musculação' : 'Corrida';
   const PRECOS_PLANO = {Mensal:'R$197/mês', Semestral:'R$997 (6x R$166)', Anual:'R$1.697 (12x R$141)'};
   const planoComPreco = consultPlan + (PRECOS_PLANO[consultPlan] ? ' — ' + PRECOS_PLANO[consultPlan] : '');
@@ -12304,7 +12351,11 @@ async function admCriarAluno(){
       return;
     }
     const u = novoPerfilLocal(data.user.id, nome, email);
-    await sb.from('alunos').upsert(userToRow(u), {onConflict:'id'});
+    const{error:erroCriarAluno}=await sb.from('alunos').upsert(userToRow(u), {onConflict:'id'});
+    if(erroCriarAluno){
+      console.error('Erro ao salvar novo aluno criado pelo admin:',erroCriarAluno.message,erroCriarAluno);
+      fqToast('⚠️ A conta de login foi criada, mas os dados não foram salvos no servidor: '+erroCriarAluno.message,'warn',7000);
+    }
 
     // Proteção: signUp NUNCA deve trocar a sessão ativa do admin.
     // Se por algum motivo isso acontecer (confirmação de e-mail desativada no projeto),
@@ -12383,13 +12434,22 @@ async function admConfirmarPago(planoId){
     }
 
     users[email] = u;
+    if(sb){
+      const{error:erroConfirmarPago}=await sb.from('alunos').update({
+        assinatura_status:'ativa', assinatura_ate:u.assinaturaAte, plano:planoId,
+        dia_conversao:u.diaConversao ?? null, data_conversao:u.dataConversao ?? null, plano_conversao:u.planoConversao ?? null,
+        preco_travado:u.precoTravado ?? null, promo_fundador:u.promoFundador ?? false, promo_vaga:u.promoVaga ?? null
+      }).eq('email',email);
+      if(erroConfirmarPago){
+        console.error('ERRO CRÍTICO — pagamento confirmado mas não salvo no servidor:',erroConfirmarPago.message,erroConfirmarPago,'| aluno:',email);
+        await fqAlert('⚠️ ATENÇÃO — não foi salvo!','O acesso NÃO foi liberado no servidor ('+erroConfirmarPago.message+'). O aluno '+email+' AINDA NÃO TEM acesso pago de verdade. Tente confirmar de novo — se continuar falhando, verifique sua conexão e me avise.','🚨');
+        return;
+      }
+    }
+    // Só grava localmente DEPOIS de confirmar que o servidor aceitou —
+    // assim o painel nunca mostra "liberado" sem ter liberado de verdade.
     DB.set('fq_users', users);
     if(window.ADM_CACHE){ const s=window.ADM_CACHE.find(a=>a.email===email); if(s){ s.assinaturaStatus='ativa'; s.assinaturaAte=u.assinaturaAte; s.plano=planoId; s.diaConversao=u.diaConversao; s.dataConversao=u.dataConversao; s.planoConversao=u.planoConversao; } }
-    if(sb) await sb.from('alunos').update({
-      assinatura_status:'ativa', assinatura_ate:u.assinaturaAte, plano:planoId,
-      dia_conversao:u.diaConversao ?? null, data_conversao:u.dataConversao ?? null, plano_conversao:u.planoConversao ?? null,
-      preco_travado:u.precoTravado ?? null, promo_fundador:u.promoFundador ?? false, promo_vaga:u.promoVaga ?? null
-    }).eq('email',email);
 
     closeModal('modal-marcar-pago');
     fqToast(`✅ Acesso liberado até ${ate.toLocaleDateString('pt-BR')}`,'ok');
