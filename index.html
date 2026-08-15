@@ -660,6 +660,8 @@ textarea.fi{resize:vertical;min-height:80px;}
 
 /* ══ WHATSAPP FLUTUANTE ══ */
 #wa-float{position:fixed;bottom:92px;right:16px;z-index:90;width:54px;height:54px;border-radius:50%;background:#25D366;display:none;align-items:center;justify-content:center;box-shadow:0 6px 24px rgba(37,211,102,.45);cursor:pointer;transition:transform .2s;text-decoration:none;}
+#adm-return-float{position:fixed;bottom:92px;left:16px;z-index:90;display:none;align-items:center;gap:8px;background:#111;border:1px solid var(--r);border-radius:99px;padding:10px 16px 10px 12px;box-shadow:0 6px 24px rgba(0,0,0,.5);cursor:pointer;transition:transform .2s;color:#fff;font-size:12px;font-weight:800;}
+#adm-return-float:active{transform:scale(.94);}
 #wa-float:active{transform:scale(.92);}
 #wa-float svg{width:30px;height:30px;fill:#fff;}
 #wa-float .wa-badge{position:absolute;top:-4px;right:-4px;background:var(--r);color:#fff;font-size:8px;font-weight:900;border-radius:10px;padding:2px 6px;letter-spacing:.3px;}
@@ -813,7 +815,7 @@ textarea.fi{resize:vertical;min-height:80px;}
       <option value="es">🇪🇸 ES</option>
     </select>
   </div>
-  <div id="fq-version-badge" style="position:absolute;bottom:8px;right:12px;font-size:9px;color:#333;font-weight:700;z-index:5">v141</div>
+  <div id="fq-version-badge" style="position:absolute;bottom:8px;right:12px;font-size:9px;color:#333;font-weight:700;z-index:5">v142</div>
   <img src="https://images.unsplash.com/photo-1517836357463-d25dfeac3438?w=800&q=80" alt="Fitness" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center top;filter:brightness(.35);z-index:0"/>
   <div class="splash-glow"></div>
   <div class="splash-noise"></div>
@@ -11530,11 +11532,20 @@ function updateWaFloat(){
   const appActive=document.getElementById('sc-app')?.classList.contains('active');
   btn.style.display=appActive?'flex':'none';
 }
+// ══ VOLTAR AO PAINEL — só aparece se quem está navegando o app é o admin ══
+function updateAdmReturnFloat(){
+  const btn=document.getElementById('adm-return-float');
+  if(!btn)return;
+  const appActive=document.getElementById('sc-app')?.classList.contains('active');
+  const email=DB.get('fq_cur');
+  btn.style.display=(appActive && email===ADMIN_EMAIL)?'flex':'none';
+}
 // Observar mudanças de tela
 const _origShow = show;
 show = function(id){
   _origShow(id);
   updateWaFloat();
+  updateAdmReturnFloat();
 };
 
 
@@ -13144,6 +13155,12 @@ function renderHomeMissoesCard(){
     </div>
   </div>
   <div id="eb-reader-container" style="height:calc(100vh - 52px);overflow-y:auto;background:var(--bg)"></div>
+</div>
+
+<!-- ══ VOLTAR AO PAINEL ADMIN — só aparece pro admin navegando o app como aluno ══ -->
+<div id="adm-return-float" onclick="voltarAdmin()">
+  <span style="font-size:16px">👑</span>
+  <span>Voltar ao Painel</span>
 </div>
 
 <!-- ══ WHATSAPP FLUTUANTE ══ -->
