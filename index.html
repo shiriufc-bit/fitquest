@@ -815,7 +815,7 @@ textarea.fi{resize:vertical;min-height:80px;}
       <option value="es">🇪🇸 ES</option>
     </select>
   </div>
-  <div id="fq-version-badge" style="position:absolute;bottom:8px;right:12px;font-size:9px;color:#333;font-weight:700;z-index:5">v142</div>
+  <div id="fq-version-badge" style="position:absolute;bottom:8px;right:12px;font-size:9px;color:#333;font-weight:700;z-index:5">v143</div>
   <img src="https://images.unsplash.com/photo-1517836357463-d25dfeac3438?w=800&q=80" alt="Fitness" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center top;filter:brightness(.35);z-index:0"/>
   <div class="splash-glow"></div>
   <div class="splash-noise"></div>
@@ -2997,6 +2997,22 @@ let EXERCISE_BANK=[
   {id:'e504',name:'Soco no Cabo (Cable Jab)',muscle:'Ombro/Core/Cardio',equipment:'Cabo',emoji:'🥊',obs:'Em pé, execute socos rápidos e alternados puxando o cabo à frente.'},
   {id:'e505',name:'Press Peitoral Superior com Contração no Cabo',muscle:'Peito Superior',equipment:'Cabo',emoji:'🎯',obs:'Empurre e aperte os cabos à frente do peito, focando na contração da porção superior.'},
   {id:'e506',name:'Elevação em Y no Cabo',muscle:'Ombro/Trapézio',equipment:'Cabo',emoji:'🎯',obs:'Puxe os cabos formando um Y acima da cabeça, foco em deltoide e trapézio inferior.'},
+  {id:'e507',name:'Rotação de Pescoço Controlada',muscle:'Cervical/Postura',equipment:'Peso Corporal',emoji:'🎯',obs:'Sentado ou em pé, gire a cabeça lentamente de um lado ao outro, sem forçar. Movimento lento e controlado.'},
+  {id:'e508',name:'Alongamento de Trapézio Lateral',muscle:'Cervical/Trapézio',equipment:'Peso Corporal',emoji:'🎯',obs:'Incline a cabeça para um lado, aproximando a orelha do ombro. Pode usar a mão para uma leve pressão extra.'},
+  {id:'e509',name:'Alongamento de Escaleno',muscle:'Cervical',equipment:'Peso Corporal',emoji:'🎯',obs:'Incline a cabeça para trás e para o lado, olhando na diagonal. Estira a lateral do pescoço.'},
+  {id:'e510',name:'Alongamento Cruzado de Ombro',muscle:'Ombro Posterior',equipment:'Peso Corporal',emoji:'🎯',obs:'Leve um braço estendido na frente do corpo, puxando com o outro braço. Estira a parte de trás do ombro.'},
+  {id:'e511',name:'Alongamento de Tríceps Atrás da Cabeça',muscle:'Tríceps',equipment:'Peso Corporal',emoji:'🎯',obs:'Dobre um braço atrás da cabeça e use a outra mão pra empurrar o cotovelo suavemente.'},
+  {id:'e512',name:'Rotação de Punho',muscle:'Antebraço/Punho',equipment:'Peso Corporal',emoji:'🎯',obs:'Gire os punhos em círculos, em ambas as direções, soltando a articulação.'},
+  {id:'e513',name:'Alongamento de Antebraço (Flexores)',muscle:'Antebraço',equipment:'Peso Corporal',emoji:'🎯',obs:'Com o braço estendido, palma pra cima, puxe os dedos suavemente pra trás com a outra mão.'},
+  {id:'e514',name:'Alongamento de Antebraço (Extensores)',muscle:'Antebraço',equipment:'Peso Corporal',emoji:'🎯',obs:'Com o braço estendido, palma pra baixo, puxe o dorso da mão suavemente pra baixo com a outra mão.'},
+  {id:'e515',name:'Alongamento de Quadríceps em Pé',muscle:'Quadríceps',equipment:'Peso Corporal',emoji:'🎯',obs:'Em pé, segure o tornozelo atrás do corpo, puxando o calcanhar em direção ao glúteo. Use apoio se precisar de equilíbrio.'},
+  {id:'e516',name:'Alongamento de Posterior de Coxa Sentado',muscle:'Isquiotibiais',equipment:'Peso Corporal',emoji:'🎯',obs:'Sentado, uma perna estendida à frente, incline o tronco pra frente mantendo as costas retas.'},
+  {id:'e517',name:'Alongamento de Panturrilha Sentado',muscle:'Panturrilha',equipment:'Peso Corporal',emoji:'🎯',obs:'Sentado com a perna estendida, puxe a ponta do pé em sua direção com as mãos ou uma faixa.'},
+  {id:'e518',name:'Torção de Coluna Deitado',muscle:'Mobilidade/Coluna',equipment:'Peso Corporal',emoji:'🎯',obs:'Deitado de costas, leve os joelhos dobrados para um lado enquanto os ombros ficam no chão. Alterna os lados.'},
+  {id:'e519',name:'Rolamento de Ombros',muscle:'Ombro/Postura',equipment:'Peso Corporal',emoji:'🎯',obs:'Em pé ou sentado, gire os ombros pra trás em círculos amplos e lentos.'},
+  {id:'e520',name:'Mobilidade de Tornozelo em Pé',muscle:'Mobilidade/Tornozelo',equipment:'Peso Corporal',emoji:'🎯',obs:'Em pé com apoio, faça pequenos círculos com o tornozelo levantado, em ambas as direções.'},
+  {id:'e521',name:'Respiração Diafragmática',muscle:'Relaxamento',equipment:'Peso Corporal',emoji:'🧘',obs:'Deitado ou sentado, inspire profundamente pelo nariz enchendo a barriga, segure 2s, solte devagar pela boca.'},
+  {id:'e522',name:'Alongamento Global da Cadeia Posterior',muscle:'Mobilidade/Posterior',equipment:'Peso Corporal',emoji:'🎯',obs:'Em pé, incline o tronco à frente tentando alcançar os pés, joelhos levemente flexionados. Solte o pescoço.'},
 ];
 
 const DG={
@@ -3363,6 +3379,7 @@ const ALONGAMENTO_ROTINAS=[
     exs:[
       {id:'e152',tempo:'8-10 repetições'},
       {id:'e374',tempo:'30s cada lado'},
+      {id:'e518',tempo:'30s cada lado'},
       {id:'e161',tempo:'45-60s'},
       {id:'e378',tempo:'30s cada lado'},
       {id:'e153',tempo:'8 repetições cada lado'},
@@ -3374,10 +3391,38 @@ const ALONGAMENTO_ROTINAS=[
     desc:'Pra quem passa o dia sentado ou no computador — solta ombro, cervical e postura.',
     exs:[
       {id:'e170',tempo:'10 repetições'},
+      {id:'e507',tempo:'8 repetições cada lado'},
+      {id:'e508',tempo:'30s cada lado'},
+      {id:'e519',tempo:'10 repetições'},
       {id:'e156',tempo:'8-10 repetições'},
       {id:'e167',tempo:'10 repetições'},
+      {id:'e510',tempo:'30s cada lado'},
       {id:'e157',tempo:'30s cada lado'},
       {id:'e251',tempo:'45-60s'},
+    ]
+  },
+  {
+    id:'cervical', nome:'Alívio Cervical Intenso', emoji:'💆', nivel:'Suave',
+    desc:'Focado só no pescoço e nuca — pra quem sente tensão, dor de cabeça tensional ou trabalha muito no celular.',
+    exs:[
+      {id:'e507',tempo:'8 repetições cada lado'},
+      {id:'e170',tempo:'10 repetições'},
+      {id:'e508',tempo:'30s cada lado'},
+      {id:'e509',tempo:'20-30s cada lado'},
+      {id:'e519',tempo:'10 repetições'},
+      {id:'e521',tempo:'8-10 ciclos'},
+    ]
+  },
+  {
+    id:'ombro-punho-pc', nome:'Ombro e Punho — Pausa do Computador', emoji:'💻', nivel:'Suave',
+    desc:'2-3 minutos pra fazer no meio do expediente. Solta ombro, punho e antebraço de quem digita o dia todo.',
+    exs:[
+      {id:'e519',tempo:'10 repetições'},
+      {id:'e510',tempo:'20s cada lado'},
+      {id:'e511',tempo:'20s cada lado'},
+      {id:'e512',tempo:'10 repetições cada lado'},
+      {id:'e513',tempo:'15-20s cada lado'},
+      {id:'e514',tempo:'15-20s cada lado'},
     ]
   },
   {
@@ -3394,8 +3439,10 @@ const ALONGAMENTO_ROTINAS=[
   },
   {
     id:'joelho', nome:'Suporte pra Dor no Joelho', emoji:'🦿', nivel:'Suave',
-    desc:'Flexibilidade nos músculos ao redor do joelho (panturrilha, posterior, quadril) — não mobiliza o joelho diretamente.',
+    desc:'Flexibilidade nos músculos ao redor do joelho (quadríceps, posterior, panturrilha) — não mobiliza o joelho diretamente.',
     exs:[
+      {id:'e515',tempo:'20-30s cada lado'},
+      {id:'e516',tempo:'20-30s cada lado'},
       {id:'e160',tempo:'30s cada lado'},
       {id:'e346',tempo:'30s cada lado'},
       {id:'e159',tempo:'45-60s cada lado'},
@@ -3404,15 +3451,29 @@ const ALONGAMENTO_ROTINAS=[
     ]
   },
   {
+    id:'tornozelo-panturrilha', nome:'Mobilidade de Tornozelo e Panturrilha', emoji:'🦶', nivel:'Suave',
+    desc:'Amplitude de tornozelo e flexibilidade de panturrilha — importante pra agachamento profundo e pra quem corre.',
+    exs:[
+      {id:'e520',tempo:'10 repetições cada lado'},
+      {id:'e345',tempo:'10 repetições cada lado'},
+      {id:'e160',tempo:'30s cada lado'},
+      {id:'e517',tempo:'20-30s cada lado'},
+      {id:'e390',tempo:'45-60s'},
+    ]
+  },
+  {
     id:'terceira-idade', nome:'Terceira Idade / Baixo Impacto', emoji:'🌿', nivel:'Muito suave',
     desc:'Movimentos leves, sem impacto, a maioria pode ser feita sentado ou apoiado. Sempre respeitando o limite do dia.',
     exs:[
       {id:'e152',tempo:'6-8 repetições, ritmo lento'},
       {id:'e170',tempo:'8 repetições'},
+      {id:'e507',tempo:'6 repetições cada lado, devagar'},
       {id:'e161',tempo:'45-60s'},
       {id:'e160',tempo:'20-30s cada lado'},
+      {id:'e517',tempo:'15-20s cada lado'},
       {id:'e361',tempo:'6 repetições cada lado'},
       {id:'e381',tempo:'6 repetições cada lado'},
+      {id:'e521',tempo:'6-8 ciclos'},
     ]
   },
   {
@@ -3422,8 +3483,10 @@ const ALONGAMENTO_ROTINAS=[
       {id:'e161',tempo:'45s'},
       {id:'e162',tempo:'30-45s'},
       {id:'e385',tempo:'45s'},
+      {id:'e515',tempo:'20-30s cada lado'},
       {id:'e160',tempo:'30s cada lado'},
       {id:'e157',tempo:'30s cada lado'},
+      {id:'e510',tempo:'20s cada lado'},
       {id:'e378',tempo:'30s cada lado'},
       {id:'e153',tempo:'8 repetições cada lado'},
     ]
@@ -3433,6 +3496,7 @@ const ALONGAMENTO_ROTINAS=[
     desc:'Pra acordar o corpo antes do treino ou começar o dia com mais disposição.',
     exs:[
       {id:'e152',tempo:'10 repetições'},
+      {id:'e519',tempo:'10 repetições'},
       {id:'e377',tempo:'8 repetições'},
       {id:'e355',tempo:'6 repetições cada lado'},
       {id:'e361',tempo:'8 repetições cada lado'},
@@ -3441,18 +3505,81 @@ const ALONGAMENTO_ROTINAS=[
     ]
   },
   {
+    id:'pre-treino', nome:'Alongamento Pré-Treino (Dinâmico)', emoji:'⚡', nivel:'Moderado',
+    desc:'Mobilidade ativa pra fazer ANTES de treinar — prepara as articulações sem "desligar" os músculos como o alongamento estático faz.',
+    exs:[
+      {id:'e152',tempo:'8 repetições'},
+      {id:'e520',tempo:'8 repetições cada lado'},
+      {id:'e377',tempo:'8 repetições'},
+      {id:'e355',tempo:'6 repetições cada lado'},
+      {id:'e519',tempo:'10 repetições'},
+      {id:'e369',tempo:'6-8 passos'},
+    ]
+  },
+  {
+    id:'toracica-postura', nome:'Mobilidade Torácica e Postura', emoji:'🧍', nivel:'Suave',
+    desc:'Foco na parte superior da coluna — corrige a postura curvada de quem passa o dia sentado.',
+    exs:[
+      {id:'e153',tempo:'8 repetições cada lado'},
+      {id:'e158',tempo:'45-60s'},
+      {id:'e167',tempo:'10 repetições'},
+      {id:'e157',tempo:'30s cada lado'},
+      {id:'e510',tempo:'20s cada lado'},
+      {id:'e518',tempo:'30s cada lado'},
+    ]
+  },
+  {
+    id:'yoga-flow', nome:'Fluxo de Yoga Básico', emoji:'🕉️', nivel:'Moderado',
+    desc:'Uma sequência suave de posturas de yoga, encadeadas — boa pra flexibilidade geral e relaxamento.',
+    exs:[
+      {id:'e161',tempo:'45-60s'},
+      {id:'e162',tempo:'45-60s'},
+      {id:'e347',tempo:'45s cada lado'},
+      {id:'e380',tempo:'45-60s'},
+      {id:'e358',tempo:'8-10 repetições'},
+      {id:'e385',tempo:'60s'},
+      {id:'e521',tempo:'8-10 ciclos'},
+    ]
+  },
+  {
+    id:'relaxamento-noturno', nome:'Relaxamento Noturno / Anti-Estresse', emoji:'🌙', nivel:'Muito suave',
+    desc:'Pra fazer antes de dormir — desacelera o corpo, solta tensão acumulada e ajuda a dormir melhor.',
+    exs:[
+      {id:'e521',tempo:'10-12 ciclos'},
+      {id:'e161',tempo:'60s'},
+      {id:'e518',tempo:'30-45s cada lado'},
+      {id:'e380',tempo:'45-60s'},
+      {id:'e357',tempo:'45-60s'},
+    ]
+  },
+  {
+    id:'membros-superiores', nome:'Flexibilidade de Membros Superiores', emoji:'💪', nivel:'Suave',
+    desc:'Braço, ombro, punho e antebraço — completo pra quem treinou upper body ou sente tensão nos braços.',
+    exs:[
+      {id:'e519',tempo:'10 repetições'},
+      {id:'e510',tempo:'20-30s cada lado'},
+      {id:'e511',tempo:'20-30s cada lado'},
+      {id:'e157',tempo:'30s cada lado'},
+      {id:'e512',tempo:'10 repetições cada lado'},
+      {id:'e513',tempo:'15-20s cada lado'},
+      {id:'e514',tempo:'15-20s cada lado'},
+    ]
+  },
+  {
     id:'corredores', nome:'Alongamento para Corredores', emoji:'🏃', nivel:'Moderado',
     desc:'Foco em panturrilha, posterior de coxa e IT band — os pontos que mais pedem socorro depois de correr.',
     exs:[
       {id:'e160',tempo:'30s cada lado'},
       {id:'e346',tempo:'30s cada lado'},
+      {id:'e516',tempo:'20-30s cada lado'},
       {id:'e347',tempo:'45s cada lado'},
       {id:'e159',tempo:'45-60s cada lado'},
       {id:'e155',tempo:'30s cada lado'},
       {id:'e345',tempo:'10 repetições cada lado'},
+      {id:'e522',tempo:'30-45s'},
     ]
   },
-];
+];;
 function getRotinaById(id){return ALONGAMENTO_ROTINAS.find(r=>r.id===id)||null;}
 
 function renderMobRotinas(){
