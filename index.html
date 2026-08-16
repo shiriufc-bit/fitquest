@@ -821,7 +821,7 @@ textarea.fi{resize:vertical;min-height:80px;}
       <option value="es">🇪🇸 ES</option>
     </select>
   </div>
-  <div id="fq-version-badge" style="position:absolute;bottom:8px;right:12px;font-size:9px;color:#333;font-weight:700;z-index:5">v152</div>
+  <div id="fq-version-badge" style="position:absolute;bottom:8px;right:12px;font-size:9px;color:#333;font-weight:700;z-index:5">v156</div>
   <img src="https://images.unsplash.com/photo-1517836357463-d25dfeac3438?w=800&q=80" alt="Fitness" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center top;filter:brightness(.35);z-index:0"/>
   <div class="splash-glow"></div>
   <div class="splash-noise"></div>
@@ -3102,6 +3102,26 @@ let EXERCISE_BANK=[
   {id:'e551',name:'Alongamento Figura 4 com Rotação',muscle:'Glúteo/Piriforme',equipment:'Peso Corporal',emoji:'4️⃣',obs:'Sentado ou deitado, cruze um tornozelo sobre o joelho oposto formando um "4", e gire suavemente pra aprofundar o alongamento do glúteo.'},
   {id:'e552',name:'Alongamento de Flexão e Extensão de Quadril',muscle:'Quadril/Flexores',equipment:'Peso Corporal',emoji:'🧘',obs:'Numa posição de afundo, alterne entre levar o quadril à frente (alongando o flexor) e voltar, numa amplitude controlada.'},
   {id:'e553',name:'Salto do Sapo',muscle:'Pernas/Glúteo/Pliometria',equipment:'Peso Corporal',emoji:'🐸',obs:'Agache bem baixo com as mãos perto dos pés e salte à frente com força, aterrissando de forma controlada de volta na posição agachada.'},
+  {id:'e554',name:'Deslizamento de Parede com Rolo (Serrátil)',muscle:'Serrátil/Ombro',equipment:'Rolo de Espuma',emoji:'🧱',obs:'Em pé de costas pra parede, com o rolo apoiado atrás do braço, deslize o braço pra cima e pra baixo pressionando contra a parede.'},
+  {id:'e555',name:'Deslizamento de Parede com Rolo e Faixa (Serrátil)',muscle:'Serrátil/Ombro',equipment:'Rolo de Espuma + Faixa Elástica',emoji:'🧱',obs:'Mesmo movimento do deslizamento na parede, agora com uma faixa elástica envolvendo os punhos pra adicionar resistência.'},
+  {id:'e556',name:'Rolamento "Volta ao Mundo" Deitado',muscle:'Costas/Ombro',equipment:'Rolo de Espuma',emoji:'🌍',obs:'Deitado com o rolo sob a parte de cima das costas, mova os braços em círculo, como se desenhasse o mundo ao redor do corpo.'},
+  {id:'e557',name:'Liberação de Lombar com Bola',muscle:'Lombar',equipment:'Bola de Liberação Miofascial',emoji:'🎾',obs:'Deitado, posicione a bola sob a lombar e role suavemente pra liberar a tensão da região.'},
+  {id:'e558',name:'Liberação de Bíceps Deitado',muscle:'Bíceps',equipment:'Rolo de Espuma',emoji:'💪',obs:'Deitado de bruços, posicione o rolo sob o bíceps e role lentamente pra frente e pra trás.'},
+  {id:'e559',name:'Liberação de Panturrilha com Rolo',muscle:'Panturrilha',equipment:'Rolo de Espuma',emoji:'🦵',obs:'Sentado, apoie a panturrilha sobre o rolo e role de um lado ao outro, usando as mãos pra controlar a pressão.'},
+  {id:'e560',name:'Abertura de Peito Deitado com Rolo',muscle:'Peito',equipment:'Rolo de Espuma',emoji:'🫁',obs:'Deitado com o rolo posicionado na altura do peito/ombro, abra os braços pros lados alongando a região peitoral.'},
+  {id:'e561',name:'Liberação de Eretores da Espinha Deitado',muscle:'Lombar/Eretores',equipment:'Rolo de Espuma',emoji:'🦴',obs:'Deitado com o rolo sob a lombar, role suavemente pra cima e pra baixo ao longo dos músculos eretores da espinha.'},
+  {id:'e562',name:'Liberação de Pé com Rolo',muscle:'Pés',equipment:'Rolo Pequeno/Bola',emoji:'🦶',obs:'Em pé, apoie o pé sobre um rolo pequeno e role da frente pra trás, massageando a sola do pé.'},
+  {id:'e563',name:'Liberação de Antebraço na Parede',muscle:'Antebraço',equipment:'Rolo de Espuma',emoji:'🧱',obs:'Em pé, pressione o antebraço contra a parede com o rolo entre os dois, e deslize pra massagear a região.'},
+  {id:'e564',name:'Liberação de Ombro e Peito Frontal Deitado',muscle:'Peito/Ombro',equipment:'Rolo de Espuma',emoji:'🫁',obs:'Deitado de bruços, posicione o rolo sob a parte frontal do ombro/peito e role lentamente.'},
+  {id:'e565',name:'Liberação de Glúteo Sentado',muscle:'Glúteo',equipment:'Rolo de Espuma',emoji:'🍑',obs:'Sentado sobre o rolo, apoie as mãos atrás do corpo e role a região do glúteo lentamente.'},
+  {id:'e566',name:'Liberação de Glúteo com Torção Deitado',muscle:'Glúteo/Rotadores',equipment:'Rolo de Espuma',emoji:'🔄',obs:'Deitado com o rolo sob o glúteo, gire o quadril pra um lado adicionando uma leve torção durante o rolamento.'},
+  {id:'e567',name:'Liberação de Posterior de Coxa e Glúteo Sentado',muscle:'Isquiotibiais/Glúteo',equipment:'Rolo de Espuma',emoji:'🦵',obs:'Sentado com as pernas estendidas sobre o rolo, role da parte de trás da coxa até o glúteo.'},
+  {id:'e568',name:'Liberação de Quadril e Lateral do Corpo (Lat)',muscle:'Quadril/Lateral do Tronco',equipment:'Rolo de Espuma',emoji:'🦵',obs:'Deitado de lado sobre o rolo, role da lateral do quadril até a lateral do tronco (região do latíssimo).'},
+  {id:'e569',name:'Liberação de Quadril com Rolo',muscle:'Quadril',equipment:'Rolo de Espuma',emoji:'🦵',obs:'Posicione o rolo sob o quadril e role lentamente, ajustando o ângulo do corpo pra alcançar diferentes pontos.'},
+  {id:'e570',name:'Elevação de Quadril com Rolo (Hip Thrust)',muscle:'Glúteo',equipment:'Rolo de Espuma',emoji:'🍑',obs:'Deitado com a parte de cima das costas apoiada no rolo, eleve o quadril contraindo o glúteo, como um hip thrust com suporte.'},
+  {id:'e571',name:'Liberação de Iliopsoas com Rolo',muscle:'Flexores de Quadril/Iliopsoas',equipment:'Rolo de Espuma',emoji:'🦴',obs:'De bruços, posicione o rolo na região do quadril/virilha (iliopsoas) e role com cuidado, pressão leve.'},
+  {id:'e572',name:'Rotação de Coluna Torácica Ajoelhado com Rolo',muscle:'Coluna Torácica/Costas',equipment:'Rolo de Espuma',emoji:'🔄',obs:'Ajoelhado com uma mão apoiada no rolo, gire o tronco levando o outro braço em direção ao teto.'},
+  {id:'e573',name:'Liberação de Latíssimo do Dorso com Rolo',muscle:'Latíssimo do Dorso',equipment:'Rolo de Espuma',emoji:'🦾',obs:'Deitado de lado com o rolo sob a lateral das costas (perto da axila), role pra cima e pra baixo massageando o latíssimo.'},
 ];
 
 const DG={
@@ -4588,11 +4608,13 @@ function aplicarSugestaoEmail(campoId, sugestao){
 }
 
 async function doRegister(){
-  const name=document.getElementById('reg-name').value.trim();
+  let name=document.getElementById('reg-name').value.trim();
   const email=document.getElementById('reg-email').value.trim().toLowerCase();
   const pass=document.getElementById('reg-pass').value;
   const pass2=document.getElementById('reg-pass2').value;
   if(!name||!email||!pass){showErr('Preencha todos os campos.');return;}
+  name = sanitizeStr(name, 80);
+  if(!name){showErr('Nome inválido.');return;}
   if(pass.length<6){showErr(t('msg.9ddbb8b602'));return;}
   if(pass!==pass2){showErr('Senhas não conferem.');return;}
   const valEmail=validarEmail(email);
@@ -8651,7 +8673,7 @@ function renderPerfil(u){
 // ══ GIFS DE DEMONSTRAÇÃO DOS EXERCÍCIOS ══
 // Lista cresce conforme os gifs vão sendo adicionados à pasta /exercicios do repositório.
 // Fallback automático pro emoji+foto quando ausente.
-const EXERCICIOS_COM_GIF = new Set(['e001','e002','e003','e004','e005','e006','e007','e008','e009','e010','e011','e012','e015','e017','e018','e020','e021','e022','e023','e024','e025','e026','e027','e030','e032','e036','e041','e044','e046','e048','e049','e052','e057','e058','e059','e061','e062','e063','e064','e065','e067','e068','e069','e070','e072','e074','e075','e076','e077','e078','e079','e080','e081','e083','e084','e086','e095','e097','e098','e100','e101','e102','e103','e110','e120','e121','e125','e127','e129','e130','e131','e136','e147','e148','e149','e150','e151','e154','e155','e164','e168','e187','e192','e193','e194','e195','e196','e198','e199','e200','e201','e202','e205','e210','e212','e214','e215','e217','e218','e219','e220','e225','e237','e238','e239','e240','e241','e242','e243','e244','e245','e246','e247','e248','e249','e250','e251','e252','e264','e265','e266','e267','e268','e269','e270','e271','e272','e273','e274','e275','e276','e277','e278','e280','e281','e282','e283','e284','e285','e286','e287','e288','e289','e290','e291','e292','e294','e295','e296','e297','e298','e299','e300','e301','e303','e304','e305','e306','e307','e308','e309','e310','e311','e312','e313','e314','e315','e316','e317','e318','e319','e320','e321','e322','e323','e324','e325','e326','e327','e328','e329','e330','e331','e332','e333','e334','e335','e336','e337','e338','e339','e340','e341','e342','e343','e344','e345','e346','e347','e348','e349','e350','e351','e352','e353','e354','e355','e356','e357','e358','e359','e360','e361','e362','e363','e364','e365','e366','e367','e368','e369','e370','e371','e372','e373','e374','e375','e376','e377','e378','e379','e380','e381','e382','e383','e384','e385','e386','e387','e388','e389','e390','e391','e392','e393','e394','e395','e396','e397','e398','e399','e400','e401','e402','e403','e404','e405','e406','e407','e408','e409','e410','e411','e412','e413','e414','e415','e416','e417','e418','e419','e420','e421','e422','e423','e424','e425','e426','e427','e428','e429','e430','e431','e432','e433','e434','e435','e436','e437','e438','e439','e440','e441','e442','e443','e444','e445','e446','e447','e448','e449','e450','e451','e452','e453','e454','e455','e456','e457','e458','e459','e460','e461','e462','e463','e464','e465','e466','e467','e468','e469','e470','e471','e472','e473','e474','e475','e476','e477','e478','e479','e480','e481','e482','e483','e484','e485','e486','e487','e488','e489','e490','e491','e492','e493','e494','e495','e496','e497','e498','e499','e500','e501','e502','e503','e504','e505','e506','e532','e533','e534','e535','e536','e537','e538','e539','e540','e541','e542','e543','e544','e545','e546','e547','e548','e549','e550','e551','e552','e553']);
+const EXERCICIOS_COM_GIF = new Set(['e001','e002','e003','e004','e005','e006','e007','e008','e009','e010','e011','e012','e015','e017','e018','e020','e021','e022','e023','e024','e025','e026','e027','e030','e032','e036','e041','e044','e046','e048','e049','e052','e057','e058','e059','e061','e062','e063','e064','e065','e067','e068','e069','e070','e072','e074','e075','e076','e077','e078','e079','e080','e081','e083','e084','e086','e095','e097','e098','e100','e101','e102','e103','e110','e120','e121','e125','e127','e129','e130','e131','e136','e147','e148','e149','e150','e151','e154','e155','e164','e168','e187','e192','e193','e194','e195','e196','e198','e199','e200','e201','e202','e205','e210','e212','e214','e215','e217','e218','e219','e220','e225','e237','e238','e239','e240','e241','e242','e243','e244','e245','e246','e247','e248','e249','e250','e251','e252','e264','e265','e266','e267','e268','e269','e270','e271','e272','e273','e274','e275','e276','e277','e278','e280','e281','e282','e283','e284','e285','e286','e287','e288','e289','e290','e291','e292','e294','e295','e296','e297','e298','e299','e300','e301','e303','e304','e305','e306','e307','e308','e309','e310','e311','e312','e313','e314','e315','e316','e317','e318','e319','e320','e321','e322','e323','e324','e325','e326','e327','e328','e329','e330','e331','e332','e333','e334','e335','e336','e337','e338','e339','e340','e341','e342','e343','e344','e345','e346','e347','e348','e349','e350','e351','e352','e353','e354','e355','e356','e357','e358','e359','e360','e361','e362','e363','e364','e365','e366','e367','e368','e369','e370','e371','e372','e373','e374','e375','e376','e377','e378','e379','e380','e381','e382','e383','e384','e385','e386','e387','e388','e389','e390','e391','e392','e393','e394','e395','e396','e397','e398','e399','e400','e401','e402','e403','e404','e405','e406','e407','e408','e409','e410','e411','e412','e413','e414','e415','e416','e417','e418','e419','e420','e421','e422','e423','e424','e425','e426','e427','e428','e429','e430','e431','e432','e433','e434','e435','e436','e437','e438','e439','e440','e441','e442','e443','e444','e445','e446','e447','e448','e449','e450','e451','e452','e453','e454','e455','e456','e457','e458','e459','e460','e461','e462','e463','e464','e465','e466','e467','e468','e469','e470','e471','e472','e473','e474','e475','e476','e477','e478','e479','e480','e481','e482','e483','e484','e485','e486','e487','e488','e489','e490','e491','e492','e493','e494','e495','e496','e497','e498','e499','e500','e501','e502','e503','e504','e505','e506','e532','e533','e534','e535','e536','e537','e538','e539','e540','e541','e542','e543','e544','e545','e546','e547','e548','e549','e550','e551','e552','e553','e554','e555','e556','e557','e558','e559','e560','e561','e562','e563','e564','e565','e566','e567','e568','e569','e570','e571','e572','e573']);
 function temGifDemo(exId){ return EXERCICIOS_COM_GIF.has(exId); }
 // Tenta o gif em várias pastas do repo, na ordem abaixo, antes de cair no ícone de reserva.
 // Isso cobre uploads que acabaram indo parar em pastas diferentes ao longo do tempo.
@@ -8756,11 +8778,14 @@ function getExImg(muscle){
 
 // ══ RANKING (dados reais do banco) ══
 function montarListaRanking(u,email){
-  const me={name:(u.name||'Você').split(' ')[0],xp:u.xp||0,level:u.level||1,isMe:true};
+  const meRaw=(u.name||'Você').split(' ')[0];
+  const me={name:meRaw,xp:u.xp||0,level:u.level||1,isMe:true};
   const outros=RANKING_CACHE.filter(r=>r.name&&!(r.name===me.name&&r.xp===me.xp));
   const combined=[me,...outros].sort((a,b)=>b.xp-a.xp);
   const seen=new Set();
-  return combined.filter(r=>{const k=r.name+'|'+r.xp;if(seen.has(k))return false;seen.add(k);return true;});
+  const unicos=combined.filter(r=>{const k=r.name+'|'+r.xp;if(seen.has(k))return false;seen.add(k);return true;});
+  // escapa por último, só na saída — a comparação/deduplicação acima usa o nome cru
+  return unicos.map(r=>({...r,name:escHtml(r.name)}));
 }
 function renderRankingCarousel(u,email,users){
   const uniq=montarListaRanking(u,email).slice(0,10);
@@ -9552,7 +9577,7 @@ function renderTrocarTreinos(filtro){
   document.getElementById('treinos-list').innerHTML = filtrados.length ? filtrados.map(u=>{
     const temPlano = u.aiPlan && u.gymWeek && u.aiPlan['Semana '+u.gymWeek];
     return `<div style="background:var(--s);border:1px solid var(--b);border-radius:10px;padding:12px 14px;margin-bottom:8px">
-      <div style="font-size:13px;font-weight:800;margin-bottom:2px">${u.name||'—'}</div>
+      <div style="font-size:13px;font-weight:800;margin-bottom:2px">${escHtml(u.name)||'—'}</div>
       <div style="font-size:10.5px;color:var(--mu);margin-bottom:10px">${resumoTreinoAluno(u)}</div>
       <button class="st-btn" ${temPlano?'':'disabled'} onclick="admTrocarTreino('${u.email}')"
         style="width:100%;background:${temPlano?'rgba(229,9,20,.12)':'rgba(255,255,255,.04)'};color:${temPlano?'var(--r)':'var(--mu)'};border:1px solid ${temPlano?'rgba(229,9,20,.3)':'var(--b)'}">
@@ -9836,10 +9861,10 @@ function admStudentCard(u, compact=false){
   return `<div class="st-card ${u.trainApproved?'ok':'pend'}">
     <!-- Header -->
     <div class="st-card-header">
-      <div class="st-av" style="background:linear-gradient(135deg,${u.avatar?.color||'#e50914'},#600)">${u.name?u.name[0].toUpperCase():'?'}</div>
+      <div class="st-av" style="background:linear-gradient(135deg,${u.avatar?.color||'#e50914'},#600)">${u.name?escHtml(u.name[0].toUpperCase()):'?'}</div>
       <div class="st-inf">
-        <div class="st-nm">${u.name||'Sem nome'}</div>
-        <div class="st-em">${u.email}</div>
+        <div class="st-nm">${escHtml(u.name)||'Sem nome'}</div>
+        <div class="st-em">${escHtml(u.email)}</div>
         <div style="font-size:9px;color:var(--mu);margin-top:2px">Cadastro: ${u.createdAt?new Date(u.createdAt).toLocaleDateString('pt-BR'):'N/A'}</div>
       </div>
       <div class="st-st ${u.trainApproved?'ok':'pend'}">${u.trainApproved?'✅ ATIVO':'⏳ PENDENTE'}</div>
@@ -9937,11 +9962,20 @@ async function admGiveAllEbooks(email){
 
 function admExportCSV(){
   const all=window.ADM_CACHE||[];
+  // Protege contra "CSV Injection": se o campo começar com =,+,-,@ o Excel pode
+  // interpretar como fórmula e executar. Prefixamos com apóstrofo pra neutralizar.
+  // Também entre aspas duplas sempre — sem isso, vírgula ou aspas no nome quebram
+  // o alinhamento das colunas (bug funcional, além do de segurança).
+  const csvField=(v)=>{
+    let s=String(v===null||v===undefined?'':v);
+    if(/^[=+\-@]/.test(s)) s="'"+s;
+    return '"'+s.replace(/"/g,'""')+'"';
+  };
   const rows=[['Nome','Email','Status','Nivel','XP','Streak','Treinos','km','Semana','E-Books','Cadastro']];
   all.forEach(u=>{
     rows.push([u.name||'',u.email,u.trainApproved?'Ativo':'Pendente',u.level||1,u.xp||0,u.streak||0,u.stats?.treinos||0,u.stats?.distancia||0,u.gymWeek||1,(u.purchases||[]).length+(u.pacoteEbooks?10:0),u.createdAt?new Date(u.createdAt).toLocaleDateString('pt-BR'):'']);
   });
-  const csv=rows.map(r=>r.join(',')).join('\n');
+  const csv=rows.map(r=>r.map(csvField).join(',')).join('\n');
   const a=document.createElement('a');
   a.href='data:text/csv;charset=utf-8,'+encodeURIComponent(csv);
   a.download='fitquest-alunos.csv';
@@ -10065,7 +10099,7 @@ function addSRun(w){const users=DB.get('fq_users')||{};const u=users[editEmail];
 function remSRun(w,i){const users=DB.get('fq_users')||{};const u=users[editEmail];if(!u)return;u.aiPlan.run[w].sessions.splice(i,1);DB.set('fq_users',users);renderERW(w,u);}
 function openAnam(email){
   const users=DB.get('fq_users')||{};const u=users[email];if(!u)return;const a=u.anamnese||{};
-  const row=(k,v)=>`<div class="an-row"><span class="an-k">${k}</span><span class="an-v">${v||'—'}</span></div>`;
+  const row=(k,v)=>`<div class="an-row"><span class="an-k">${escHtml(k)}</span><span class="an-v">${v?escHtml(v):'—'}</span></div>`;
   document.getElementById('modal-anam-content').innerHTML=`
   <div style="background:rgba(229,9,20,.08);border:1px solid rgba(229,9,20,.2);border-radius:8px;padding:10px 12px;margin-bottom:10px;font-size:11px;color:#ff8888">
     <strong>⚠️ ALERTAS DE LESÃO:</strong><br>
@@ -12379,6 +12413,19 @@ async function enviarEmailBoasVindas(nome, email){
 
 
 // ══ SANITIZAÇÃO DE INPUTS ══
+// ══ SEGURANÇA: escape de HTML pra qualquer texto vindo de usuário (nome, etc.)
+// antes de inserir via innerHTML. sanitizeStr (abaixo) remove tags no INPUT;
+// esta função escapa no OUTPUT — as duas juntas dão defesa em profundidade
+// contra XSS armazenado (ex: alguém se cadastrando com nome="<script>...").
+function escHtml(str){
+  if(str===null||str===undefined) return '';
+  return String(str)
+    .replace(/&/g,'&amp;')
+    .replace(/</g,'&lt;')
+    .replace(/>/g,'&gt;')
+    .replace(/"/g,'&quot;')
+    .replace(/'/g,'&#39;');
+}
 function sanitizeStr(str, maxLen=200){
   if(typeof str !== 'string') return '';
   return str.replace(/<[^>]*>/g,'').replace(/[<>"'`]/g,'').trim().substring(0, maxLen);
@@ -12614,7 +12661,7 @@ function renderMural(){
   el.innerHTML=ev.slice(0,10).map((e,i)=>{
     const chave=e.ts+'_'+i;
     const minhaReacao=minhas[chave]||null;
-    const primeiroNome=(e.nome||'Atleta').split(' ')[0];const tituloTag=e.titulo?e.titulo+' ':'';
+    const primeiroNome=escHtml((e.nome||'Atleta').split(' ')[0]);const tituloTag=e.titulo?escHtml(e.titulo)+' ':'';
     const ini=primeiroNome[0]?primeiroNome[0].toUpperCase():'A';
     let texto='';
     if(e.tipo==='pr')texto=`bateu um novo recorde: <strong>${e.ex}</strong> ⭐`;
