@@ -815,7 +815,7 @@ textarea.fi{resize:vertical;min-height:80px;}
       <option value="es">🇪🇸 ES</option>
     </select>
   </div>
-  <div id="fq-version-badge" style="position:absolute;bottom:8px;right:12px;font-size:9px;color:#333;font-weight:700;z-index:5">v143</div>
+  <div id="fq-version-badge" style="position:absolute;bottom:8px;right:12px;font-size:9px;color:#333;font-weight:700;z-index:5">v146</div>
   <img src="https://images.unsplash.com/photo-1517836357463-d25dfeac3438?w=800&q=80" alt="Fitness" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center top;filter:brightness(.35);z-index:0"/>
   <div class="splash-glow"></div>
   <div class="splash-noise"></div>
@@ -1467,6 +1467,16 @@ textarea.fi{resize:vertical;min-height:80px;}
             <div style="font-size:11.5px;color:var(--t2);margin-top:2px">Rotinas prontas pra dores, mobilidade e relaxamento</div>
           </div>
         </div>
+
+        <div class="treino-select-card" onclick="switchTab('kids',document.querySelectorAll('.nbtn')[1])" style="margin-top:14px;position:relative;border-radius:18px;overflow:hidden;cursor:pointer;min-height:110px;background:#111;border:1px solid var(--b);display:flex;align-items:center;gap:16px;padding:16px 18px">
+          <img src="https://images.unsplash.com/photo-1526676037777-05a232554f77?w=600&q=80" alt="Kids & Teens" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;filter:brightness(.35)"/>
+          <div style="position:absolute;inset:0;background:linear-gradient(90deg,rgba(0,0,0,.55),rgba(0,0,0,.85))"></div>
+          <div style="position:relative;font-size:36px;flex-shrink:0">🧒</div>
+          <div style="position:relative;text-align:left;flex:1">
+            <div style="font-size:16px;font-weight:900;color:#fff;letter-spacing:-.2px">Kids & Teens</div>
+            <div style="font-size:11.5px;color:var(--t2);margin-top:2px">Treinos divertidos pra crianças e adolescentes</div>
+          </div>
+        </div>
       </div>
     </div>
 
@@ -1479,6 +1489,27 @@ textarea.fi{resize:vertical;min-height:80px;}
           <div style="font-size:12px;color:var(--t2);margin-top:4px" data-i18n="ui.873dfd32da">Escolha uma rotina pelo seu objetivo do momento</div>
         </div>
         <div id="mob-rotinas-list" style="display:flex;flex-direction:column;gap:12px"></div>
+      </div>
+    </div>
+
+    <!-- KIDS & TEENS — treinos funcionais e corrida pra crianças/adolescentes -->
+    <div class="tp" id="tp-kids">
+      <div style="padding:22px 16px 40px">
+        <div style="margin-bottom:14px">
+          <div style="font-size:11px;font-weight:800;color:var(--r);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:6px">FitQuest</div>
+          <div style="font-size:20px;font-weight:900;letter-spacing:-.3px">🧒 Kids & Teens</div>
+          <div style="font-size:12px;color:var(--t2);margin-top:4px">Treinos pensados pra cada fase — sempre com diversão em primeiro lugar</div>
+        </div>
+        <div style="margin-bottom:16px;padding:12px 14px;background:rgba(46,204,113,.08);border:1px solid rgba(46,204,113,.25);border-radius:10px;font-size:11.5px;color:var(--t2);line-height:1.6">
+          👨‍👩‍👧 Recomendamos acompanhamento de um adulto responsável durante os treinos, principalmente com crianças menores. Nada aqui substitui orientação pediátrica.
+        </div>
+        <div id="kids-tabs" style="display:flex;gap:8px;margin-bottom:16px;overflow-x:auto;padding-bottom:4px">
+          <button onclick="switchKidsCategoria('funcional-infantil')" class="kids-tab-btn active" data-cat="funcional-infantil" style="flex-shrink:0;padding:9px 14px;border-radius:99px;border:1px solid var(--r);background:var(--r);color:#fff;font-size:12px;font-weight:800;cursor:pointer;white-space:nowrap">🦁 Funcional 6-10 anos</button>
+          <button onclick="switchKidsCategoria('funcional-adolescente')" class="kids-tab-btn" data-cat="funcional-adolescente" style="flex-shrink:0;padding:9px 14px;border-radius:99px;border:1px solid var(--b);background:var(--s);color:var(--t2);font-size:12px;font-weight:800;cursor:pointer;white-space:nowrap">💪 Funcional 11-17 anos</button>
+          <button onclick="switchKidsCategoria('corrida-infantil')" class="kids-tab-btn" data-cat="corrida-infantil" style="flex-shrink:0;padding:9px 14px;border-radius:99px;border:1px solid var(--b);background:var(--s);color:var(--t2);font-size:12px;font-weight:800;cursor:pointer;white-space:nowrap">🏃 Brincadeiras de Corrida</button>
+          <button onclick="switchKidsCategoria('corrida-adolescente')" class="kids-tab-btn" data-cat="corrida-adolescente" style="flex-shrink:0;padding:9px 14px;border-radius:99px;border:1px solid var(--b);background:var(--s);color:var(--t2);font-size:12px;font-weight:800;cursor:pointer;white-space:nowrap">🏁 Corrida Iniciante Teen</button>
+        </div>
+        <div id="kids-conteudo"></div>
       </div>
     </div>
 
@@ -3013,6 +3044,15 @@ let EXERCISE_BANK=[
   {id:'e520',name:'Mobilidade de Tornozelo em Pé',muscle:'Mobilidade/Tornozelo',equipment:'Peso Corporal',emoji:'🎯',obs:'Em pé com apoio, faça pequenos círculos com o tornozelo levantado, em ambas as direções.'},
   {id:'e521',name:'Respiração Diafragmática',muscle:'Relaxamento',equipment:'Peso Corporal',emoji:'🧘',obs:'Deitado ou sentado, inspire profundamente pelo nariz enchendo a barriga, segure 2s, solte devagar pela boca.'},
   {id:'e522',name:'Alongamento Global da Cadeia Posterior',muscle:'Mobilidade/Posterior',equipment:'Peso Corporal',emoji:'🎯',obs:'Em pé, incline o tronco à frente tentando alcançar os pés, joelhos levemente flexionados. Solte o pescoço.'},
+  {id:'e523',name:'Salto do Sapinho',muscle:'Pernas/Coordenação',equipment:'Peso Corporal',emoji:'🐸',obs:'Agache bem baixinho como um sapo e dê pulinhos curtos pra frente. Vamos ver quem pula mais longe!'},
+  {id:'e524',name:'Voo do Avião',muscle:'Equilíbrio',equipment:'Peso Corporal',emoji:'✈️',obs:'Fique em pé numa perna só, abra os braços como asas de avião e tente ficar paradinho. Troca de perna depois.'},
+  {id:'e525',name:'Estátua Musical',muscle:'Equilíbrio/Core',equipment:'Peso Corporal',emoji:'🗿',obs:'Fique parado numa posição engraçada e não se mexa até a música ou o tempo acabar. Ótimo pra equilíbrio e concentração.'},
+  {id:'e526',name:'Corrida em Zigue-Zague',muscle:'Agilidade/Cardio',equipment:'Peso Corporal',emoji:'⚡',obs:'Corra fazendo curvas entre objetos (cones, garrafas, chinelos) espalhados no chão. Foco em mudar de direção rápido.'},
+  {id:'e527',name:'Pular Igual Canguru',muscle:'Pernas/Coordenação',equipment:'Peso Corporal',emoji:'🦘',obs:'Pulinhos pequenos e seguidos, pés juntos, quicando pra frente como um canguru. Movimento leve, sem força total.'},
+  {id:'e528',name:'Rastejar Como Cobra',muscle:'Core',equipment:'Peso Corporal',emoji:'🐍',obs:'Deitado de barriga pra baixo, rasteje devagar usando só os braços, arrastando o corpo como uma cobra.'},
+  {id:'e529',name:'Equilibrista na Linha',muscle:'Equilíbrio',equipment:'Peso Corporal',emoji:'🤸',obs:'Desenhe ou imagine uma linha reta no chão e caminhe em cima dela, um pé na frente do outro, como um equilibrista de circo.'},
+  {id:'e530',name:'Arremesso de Bola em Dupla',muscle:'Coordenação/Ombro',equipment:'Bola',emoji:'🤾',obs:'Em dupla, jogue e receba uma bola leve (ou uma meia enrolada) com as duas mãos. Treina coordenação e reflexo brincando.'},
+  {id:'e531',name:'Corrida com Obstáculos Imaginários',muscle:'Agilidade/Cardio',equipment:'Peso Corporal',emoji:'🏃',obs:'Corra num trajeto curto pulando "obstáculos" imaginários (ou almofadas no chão) — como se fosse uma corrida de aventura.'},
 ];
 
 const DG={
@@ -3582,6 +3622,277 @@ const ALONGAMENTO_ROTINAS=[
 ];;
 function getRotinaById(id){return ALONGAMENTO_ROTINAS.find(r=>r.id===id)||null;}
 
+const KIDS_FUNCIONAL_ROTINAS=[
+  {
+    id:'missao-selva', categoria:'funcional-infantil', nome:'Missão Selva', emoji:'🦁',
+    faixa:'6-10 anos', duracao:'15-20 min', nivel:'Iniciante',
+    desc:'Uma aventura na selva! Cada exercício é um animal diferente — bora se mover que nem eles?',
+    exs:[
+      {id:'e121',tempo:'20-30s'},
+      {id:'e122',tempo:'20-30s'},
+      {id:'e523',tempo:'8-10 pulos'},
+      {id:'e527',tempo:'10 pulinhos'},
+      {id:'e528',tempo:'15-20s'},
+      {id:'e144',tempo:'10 repetições'},
+    ]
+  },
+  {
+    id:'desafio-super-herois', categoria:'funcional-infantil', nome:'Desafio dos Super-Heróis', emoji:'🦸',
+    faixa:'6-10 anos', duracao:'15 min', nivel:'Iniciante',
+    desc:'Cada criança vira um super-herói treinando seus poderes — força, equilíbrio e velocidade!',
+    exs:[
+      {id:'e144',tempo:'10 repetições'},
+      {id:'e524',tempo:'15-20s cada perna'},
+      {id:'e019',tempo:'8 repetições'},
+      {id:'e029',tempo:'10-15s'},
+      {id:'e526',tempo:'2 idas'},
+      {id:'e525',tempo:'15-20s'},
+    ]
+  },
+  {
+    id:'cacada-tesouro', categoria:'funcional-infantil', nome:'Caçada ao Tesouro em Movimento', emoji:'🏴‍☠️',
+    faixa:'6-10 anos', duracao:'15-20 min', nivel:'Iniciante',
+    desc:'Uma trilha de desafios pra completar até achar o "tesouro" no final — pode ser um adesivo, uma fruta gostosa, o que você quiser!',
+    exs:[
+      {id:'e531',tempo:'1 trajeto curto'},
+      {id:'e122',tempo:'15-20s'},
+      {id:'e529',tempo:'2 idas e voltas'},
+      {id:'e527',tempo:'8 pulinhos'},
+      {id:'e530',tempo:'10 lançamentos'},
+      {id:'e525',tempo:'15s'},
+    ]
+  },
+  {
+    id:'full-body-divertido', categoria:'funcional-adolescente', nome:'Full Body Divertido', emoji:'💪',
+    faixa:'11-17 anos', duracao:'25-30 min', nivel:'Iniciante/Intermediário',
+    desc:'Um circuito completo de corpo todo, com peso do próprio corpo — ótimo primeiro contato com treino estruturado.',
+    exs:[
+      {id:'e019',tempo:'10-12 repetições'},
+      {id:'e055',tempo:'8-10 repetições'},
+      {id:'e022',tempo:'8 repetições cada lado'},
+      {id:'e029',tempo:'20-30s'},
+      {id:'e096',tempo:'10-12 repetições'},
+      {id:'e144',tempo:'15 repetições'},
+    ]
+  },
+  {
+    id:'desafio-entre-amigos', categoria:'funcional-adolescente', nome:'Desafio Entre Amigos', emoji:'🔥',
+    faixa:'11-17 anos', duracao:'25 min', nivel:'Iniciante/Intermediário',
+    desc:'Treino pensado pra fazer em dupla ou em grupo — mais divertido e ainda ajuda a se cobrar de leve.',
+    exs:[
+      {id:'e082',tempo:'10 repetições cada lado'},
+      {id:'e121',tempo:'20-30s'},
+      {id:'e530',tempo:'15 lançamentos'},
+      {id:'e036',tempo:'20-30s'},
+      {id:'e097',tempo:'6-8 repetições'},
+      {id:'e029',tempo:'25-30s'},
+    ]
+  },
+  {
+    id:'circuito-agilidade', categoria:'funcional-adolescente', nome:'Circuito de Agilidade', emoji:'⚡',
+    faixa:'11-17 anos', duracao:'25 min', nivel:'Intermediário',
+    desc:'Foco em velocidade, coordenação e potência — bom pra quem já pratica algum esporte ou quer começar.',
+    exs:[
+      {id:'e526',tempo:'4-6 repetições'},
+      {id:'e119',tempo:'6-8 repetições cada lado'},
+      {id:'e117',tempo:'6-8 repetições'},
+      {id:'e022',tempo:'10 repetições cada lado'},
+      {id:'e096',tempo:'12-15 repetições'},
+      {id:'e029',tempo:'25-30s'},
+    ]
+  },
+];
+const KIDS_CORRIDA_BRINCADEIRAS = [
+  {emoji:'🐺', nome:'Pega-Pega Turbinado', desc:'O clássico pega-pega, só que quem for pego vira "congelado" e só é liberado quando outro colega toca nele. Corrida, agilidade e diversão em dose alta.'},
+  {emoji:'🎯', nome:'Corrida de Revezamento', desc:'Divide a turma em times, marca um ponto de virada, e corre em dupla passando um "bastão" (pode ser qualquer objeto). Ótimo pra socializar e criar espírito de equipe.'},
+  {emoji:'🧩', nome:'Corrida com Obstáculos', desc:'Monta um trajeto curto com almofadas, cadeiras e cordas pra pular/desviar. A criança corre driblando os "desafios" do caminho.'},
+  {emoji:'🔴', nome:'Semáforo Maluco', desc:'Você grita "verde" (correr), "amarelo" (andar) ou "vermelho" (parar). Treina reação rápida e controle de ritmo, brincando.'},
+  {emoji:'🗺️', nome:'Caça ao Tesouro Correndo', desc:'Espalha pistas ou objetos pelo espaço e a criança corre de um ponto a outro pra ir encontrando. Corrida com propósito e curiosidade.'},
+  {emoji:'🎈', nome:'Corrida da Bexiga', desc:'Correr equilibrando uma bexiga (ou bolinha) numa colher ou nas mãos sem deixar cair. Diverte, e ainda trabalha coordenação junto com a corrida.'},
+];
+
+const KIDS_CORRIDA_TEEN = [
+  {
+    semana:1, titulo:'Semana 1 — Conhecendo o Ritmo',
+    sessoes:'2x por semana, dias não seguidos (ex: terça e sábado)',
+    estrutura:'5 min de caminhada pra aquecer → 6 blocos de (1 min correndo leve + 2 min caminhando) → 5 min de caminhada pra terminar',
+    dica:'O objetivo aqui não é performance — é a criança/adolescente descobrir como o corpo responde a correr. Ritmo de conversa: se não consegue falar frases enquanto corre, está rápido demais.'
+  },
+  {
+    semana:2, titulo:'Semana 2 — Aumentando um Pouquinho',
+    sessoes:'2x por semana',
+    estrutura:'5 min de caminhada → 6 blocos de (2 min correndo leve + 2 min caminhando) → 5 min de caminhada',
+    dica:'Se sentir qualquer dor (não confundir com cansaço normal), para e descansa. Dor não é desafio a superar, é sinal de alerta.'
+  },
+  {
+    semana:3, titulo:'Semana 3 — Ganhando Confiança',
+    sessoes:'2x por semana',
+    estrutura:'5 min de caminhada → 5 blocos de (3 min correndo leve + 1,5 min caminhando) → 5 min de caminhada',
+    dica:'Nessa fase já dá pra notar o corpo se acostumando. Se ainda estiver difícil, pode repetir a semana 2 — não tem pressa nenhuma aqui.'
+  },
+  {
+    semana:4, titulo:'Semana 4 — Corrida Contínua Curta',
+    sessoes:'2x por semana',
+    estrutura:'5 min de caminhada → 12-15 min correndo em ritmo BEM confortável (pode intercalar com caminhada se precisar) → 5 min de caminhada',
+    dica:'Chegar até aqui já é uma conquista enorme! Distâncias maiores (tipo prova de 5km) só valem a pena pensar depois dos 12 anos — o consenso internacional de corrida infantil recomenda isso.'
+  },
+];
+
+function getKidsRotinaById(id){return KIDS_FUNCIONAL_ROTINAS.find(r=>r.id===id)||null;}
+
+// ══ KIDS & TEENS — navegação entre as 4 categorias ══
+let kidsCategoriaAtual='funcional-infantil';
+function switchKidsCategoria(cat){
+  kidsCategoriaAtual=cat;
+  document.querySelectorAll('.kids-tab-btn').forEach(b=>{
+    const ativo=b.dataset.cat===cat;
+    b.classList.toggle('active',ativo);
+    b.style.background=ativo?'var(--r)':'var(--s)';
+    b.style.color=ativo?'#fff':'var(--t2)';
+    b.style.borderColor=ativo?'var(--r)':'var(--b)';
+  });
+  renderKidsConteudo();
+}
+function renderKidsConteudo(){
+  const el=document.getElementById('kids-conteudo');
+  if(!el)return;
+  if(kidsCategoriaAtual==='corrida-infantil'){
+    el.innerHTML=`
+      <div style="margin-bottom:14px;padding:12px 14px;background:rgba(243,156,18,.08);border:1px solid rgba(243,156,18,.25);border-radius:10px;font-size:11.5px;color:var(--t2);line-height:1.6">
+        🎈 Isso aqui <b>não é um treino estruturado</b> — crianças até 10-11 anos não devem seguir plano sistemático de corrida (é o que recomenda o consenso internacional de corrida infantil). São só ideias de brincadeira pra incentivar o movimento, sem cobrança de distância ou tempo.
+      </div>
+      ${KIDS_CORRIDA_BRINCADEIRAS.map(b=>`
+        <div style="background:var(--s);border:1px solid var(--b);border-radius:14px;padding:16px;margin-bottom:12px;display:flex;gap:14px;align-items:flex-start">
+          <div style="font-size:30px;flex-shrink:0">${b.emoji}</div>
+          <div>
+            <div style="font-size:14.5px;font-weight:800">${b.nome}</div>
+            <div style="font-size:12px;color:var(--t2);margin-top:4px;line-height:1.5">${b.desc}</div>
+          </div>
+        </div>`).join('')}`;
+    return;
+  }
+  if(kidsCategoriaAtual==='corrida-adolescente'){
+    el.innerHTML=`
+      <div style="margin-bottom:14px;padding:12px 14px;background:rgba(46,204,113,.08);border:1px solid rgba(46,204,113,.25);border-radius:10px;font-size:11.5px;color:var(--t2);line-height:1.6">
+        🏁 Plano leve de 4 semanas, método corrida-caminhada, pra quem nunca correu. Volume baixo de propósito — o objetivo é criar o hábito com segurança, não performance.
+      </div>
+      ${KIDS_CORRIDA_TEEN.map(s=>`
+        <div style="background:var(--s);border:1px solid var(--b);border-radius:14px;padding:16px;margin-bottom:12px">
+          <div style="font-size:14.5px;font-weight:800;color:var(--r)">${s.titulo}</div>
+          <div style="font-size:11px;color:var(--mu);margin-top:2px">${s.sessoes}</div>
+          <div style="font-size:12.5px;margin-top:10px;padding:10px 12px;background:var(--s2);border-radius:8px;line-height:1.6">${s.estrutura}</div>
+          <div style="font-size:11.5px;color:var(--t2);margin-top:10px;line-height:1.6">💡 ${s.dica}</div>
+        </div>`).join('')}`;
+    return;
+  }
+  // funcional-infantil ou funcional-adolescente
+  const rotinas=KIDS_FUNCIONAL_ROTINAS.filter(r=>r.categoria===kidsCategoriaAtual);
+  el.innerHTML=rotinas.map(r=>`
+    <div onclick="abrirRotinaKids('${r.id}')" style="display:flex;align-items:center;gap:14px;background:var(--s);border:1px solid var(--b);border-radius:14px;padding:14px 16px;margin-bottom:12px;cursor:pointer">
+      <div style="font-size:32px;flex-shrink:0">${r.emoji}</div>
+      <div style="flex:1">
+        <div style="font-size:14.5px;font-weight:800">${r.nome}</div>
+        <div style="font-size:11px;color:var(--t2);margin-top:2px">${r.desc}</div>
+        <div style="font-size:10px;color:var(--mu);margin-top:6px">👶 ${r.faixa} · ⏱ ${r.duracao} · ${r.exs.length} exercícios</div>
+      </div>
+      <span style="color:var(--mu);font-size:18px">›</span>
+    </div>`).join('');
+}
+
+function abrirRotinaKids(id){
+  const r=getKidsRotinaById(id);
+  if(!r)return;
+  const u=getU()||{};
+  const itens=r.exs.map((item,i)=>{
+    const ex=getExById(item.id);
+    if(!ex)return '';
+    const dk=`kids_${r.id}_${ex.id}`;
+    const feito=u.mobExDone&&u.mobExDone[dk];
+    return `<div class="ep-card" id="kids-ep-${i}">
+      <div class="ep-header" onclick="togKidsEp(${i})">
+        <div class="ep-num ${feito?'done':''}">${feito?'✓':i+1}</div>
+        <div class="ep-info"><div class="ep-title">${ex.emoji||''} ${ex.name}</div><div class="ep-sub">${ex.muscle}</div></div>
+        <div class="ep-chips"><span class="ep-chip">${item.tempo}</span></div>
+        <span class="ep-chv">▾</span>
+      </div>
+      <div class="ep-body">
+        <div class="ep-thumb" style="position:relative;overflow:hidden">
+          ${renderExThumb(ex)}
+        </div>
+        <div class="ep-obs">💡 ${ex.obs||''}</div>
+        <button onclick="event.stopPropagation();chkKidsEx('${r.id}','${ex.id}',${i})" style="width:100%;padding:11px;border-radius:8px;border:1px solid ${feito?'rgba(46,204,113,.3)':'var(--b)'};background:${feito?'rgba(46,204,113,.1)':'var(--s2)'};color:${feito?'#2ecc71':'var(--t2)'};font-size:12.5px;font-weight:800;cursor:pointer">${feito?'✅ Feito':'Marcar como feito'}</button>
+      </div>
+    </div>`;
+  }).join('');
+
+  document.getElementById('modal-rotina-content').innerHTML=`
+    <div style="padding:24px 20px 8px">
+      <div style="font-size:38px;margin-bottom:8px">${r.emoji}</div>
+      <div style="font-size:19px;font-weight:900;letter-spacing:-.3px">${r.nome}</div>
+      <div style="font-size:12.5px;color:var(--t2);margin-top:4px">${r.desc}</div>
+      <div style="font-size:10.5px;color:var(--mu);margin-top:6px">👶 ${r.faixa} · ⏱ ${r.duracao} · ${r.nivel}</div>
+    </div>
+    <div style="margin:14px 20px;padding:11px 13px;background:rgba(46,204,113,.08);border:1px solid rgba(46,204,113,.2);border-radius:10px;font-size:11px;color:var(--t2);line-height:1.5">
+      👨‍👩‍👧 Com acompanhamento de um adulto. Se sentir dor (diferente de cansaço normal), pare na hora.
+    </div>
+    <div style="padding:0 20px 12px" id="kids-rotina-cards">${itens}</div>
+    <div style="padding:0 20px 28px" id="kids-rotina-concluir">${kidsBtnConcluirHTML(r)}</div>
+  `;
+  abrirModal('modal-rotina');
+  initGifCanvases(document.getElementById('modal-rotina-content'));
+}
+function togKidsEp(i){document.getElementById(`kids-ep-${i}`).classList.toggle('open');}
+function kidsBtnConcluirHTML(r){
+  const u=getU()||{};
+  const todosFeitos=r.exs.every(item=>u.mobExDone&&u.mobExDone[`kids_${r.id}_${item.id}`]);
+  const hoje=new Date().toLocaleDateString('pt-BR');
+  const jaConcluidaHoje=u.mobRotinasDone&&u.mobRotinasDone[`kids_${r.id}_${hoje}`];
+  if(jaConcluidaHoje) return `<button disabled style="width:100%;padding:14px;border-radius:12px;border:none;background:rgba(46,204,113,.12);color:#2ecc71;font-size:14px;font-weight:800;opacity:.7">🎉 Treino concluído hoje!</button>`;
+  return `<button onclick="concluirRotinaKids('${r.id}')" ${todosFeitos?'':'disabled'} style="width:100%;padding:14px;border-radius:12px;border:none;background:${todosFeitos?'var(--r)':'var(--s2)'};color:${todosFeitos?'#fff':'var(--mu)'};font-size:14px;font-weight:800;cursor:${todosFeitos?'pointer':'default'}">${todosFeitos?'▶ Concluir treino':'Marque todos os exercícios acima'}</button>`;
+}
+function chkKidsEx(routineId, exId, i){
+  const email=DB.get('fq_cur');const users=DB.get('fq_users')||{};const u=users[email];if(!u)return;
+  if(!u.mobExDone)u.mobExDone={};
+  const dk=`kids_${routineId}_${exId}`;
+  u.mobExDone[dk]=!u.mobExDone[dk];
+  DB.set('fq_users',users);
+  const r=getKidsRotinaById(routineId);
+  const card=document.getElementById(`kids-ep-${i}`);
+  if(card){
+    const num=card.querySelector('.ep-num');
+    const btn=card.querySelector('.ep-body button');
+    const feito=u.mobExDone[dk];
+    if(num){num.classList.toggle('done',feito);num.textContent=feito?'✓':(i+1);}
+    if(btn){
+      btn.textContent=feito?'✅ Feito':'Marcar como feito';
+      btn.style.borderColor=feito?'rgba(46,204,113,.3)':'var(--b)';
+      btn.style.background=feito?'rgba(46,204,113,.1)':'var(--s2)';
+      btn.style.color=feito?'#2ecc71':'var(--t2)';
+    }
+  }
+  const wrap=document.getElementById('kids-rotina-concluir');
+  if(wrap && r) wrap.innerHTML=kidsBtnConcluirHTML(r);
+}
+function concluirRotinaKids(routineId){
+  const email=DB.get('fq_cur');const users=DB.get('fq_users')||{};const u=users[email];if(!u)return;
+  const r=getKidsRotinaById(routineId);if(!r)return;
+  const hoje=new Date().toLocaleDateString('pt-BR');
+  if(!u.mobRotinasDone)u.mobRotinasDone={};
+  const dk=`kids_${routineId}_${hoje}`;
+  if(u.mobRotinasDone[dk])return;
+  u.mobRotinasDone[dk]=true;
+  u.xp=(u.xp||0)+50;u.coins=(u.coins||0)+10;
+  atualizarStreak(u);
+  try{registrarEventoComunidade('treino',{nome:u.name,nome_treino:r.nome,titulo:tituloAtual(u)?.emoji});}catch(e){}
+  if((u.xp||0)>=(u.level||1)*1000){u.level=(u.level||1)+1;u.xp=0;setTimeout(()=>fqToast(t('msg.e4f2eae161')+(u.level||1)+'!','ok',5000),200);try{dispararConfete(40);}catch(e){}}
+  DB.set('fq_users',users);
+  const wrap=document.getElementById('kids-rotina-concluir');
+  if(wrap) wrap.innerHTML=kidsBtnConcluirHTML(r);
+  fqToast('🎉 Treino concluído! +50 XP','ok');
+  try{dispararConfete(28);}catch(e){}
+}
+
+
 function renderMobRotinas(){
   const el=document.getElementById('mob-rotinas-list');
   if(!el)return;
@@ -3626,20 +3937,27 @@ function abrirRotina(id){
   if(!pago){abrirAssinatura();return;}
   const r=getRotinaById(id);
   if(!r)return;
-  const itens=r.exs.map(item=>{
+  const u=getU()||{};
+  const itens=r.exs.map((item,i)=>{
     const ex=getExById(item.id);
     if(!ex)return '';
-    const thumb=temGifDemo(ex.id)
-      ?gifCanvasHTML(ex.id, 'width:56px;height:56px;object-fit:cover;border-radius:10px;background:#f6f2e4;flex-shrink:0', '.mob-ex-thumb')
-      :`<div style="width:56px;height:56px;flex-shrink:0">${renderExThumbFallback(ex.id)}</div>`;
-    return `
-      <div style="display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--b)">
-        <div class="mob-ex-thumb" style="width:56px;height:56px;border-radius:10px;overflow:hidden;flex-shrink:0">${thumb}</div>
-        <div style="flex:1">
-          <div style="font-size:13.5px;font-weight:700">${ex.name}</div>
-          <div style="font-size:11px;color:var(--t2);margin-top:2px">${item.tempo}</div>
+    const dk=`${r.id}_${ex.id}`;
+    const feito=u.mobExDone&&u.mobExDone[dk];
+    return `<div class="ep-card" id="mob-ep-${i}">
+      <div class="ep-header" onclick="togMobEp(${i})">
+        <div class="ep-num ${feito?'done':''}">${feito?'✓':i+1}</div>
+        <div class="ep-info"><div class="ep-title">${ex.name} <button onclick="event.stopPropagation();abrirFichaExercicio('${ex.id}')" style="background:rgba(255,255,255,.08);border:1px solid var(--b);color:var(--t2);border-radius:50%;width:20px;height:20px;font-size:11px;cursor:pointer;vertical-align:middle;margin-left:4px;padding:0;line-height:1" title="Ver ficha completa">ℹ️</button></div><div class="ep-sub">${ex.muscle}</div></div>
+        <div class="ep-chips"><span class="ep-chip">${item.tempo}</span></div>
+        <span class="ep-chv">▾</span>
+      </div>
+      <div class="ep-body">
+        <div class="ep-thumb" style="position:relative;overflow:hidden">
+          ${renderExThumb(ex)}
         </div>
-      </div>`;
+        <div class="ep-obs">💡 ${exObs(ex, ex.obs||'')}</div>
+        <button onclick="event.stopPropagation();chkMobEx('${r.id}','${ex.id}',${i})" style="width:100%;padding:11px;border-radius:8px;border:1px solid ${feito?'rgba(46,204,113,.3)':'var(--b)'};background:${feito?'rgba(46,204,113,.1)':'var(--s2)'};color:${feito?'#2ecc71':'var(--t2)'};font-size:12.5px;font-weight:800;cursor:pointer">${feito?'✅ Feito':'Marcar como feito'}</button>
+      </div>
+    </div>`;
   }).join('');
 
   document.getElementById('modal-rotina-content').innerHTML=`
@@ -3652,10 +3970,61 @@ function abrirRotina(id){
     <div style="margin:14px 20px;padding:11px 13px;background:rgba(229,9,20,.08);border:1px solid rgba(229,9,20,.2);border-radius:10px;font-size:11px;color:var(--t2);line-height:1.5">
       ⚠️ Orientação geral de bem-estar, não substitui avaliação médica ou fisioterapêutica. Se a dor for forte, persistente ou piorar durante o movimento, pare e procure um profissional.
     </div>
-    <div style="padding:0 20px 28px">${itens}</div>
+    <div style="padding:0 20px 12px" id="mob-rotina-cards">${itens}</div>
+    <div style="padding:0 20px 28px" id="mob-rotina-concluir">${mobBtnConcluirHTML(r)}</div>
   `;
   abrirModal('modal-rotina');
   initGifCanvases(document.getElementById('modal-rotina-content'));
+}
+function togMobEp(i){document.getElementById(`mob-ep-${i}`).classList.toggle('open');}
+function mobBtnConcluirHTML(r){
+  const u=getU()||{};
+  const todosFeitos=r.exs.every(item=>u.mobExDone&&u.mobExDone[`${r.id}_${item.id}`]);
+  const hoje=new Date().toLocaleDateString('pt-BR');
+  const jaConcluidaHoje=u.mobRotinasDone&&u.mobRotinasDone[`${r.id}_${hoje}`];
+  if(jaConcluidaHoje) return `<button disabled style="width:100%;padding:14px;border-radius:12px;border:none;background:rgba(46,204,113,.12);color:#2ecc71;font-size:14px;font-weight:800;opacity:.7">✅ Rotina concluída hoje!</button>`;
+  return `<button onclick="concluirRotina('${r.id}')" ${todosFeitos?'':'disabled'} style="width:100%;padding:14px;border-radius:12px;border:none;background:${todosFeitos?'var(--r)':'var(--s2)'};color:${todosFeitos?'#fff':'var(--mu)'};font-size:14px;font-weight:800;cursor:${todosFeitos?'pointer':'default'}">${todosFeitos?'▶ Concluir rotina':'Marque todos os exercícios acima'}</button>`;
+}
+function chkMobEx(routineId, exId, i){
+  const email=DB.get('fq_cur');const users=DB.get('fq_users')||{};const u=users[email];if(!u)return;
+  if(!u.mobExDone)u.mobExDone={};
+  const dk=`${routineId}_${exId}`;
+  u.mobExDone[dk]=!u.mobExDone[dk]; // permite desmarcar por engano
+  DB.set('fq_users',users);
+  const r=getRotinaById(routineId);
+  const card=document.getElementById(`mob-ep-${i}`);
+  if(card){
+    const num=card.querySelector('.ep-num');
+    const btn=card.querySelector('.ep-body button');
+    const feito=u.mobExDone[dk];
+    if(num){num.classList.toggle('done',feito);num.textContent=feito?'✓':(i+1);}
+    if(btn){
+      btn.textContent=feito?'✅ Feito':'Marcar como feito';
+      btn.style.borderColor=feito?'rgba(46,204,113,.3)':'var(--b)';
+      btn.style.background=feito?'rgba(46,204,113,.1)':'var(--s2)';
+      btn.style.color=feito?'#2ecc71':'var(--t2)';
+    }
+  }
+  const wrap=document.getElementById('mob-rotina-concluir');
+  if(wrap && r) wrap.innerHTML=mobBtnConcluirHTML(r);
+}
+function concluirRotina(routineId){
+  const email=DB.get('fq_cur');const users=DB.get('fq_users')||{};const u=users[email];if(!u)return;
+  const r=getRotinaById(routineId);if(!r)return;
+  const hoje=new Date().toLocaleDateString('pt-BR');
+  if(!u.mobRotinasDone)u.mobRotinasDone={};
+  const dk=`${routineId}_${hoje}`;
+  if(u.mobRotinasDone[dk])return;
+  u.mobRotinasDone[dk]=true;
+  u.xp=(u.xp||0)+60;u.coins=(u.coins||0)+10;
+  atualizarStreak(u);
+  try{registrarEventoComunidade('treino',{nome:u.name,nome_treino:'Alongamento: '+r.nome,titulo:tituloAtual(u)?.emoji});}catch(e){}
+  if((u.xp||0)>=(u.level||1)*1000){u.level=(u.level||1)+1;u.xp=0;setTimeout(()=>fqToast(t('msg.e4f2eae161')+(u.level||1)+'!','ok',5000),200);try{dispararConfete(40);}catch(e){}}
+  DB.set('fq_users',users);
+  const wrap=document.getElementById('mob-rotina-concluir');
+  if(wrap) wrap.innerHTML=mobBtnConcluirHTML(r);
+  fqToast('✅ Rotina concluída! +60 XP','ok');
+  try{dispararConfete(24);}catch(e){}
 }
 
 // ══════════════════════════════════════════════════════════════
@@ -8952,6 +9321,7 @@ function switchTab(name,btn){
   }
   if(name==='missoes'&&typeof renderMissoes==='function')renderMissoes();
   if(name==='mobilidade'&&typeof renderMobRotinas==='function')renderMobRotinas();
+  if(name==='kids'&&typeof renderKidsConteudo==='function')renderKidsConteudo();
   if(name==='treinos'){
     const badge=document.getElementById('mob-lock-badge');
     if(badge){const pago=typeof statusAssinatura==='function'&&statusAssinatura(getU())==='ativa';badge.style.display=pago?'none':'inline';}
@@ -12713,12 +13083,19 @@ async function admConfirmarPago(planoId){
       // TRAVA O PREÇO: quem entrou na campanha paga esse valor pra sempre,
       // mesmo depois que a promo acabar. Guardamos o preço e o número da vaga
       // pra você ter o registro de quem entrou como fundador.
+      // O .preco de PLANOS_PROMO/NORMAL é texto formatado pra tela ("R$14,90") —
+      // a coluna do banco é numérica, então convertemos pra número puro aqui.
+      const precoParaNumero = (txt) => {
+        if(!txt) return null;
+        const n = parseFloat(String(txt).replace('R$','').replace(/\./g,'').replace(',','.').trim());
+        return isNaN(n) ? null : n;
+      };
       if(promoAtiva()){
-        u.precoTravado = (PLANOS_PROMO[planoId]||{}).preco || null;
+        u.precoTravado = precoParaNumero((PLANOS_PROMO[planoId]||{}).preco);
         u.promoFundador = true;
         u.promoVaga = PROMO_VAGAS_USADAS + 1;
       }else{
-        u.precoTravado = (PLANOS_NORMAL[planoId]||{}).preco || null;
+        u.precoTravado = precoParaNumero((PLANOS_NORMAL[planoId]||{}).preco);
         u.promoFundador = false;
       }
       if(u.trialInicio){
