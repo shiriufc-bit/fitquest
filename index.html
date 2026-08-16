@@ -815,7 +815,7 @@ textarea.fi{resize:vertical;min-height:80px;}
       <option value="es">🇪🇸 ES</option>
     </select>
   </div>
-  <div id="fq-version-badge" style="position:absolute;bottom:8px;right:12px;font-size:9px;color:#333;font-weight:700;z-index:5">v146</div>
+  <div id="fq-version-badge" style="position:absolute;bottom:8px;right:12px;font-size:9px;color:#333;font-weight:700;z-index:5">v147</div>
   <img src="https://images.unsplash.com/photo-1517836357463-d25dfeac3438?w=800&q=80" alt="Fitness" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center top;filter:brightness(.35);z-index:0"/>
   <div class="splash-glow"></div>
   <div class="splash-noise"></div>
@@ -1473,7 +1473,7 @@ textarea.fi{resize:vertical;min-height:80px;}
           <div style="position:absolute;inset:0;background:linear-gradient(90deg,rgba(0,0,0,.55),rgba(0,0,0,.85))"></div>
           <div style="position:relative;font-size:36px;flex-shrink:0">🧒</div>
           <div style="position:relative;text-align:left;flex:1">
-            <div style="font-size:16px;font-weight:900;color:#fff;letter-spacing:-.2px">Kids & Teens</div>
+            <div style="font-size:16px;font-weight:900;color:#fff;letter-spacing:-.2px;display:flex;align-items:center;gap:6px">Kids & Teens <span id="kids-lock-badge" style="display:none;font-size:11px;background:rgba(229,9,20,.9);padding:2px 8px;border-radius:99px;font-weight:800">🔒 Assinantes</span></div>
             <div style="font-size:11.5px;color:var(--t2);margin-top:2px">Treinos divertidos pra crianças e adolescentes</div>
           </div>
         </div>
@@ -3624,6 +3624,66 @@ function getRotinaById(id){return ALONGAMENTO_ROTINAS.find(r=>r.id===id)||null;}
 
 const KIDS_FUNCIONAL_ROTINAS=[
   {
+    id:'zoologico-equilibrio', categoria:'funcional-infantil', nome:'Zoológico do Equilíbrio', emoji:'🦩',
+    faixa:'6-10 anos', duracao:'15 min', nivel:'Iniciante',
+    desc:'Brincadeiras de equilíbrio inspiradas em animais — flamingo, urso, cobra. Corpo mais firme e concentração de brinde.',
+    exs:[
+      {id:'e524',tempo:'15-20s cada perna'},
+      {id:'e529',tempo:'2 idas e voltas'},
+      {id:'e525',tempo:'15-20s'},
+      {id:'e528',tempo:'15-20s'},
+      {id:'e121',tempo:'20s'},
+    ]
+  },
+  {
+    id:'corrida-das-formas', categoria:'funcional-infantil', nome:'Corrida das Formas', emoji:'🔺',
+    faixa:'6-10 anos', duracao:'15-20 min', nivel:'Iniciante',
+    desc:'Corra, pule e se mova fazendo o percurso de diferentes formas — círculo, zigue-zague, linha reta. Diversão com direção.',
+    exs:[
+      {id:'e526',tempo:'3-4 repetições'},
+      {id:'e527',tempo:'10 pulinhos'},
+      {id:'e144',tempo:'12 repetições'},
+      {id:'e531',tempo:'1 trajeto'},
+      {id:'e523',tempo:'8 pulos'},
+    ]
+  },
+  {
+    id:'circo-em-casa', categoria:'funcional-infantil', nome:'Circo em Casa', emoji:'🎪',
+    faixa:'6-10 anos', duracao:'15 min', nivel:'Iniciante',
+    desc:'Vira um artista de circo por um dia — equilibrista, malabarista e acrobata, tudo em forma de brincadeira.',
+    exs:[
+      {id:'e529',tempo:'2 idas e voltas'},
+      {id:'e530',tempo:'10 lançamentos'},
+      {id:'e122',tempo:'20s'},
+      {id:'e525',tempo:'15s cada posição'},
+      {id:'e523',tempo:'8 pulos'},
+    ]
+  },
+  {
+    id:'treino-hiit-leve', categoria:'funcional-adolescente', nome:'HIIT Leve — Energia Rápida', emoji:'🔋',
+    faixa:'11-17 anos', duracao:'20 min', nivel:'Intermediário',
+    desc:'Circuito curto e intenso, blocos de esforço com descanso generoso — bom pra quem já se movimenta bem.',
+    exs:[
+      {id:'e144',tempo:'20 repetições'},
+      {id:'e096',tempo:'12 repetições'},
+      {id:'e019',tempo:'12 repetições'},
+      {id:'e097',tempo:'6 repetições'},
+      {id:'e029',tempo:'25-30s'},
+    ]
+  },
+  {
+    id:'forca-funcional-teen', categoria:'funcional-adolescente', nome:'Força Funcional', emoji:'🏋️',
+    faixa:'11-17 anos', duracao:'25-30 min', nivel:'Intermediário',
+    desc:'Foco em construir base de força com o peso do próprio corpo — movimentos que preparam pro treino de musculação no futuro.',
+    exs:[
+      {id:'e019',tempo:'12-15 repetições'},
+      {id:'e055',tempo:'8-12 repetições'},
+      {id:'e082',tempo:'10 repetições cada lado'},
+      {id:'e036',tempo:'25-30s'},
+      {id:'e300',tempo:'10-12 repetições cada lado'},
+    ]
+  },
+  {
     id:'missao-selva', categoria:'funcional-infantil', nome:'Missão Selva', emoji:'🦁',
     faixa:'6-10 anos', duracao:'15-20 min', nivel:'Iniciante',
     desc:'Uma aventura na selva! Cada exercício é um animal diferente — bora se mover que nem eles?',
@@ -3753,9 +3813,47 @@ function switchKidsCategoria(cat){
   });
   renderKidsConteudo();
 }
+function avancarSemanaCorridaKids(semanaConcluida){
+  const email=DB.get('fq_cur');const users=DB.get('fq_users')||{};const u=users[email];if(!u)return;
+  const atual=u.kidsCorridaSemana||1;
+  if(semanaConcluida!==atual)return; // proteção — só avança a semana certa, na ordem
+  u.kidsCorridaSemana=atual+1;
+  u.xp=(u.xp||0)+80;u.coins=(u.coins||0)+15;
+  atualizarStreak(u);
+  if((u.xp||0)>=(u.level||1)*1000){u.level=(u.level||1)+1;u.xp=0;setTimeout(()=>fqToast(t('msg.e4f2eae161')+(u.level||1)+'!','ok',5000),200);try{dispararConfete(40);}catch(e){}}
+  DB.set('fq_users',users);
+  renderKidsConteudo();
+  fqToast('🎉 Semana concluída! Próxima semana liberada. +80 XP','ok');
+  try{dispararConfete(28);}catch(e){}
+}
 function renderKidsConteudo(){
   const el=document.getElementById('kids-conteudo');
   if(!el)return;
+  const pago=typeof statusAssinatura==='function'&&statusAssinatura(getU())==='ativa';
+  const u=getU()||{};
+  if(!pago){
+    const totalRotinas=KIDS_FUNCIONAL_ROTINAS.length;
+    el.innerHTML=`
+      <div style="text-align:center;padding:10px 6px 4px">
+        <div style="font-size:40px;margin-bottom:10px">🔒</div>
+        <div style="font-size:15px;font-weight:800">Recurso de assinante</div>
+        <div style="font-size:12.5px;color:var(--t2);margin-top:6px;line-height:1.5">Os treinos Kids & Teens fazem parte do plano pago do FitQuest. Assine pra desbloquear todos os ${totalRotinas} treinos e o plano de corrida.</div>
+        <button onclick="abrirAssinatura()" style="margin-top:18px;width:100%;background:var(--r);color:#fff;border:none;border-radius:12px;padding:15px;font-size:14.5px;font-weight:800;cursor:pointer">⭐ Assinar FitQuest</button>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:10px;margin-top:22px;opacity:.5;pointer-events:none">
+        ${KIDS_FUNCIONAL_ROTINAS.map(r=>`
+          <div style="display:flex;align-items:center;gap:14px;background:var(--s);border:1px solid var(--b);border-radius:14px;padding:14px 16px">
+            <div style="font-size:26px;flex-shrink:0">${r.emoji}</div>
+            <div style="flex:1">
+              <div style="font-size:13.5px;font-weight:800">${r.nome}</div>
+              <div style="font-size:10.5px;color:var(--mu);margin-top:2px">${r.faixa} · ${r.exs.length} exercícios</div>
+            </div>
+            <span style="font-size:16px">🔒</span>
+          </div>
+        `).join('')}
+      </div>`;
+    return;
+  }
   if(kidsCategoriaAtual==='corrida-infantil'){
     el.innerHTML=`
       <div style="margin-bottom:14px;padding:12px 14px;background:rgba(243,156,18,.08);border:1px solid rgba(243,156,18,.25);border-radius:10px;font-size:11.5px;color:var(--t2);line-height:1.6">
@@ -3772,17 +3870,35 @@ function renderKidsConteudo(){
     return;
   }
   if(kidsCategoriaAtual==='corrida-adolescente'){
+    const semanaAtual=u.kidsCorridaSemana||1;
     el.innerHTML=`
       <div style="margin-bottom:14px;padding:12px 14px;background:rgba(46,204,113,.08);border:1px solid rgba(46,204,113,.25);border-radius:10px;font-size:11.5px;color:var(--t2);line-height:1.6">
-        🏁 Plano leve de 4 semanas, método corrida-caminhada, pra quem nunca correu. Volume baixo de propósito — o objetivo é criar o hábito com segurança, não performance.
+        🏁 Plano leve de 4 semanas, método corrida-caminhada, pra quem nunca correu. Uma semana de cada vez — sem pressa, no ritmo do aluno.
       </div>
-      ${KIDS_CORRIDA_TEEN.map(s=>`
-        <div style="background:var(--s);border:1px solid var(--b);border-radius:14px;padding:16px;margin-bottom:12px">
-          <div style="font-size:14.5px;font-weight:800;color:var(--r)">${s.titulo}</div>
-          <div style="font-size:11px;color:var(--mu);margin-top:2px">${s.sessoes}</div>
-          <div style="font-size:12.5px;margin-top:10px;padding:10px 12px;background:var(--s2);border-radius:8px;line-height:1.6">${s.estrutura}</div>
-          <div style="font-size:11.5px;color:var(--t2);margin-top:10px;line-height:1.6">💡 ${s.dica}</div>
-        </div>`).join('')}`;
+      ${KIDS_CORRIDA_TEEN.map(s=>{
+        if(s.semana<semanaAtual){
+          return `<div style="background:rgba(46,204,113,.06);border:1px solid rgba(46,204,113,.2);border-radius:14px;padding:14px 16px;margin-bottom:12px;display:flex;align-items:center;gap:10px">
+            <span style="font-size:18px">✅</span>
+            <div style="font-size:13px;font-weight:800;color:#2ecc71">${s.titulo} — concluída</div>
+          </div>`;
+        }
+        if(s.semana===semanaAtual){
+          return `<div style="background:var(--s);border:1px solid var(--r);border-radius:14px;padding:16px;margin-bottom:12px">
+            <div style="font-size:14.5px;font-weight:800;color:var(--r)">${s.titulo}</div>
+            <div style="font-size:11px;color:var(--mu);margin-top:2px">${s.sessoes}</div>
+            <div style="font-size:12.5px;margin-top:10px;padding:10px 12px;background:var(--s2);border-radius:8px;line-height:1.6">${s.estrutura}</div>
+            <div style="font-size:11.5px;color:var(--t2);margin-top:10px;line-height:1.6">💡 ${s.dica}</div>
+            <button onclick="avancarSemanaCorridaKids(${s.semana})" style="width:100%;margin-top:12px;padding:12px;border-radius:10px;border:none;background:var(--r);color:#fff;font-size:13px;font-weight:800;cursor:pointer">✅ Concluir esta semana</button>
+          </div>`;
+        }
+        // semana futura — trava, sem expor o conteúdo
+        return `<div style="background:var(--s);border:1px solid var(--b);border-radius:14px;padding:16px;margin-bottom:12px;opacity:.55">
+          <div style="font-size:14px;font-weight:800;display:flex;align-items:center;gap:8px">🔒 ${s.titulo}</div>
+          <div style="font-size:11px;color:var(--mu);margin-top:4px">Complete a semana atual pra desbloquear</div>
+        </div>`;
+      }).join('')}
+      ${semanaAtual>KIDS_CORRIDA_TEEN.length?`<div style="text-align:center;padding:20px;color:#2ecc71;font-weight:800;font-size:14px">🎉 Plano completo! Parabéns pela conquista.</div>`:''}
+    `;
     return;
   }
   // funcional-infantil ou funcional-adolescente
@@ -3800,6 +3916,8 @@ function renderKidsConteudo(){
 }
 
 function abrirRotinaKids(id){
+  const pago=typeof statusAssinatura==='function'&&statusAssinatura(getU())==='ativa';
+  if(!pago){abrirAssinatura();return;}
   const r=getKidsRotinaById(id);
   if(!r)return;
   const u=getU()||{};
@@ -9324,7 +9442,10 @@ function switchTab(name,btn){
   if(name==='kids'&&typeof renderKidsConteudo==='function')renderKidsConteudo();
   if(name==='treinos'){
     const badge=document.getElementById('mob-lock-badge');
-    if(badge){const pago=typeof statusAssinatura==='function'&&statusAssinatura(getU())==='ativa';badge.style.display=pago?'none':'inline';}
+    const pago=typeof statusAssinatura==='function'&&statusAssinatura(getU())==='ativa';
+    if(badge){badge.style.display=pago?'none':'inline';}
+    const badgeKids=document.getElementById('kids-lock-badge');
+    if(badgeKids){badgeKids.style.display=pago?'none':'inline';}
   }
 }
 
