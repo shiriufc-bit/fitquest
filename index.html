@@ -821,7 +821,7 @@ textarea.fi{resize:vertical;min-height:80px;}
       <option value="es">🇪🇸 ES</option>
     </select>
   </div>
-  <div id="fq-version-badge" style="position:absolute;bottom:8px;right:12px;font-size:9px;color:#333;font-weight:700;z-index:5">v157</div>
+  <div id="fq-version-badge" style="position:absolute;bottom:8px;right:12px;font-size:9px;color:#333;font-weight:700;z-index:5">v162</div>
   <img src="https://images.unsplash.com/photo-1517836357463-d25dfeac3438?w=800&q=80" alt="Fitness" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center top;filter:brightness(.35);z-index:0"/>
   <div class="splash-glow"></div>
   <div class="splash-noise"></div>
@@ -832,7 +832,7 @@ textarea.fi{resize:vertical;min-height:80px;}
     <div class="splash-title" data-i18n="splash.title">Seu treino.<br>Sua <span class="hl" data-i18n="ui.cca38aeb0f">evolução.</span><br>Seu ritmo.</div>
     <div class="splash-sub" data-i18n="splash.sub">Plataforma de assessoria esportiva com treinos personalizados e acompanhamento completo.</div>
     <div class="splash-btns">
-      <button class="btn-splash-primary" data-i18n="splash.cta" onclick="goAuth('register')">▶ Testar 14 dias grátis</button>
+      <button class="btn-splash-primary" data-i18n="splash.cta" onclick="goAuth('register')">▶ Testar 7 dias grátis</button>
       <button class="btn-splash-secondary" data-i18n="splash.login" onclick="goAuth('login')">Já tenho uma conta</button>
     </div>
     <div style="text-align:center;font-size:11px;color:rgba(255,255,255,.55);margin-top:12px;font-weight:600" data-i18n="splash.nocard">✅ Sem cartão salvo · sem renovação automática</div>
@@ -846,7 +846,7 @@ textarea.fi{resize:vertical;min-height:80px;}
     <div class="auth-logo-sm"><span class="r">FIT</span>QUEST</div>
     <div class="auth-box">
       <div class="auth-title" id="auth-title">Criar conta</div>
-      <div id="auth-trial-badge" style="background:rgba(46,204,113,.1);border:1px solid rgba(46,204,113,.3);border-radius:8px;padding:9px 12px;margin-bottom:14px;text-align:center;font-size:11.5px;font-weight:700;color:#2ecc71" data-i18n="auth.trial.badge">🎁 14 dias grátis · sem cartão de crédito</div>
+      <div id="auth-trial-badge" style="background:rgba(46,204,113,.1);border:1px solid rgba(46,204,113,.3);border-radius:8px;padding:9px 12px;margin-bottom:14px;text-align:center;font-size:11.5px;font-weight:700;color:#2ecc71" data-i18n="auth.trial.badge">🎁 7 dias grátis · sem cartão de crédito</div>
       <div class="auth-tabs">
         <button class="auth-tab" id="tab-login" data-i18n="auth.tab.login" onclick="switchAuth('login')">Entrar</button>
         <button class="auth-tab active" id="tab-reg" data-i18n="auth.tab.register" onclick="switchAuth('register')">Criar conta</button>
@@ -862,7 +862,7 @@ textarea.fi{resize:vertical;min-height:80px;}
         <div class="fg"><label class="fl" data-i18n="auth.field.email">E-mail</label><input id="reg-email" class="fi" type="email" placeholder="seu@email.com"/></div>
         <div class="fg"><label class="fl" data-i18n="auth.field.pass">Senha</label><input id="reg-pass" class="fi" type="password" placeholder="Mínimo 6 caracteres"/></div>
         <div class="fg"><label class="fl" data-i18n="auth.field.pass2">Confirmar senha</label><input id="reg-pass2" class="fi" type="password" placeholder="Repita a senha"/></div>
-        <button class="btn-p" id="btn-reg" data-i18n="auth.btn.register" onclick="doRegister()">Começar meus 14 dias grátis</button>
+        <button class="btn-p" id="btn-reg" data-i18n="auth.btn.register" onclick="doRegister()">Começar meus 7 dias grátis</button>
         <div style="font-size:10.5px;color:var(--mu);text-align:center;margin-top:12px;line-height:1.6" data-i18n="auth.privacidade">Ao criar sua conta, você concorda com nossa <a href="privacidade.html" target="_blank" style="color:var(--r)" data-i18n="ui.60324c31ec">Política de Privacidade</a>. Coletamos informações de saúde para montar um treino seguro para você.</div>
       </div>
     </div>
@@ -3519,11 +3519,13 @@ async function garantirKidsCarregado(){
   }
   return false;
 }
-let _ebooksCarregado = false;
-async function garantirEbooksCarregado(){
-  if(_ebooksCarregado) return true;
-  const dados = await carregarConteudoPago('ebooks_content');
-  if(dados){ EBOOKS_CONTENT = dados; _ebooksCarregado = true; return true; }
+// EBOOKS_CONTENT agora funciona como um cache — cada livro é buscado
+// individualmente, só quando aberto. Ninguém recebe os 10 de uma vez;
+// a política no banco confere exatamente qual livro foi comprado.
+async function garantirEbookCarregado(programId){
+  if(EBOOKS_CONTENT[programId]) return true; // já está em cache nesta sessão
+  const dados = await carregarConteudoPago('ebook_'+programId);
+  if(dados){ EBOOKS_CONTENT[programId] = dados; return true; }
   return false;
 }
 
@@ -4081,10 +4083,10 @@ function renovarMissoesSemanais(u){
   return true;
 }
 function rowToUser(data){
-  return{id:data.id,name:data.nome,email:data.email,plano:data.plano,trialInicio:data.trial_inicio,runInicio:data.run_inicio,runAjusteLesao:!!data.run_ajuste_lesao,assinaturaStatus:data.assinatura_status||'trial',assinaturaAte:data.assinatura_ate,diaConversao:data.dia_conversao,dataConversao:data.data_conversao,planoConversao:data.plano_conversao,precoTravado:data.preco_travado,promoFundador:!!data.promo_fundador,promoVaga:data.promo_vaga,trainApproved:data.treino_liberado,isAdmin:!!data.is_admin,aiPlan:data.ai_plan,anamnese:data.anamnese,anamneseDone:!!data.anamnese_geral,anamneseGeral:data.anamnese_geral||null,anamneseMusculacao:data.anamnese_musculacao||null,anamneseCorrida:data.anamnese_corrida||null,anamneseMuscDone:!!data.anamnese_musculacao,anamneseCorridaDone:!!data.anamnese_corrida,gymWeek:data.gym_week||1,runWeek:data.run_week||1,gymDone:data.gym_done||{},runDone:data.run_done||{},loadHistory:data.load_history||{},workoutHistory:data.workout_history||[],xp:data.xp||0,level:data.level||1,streak:data.streak||1,coins:data.coins||0,badges:data.badges||[],prs:data.prs||[],stats:data.stats||{treinos:0,distancia:0,semanas:0},purchases:data.purchases||[],pacoteEbooks:!!data.pacote_ebooks,programIntakes:data.program_intakes||{},avatar:data.avatar||null,avaliacoes:data.evals||[],missions:MISSOES_PADRAO.map(m=>({...m})),createdAt:data.criado_em,lastLogin:data.ultimo_acesso};
+  return{id:data.id,name:data.nome,email:data.email,plano:data.plano,trialInicio:data.trial_inicio,runInicio:data.run_inicio,runAjusteLesao:!!data.run_ajuste_lesao,assinaturaStatus:data.assinatura_status||'trial',assinaturaAte:data.assinatura_ate,diaConversao:data.dia_conversao,dataConversao:data.data_conversao,planoConversao:data.plano_conversao,precoTravado:data.preco_travado,promoFundador:!!data.promo_fundador,pixFundador:!!data.pix_fundador,promoVaga:data.promo_vaga,trainApproved:data.treino_liberado,isAdmin:!!data.is_admin,aiPlan:data.ai_plan,anamnese:data.anamnese,anamneseDone:!!data.anamnese_geral,anamneseGeral:data.anamnese_geral||null,anamneseMusculacao:data.anamnese_musculacao||null,anamneseCorrida:data.anamnese_corrida||null,anamneseMuscDone:!!data.anamnese_musculacao,anamneseCorridaDone:!!data.anamnese_corrida,gymWeek:data.gym_week||1,runWeek:data.run_week||1,gymDone:data.gym_done||{},runDone:data.run_done||{},loadHistory:data.load_history||{},workoutHistory:data.workout_history||[],xp:data.xp||0,level:data.level||1,streak:data.streak||1,coins:data.coins||0,badges:data.badges||[],prs:data.prs||[],stats:data.stats||{treinos:0,distancia:0,semanas:0},purchases:data.purchases||[],pacoteEbooks:!!data.pacote_ebooks,programIntakes:data.program_intakes||{},avatar:data.avatar||null,avaliacoes:data.evals||[],missions:MISSOES_PADRAO.map(m=>({...m})),createdAt:data.criado_em,lastLogin:data.ultimo_acesso};
 }
 function userToRow(u){
-  return{id:u.id,nome:u.name,email:u.email,plano:u.plano||'free',trial_inicio:u.trialInicio||new Date().toISOString(),run_inicio:u.runInicio||null,run_ajuste_lesao:u.runAjusteLesao||false,treino_liberado:u.trainApproved||false,ai_plan:u.aiPlan||null,anamnese:u.anamnese||null,anamnese_geral:u.anamneseGeral||null,anamnese_musculacao:u.anamneseMusculacao||null,anamnese_corrida:u.anamneseCorrida||null,gym_week:u.gymWeek||1,run_week:u.runWeek||1,gym_done:u.gymDone||{},run_done:u.runDone||{},load_history:u.loadHistory||{},workout_history:u.workoutHistory||[],xp:u.xp||0,level:u.level||1,streak:u.streak||1,coins:u.coins||0,badges:u.badges||[],prs:u.prs||[],stats:u.stats||{treinos:0,distancia:0,semanas:0},avatar:u.avatar||null,evals:u.avaliacoes||[],program_intakes:u.programIntakes||{},ultimo_acesso:new Date().toISOString(),updated_at:new Date().toISOString()};
+  return{id:u.id,nome:u.name,email:u.email,plano:u.plano||'free',trial_inicio:u.trialInicio||undefined,run_inicio:u.runInicio||null,run_ajuste_lesao:u.runAjusteLesao||false,treino_liberado:u.trainApproved||false,ai_plan:u.aiPlan||null,anamnese:u.anamnese||null,anamnese_geral:u.anamneseGeral||null,anamnese_musculacao:u.anamneseMusculacao||null,anamnese_corrida:u.anamneseCorrida||null,gym_week:u.gymWeek||1,run_week:u.runWeek||1,gym_done:u.gymDone||{},run_done:u.runDone||{},load_history:u.loadHistory||{},workout_history:u.workoutHistory||[],xp:u.xp||0,level:u.level||1,streak:u.streak||1,coins:u.coins||0,badges:u.badges||[],prs:u.prs||[],stats:u.stats||{treinos:0,distancia:0,semanas:0},avatar:u.avatar||null,evals:u.avaliacoes||[],program_intakes:u.programIntakes||{},ultimo_acesso:new Date().toISOString(),updated_at:new Date().toISOString()};
   // Obs.: purchases/pacote_ebooks/is_admin/plano NÃO são enviados pelo aluno — são protegidos no banco e só mudam via webhook de pagamento ou admin.
 }
 async function syncU(u){
@@ -4171,8 +4173,29 @@ async function doLogin(){
       const m=/invalid/i.test(error.message)?'E-mail ou senha incorretos.':(/confirm/i.test(error.message)?'Confirme seu e-mail antes de entrar (verifique sua caixa de entrada).':'Não foi possível entrar: '+error.message);
       showErr(m);return;
     }
-    let u=await loadUDB(data.user.id);
-    if(!u){
+    let u=null;
+    let contaRealmenteNova=false;
+    try{
+      const{data:linha,error:erroLinha}=await sb.from('alunos').select('*').eq('id',data.user.id).single();
+      if(linha){
+        u=rowToUser(linha);
+      }else if(erroLinha && erroLinha.code==='PGRST116'){
+        // PGRST116 = "nenhuma linha encontrada" — aqui sim é conta nova de verdade
+        // (ex: criada pelo painel admin, ou signUp sem o upsert inicial ter completado)
+        contaRealmenteNova=true;
+      }else if(erroLinha){
+        // Erro de verdade (rede, RLS, etc) — NÃO é o mesmo que "conta não existe".
+        // Não assume conta nova aqui, senão resetaríamos o trial de alguém que já existe.
+        console.error('Erro ao buscar perfil no login:',erroLinha.message,erroLinha);
+        showErr('Não foi possível carregar sua conta agora. Verifique sua conexão e tente de novo.');
+        btn.textContent='Entrar';btn.disabled=false;return;
+      }
+    }catch(e){
+      console.error('Erro ao buscar perfil no login:',e);
+      showErr('Não foi possível carregar sua conta agora. Verifique sua conexão e tente de novo.');
+      btn.textContent='Entrar';btn.disabled=false;return;
+    }
+    if(!u && contaRealmenteNova){
       // Primeiro login sem perfil ainda (conta criada antes ou pelo painel) — cria o perfil
       u=novoPerfilLocal(data.user.id,data.user.user_metadata?.nome||email.split('@')[0],email);
       if(email===ADMIN_EMAIL)u.isAdmin=true;
@@ -4182,6 +4205,10 @@ async function doLogin(){
         fqToast('⚠️ Não foi possível salvar seus dados no servidor agora.','warn',6000);
       }
       const fresh=await loadUDB(data.user.id);if(fresh)u=fresh;
+    }
+    if(!u){
+      showErr('Não foi possível carregar sua conta agora. Verifique sua conexão e tente de novo.');
+      btn.textContent='Entrar';btn.disabled=false;return;
     }
     if(email===ADMIN_EMAIL)u.isAdmin=true; // garante admin mesmo se o banco não tiver a flag
     await entrarComPerfil(u);
@@ -6361,7 +6388,7 @@ async function carregarRanking(){
 
 // ══ LOAD APP ══
 // ══════════════════════════════════════════════════════════
-// ASSINATURA — 14 dias grátis, depois plano mensal ou anual.
+// ASSINATURA — 7 dias grátis, depois plano mensal ou anual.
 // Status possíveis: 'trial' | 'ativa' | 'expirada'
 // IMPORTANTE: este controle é de EXPERIÊNCIA (mostra/esconde tela).
 // A liberação real de acesso pago depende do webhook do Mercado Pago
@@ -6622,7 +6649,7 @@ const FQ_I18N = {
     'tpl.eafef1ca4e': '(você)',
     'tpl.7f10d01ec1': 'A maioria decide cedo — encurtar o teste provavelmente não perderia assinantes.',
     'tpl.15ea2f3f02': 'Adicione avaliações para ver o gráfico',
-    'tpl.3deede228c': 'Boa parte decide depois do dia 7 — o teste de 14 dias está sendo usado.',
+    'tpl.3deede228c': 'Boa parte decide perto do fim do teste — o prazo atual está sendo bem aproveitado.',
     'tpl.11744fb6aa': 'Complete esse exercício pela primeira vez para começar seu histórico.',
     'tpl.a0b2cd51e3': 'Dobras cutâneas (mm)',
     'tpl.61b2ba607d': 'Faça seu primeiro check-in',
@@ -7125,7 +7152,7 @@ const FQ_I18N = {
     'tpl.eafef1ca4e': '(you)',
     'tpl.7f10d01ec1': 'Most decide early — shortening the trial probably wouldn\'t cost you subscribers.',
     'tpl.15ea2f3f02': 'Add assessments to see the chart',
-    'tpl.3deede228c': 'A good share decide after day 7 — the 14-day trial is being used.',
+    'tpl.3deede228c': 'A good share decide near the end of the trial — the current length is being used well.',
     'tpl.11744fb6aa': 'Complete this exercise for the first time to start your history.',
     'tpl.a0b2cd51e3': 'Skinfolds (mm)',
     'tpl.61b2ba607d': 'Do your first check-in',
@@ -7615,7 +7642,7 @@ const FQ_I18N = {
     'tpl.eafef1ca4e': '(tú)',
     'tpl.7f10d01ec1': 'La mayoría decide pronto — acortar la prueba probablemente no perdería suscriptores.',
     'tpl.15ea2f3f02': 'Añade evaluaciones para ver el gráfico',
-    'tpl.3deede228c': 'Buena parte decide después del día 7 — la prueba de 14 días se está usando.',
+    'tpl.3deede228c': 'Buena parte decide cerca del final de la prueba — el plazo actual se está aprovechando bien.',
     'tpl.11744fb6aa': 'Completa este ejercicio por primera vez para empezar tu historial.',
     'tpl.a0b2cd51e3': 'Pliegues cutáneos (mm)',
     'tpl.61b2ba607d': 'Haz tu primer check-in',
@@ -7960,7 +7987,7 @@ function aplicarIdioma(){
   if(selP) selP.value = fqLangAtual();
 }
 
-const TRIAL_DIAS = 14;
+const TRIAL_DIAS = 7;
 // ══ CAMPANHA DE LANÇAMENTO ══
 // Os primeiros N assinantes travam o preço promocional PARA SEMPRE.
 // Depois disso, os preços sobem automaticamente para quem entrar novo.
@@ -8026,6 +8053,35 @@ async function carregarContagemPromo(){
 }
 const MENSALIDADE = PLANOS.mensal.preco; // mantido por compatibilidade com textos existentes
 
+// ══ OFERTA FUNDADOR VIA PIX ══
+// R$100 à vista = 1 ano de acesso, só pros 100 primeiros. Pagamento manual
+// (o Pix não se conecta automaticamente ao app) — o aluno clica "Já paguei",
+// isso avisa o admin, que confirma manualmente no painel (mesma tela que já existe).
+const PIX_FUNDADOR_LIMITE = 100;
+const PIX_FUNDADOR_PRECO = 100;
+// ⚠️ SUBSTITUA pelo seu código Pix "copia e cola" de verdade antes de divulgar.
+const PIX_FUNDADOR_CODIGO = '00020101021126500014br.gov.bcb.pix0128rennandiaspersonal@gmail.com5204000053039865406100.005802BR5911RENNAN DIAS6014BELO HORIZONTE62070503***6304D2E8';
+let PIX_FUNDADOR_VAGAS_USADAS = 0;
+let PIX_FUNDADOR_CONTAGEM_OK = false;
+function pixFundadorAtiva(){
+  if(!PIX_FUNDADOR_CONTAGEM_OK) return true; // mesma lógica de segurança do promoAtiva()
+  return PIX_FUNDADOR_VAGAS_USADAS < PIX_FUNDADOR_LIMITE;
+}
+function pixFundadorVagasRestantes(){
+  return Math.max(0, PIX_FUNDADOR_LIMITE - PIX_FUNDADOR_VAGAS_USADAS);
+}
+async function carregarContagemPixFundador(){
+  try{
+    if(typeof sb==='undefined' || !sb) return;
+    const {count, error} = await sb.from('alunos')
+      .select('id', {count:'exact', head:true})
+      .eq('pix_fundador', true);
+    if(error) return;
+    PIX_FUNDADOR_VAGAS_USADAS = count || 0;
+    PIX_FUNDADOR_CONTAGEM_OK = true;
+  }catch(e){ /* mantém a oferta visível por segurança */ }
+}
+
 function diasRestantesTrial(u){
   if(!u||!u.trialInicio) return TRIAL_DIAS;
   const inicio = new Date(u.trialInicio);
@@ -8086,7 +8142,61 @@ function renderModalAssinatura(){
       ✅ Comunidade e ranking<br/>
       ✅ Acompanhamento de evolução
     </div>
-    <button class="btn-p" onclick="irParaPagamento(_planoSelecionado)">Assinar plano ${_planoSelecionado==='anual'?'anual':'mensal'}</button>`;
+    <button class="btn-p" onclick="irParaPagamento(_planoSelecionado)">Assinar plano ${_planoSelecionado==='anual'?'anual':'mensal'}</button>
+    ${renderCardPixFundador()}`;
+}
+
+function renderCardPixFundador(){
+  if(!pixFundadorAtiva()) return '';
+  const restantes = pixFundadorVagasRestantes();
+  return `
+    <div style="margin-top:22px;padding-top:20px;border-top:1px solid var(--b)">
+      <div style="background:linear-gradient(135deg,rgba(46,204,113,.12),rgba(46,204,113,.03));border:1px solid rgba(46,204,113,.35);border-radius:14px;padding:16px">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">
+          <span style="font-size:20px">💰</span>
+          <span style="font-size:13.5px;font-weight:900;color:#2ecc71">OFERTA FUNDADOR — PAGUE NO PIX</span>
+        </div>
+        <div style="font-size:26px;font-weight:900;color:#fff">R$${PIX_FUNDADOR_PRECO} <span style="font-size:12px;color:var(--t2);font-weight:400">à vista · 1 ano de acesso</span></div>
+        ${PIX_FUNDADOR_CONTAGEM_OK?`<div style="font-size:11.5px;color:var(--t2);margin-top:4px">Restam <strong style="color:#2ecc71">${restantes} de ${PIX_FUNDADOR_LIMITE} vagas</strong></div>`:''}
+        <div style="margin-top:14px;background:var(--bg);border:1px dashed var(--b2);border-radius:10px;padding:10px;display:flex;align-items:center;gap:10px">
+          <img src="https://api.qrserver.com/v1/create-qr-code/?size=90x90&data=${encodeURIComponent(PIX_FUNDADOR_CODIGO)}" alt="QR Code Pix" style="width:70px;height:70px;border-radius:6px;flex-shrink:0"/>
+          <div style="flex:1;min-width:0">
+            <div style="font-size:10px;color:var(--mu)">Código Pix (copia e cola)</div>
+            <div style="font-size:10.5px;color:var(--t2);word-break:break-all;line-height:1.4;max-height:32px;overflow:hidden">${PIX_FUNDADOR_CODIGO}</div>
+          </div>
+        </div>
+        <button onclick="copiarCodigoPix()" style="width:100%;margin-top:10px;background:var(--s2);border:1px solid var(--b);color:#fff;border-radius:9px;padding:11px;font-size:12.5px;font-weight:700;cursor:pointer">📋 Copiar código Pix</button>
+        <button onclick="confirmarJaPagueiPix()" style="width:100%;margin-top:8px;background:#2ecc71;border:none;color:#0a0a0a;border-radius:9px;padding:12px;font-size:13px;font-weight:900;cursor:pointer">✅ Já paguei</button>
+        <div style="font-size:10px;color:var(--mu);margin-top:8px;line-height:1.5">Depois de pagar, clica em "Já paguei" — o Rennan confirma manualmente e libera seu acesso.</div>
+      </div>
+    </div>`;
+}
+
+function copiarCodigoPix(){
+  navigator.clipboard?.writeText(PIX_FUNDADOR_CODIGO).then(()=>{
+    fqToast('✅ Código Pix copiado! Cola no seu app do banco.','ok');
+  }).catch(()=>{
+    fqToast('Não consegui copiar automaticamente — seleciona o código manualmente.','warn');
+  });
+}
+
+let _ultimoAvisoJaPagueiPix = 0;
+async function confirmarJaPagueiPix(){
+  const u = getU();
+  if(!u){ fqToast(t('msg.9bca989b76'),'warn'); return; }
+  const agora = Date.now();
+  if(agora - _ultimoAvisoJaPagueiPix < 60000){
+    fqToast('Já avisamos o Rennan há pouco — aguarda a confirmação.','warn');
+    return;
+  }
+  _ultimoAvisoJaPagueiPix = agora;
+  fqToast('Avisando o Rennan...','ok');
+  const enviado = await notificarAdminPagamentoPix(u.name||'Aluno', u.email);
+  if(enviado){
+    fqToast('✅ Aviso enviado! O Rennan vai confirmar seu pagamento em breve.','ok',6000);
+  }else{
+    fqToast('⚠️ Não consegui avisar automaticamente. Manda uma mensagem direto pro Rennan avisando que pagou.','warn',7000);
+  }
 }
 
 // ══ SELETOR DE PLANO (mensal vs anual) — compartilhado entre a tela de
@@ -8250,6 +8360,7 @@ function loadApp(email){
   _safe(()=>renderMissions(u.missions||[]),'missions');
   _safe(()=>renderRankingCarousel(u,email,users),'rankCar');
   carregarContagemPromo().then(()=>{ try{ if(typeof renderBannerTrial==='function') renderBannerTrial(u); }catch(e){} });
+  carregarContagemPixFundador();
   carregarRanking().then(()=>{try{renderRankingCarousel(u,email,users);renderRankingFull(u,email,users);}catch(e){}});
   _safe(()=>renderHistory(u),'history');
   _safe(()=>renderGym(u),'gym');
@@ -12038,6 +12149,38 @@ async function notificarAdminNovoAluno(nome, email){
   }
 }
 
+// Avisa o admin quando alguém clica "Já paguei" na oferta Fundador Pix.
+// Usa o MESMO template/config de admin — se quiser um texto diferente pra
+// esse caso, é só criar um template novo no EmailJS e trocar o templateId aqui.
+async function notificarAdminPagamentoPix(nome, email){
+  if(EMAILJS_CONFIG.serviceId==='SEU_SERVICE_ID' || EMAILJS_CONFIG.templateIdAdmin==='SEU_TEMPLATE_ADMIN_ID'){
+    console.log('EmailJS admin não configurado — pulando notificação de pagamento Pix');
+    return false;
+  }
+  try{
+    const res = await fetch('https://api.emailjs.com/api/v1.0/email/send',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({
+        service_id: EMAILJS_CONFIG.serviceId,
+        template_id: EMAILJS_CONFIG.templateIdAdmin,
+        user_id: EMAILJS_CONFIG.publicKey,
+        template_params:{
+          to_email: EMAILJS_CONFIG.adminEmail,
+          aluno_nome: nome + ' — 💰 AVISOU QUE PAGOU O PIX FUNDADOR (R$100/ano) — confira o extrato e confirme no painel',
+          aluno_email: email,
+          data_cadastro: new Date().toLocaleString('pt-BR',{dateStyle:'short',timeStyle:'short'}),
+          link_admin: 'https://shiriufc-bit.github.io/fitquest/'
+        }
+      })
+    });
+    return res.ok;
+  }catch(e){
+    console.warn('Notificação admin (Pix) erro:', e.message);
+    return false;
+  }
+}
+
 async function enviarEmailBoasVindas(nome, email){
   if(EMAILJS_CONFIG.serviceId==='SEU_SERVICE_ID'){
     console.log('EmailJS não configurado — pulando e-mail de boas-vindas');
@@ -12418,7 +12561,7 @@ function renderTrilha(u){
   },50);
 }
 
-let EBOOKS_CONTENT={}; // carregado do servidor sob demanda — ver garantirEbooksCarregado()
+let EBOOKS_CONTENT={}; // carregado do servidor sob demanda, livro por livro — ver garantirEbookCarregado()
 
 // ══════════════════════════════════════════════════════
 // MOTOR DE EBOOKS PERSONALIZADOS
@@ -12476,7 +12619,7 @@ async function openEbook(programId){
   if(!u){ fqToast(t('msg.0b84ff2d6d'),'warn'); return; }
   const temAcesso = u.pacoteEbooks || (u.purchases||[]).includes(programId) || (typeof statusAssinatura==='function' && statusAssinatura(u)==='ativa');
   if(!temAcesso){ fqToast(t('msg.0b84ff2d6d'),'warn'); return; }
-  if(!await garantirEbooksCarregado()){ fqToast('Não foi possível carregar agora. Tenta de novo.','warn'); return; }
+  if(!await garantirEbookCarregado(programId)){ fqToast('Não foi possível carregar agora. Tenta de novo.','warn'); return; }
   const file = EBOOKS_CONTENT[programId];
   if(!file){ fqToast(t('msg.0b84ff2d6d'),'warn'); return; }
 
@@ -12963,8 +13106,9 @@ function abrirMarcarPago(email){
 async function admConfirmarPago(planoId){
   const email = _pagoEmailAtual;
   if(!email){ fqToast(t('msg.31aa6fec56'),'warn'); return; }
-  const dias = planoId==='anual' ? 365 : 30;
-  const nomePlano = planoId==='anual' ? 'Anual' : 'Mensal';
+  const ehPixFundador = planoId==='pix_fundador';
+  const dias = (planoId==='anual'||ehPixFundador) ? 365 : 30;
+  const nomePlano = ehPixFundador ? 'Fundador Pix (R$100)' : (planoId==='anual' ? 'Anual' : 'Mensal');
   if(!await fqConfirm('Confirmar pagamento', `Confirma que ${email} pagou o plano ${nomePlano}? Isso libera o acesso por ${dias} dias.`, 'Confirmar', '💳')) return;
 
   try{
@@ -12985,23 +13129,31 @@ async function admConfirmarPago(planoId){
     if(!jaConvertido){
       u.dataConversao = agora.toISOString();
       u.planoConversao = planoId;
-      // TRAVA O PREÇO: quem entrou na campanha paga esse valor pra sempre,
-      // mesmo depois que a promo acabar. Guardamos o preço e o número da vaga
-      // pra você ter o registro de quem entrou como fundador.
-      // O .preco de PLANOS_PROMO/NORMAL é texto formatado pra tela ("R$14,90") —
-      // a coluna do banco é numérica, então convertemos pra número puro aqui.
-      const precoParaNumero = (txt) => {
-        if(!txt) return null;
-        const n = parseFloat(String(txt).replace('R$','').replace(/\./g,'').replace(',','.').trim());
-        return isNaN(n) ? null : n;
-      };
-      if(promoAtiva()){
-        u.precoTravado = precoParaNumero((PLANOS_PROMO[planoId]||{}).preco);
-        u.promoFundador = true;
-        u.promoVaga = PROMO_VAGAS_USADAS + 1;
-      }else{
-        u.precoTravado = precoParaNumero((PLANOS_NORMAL[planoId]||{}).preco);
+      if(ehPixFundador){
+        // Oferta separada da promo de fundador mensal/anual — preço fixo,
+        // conta pra vaga própria (pix_fundador), não pra PROMO_VAGAS_USADAS.
+        u.precoTravado = PIX_FUNDADOR_PRECO;
+        u.pixFundador = true;
         u.promoFundador = false;
+      }else{
+        // TRAVA O PREÇO: quem entrou na campanha paga esse valor pra sempre,
+        // mesmo depois que a promo acabar. Guardamos o preço e o número da vaga
+        // pra você ter o registro de quem entrou como fundador.
+        // O .preco de PLANOS_PROMO/NORMAL é texto formatado pra tela ("R$14,90") —
+        // a coluna do banco é numérica, então convertemos pra número puro aqui.
+        const precoParaNumero = (txt) => {
+          if(!txt) return null;
+          const n = parseFloat(String(txt).replace('R$','').replace(/\./g,'').replace(',','.').trim());
+          return isNaN(n) ? null : n;
+        };
+        if(promoAtiva()){
+          u.precoTravado = precoParaNumero((PLANOS_PROMO[planoId]||{}).preco);
+          u.promoFundador = true;
+          u.promoVaga = PROMO_VAGAS_USADAS + 1;
+        }else{
+          u.precoTravado = precoParaNumero((PLANOS_NORMAL[planoId]||{}).preco);
+          u.promoFundador = false;
+        }
       }
       if(u.trialInicio){
         const diasDesdeInicio = Math.floor((agora - new Date(u.trialInicio))/(1000*60*60*24));
@@ -13014,7 +13166,8 @@ async function admConfirmarPago(planoId){
       const{error:erroConfirmarPago}=await sb.from('alunos').update({
         assinatura_status:'ativa', assinatura_ate:u.assinaturaAte, plano:planoId,
         dia_conversao:u.diaConversao ?? null, data_conversao:u.dataConversao ?? null, plano_conversao:u.planoConversao ?? null,
-        preco_travado:u.precoTravado ?? null, promo_fundador:u.promoFundador ?? false, promo_vaga:u.promoVaga ?? null
+        preco_travado:u.precoTravado ?? null, promo_fundador:u.promoFundador ?? false, promo_vaga:u.promoVaga ?? null,
+        pix_fundador:u.pixFundador ?? false
       }).eq('email',email);
       if(erroConfirmarPago){
         console.error('ERRO CRÍTICO — pagamento confirmado mas não salvo no servidor:',erroConfirmarPago.message,erroConfirmarPago,'| aluno:',email);
@@ -13513,9 +13666,13 @@ function renderHomeMissoesCard(){
       <div><div style="font-size:13px;font-weight:800">Mensal</div><div style="font-size:10.5px;color:var(--mu)" data-i18n="ui.5ff3ec9821">Libera por 30 dias</div></div>
       <div style="font-size:18px;font-weight:900;color:var(--r)">R$14,90</div>
     </div>
-    <div onclick="admConfirmarPago('anual')" style="background:var(--s);border:1px solid var(--b);border-radius:10px;padding:16px;cursor:pointer;display:flex;align-items:center;justify-content:space-between">
+    <div onclick="admConfirmarPago('anual')" style="background:var(--s);border:1px solid var(--b);border-radius:10px;padding:16px;margin-bottom:10px;cursor:pointer;display:flex;align-items:center;justify-content:space-between">
       <div><div style="font-size:13px;font-weight:800">Anual</div><div style="font-size:10.5px;color:var(--mu)" data-i18n="ui.f8b94b463d">Libera por 365 dias</div></div>
       <div style="font-size:18px;font-weight:900;color:var(--r)">R$118,80</div>
+    </div>
+    <div onclick="admConfirmarPago('pix_fundador')" style="background:rgba(46,204,113,.08);border:1px solid rgba(46,204,113,.35);border-radius:10px;padding:16px;cursor:pointer;display:flex;align-items:center;justify-content:space-between">
+      <div><div style="font-size:13px;font-weight:800">💰 Pix Fundador</div><div style="font-size:10.5px;color:var(--mu)">Libera por 365 dias · vaga limitada</div></div>
+      <div style="font-size:18px;font-weight:900;color:#2ecc71">R$100</div>
     </div>
   </div>
 </div></div>
