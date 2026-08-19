@@ -822,7 +822,7 @@ textarea.fi{resize:vertical;min-height:80px;}
       <option value="es">🇪🇸 ES</option>
     </select>
   </div>
-  <div id="fq-version-badge" style="position:absolute;bottom:8px;right:12px;font-size:9px;color:#333;font-weight:700;z-index:5">v169</div>
+  <div id="fq-version-badge" style="position:absolute;bottom:8px;right:12px;font-size:9px;color:#333;font-weight:700;z-index:5">v171</div>
   <img src="https://images.unsplash.com/photo-1517836357463-d25dfeac3438?w=800&q=80" alt="Fitness" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center top;filter:brightness(.35);z-index:0"/>
   <div class="splash-glow"></div>
   <div class="splash-noise"></div>
@@ -2390,6 +2390,64 @@ textarea.fi{resize:vertical;min-height:80px;}
           <div><div style="font-size:20px;font-weight:900;color:var(--r)" id="bio-rt-fat">—</div><div style="font-size:9px;color:var(--mu)">% Gordura</div></div>
           <div><div style="font-size:20px;font-weight:900;color:#2ecc71" id="bio-rt-lean">—</div><div style="font-size:9px;color:var(--mu)">Massa Magra</div></div>
           <div><div style="font-size:20px;font-weight:900;color:#3498db" id="bio-rt-gorda">—</div><div style="font-size:9px;color:var(--mu)">Massa Gorda</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PERIMETRIA (opcional) — disponível pros dois métodos, já que normalmente é feita junto -->
+    <div style="margin-bottom:16px">
+      <div onclick="togPerimetria()" style="display:flex;align-items:center;justify-content:space-between;cursor:pointer;padding:2px 0">
+        <div style="font-size:10px;font-weight:800;color:var(--r);text-transform:uppercase;letter-spacing:1.5px">📏 Perimetria (opcional)</div>
+        <span id="perimetria-chv" style="color:var(--mu);font-size:14px;transition:transform .2s">▾</span>
+      </div>
+      <div id="panel-perimetria" style="display:none;margin-top:10px">
+        <div style="font-size:10.5px;color:var(--t2);margin-bottom:10px;line-height:1.4">Medidas de circunferência (fita métrica) — deixe em branco o que não medir.</div>
+        <div class="dobra-grid">
+          <div class="dobra-field">
+            <div class="dobra-label">💪 Braço relaxado</div>
+            <input class="dobra-input" type="number" id="p-braco-relax" placeholder="0" step="0.1"/>
+            <div class="dobra-unit">cm</div>
+          </div>
+          <div class="dobra-field">
+            <div class="dobra-label">💪 Braço contraído</div>
+            <input class="dobra-input" type="number" id="p-braco-contr" placeholder="0" step="0.1"/>
+            <div class="dobra-unit">cm</div>
+          </div>
+          <div class="dobra-field">
+            <div class="dobra-label">🦾 Antebraço</div>
+            <input class="dobra-input" type="number" id="p-antebraco" placeholder="0" step="0.1"/>
+            <div class="dobra-unit">cm</div>
+          </div>
+          <div class="dobra-field">
+            <div class="dobra-label">🫁 Tórax</div>
+            <input class="dobra-input" type="number" id="p-torax" placeholder="0" step="0.1"/>
+            <div class="dobra-unit">cm</div>
+          </div>
+          <div class="dobra-field">
+            <div class="dobra-label">⭕ Cintura</div>
+            <input class="dobra-input" type="number" id="p-cintura" placeholder="0" step="0.1"/>
+            <div class="dobra-unit">cm</div>
+          </div>
+          <div class="dobra-field">
+            <div class="dobra-label">🎯 Abdômen</div>
+            <input class="dobra-input" type="number" id="p-abdomen" placeholder="0" step="0.1"/>
+            <div class="dobra-unit">cm</div>
+          </div>
+          <div class="dobra-field">
+            <div class="dobra-label">🍑 Quadril</div>
+            <input class="dobra-input" type="number" id="p-quadril" placeholder="0" step="0.1"/>
+            <div class="dobra-unit">cm</div>
+          </div>
+          <div class="dobra-field">
+            <div class="dobra-label">🦵 Coxa</div>
+            <input class="dobra-input" type="number" id="p-coxa" placeholder="0" step="0.1"/>
+            <div class="dobra-unit">cm</div>
+          </div>
+          <div class="dobra-field">
+            <div class="dobra-label">🦵 Panturrilha</div>
+            <input class="dobra-input" type="number" id="p-panturrilha" placeholder="0" step="0.1"/>
+            <div class="dobra-unit">cm</div>
+          </div>
         </div>
       </div>
     </div>
@@ -10284,6 +10342,13 @@ function attachEvalListeners(){
   ['bio-fat','bio-lean'].forEach(id=>{ const el=document.getElementById(id); if(el) el.addEventListener('input', calcBio); });
 }
 
+function togPerimetria(){
+  const painel=document.getElementById('panel-perimetria');
+  const chv=document.getElementById('perimetria-chv');
+  const aberto=painel.style.display!=='none';
+  painel.style.display=aberto?'none':'block';
+  if(chv) chv.style.transform=aberto?'':'rotate(180deg)';
+}
 function selMethod(method, el){
   evalMethod = method;
   document.querySelectorAll('.method-tab').forEach(b=>b.classList.remove('active'));
@@ -10313,7 +10378,8 @@ function openEvalModal(emailAlvo){
   if(dateEl) dateEl.value = today;
   // Reset fields
   ['d-peitoral','d-axilar','d-triceps','d-subescapular','d-abdominal','d-suprailíaca','d-coxa',
-   'bio-fat','bio-lean','bio-water','bio-bone','bio-tmb','bio-idademet','eval-obs'].forEach(id=>{
+   'bio-fat','bio-lean','bio-water','bio-bone','bio-tmb','bio-idademet','eval-obs',
+   'p-braco-relax','p-braco-contr','p-antebraco','p-torax','p-cintura','p-abdomen','p-quadril','p-coxa','p-panturrilha'].forEach(id=>{
     const el=document.getElementById(id); if(el) el.value='';
   });
   // Reset peso from profile (do aluno certo, seja ele quem for)
@@ -10326,6 +10392,10 @@ function openEvalModal(emailAlvo){
   document.getElementById('rt-soma').textContent='0';
   const clsEl=document.getElementById('rt-class');
   if(clsEl){clsEl.textContent='Preencha as dobras';clsEl.style.background='rgba(255,255,255,.08)';clsEl.style.color='';}
+  const painelPerim=document.getElementById('panel-perimetria');
+  const chvPerim=document.getElementById('perimetria-chv');
+  if(painelPerim) painelPerim.style.display='none';
+  if(chvPerim) chvPerim.style.transform='';
   abrirModal('modal-eval');
   setTimeout(attachEvalListeners, 100);
 }
@@ -10380,6 +10450,19 @@ async function saveEval(){
       idademet: parseFloat(document.getElementById('bio-idademet')?.value||0),
     };
   }
+
+  // Perimetria — opcional, só grava o que foi de fato preenchido
+  const perimCampos = {
+    bracoRelax:'p-braco-relax', bracoContr:'p-braco-contr', antebraco:'p-antebraco',
+    torax:'p-torax', cintura:'p-cintura', abdomen:'p-abdomen',
+    quadril:'p-quadril', coxa:'p-coxa', panturrilha:'p-panturrilha'
+  };
+  const perimetria = {};
+  Object.entries(perimCampos).forEach(([chave,id])=>{
+    const v = parseFloat(document.getElementById(id)?.value||'');
+    if(!isNaN(v) && v>0) perimetria[chave]=v;
+  });
+  if(Object.keys(perimetria).length) evalData.perimetria = perimetria;
 
   if(!u.avaliacoes) u.avaliacoes = [];
   u.avaliacoes.push(evalData);
@@ -12961,6 +13044,38 @@ function ebIrCapitulo(idx){
 // ══════════════════════════════════════════════════════
 // PDF DA AVALIAÇÃO FÍSICA — laudo individual pro aluno baixar
 // ══════════════════════════════════════════════════════
+// ══ DOWNLOAD ROBUSTO DE PDF ══
+// doc.save() sozinho (o jeito padrão do jsPDF) funciona bem no navegador
+// normal, mas costuma falhar EM SILÊNCIO dentro do app instalado no Android
+// (TWA) — gera o PDF certinho, só não dispara o download de verdade.
+// Aqui tentamos primeiro o menu nativo de compartilhar (Web Share API),
+// que é muito mais confiável nesse contexto, e só cai pro método antigo
+// se o compartilhamento não estiver disponível (ex: desktop).
+async function baixarPDFRobusto(doc, filename){
+  try{
+    const blob = doc.output('blob');
+    if(navigator.canShare && navigator.share){
+      const file = new File([blob], filename, {type:'application/pdf'});
+      if(navigator.canShare({files:[file]})){
+        await navigator.share({files:[file], title:filename});
+        return true;
+      }
+    }
+  }catch(e){
+    // Usuário cancelou o menu de compartilhar não é erro de verdade — só ignora
+    if(e?.name==='AbortError') return true;
+    console.warn('Compartilhamento falhou, tentando download tradicional:', e.message);
+  }
+  try{
+    doc.save(filename);
+    return true;
+  }catch(e){
+    console.error('Download do PDF falhou nos dois métodos:', e);
+    fqToast('⚠️ Não consegui baixar o PDF. Tenta de novo, ou tira print da tela.','warn',7000);
+    return false;
+  }
+}
+
 async function baixarAvaliacaoPDF(evalId){
   const u = getU();
   if(!u){ fqToast('Você precisa estar logado.','warn'); return; }
@@ -13086,6 +13201,26 @@ async function baixarAvaliacaoPDF(evalId){
     y += 10;
   }
 
+  // ── Tabela de Perimetria (se houver qualquer medida) ──
+  if(a.perimetria && Object.keys(a.perimetria).length){
+    if(y > 220){ doc.addPage(); y = 20; }
+    doc.setFont('helvetica','bold'); doc.setFontSize(11); doc.setTextColor(...R);
+    doc.text('PERIMETRIA (cm)', 15, y); y += 3;
+    const nomesPerim = {bracoRelax:'Braço Relaxado', bracoContr:'Braço Contraído', antebraco:'Antebraço',
+      torax:'Tórax', cintura:'Cintura', abdomen:'Abdômen', quadril:'Quadril', coxa:'Coxa', panturrilha:'Panturrilha'};
+    const linhasPerim = Object.entries(a.perimetria).map(([chave,v])=>[nomesPerim[chave]||chave, v+' cm']);
+    doc.autoTable({
+      startY: y+2, margin:{left:15,right:15},
+      head: [['Medida','Valor']],
+      body: linhasPerim,
+      theme: 'grid',
+      headStyles: {fillColor:[40,40,40], textColor:255, fontStyle:'bold', fontSize:8.5},
+      bodyStyles: {fontSize:8.5, textColor:[40,40,40]},
+      alternateRowStyles: {fillColor:[248,248,248]},
+    });
+    y = doc.lastAutoTable.finalY + 10;
+  }
+
   // ── Observações ──
   if(a.obs){
     if(y > 250){ doc.addPage(); y = 20; }
@@ -13107,8 +13242,9 @@ async function baixarAvaliacaoPDF(evalId){
   doc.setFontSize(7); doc.setTextColor(150,150,150);
   doc.text('Este relatório é uma estimativa de composição corporal e não substitui avaliação médica.', 15, y+18);
 
-  doc.save(`Avaliacao-Fisica-${(u.name||'aluno').replace(/\s+/g,'-')}-${a.date}.pdf`);
-  fqToast('✅ PDF gerado!','ok');
+  const nomeArquivo = `Avaliacao-Fisica-${(u.name||'aluno').replace(/\s+/g,'-')}-${a.date}.pdf`;
+  const ok = await baixarPDFRobusto(doc, nomeArquivo);
+  if(ok) fqToast('✅ PDF gerado!','ok');
 }
 
 // GERADOR DE PDF PERSONALIZADO (jsPDF + autoTable)
@@ -13242,8 +13378,9 @@ async function baixarEbookPDF(){
 
   const safeName = (perfil.nome||'Aluno').replace(/[^\w]/g,'');
   const safeTitle = (book.titulo||'Ebook').replace(/[^\w]/g,'-');
-  doc.save('FitQuest-' + safeTitle + '-' + safeName + '.pdf');
-  fqToast('📄 PDF personalizado baixado!','ok');
+  const nomeArquivoEbook = 'FitQuest-' + safeTitle + '-' + safeName + '.pdf';
+  const okEbook = await baixarPDFRobusto(doc, nomeArquivoEbook);
+  if(okEbook) fqToast('📄 PDF personalizado baixado!','ok');
 }
 
 
