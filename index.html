@@ -822,7 +822,7 @@ textarea.fi{resize:vertical;min-height:80px;}
       <option value="es">🇪🇸 ES</option>
     </select>
   </div>
-  <div id="fq-version-badge" style="position:absolute;bottom:8px;right:12px;font-size:9px;color:#333;font-weight:700;z-index:5">v167</div>
+  <div id="fq-version-badge" style="position:absolute;bottom:8px;right:12px;font-size:9px;color:#333;font-weight:700;z-index:5">v169</div>
   <img src="https://images.unsplash.com/photo-1517836357463-d25dfeac3438?w=800&q=80" alt="Fitness" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center top;filter:brightness(.35);z-index:0"/>
   <div class="splash-glow"></div>
   <div class="splash-noise"></div>
@@ -1974,6 +1974,9 @@ textarea.fi{resize:vertical;min-height:80px;}
         </div>
         <button onclick="agendarNotifTreino()" style="background:rgba(229,9,20,.12);border:1px solid rgba(229,9,20,.3);border-radius:8px;padding:9px 16px;color:var(--r);font-size:12px;font-weight:800;cursor:pointer;white-space:nowrap">Ativar</button>
       </div>
+
+      <!-- Meu Plano / Assinatura — sempre visível, não só quando o teste está acabando -->
+      <div id="perfil-plano-card" style="margin:0 20px 14px"></div>
 
       <!-- XP/Nível -->
       <div style="margin:0 20px 14px;background:var(--s);border:1px solid var(--b);border-radius:14px;padding:16px">
@@ -8210,7 +8213,7 @@ function renderBannerTrial(u){
         </div>
         <div style="font-size:10.5px;color:var(--t2)">Depois, a partir de ${PLANOS.anual.preco}/mês para continuar</div>
       </div>
-      ${urgente?`<button onclick="abrirAssinatura()" style="background:#f39c12;border:none;border-radius:7px;color:#000;font-size:11px;font-weight:800;padding:7px 12px;cursor:pointer;flex-shrink:0">Assinar</button>`:''}
+      ${!urgente?`<button onclick="abrirAssinatura()" style="background:rgba(46,204,113,.15);border:1px solid rgba(46,204,113,.4);border-radius:7px;color:#2ecc71;font-size:11px;font-weight:800;padding:7px 12px;cursor:pointer;flex-shrink:0">Assinar</button>`:`<button onclick="abrirAssinatura()" style="background:#f39c12;border:none;border-radius:7px;color:#000;font-size:11px;font-weight:800;padding:7px 12px;cursor:pointer;flex-shrink:0">Assinar</button>`}
     </div>`;
   }
 }
@@ -8495,10 +8498,46 @@ function renderMissions(ms){
 }
 
 // ══ PERFIL ══
+function renderPerfilPlano(u){
+  const el=document.getElementById('perfil-plano-card');
+  if(!el)return;
+  const st=statusAssinatura(u);
+
+  if(st==='ativa'){
+    const nomePlano=u.isAdmin?'Admin':(u.plano==='pix_fundador'?'Fundador Pix':(u.plano==='anual'?'Anual':'Mensal'));
+    const ate=u.assinaturaAte?new Date(u.assinaturaAte).toLocaleDateString('pt-BR'):null;
+    el.innerHTML=`<div style="background:rgba(46,204,113,.08);border:1px solid rgba(46,204,113,.25);border-radius:14px;padding:16px">
+      <div style="font-size:11px;color:#2ecc71;font-weight:800;text-transform:uppercase;letter-spacing:.5px">Meu Plano</div>
+      <div style="font-size:16px;font-weight:900;margin-top:4px">✅ ${nomePlano} — ativo</div>
+      ${ate&&!u.isAdmin?`<div style="font-size:11.5px;color:var(--t2);margin-top:4px">Renova em ${ate}</div>`:''}
+    </div>`;
+    return;
+  }
+
+  if(st==='trial'){
+    const dias=diasRestantesTrial(u);
+    el.innerHTML=`<div style="background:var(--s);border:1px solid var(--b);border-radius:14px;padding:16px">
+      <div style="font-size:11px;color:var(--t2);font-weight:800;text-transform:uppercase;letter-spacing:.5px">Meu Plano</div>
+      <div style="font-size:16px;font-weight:900;margin-top:4px">🎁 ${dias<=1?'Último dia':dias+' dias'} de teste grátis</div>
+      <div style="font-size:11.5px;color:var(--t2);margin-top:4px">Depois, a partir de ${PLANOS.anual.preco}/mês</div>
+      <button onclick="abrirAssinatura()" style="width:100%;margin-top:12px;background:var(--r);color:#fff;border:none;border-radius:9px;padding:11px;font-size:12.5px;font-weight:800;cursor:pointer">⭐ Assinar agora</button>
+    </div>`;
+    return;
+  }
+
+  // expirada
+  el.innerHTML=`<div style="background:rgba(243,156,18,.08);border:1px solid rgba(243,156,18,.3);border-radius:14px;padding:16px">
+    <div style="font-size:11px;color:#f39c12;font-weight:800;text-transform:uppercase;letter-spacing:.5px">Meu Plano</div>
+    <div style="font-size:16px;font-weight:900;margin-top:4px">⏳ Teste grátis encerrado</div>
+    <div style="font-size:11.5px;color:var(--t2);margin-top:4px">Assine pra continuar com acesso completo</div>
+    <button onclick="abrirAssinatura()" style="width:100%;margin-top:12px;background:#f39c12;color:#000;border:none;border-radius:9px;padding:11px;font-size:12.5px;font-weight:800;cursor:pointer">⭐ Assinar agora</button>
+  </div>`;
+}
 function renderPerfil(u){
   // Basic info
   const pnEl=document.getElementById('perfil-name');if(pnEl)pnEl.textContent=u.name||'Atleta';
   const peEl=document.getElementById('perfil-email-disp');if(peEl)peEl.textContent=u.email||'';
+  renderPerfilPlano(u);
   // Stats
   const ptEl=document.getElementById('perfil-treinos');if(ptEl)ptEl.textContent=u.stats?.treinos||0;
   const pkEl=document.getElementById('perfil-km');if(pkEl)pkEl.textContent=u.stats?.distancia||0;
@@ -9796,6 +9835,7 @@ function admStudentCard(u, compact=false){
       <button class="st-btn anam" onclick="openAnam('${u.email}')">📋 Anamnese</button>
       <button class="st-btn ebook" onclick="openEbooksAdmin('${u.email}')">📚 E-Books</button>
       <button class="st-btn" onclick="abrirMarcarPago('${u.email}')" style="background:rgba(46,204,113,.12);color:#2ecc71;border:1px solid rgba(46,204,113,.3)">💳 Marcar como pago</button>
+      <button class="st-btn" onclick="openEvalModal('${u.email}')" style="background:rgba(52,152,219,.12);color:#3498db;border:1px solid rgba(52,152,219,.3)">📊 Nova Avaliação</button>
       <button class="st-btn del" onclick="admDel('${u.email}')">🗑️</button>
     </div>
     <div style="padding:8px 14px 0;font-size:10px;color:var(--mu)">${admStatusAssinaturaTxt(u)}</div>
@@ -10143,6 +10183,7 @@ function getAvatarEmoji(u){ return u?.name?u.name[0].toUpperCase():'?'; }
 // ══ EVOLUÇÃO / AVALIAÇÃO CORPORAL ══
 
 let evalMethod = 'pollock';
+let _evalAlunoAlvo = null; // null = o próprio usuário logado; email = admin lançando avaliação de outro aluno
 
 // Classificação % gordura por sexo e idade
 function classifyFat(fat, sex, age){
@@ -10251,7 +10292,21 @@ function selMethod(method, el){
   document.getElementById('panel-bio').style.display     = method==='bio'?'block':'none';
 }
 
-function openEvalModal(){
+function openEvalModal(emailAlvo){
+  _evalAlunoAlvo = emailAlvo || null;
+
+  // Descobre de quem são os dados a preencher: o próprio aluno (fluxo normal)
+  // ou o aluno escolhido pelo admin (fluxo novo)
+  let alvo;
+  if(_evalAlunoAlvo){
+    alvo = (window.ADM_CACHE||[]).find(a=>a.email===_evalAlunoAlvo) || (DB.get('fq_users')||{})[_evalAlunoAlvo];
+  } else {
+    alvo = getU();
+  }
+
+  const tituloEl = document.getElementById('modal-eval-title');
+  if(tituloEl) tituloEl.textContent = _evalAlunoAlvo ? `📋 Avaliação de ${alvo?.name||_evalAlunoAlvo}` : '📋 Nova Avaliação';
+
   // Set today's date
   const today = new Date().toISOString().split('T')[0];
   const dateEl = document.getElementById('eval-date');
@@ -10261,10 +10316,9 @@ function openEvalModal(){
    'bio-fat','bio-lean','bio-water','bio-bone','bio-tmb','bio-idademet','eval-obs'].forEach(id=>{
     const el=document.getElementById(id); if(el) el.value='';
   });
-  // Reset peso from profile
-  const u = getU();
+  // Reset peso from profile (do aluno certo, seja ele quem for)
   const pesoEl = document.getElementById('eval-peso');
-  if(pesoEl && u?.anamnese?.peso) pesoEl.value = u.anamnese.peso;
+  if(pesoEl && alvo?.anamnese?.peso) pesoEl.value = alvo.anamnese.peso;
   // Reset results
   ['rt-soma','rt-fat','rt-lean','bio-rt-fat','bio-rt-lean','bio-rt-gorda'].forEach(id=>{
     const el=document.getElementById(id); if(el) el.textContent='—';
@@ -10276,10 +10330,15 @@ function openEvalModal(){
   setTimeout(attachEvalListeners, 100);
 }
 
-function saveEval(){
-  const email = DB.get('fq_cur');
+async function saveEval(){
+  const modoAdmin = !!_evalAlunoAlvo;
+  const email = modoAdmin ? _evalAlunoAlvo : DB.get('fq_cur');
   const users = DB.get('fq_users')||{};
-  const u = users[email];
+  // No modo admin, o aluno-alvo pode nem estar no fq_users local (é outra pessoa) —
+  // busca os dados dele no cache do painel pra calcular idade/sexo certos.
+  const u = modoAdmin
+    ? ((window.ADM_CACHE||[]).find(a=>a.email===email) || users[email] || {email})
+    : users[email];
   if(!u) return;
 
   const date  = document.getElementById('eval-date')?.value;
@@ -10325,6 +10384,26 @@ function saveEval(){
   if(!u.avaliacoes) u.avaliacoes = [];
   u.avaliacoes.push(evalData);
   u.avaliacoes.sort((a,b)=>new Date(a.date)-new Date(b.date));
+
+  if(modoAdmin){
+    // Admin lançando avaliação de outro aluno — grava direto no servidor,
+    // checando erro de verdade (não pode falhar em silêncio).
+    if(sb){
+      const{error}=await sb.from('alunos').update({evals:u.avaliacoes}).eq('email',email);
+      if(error){
+        console.error('Erro ao salvar avaliação (admin):',error.message,error);
+        fqToast('⚠️ Não foi possível salvar no servidor: '+error.message,'warn',6000);
+        return;
+      }
+    }
+    if(window.ADM_CACHE){const s=window.ADM_CACHE.find(a=>a.email===email);if(s)s.avaliacoes=u.avaliacoes;}
+    if(users[email]) { users[email].avaliacoes = u.avaliacoes; DB.set('fq_users', users); }
+    _evalAlunoAlvo = null;
+    closeModal('modal-eval');
+    fqToast('✅ Avaliação salva para '+(u.name||email)+'!','ok');
+    return;
+  }
+
   DB.set('fq_users', users);
   syncU(u);
   closeModal('modal-eval');
