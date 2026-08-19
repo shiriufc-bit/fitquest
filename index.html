@@ -822,7 +822,7 @@ textarea.fi{resize:vertical;min-height:80px;}
       <option value="es">🇪🇸 ES</option>
     </select>
   </div>
-  <div id="fq-version-badge" style="position:absolute;bottom:8px;right:12px;font-size:9px;color:#333;font-weight:700;z-index:5">v171</div>
+  <div id="fq-version-badge" style="position:absolute;bottom:8px;right:12px;font-size:9px;color:#333;font-weight:700;z-index:5">v172</div>
   <img src="https://images.unsplash.com/photo-1517836357463-d25dfeac3438?w=800&q=80" alt="Fitness" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center top;filter:brightness(.35);z-index:0"/>
   <div class="splash-glow"></div>
   <div class="splash-noise"></div>
@@ -9893,7 +9893,7 @@ function admStudentCard(u, compact=false){
       <button class="st-btn anam" onclick="openAnam('${u.email}')">📋 Anamnese</button>
       <button class="st-btn ebook" onclick="openEbooksAdmin('${u.email}')">📚 E-Books</button>
       <button class="st-btn" onclick="abrirMarcarPago('${u.email}')" style="background:rgba(46,204,113,.12);color:#2ecc71;border:1px solid rgba(46,204,113,.3)">💳 Marcar como pago</button>
-      <button class="st-btn" onclick="openEvalModal('${u.email}')" style="background:rgba(52,152,219,.12);color:#3498db;border:1px solid rgba(52,152,219,.3)">📊 Nova Avaliação</button>
+      <button class="st-btn" onclick="abrirAvaliacoesAdmin('${u.email}')" style="background:rgba(52,152,219,.12);color:#3498db;border:1px solid rgba(52,152,219,.3)">📊 Avaliações</button>
       <button class="st-btn del" onclick="admDel('${u.email}')">🗑️</button>
     </div>
     <div style="padding:8px 14px 0;font-size:10px;color:var(--mu)">${admStatusAssinaturaTxt(u)}</div>
@@ -10242,6 +10242,7 @@ function getAvatarEmoji(u){ return u?.name?u.name[0].toUpperCase():'?'; }
 
 let evalMethod = 'pollock';
 let _evalAlunoAlvo = null; // null = o próprio usuário logado; email = admin lançando avaliação de outro aluno
+let _evalEditandoId = null; // null = criando nova; id = editando avaliação existente com esse id
 
 // Classificação % gordura por sexo e idade
 function classifyFat(fat, sex, age){
@@ -10357,7 +10358,41 @@ function selMethod(method, el){
   document.getElementById('panel-bio').style.display     = method==='bio'?'block':'none';
 }
 
-function openEvalModal(emailAlvo){
+function abrirAvaliacoesAdmin(email){
+  const alvo = (window.ADM_CACHE||[]).find(a=>a.email===email) || (DB.get('fq_users')||{})[email];
+  if(!alvo){ fqToast('Aluno não encontrado.','warn'); return; }
+  const avals = (alvo.avaliacoes||[]).slice().sort((a,b)=>new Date(b.date)-new Date(a.date));
+  const idade = alvo.anamnese?.nasc ? Math.floor((Date.now()-new Date(alvo.anamnese.nasc))/(365.25*24*3600*1000)) : 30;
+  const sexo = alvo.anamnese?.sexo || 'Masculino';
+
+  document.getElementById('modal-rotina-content').innerHTML = `
+    <div style="padding:24px 20px 8px">
+      <div style="font-size:19px;font-weight:900;letter-spacing:-.3px">Avaliações de ${escHtml(alvo.name||email)}</div>
+      <div style="font-size:12.5px;color:var(--t2);margin-top:4px">Toque numa avaliação existente pra editar, ou crie uma nova.</div>
+    </div>
+    <div style="padding:0 20px 12px">
+      <button onclick="closeModal('modal-rotina');openEvalModal('${email}')" style="width:100%;background:var(--r);color:#fff;border:none;border-radius:10px;padding:13px;font-size:13px;font-weight:800;cursor:pointer">+ Nova Avaliação</button>
+    </div>
+    <div style="padding:0 20px 28px;display:flex;flex-direction:column;gap:10px">
+      ${avals.length===0?`<div style="text-align:center;padding:30px 0;color:var(--mu);font-size:12.5px">Nenhuma avaliação registrada ainda.</div>`:avals.map(a=>{
+        const {cls,color} = classifyFat(a.fatPct||0, sexo, idade);
+        const dataF = new Date(a.date+'T12:00:00').toLocaleDateString('pt-BR');
+        const metodoTxt = a.method==='bio'?'Bioimpedância':'Pollock 7 dobras';
+        return `<div onclick="closeModal('modal-rotina');openEvalModal('${email}','${a.id}')" style="display:flex;align-items:center;gap:12px;background:var(--s);border:1px solid var(--b);border-radius:12px;padding:14px 16px;cursor:pointer">
+          <div style="flex:1">
+            <div style="font-size:13.5px;font-weight:800">${dataF}</div>
+            <div style="font-size:11px;color:var(--t2);margin-top:2px">${metodoTxt} · ${a.fatPct}% gordura</div>
+          </div>
+          <span style="font-size:10px;font-weight:800;padding:3px 8px;border-radius:6px;background:${color}22;color:${color}">${cls.replace(/[✅⚠️🔴]/g,'').trim()}</span>
+          <span style="color:var(--mu);font-size:16px">✏️</span>
+        </div>`;
+      }).join('')}
+    </div>
+  `;
+  abrirModal('modal-rotina');
+}
+
+function openEvalModal(emailAlvo, evalId){
   _evalAlunoAlvo = emailAlvo || null;
 
   // Descobre de quem são os dados a preencher: o próprio aluno (fluxo normal)
@@ -10396,6 +10431,34 @@ function openEvalModal(emailAlvo){
   const chvPerim=document.getElementById('perimetria-chv');
   if(painelPerim) painelPerim.style.display='none';
   if(chvPerim) chvPerim.style.transform='';
+
+  // Modo edição — pré-preenche tudo com os dados da avaliação existente
+  _evalEditandoId = evalId || null;
+  if(evalId){
+    const av = (alvo?.avaliacoes||[]).find(e=>String(e.id)===String(evalId));
+    if(av){
+      if(dateEl) dateEl.value = av.date;
+      if(pesoEl) pesoEl.value = av.peso;
+      const obsEl=document.getElementById('eval-obs'); if(obsEl) obsEl.value = av.obs||'';
+
+      const metodoTab = document.getElementById(av.method==='bio'?'mtab-bio':'mtab-pollock');
+      if(metodoTab) selMethod(av.method==='bio'?'bio':'pollock', metodoTab);
+
+      if(av.method==='pollock' && av.dobras){
+        const camposDobra=['d-peitoral','d-axilar','d-triceps','d-subescapular','d-abdominal','d-suprailíaca','d-coxa'];
+        camposDobra.forEach((id,i)=>{ const el=document.getElementById(id); if(el && av.dobras[i]!==undefined) el.value=av.dobras[i]; });
+      }else if(av.method==='bio'){
+        const camposBio={'bio-fat':'fatPct','bio-lean':'leanKg','bio-water':'water','bio-bone':'bone','bio-tmb':'tmb','bio-idademet':'idademet'};
+        Object.entries(camposBio).forEach(([id,chave])=>{ const el=document.getElementById(id); if(el && av[chave]!==undefined) el.value=av[chave]; });
+      }
+      if(av.perimetria){
+        const camposPerim={'p-braco-relax':'bracoRelax','p-braco-contr':'bracoContr','p-antebraco':'antebraco','p-torax':'torax','p-cintura':'cintura','p-abdomen':'abdomen','p-quadril':'quadril','p-coxa':'coxa','p-panturrilha':'panturrilha'};
+        Object.entries(camposPerim).forEach(([id,chave])=>{ const el=document.getElementById(id); if(el && av.perimetria[chave]!==undefined) el.value=av.perimetria[chave]; if(painelPerim && av.perimetria[chave]!==undefined){painelPerim.style.display='block';if(chvPerim)chvPerim.style.transform='rotate(180deg)';} });
+      }
+      setTimeout(()=>{ if(av.method==='pollock') calcRealtime(); else calcBio(); }, 120);
+    }
+  }
+
   abrirModal('modal-eval');
   setTimeout(attachEvalListeners, 100);
 }
@@ -10419,7 +10482,7 @@ async function saveEval(){
   const idade = u.anamnese?.nasc ? Math.floor((Date.now()-new Date(u.anamnese.nasc))/(365.25*24*3600*1000)) : 30;
   const sexo  = u.anamnese?.sexo || 'Masculino';
 
-  let evalData = { id:Date.now(), date, peso, obs, method:evalMethod };
+  let evalData = { id: _evalEditandoId ? (isNaN(Number(_evalEditandoId))?_evalEditandoId:Number(_evalEditandoId)) : Date.now(), date, peso, obs, method:evalMethod };
 
   if(evalMethod === 'pollock'){
     const dobras = [
@@ -10465,8 +10528,14 @@ async function saveEval(){
   if(Object.keys(perimetria).length) evalData.perimetria = perimetria;
 
   if(!u.avaliacoes) u.avaliacoes = [];
-  u.avaliacoes.push(evalData);
+  if(_evalEditandoId){
+    const idx = u.avaliacoes.findIndex(e=>String(e.id)===String(_evalEditandoId));
+    if(idx>=0) u.avaliacoes[idx] = evalData; else u.avaliacoes.push(evalData);
+  }else{
+    u.avaliacoes.push(evalData);
+  }
   u.avaliacoes.sort((a,b)=>new Date(a.date)-new Date(b.date));
+  _evalEditandoId = null;
 
   if(modoAdmin){
     // Admin lançando avaliação de outro aluno — grava direto no servidor,
