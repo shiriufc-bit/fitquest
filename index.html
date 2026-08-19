@@ -822,7 +822,7 @@ textarea.fi{resize:vertical;min-height:80px;}
       <option value="es">🇪🇸 ES</option>
     </select>
   </div>
-  <div id="fq-version-badge" style="position:absolute;bottom:8px;right:12px;font-size:9px;color:#333;font-weight:700;z-index:5">v174</div>
+  <div id="fq-version-badge" style="position:absolute;bottom:8px;right:12px;font-size:9px;color:#333;font-weight:700;z-index:5">v175</div>
   <img src="https://images.unsplash.com/photo-1517836357463-d25dfeac3438?w=800&q=80" alt="Fitness" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center top;filter:brightness(.35);z-index:0"/>
   <div class="splash-glow"></div>
   <div class="splash-noise"></div>
@@ -10880,6 +10880,7 @@ function renderEvo(u){
         <span style="font-size:10px;font-weight:800;padding:3px 8px;border-radius:6px;background:${color}22;color:${color}">${cls}</span>
         <div style="display:flex;gap:6px">
           <button onclick="event.stopPropagation();baixarAvaliacaoPDF(${a.id})" style="background:rgba(46,204,113,.1);border:1px solid rgba(46,204,113,.25);border-radius:6px;padding:3px 8px;color:#2ecc71;font-size:10px;font-weight:700;cursor:pointer">📄 PDF</button>
+          <button onclick="event.stopPropagation();baixarAvaliacaoPDF(${a.id},'email')" style="background:rgba(52,152,219,.1);border:1px solid rgba(52,152,219,.25);border-radius:6px;padding:3px 8px;color:#3498db;font-size:10px;font-weight:700;cursor:pointer;margin-left:6px">📧 Email</button>
           <button onclick="event.stopPropagation();deleteEval(${a.id})" style="background:rgba(255,23,68,.08);border:1px solid rgba(255,23,68,.15);border-radius:6px;padding:3px 8px;color:#ff6b6b;font-size:10px;font-weight:700;cursor:pointer">🗑️</button>
         </div>
       </div>
@@ -12494,6 +12495,7 @@ const EMAILJS_CONFIG = {
   serviceId: 'SEU_SERVICE_ID',        // ex: service_abc123
   templateId: 'SEU_TEMPLATE_ID',      // ex: template_xyz789 — boas-vindas pro aluno
   templateIdAdmin: 'SEU_TEMPLATE_ADMIN_ID', // template separado — notificação pra você
+  templateIdPdf: 'SEU_TEMPLATE_PDF_ID', // template separado — envia o link do PDF de avaliação pro aluno
   publicKey: 'SUA_PUBLIC_KEY',        // ex: AbCdEfGh123
   adminEmail: 'rennandg2012@hotmail.com'    // pra onde a notificação de novo aluno vai
 };
@@ -13182,14 +13184,81 @@ async function baixarPDFRobusto(doc, filename){
   }
 }
 
-async function baixarAvaliacaoPDF(evalId){
+// ══ ENVIA O PDF DE AVALIAÇÃO POR EMAIL (link, não anexo) ══
+// Anexo de arquivo no EmailJS só funciona no plano pago deles. Em vez disso,
+// guardamos o PDF no Storage do Supabase e mandamos por email um link
+// assinado (expira em 90 dias) — abrir um link funciona em qualquer
+// aparelho/navegador, diferente do download programático que vinha falhando.
+async function enviarAvaliacaoPorEmail(u, a, doc, emailDestino){
+  if(!sb){ fqToast('⚠️ Sem conexão com o servidor agora.','warn'); return false; }
+  fqToast('Enviando por email...','ok');
+
+  try{
+    const blob = doc.output('blob');
+    const caminho = `${u.email}/avaliacao-${a.id}.pdf`;
+
+    const{error:erroUpload} = await sb.storage.from('avaliacoes-pdf').upload(caminho, blob, {
+      contentType: 'application/pdf',
+      upsert: true
+    });
+    if(erroUpload){
+      console.error('Erro ao subir PDF pro storage:', erroUpload.message, erroUpload);
+      fqToast('⚠️ Não consegui salvar o PDF no servidor: '+erroUpload.message,'warn',6000);
+      return false;
+    }
+
+    const{data:linkData, error:erroLink} = await sb.storage.from('avaliacoes-pdf').createSignedUrl(caminho, 60*60*24*90); // 90 dias
+    if(erroLink || !linkData?.signedUrl){
+      console.error('Erro ao gerar link do PDF:', erroLink?.message, erroLink);
+      fqToast('⚠️ PDF salvo, mas não consegui gerar o link: '+(erroLink?.message||''),'warn',6000);
+      return false;
+    }
+
+    if(EMAILJS_CONFIG.serviceId==='SEU_SERVICE_ID' || EMAILJS_CONFIG.templateIdPdf==='SEU_TEMPLATE_PDF_ID'){
+      fqToast('⚠️ Email ainda não configurado — mas aqui está o link do PDF, copia e envia manualmente: '+linkData.signedUrl,'warn',15000);
+      console.log('Link do PDF (EmailJS não configurado):', linkData.signedUrl);
+      return false;
+    }
+
+    const dataF = new Date(a.date+'T12:00:00').toLocaleDateString('pt-BR');
+    const res = await fetch('https://api.emailjs.com/api/v1.0/email/send',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({
+        service_id: EMAILJS_CONFIG.serviceId,
+        template_id: EMAILJS_CONFIG.templateIdPdf,
+        user_id: EMAILJS_CONFIG.publicKey,
+        template_params:{
+          to_email: emailDestino || u.email,
+          aluno_nome: u.name || 'Aluno',
+          data_avaliacao: dataF,
+          link_pdf: linkData.signedUrl,
+        }
+      })
+    });
+    if(!res.ok){
+      console.error('EmailJS respondeu com erro:', res.status, await res.text());
+      fqToast('⚠️ PDF salvo, mas o email falhou. Link: '+linkData.signedUrl,'warn',15000);
+      return false;
+    }
+    fqToast('✅ Enviado! Confira o email de '+(emailDestino||u.email)+'.','ok',6000);
+    return true;
+  }catch(e){
+    console.error('Erro ao enviar avaliação por email:', e);
+    fqToast('⚠️ Não foi possível enviar agora: '+e.message,'warn',6000);
+    return false;
+  }
+}
+
+async function baixarAvaliacaoPDF(evalId, modo){
+  modo = modo || 'download';
   const u = getU();
   if(!u){ fqToast('Você precisa estar logado.','warn'); return; }
   const a = (u.avaliacoes||[]).find(e=>e.id===evalId);
   if(!a){ fqToast('Avaliação não encontrada.','warn'); return; }
   if(typeof window.jspdf === 'undefined'){ fqToast(t('msg.f3af71a877'),'warn'); return; }
 
-  fqToast('Gerando seu PDF...','ok');
+  fqToast(modo==='email'?'Preparando pra enviar...':'Gerando seu PDF...','ok');
   const { jsPDF } = window.jspdf;
   const doc = new jsPDF({unit:'mm', format:'a4'});
   const W = 210, H = 297;
@@ -13349,7 +13418,11 @@ async function baixarAvaliacaoPDF(evalId){
   doc.text('Este relatório é uma estimativa de composição corporal e não substitui avaliação médica.', 15, y+18);
 
   const nomeArquivo = `Avaliacao-Fisica-${(u.name||'aluno').replace(/\s+/g,'-')}-${a.date}.pdf`;
-  await baixarPDFRobusto(doc, nomeArquivo);
+  if(modo==='email'){
+    await enviarAvaliacaoPorEmail(u, a, doc);
+  }else{
+    await baixarPDFRobusto(doc, nomeArquivo);
+  }
 }
 
 // GERADOR DE PDF PERSONALIZADO (jsPDF + autoTable)
