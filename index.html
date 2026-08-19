@@ -822,7 +822,7 @@ textarea.fi{resize:vertical;min-height:80px;}
       <option value="es">🇪🇸 ES</option>
     </select>
   </div>
-  <div id="fq-version-badge" style="position:absolute;bottom:8px;right:12px;font-size:9px;color:#333;font-weight:700;z-index:5">v172</div>
+  <div id="fq-version-badge" style="position:absolute;bottom:8px;right:12px;font-size:9px;color:#333;font-weight:700;z-index:5">v173</div>
   <img src="https://images.unsplash.com/photo-1517836357463-d25dfeac3438?w=800&q=80" alt="Fitness" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center top;filter:brightness(.35);z-index:0"/>
   <div class="splash-glow"></div>
   <div class="splash-noise"></div>
@@ -2404,18 +2404,23 @@ textarea.fi{resize:vertical;min-height:80px;}
         <div style="font-size:10.5px;color:var(--t2);margin-bottom:10px;line-height:1.4">Medidas de circunferência (fita métrica) — deixe em branco o que não medir.</div>
         <div class="dobra-grid">
           <div class="dobra-field">
-            <div class="dobra-label">💪 Braço relaxado</div>
-            <input class="dobra-input" type="number" id="p-braco-relax" placeholder="0" step="0.1"/>
+            <div class="dobra-label">💪 Braço Direito</div>
+            <input class="dobra-input" type="number" id="p-braco-dir" placeholder="0" step="0.1"/>
             <div class="dobra-unit">cm</div>
           </div>
           <div class="dobra-field">
-            <div class="dobra-label">💪 Braço contraído</div>
-            <input class="dobra-input" type="number" id="p-braco-contr" placeholder="0" step="0.1"/>
+            <div class="dobra-label">💪 Braço Esquerdo</div>
+            <input class="dobra-input" type="number" id="p-braco-esq" placeholder="0" step="0.1"/>
             <div class="dobra-unit">cm</div>
           </div>
           <div class="dobra-field">
-            <div class="dobra-label">🦾 Antebraço</div>
-            <input class="dobra-input" type="number" id="p-antebraco" placeholder="0" step="0.1"/>
+            <div class="dobra-label">🦾 Antebraço Direito</div>
+            <input class="dobra-input" type="number" id="p-antebraco-dir" placeholder="0" step="0.1"/>
+            <div class="dobra-unit">cm</div>
+          </div>
+          <div class="dobra-field">
+            <div class="dobra-label">🦾 Antebraço Esquerdo</div>
+            <input class="dobra-input" type="number" id="p-antebraco-esq" placeholder="0" step="0.1"/>
             <div class="dobra-unit">cm</div>
           </div>
           <div class="dobra-field">
@@ -2439,13 +2444,23 @@ textarea.fi{resize:vertical;min-height:80px;}
             <div class="dobra-unit">cm</div>
           </div>
           <div class="dobra-field">
-            <div class="dobra-label">🦵 Coxa</div>
-            <input class="dobra-input" type="number" id="p-coxa" placeholder="0" step="0.1"/>
+            <div class="dobra-label">🦵 Perna Direita</div>
+            <input class="dobra-input" type="number" id="p-perna-dir" placeholder="0" step="0.1"/>
             <div class="dobra-unit">cm</div>
           </div>
           <div class="dobra-field">
-            <div class="dobra-label">🦵 Panturrilha</div>
-            <input class="dobra-input" type="number" id="p-panturrilha" placeholder="0" step="0.1"/>
+            <div class="dobra-label">🦵 Perna Esquerda</div>
+            <input class="dobra-input" type="number" id="p-perna-esq" placeholder="0" step="0.1"/>
+            <div class="dobra-unit">cm</div>
+          </div>
+          <div class="dobra-field">
+            <div class="dobra-label">🦵 Panturrilha Direita</div>
+            <input class="dobra-input" type="number" id="p-panturrilha-dir" placeholder="0" step="0.1"/>
+            <div class="dobra-unit">cm</div>
+          </div>
+          <div class="dobra-field">
+            <div class="dobra-label">🦵 Panturrilha Esquerda</div>
+            <input class="dobra-input" type="number" id="p-panturrilha-esq" placeholder="0" step="0.1"/>
             <div class="dobra-unit">cm</div>
           </div>
         </div>
@@ -10414,7 +10429,7 @@ function openEvalModal(emailAlvo, evalId){
   // Reset fields
   ['d-peitoral','d-axilar','d-triceps','d-subescapular','d-abdominal','d-suprailíaca','d-coxa',
    'bio-fat','bio-lean','bio-water','bio-bone','bio-tmb','bio-idademet','eval-obs',
-   'p-braco-relax','p-braco-contr','p-antebraco','p-torax','p-cintura','p-abdomen','p-quadril','p-coxa','p-panturrilha'].forEach(id=>{
+   'p-braco-dir','p-braco-esq','p-antebraco-dir','p-antebraco-esq','p-torax','p-cintura','p-abdomen','p-quadril','p-perna-dir','p-perna-esq','p-panturrilha-dir','p-panturrilha-esq'].forEach(id=>{
     const el=document.getElementById(id); if(el) el.value='';
   });
   // Reset peso from profile (do aluno certo, seja ele quem for)
@@ -10452,7 +10467,7 @@ function openEvalModal(emailAlvo, evalId){
         Object.entries(camposBio).forEach(([id,chave])=>{ const el=document.getElementById(id); if(el && av[chave]!==undefined) el.value=av[chave]; });
       }
       if(av.perimetria){
-        const camposPerim={'p-braco-relax':'bracoRelax','p-braco-contr':'bracoContr','p-antebraco':'antebraco','p-torax':'torax','p-cintura':'cintura','p-abdomen':'abdomen','p-quadril':'quadril','p-coxa':'coxa','p-panturrilha':'panturrilha'};
+        const camposPerim={'p-braco-dir':'bracoDir','p-braco-esq':'bracoEsq','p-antebraco-dir':'antebracoDir','p-antebraco-esq':'antebracoEsq','p-torax':'torax','p-cintura':'cintura','p-abdomen':'abdomen','p-quadril':'quadril','p-perna-dir':'pernaDir','p-perna-esq':'pernaEsq','p-panturrilha-dir':'panturrilhaDir','p-panturrilha-esq':'panturrilhaEsq'};
         Object.entries(camposPerim).forEach(([id,chave])=>{ const el=document.getElementById(id); if(el && av.perimetria[chave]!==undefined) el.value=av.perimetria[chave]; if(painelPerim && av.perimetria[chave]!==undefined){painelPerim.style.display='block';if(chvPerim)chvPerim.style.transform='rotate(180deg)';} });
       }
       setTimeout(()=>{ if(av.method==='pollock') calcRealtime(); else calcBio(); }, 120);
@@ -10516,9 +10531,9 @@ async function saveEval(){
 
   // Perimetria — opcional, só grava o que foi de fato preenchido
   const perimCampos = {
-    bracoRelax:'p-braco-relax', bracoContr:'p-braco-contr', antebraco:'p-antebraco',
-    torax:'p-torax', cintura:'p-cintura', abdomen:'p-abdomen',
-    quadril:'p-quadril', coxa:'p-coxa', panturrilha:'p-panturrilha'
+    bracoDir:'p-braco-dir', bracoEsq:'p-braco-esq', antebracoDir:'p-antebraco-dir', antebracoEsq:'p-antebraco-esq',
+    torax:'p-torax', cintura:'p-cintura', abdomen:'p-abdomen', quadril:'p-quadril',
+    pernaDir:'p-perna-dir', pernaEsq:'p-perna-esq', panturrilhaDir:'p-panturrilha-dir', panturrilhaEsq:'p-panturrilha-esq'
   };
   const perimetria = {};
   Object.entries(perimCampos).forEach(([chave,id])=>{
@@ -13275,8 +13290,8 @@ async function baixarAvaliacaoPDF(evalId){
     if(y > 220){ doc.addPage(); y = 20; }
     doc.setFont('helvetica','bold'); doc.setFontSize(11); doc.setTextColor(...R);
     doc.text('PERIMETRIA (cm)', 15, y); y += 3;
-    const nomesPerim = {bracoRelax:'Braço Relaxado', bracoContr:'Braço Contraído', antebraco:'Antebraço',
-      torax:'Tórax', cintura:'Cintura', abdomen:'Abdômen', quadril:'Quadril', coxa:'Coxa', panturrilha:'Panturrilha'};
+    const nomesPerim = {bracoDir:'Braço Direito', bracoEsq:'Braço Esquerdo', antebracoDir:'Antebraço Direito', antebracoEsq:'Antebraço Esquerdo',
+      torax:'Tórax', cintura:'Cintura', abdomen:'Abdômen', quadril:'Quadril', pernaDir:'Perna Direita', pernaEsq:'Perna Esquerda', panturrilhaDir:'Panturrilha Direita', panturrilhaEsq:'Panturrilha Esquerda'};
     const linhasPerim = Object.entries(a.perimetria).map(([chave,v])=>[nomesPerim[chave]||chave, v+' cm']);
     doc.autoTable({
       startY: y+2, margin:{left:15,right:15},
