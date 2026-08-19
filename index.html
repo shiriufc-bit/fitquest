@@ -821,7 +821,7 @@ textarea.fi{resize:vertical;min-height:80px;}
       <option value="es">🇪🇸 ES</option>
     </select>
   </div>
-  <div id="fq-version-badge" style="position:absolute;bottom:8px;right:12px;font-size:9px;color:#333;font-weight:700;z-index:5">v163</div>
+  <div id="fq-version-badge" style="position:absolute;bottom:8px;right:12px;font-size:9px;color:#333;font-weight:700;z-index:5">v164</div>
   <img src="https://images.unsplash.com/photo-1517836357463-d25dfeac3438?w=800&q=80" alt="Fitness" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center top;filter:brightness(.35);z-index:0"/>
   <div class="splash-glow"></div>
   <div class="splash-noise"></div>
@@ -4510,7 +4510,8 @@ function anamNext(tipo){
 function anamPrev(tipo){
   tipo=tipo||'geral';
   if(anamStepState[tipo]>1){ anamStepState[tipo]--; updAnam(tipo); window.scrollTo(0,0); }
-  else{ show('sc-auth'); } // primeiro passo — "Voltar" leva pro login, não fica sem função
+  else if(tipo==='geral'){ show('sc-auth'); } // anamnese geral é a primeira coisa após o cadastro — "Voltar" leva pro login
+  else{ show('sc-app'); } // anamnese de musc/corrida é iniciada de DENTRO do app — "Voltar" deve levar pra tela inicial logada, não pro login
 }
 // ── ANAMNESE GERAL — obrigatória logo após cadastro, vai direto pra Home (sem gerar plano) ──
 async function submitAnamGeral(){
