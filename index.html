@@ -821,7 +821,7 @@ textarea.fi{resize:vertical;min-height:80px;}
       <option value="es">🇪🇸 ES</option>
     </select>
   </div>
-  <div id="fq-version-badge" style="position:absolute;bottom:8px;right:12px;font-size:9px;color:#333;font-weight:700;z-index:5">v164</div>
+  <div id="fq-version-badge" style="position:absolute;bottom:8px;right:12px;font-size:9px;color:#333;font-weight:700;z-index:5">v165</div>
   <img src="https://images.unsplash.com/photo-1517836357463-d25dfeac3438?w=800&q=80" alt="Fitness" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center top;filter:brightness(.35);z-index:0"/>
   <div class="splash-glow"></div>
   <div class="splash-noise"></div>
@@ -1927,84 +1927,7 @@ textarea.fi{resize:vertical;min-height:80px;}
     <!-- PERFIL -->
     
     <!-- ══════════ COMUNIDADE ══════════ -->
-    <div class="tp" id="tp-com">
-      <div class="ttl" style="padding:18px 20px 12px">
-        <div style="font-size:22px;font-weight:900">Comunidade</div>
-        <div style="font-size:12px;color:var(--t2);margin-top:2px" data-i18n="ui.7953a7d8e4">Você não treina sozinho 💪</div>
-      </div>
-
-      <!-- CHECK-IN — ação principal, primeiro na tela -->
-      <div style="padding:0 20px;margin-bottom:6px">
-        <div id="checkin-atual" style="display:none">
-          <div class="gym-card" style="border-color:rgba(46,204,113,.35);background:rgba(46,204,113,.05)">
-            <div class="gym-ico" style="background:rgba(46,204,113,.12)">✅</div>
-            <div style="flex:1">
-              <div style="font-size:13px;font-weight:800" id="checkin-local">—</div>
-              <div style="font-size:11px;color:#2ecc71" id="checkin-tempo">Check-in ativo</div>
-            </div>
-            <button onclick="fazerCheckout()" style="background:var(--s2);border:1px solid var(--b);border-radius:8px;padding:8px 14px;color:var(--t2);font-size:11px;font-weight:800;cursor:pointer">Sair</button>
-          </div>
-        </div>
-        <div id="checkin-form">
-          <div style="font-size:13px;font-weight:800;margin-bottom:2px" data-i18n="ui.963368fa1d">📍 Onde você vai treinar hoje?</div>
-          <div style="font-size:11px;color:var(--mu);margin-bottom:8px" data-i18n="ui.f29378eae7">🔒 Só você vê isso — sua localização nunca é compartilhada</div>
-          <input id="checkin-nome" placeholder="Nome da academia (ex: Smart Fit Savassi)" style="width:100%;background:var(--s);border:1px solid var(--b);border-radius:10px;padding:12px;color:var(--t);font-size:13px;margin-bottom:8px;outline:none">
-          <div id="checkin-sugestoes" style="margin-bottom:8px"></div>
-          <button class="checkin-btn" onclick="fazerCheckin()">📍 Fazer Check-in</button>
-        </div>
-      </div>
-
-      <!-- Mural — feedback social imediato -->
-      <div style="padding:14px 20px 0">
-        <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:2px">
-          <div style="font-size:13px;font-weight:800">🔥 Acontecendo agora</div>
-          <div style="font-size:10px;color:var(--mu)" id="com-atletas">—</div>
-        </div>
-        <div style="font-size:10px;color:var(--mu);margin-bottom:8px" data-i18n="ui.d0bf91889e">Só suas conquistas aparecem aqui. Sua localização exata nunca é mostrada.</div>
-        <div id="mural-lista"></div>
-      </div>
-
-      <!-- Desafio coletivo -->
-      <div class="desafio-card">
-        <div style="display:flex;justify-content:space-between;align-items:center">
-          <div style="font-size:14px;font-weight:800">🎯 <span id="desafio-nome" data-i18n="ui.459498af11">Desafio do Mês</span></div>
-          <div style="font-size:10px;color:var(--mu);font-weight:700" id="desafio-dias">—</div>
-        </div>
-        <div style="font-size:12px;color:var(--t2);margin-top:4px" id="desafio-desc">Carregando...</div>
-        <div class="desafio-bar"><div class="desafio-fill" id="desafio-fill" style="width:0%"></div></div>
-        <div style="display:flex;justify-content:space-between;font-size:11px">
-          <span style="color:var(--r);font-weight:800" id="desafio-atual">0</span>
-          <span style="color:var(--mu)" id="desafio-meta">meta 0</span>
-        </div>
-        <div style="font-size:11px;color:var(--t2);margin-top:8px;padding-top:8px;border-top:1px solid var(--b)">
-          Sua contribuição: <strong style="color:#f39c12" id="desafio-minha">0</strong>
-        </div>
-      </div>
-
-
-      <!-- Trilha de conquistas -->
-      <div class="trilha-wrap">
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:2px">
-          <div style="font-size:13px;font-weight:800" data-i18n="ui.f6d9918b03">🗺️ Sua jornada</div>
-          <div style="font-size:10px;color:var(--mu)" id="trilha-titulo-atual">—</div>
-        </div>
-        <div style="font-size:10px;color:var(--mu);margin-bottom:6px" data-i18n="ui.f6d1d742b6">Baseado no seu XP total acumulado</div>
-        <div class="trilha-track" id="trilha-track"></div>
-      </div>
-
-      <!-- Seus locais — mapa + conquistas fundidos numa lista só -->
-      <div class="mapa-wrap">
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:2px">
-          <div style="font-size:13px;font-weight:800" data-i18n="ui.d9e001466e">📍 Seus locais de treino</div>
-          <div style="font-size:10px;color:var(--mu)" id="mapa-total">0 locais</div>
-        </div>
-        <div style="font-size:10px;color:var(--mu);margin-bottom:10px" data-i18n="ui.f2b9059248">Só você vê isso</div>
-        <div id="mapa-grid"></div>
-        <div id="lugar-badges" style="margin-top:10px"></div>
-      </div>
-
-      <div style="height:16px"></div>
-    </div>
+    <!-- tela de Comunidade/Social removida do app -->
 
     <div class="tp" id="tp-perfil">
       <!-- Navbar transparente nesta aba - foto começa DEPOIS da navbar -->
@@ -2141,7 +2064,7 @@ textarea.fi{resize:vertical;min-height:80px;}
     <button class="nbtn" onclick="switchTab('treinos',this)"><span class="nico">🏋️</span><span class="nlbl" data-i18n="nav.train">Treinos</span><div class="ndot"></div></button>
     <button class="nbtn" onclick="switchTab('store',this)"><span class="nico">🎬</span><span class="nlbl" data-i18n="nav.store">Loja</span><div class="ndot"></div></button>
     <button class="nbtn" onclick="switchTab('consult',this)"><span class="nico">⭐</span><span class="nlbl" data-i18n="nav.coach">Coach</span><div class="ndot"></div></button>
-    <button class="nbtn" onclick="switchTab('com',this)"><span class="nico">🌍</span><span class="nlbl" data-i18n="nav.social">Social</span><div class="ndot"></div></button>
+    <button class="nbtn" onclick="switchTab('evo',this)"><span class="nico">📈</span><span class="nlbl" data-i18n="nav.evolucao">Evolução</span><div class="ndot"></div></button>
     <button class="nbtn" onclick="switchTab('perfil',this)"><span class="nico" id="nav-perfil-ico">👤</span><span class="nlbl" data-i18n="nav.profile">Perfil</span><div class="ndot"></div></button>
   </div>
 </div>
@@ -6424,6 +6347,7 @@ const FQ_I18N = {
     'nav.store': 'Loja',
     'nav.coach': 'Coach',
     'nav.social': 'Social',
+    'nav.evolucao': 'Evolução',
     'nav.profile': 'Perfil',
 
     // ── Planos / assinatura ──
@@ -6927,6 +6851,7 @@ const FQ_I18N = {
     'nav.store': 'Store',
     'nav.coach': 'Coach',
     'nav.social': 'Social',
+    'nav.evolucao': 'Progress',
     'nav.profile': 'Profile',
 
     // ── Planos / assinatura ──
@@ -7424,6 +7349,7 @@ const FQ_I18N = {
     'nav.store': 'Tienda',
     'nav.coach': 'Coach',
     'nav.social': 'Social',
+    'nav.evolucao': 'Evolución',
     'nav.profile': 'Perfil',
     'plan.monthly': 'Mensual',
     'plan.annual': 'Anual',
