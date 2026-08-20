@@ -822,7 +822,7 @@ textarea.fi{resize:vertical;min-height:80px;}
       <option value="es">🇪🇸 ES</option>
     </select>
   </div>
-  <div id="fq-version-badge" style="position:absolute;bottom:8px;right:12px;font-size:9px;color:#333;font-weight:700;z-index:5">v175</div>
+  <div id="fq-version-badge" style="position:absolute;bottom:8px;right:12px;font-size:9px;color:#333;font-weight:700;z-index:5">v176</div>
   <img src="https://images.unsplash.com/photo-1517836357463-d25dfeac3438?w=800&q=80" alt="Fitness" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center top;filter:brightness(.35);z-index:0"/>
   <div class="splash-glow"></div>
   <div class="splash-noise"></div>
@@ -1527,6 +1527,7 @@ textarea.fi{resize:vertical;min-height:80px;}
         <div style="margin-bottom:16px;padding:12px 14px;background:rgba(46,204,113,.08);border:1px solid rgba(46,204,113,.25);border-radius:10px;font-size:11.5px;color:var(--t2);line-height:1.6">
           👨‍👩‍👧 Recomendamos acompanhamento de um adulto responsável durante os treinos, principalmente com crianças menores. Nada aqui substitui orientação pediátrica.
         </div>
+        <div id="kids-jornada" style="margin-bottom:16px"></div>
         <div id="kids-tabs" style="display:flex;gap:8px;margin-bottom:16px;overflow-x:auto;padding-bottom:4px">
           <button onclick="switchKidsCategoria('funcional-infantil')" class="kids-tab-btn active" data-cat="funcional-infantil" style="flex-shrink:0;padding:9px 14px;border-radius:99px;border:1px solid var(--r);background:var(--r);color:#fff;font-size:12px;font-weight:800;cursor:pointer;white-space:nowrap">Funcional 6-10 anos</button>
           <button onclick="switchKidsCategoria('funcional-adolescente')" class="kids-tab-btn" data-cat="funcional-adolescente" style="flex-shrink:0;padding:9px 14px;border-radius:99px;border:1px solid var(--b);background:var(--s);color:var(--t2);font-size:12px;font-weight:800;cursor:pointer;white-space:nowrap">Funcional 11-17 anos</button>
@@ -3555,14 +3556,50 @@ function avancarSemanaCorridaKids(semanaConcluida){
   const atual=u.kidsCorridaSemana||1;
   if(semanaConcluida!==atual)return; // proteção — só avança a semana certa, na ordem
   u.kidsCorridaSemana=atual+1;
-  u.xp=(u.xp||0)+80;u.coins=(u.coins||0)+15;
+  u.kidsXp=(u.kidsXp||0)+80;u.coins=(u.coins||0)+15;
   atualizarStreak(u);
-  if((u.xp||0)>=(u.level||1)*1000){u.level=(u.level||1)+1;u.xp=0;setTimeout(()=>fqToast(t('msg.e4f2eae161')+(u.level||1)+'!','ok',5000),200);try{dispararConfete(40);}catch(e){}}
   DB.set('fq_users',users);
   renderKidsConteudo();
-  fqToast('🎉 Semana concluída! Próxima semana liberada. +80 XP','ok');
+  fqToast('🎉 Semana concluída! Próxima semana liberada. +80 pontos de aventura','ok');
   try{dispararConfete(28);}catch(e){}
 }
+// Progresso pessoal do Kids — compara só com o passado da própria criança,
+// nunca com outros usuários. Marcos por pontos acumulados, sem "nível"
+// pra não confundir com o sistema de nível/ranking dos adultos.
+const KIDS_MARCOS = [
+  {pontos:0,   nome:'Iniciante',       emoji:'🌱'},
+  {pontos:150, nome:'Aventureiro',     emoji:'🧭'},
+  {pontos:400, nome:'Explorador',      emoji:'🗺️'},
+  {pontos:800, nome:'Campeão',         emoji:'🏆'},
+  {pontos:1500,nome:'Lenda da Selva',  emoji:'🦁'},
+];
+function renderJornadaKids(u){
+  const el = document.getElementById('kids-jornada');
+  if(!el) return;
+  const pontos = u.kidsXp||0;
+  let atual = KIDS_MARCOS[0], prox = KIDS_MARCOS[1];
+  for(let i=0;i<KIDS_MARCOS.length;i++){
+    if(pontos >= KIDS_MARCOS[i].pontos){ atual = KIDS_MARCOS[i]; prox = KIDS_MARCOS[i+1]||null; }
+  }
+  const pct = prox ? Math.min(100, Math.round((pontos-atual.pontos)/(prox.pontos-atual.pontos)*100)) : 100;
+  el.innerHTML = `
+    <div style="background:linear-gradient(135deg,rgba(46,204,113,.1),rgba(46,204,113,.02));border:1px solid rgba(46,204,113,.25);border-radius:14px;padding:16px">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">
+        <div style="font-size:26px">${atual.emoji}</div>
+        <div>
+          <div style="font-size:14px;font-weight:900">${atual.nome}</div>
+          <div style="font-size:10.5px;color:var(--t2)">${pontos} pontos de aventura conquistados</div>
+        </div>
+      </div>
+      ${prox?`
+        <div style="background:rgba(255,255,255,.08);border-radius:99px;height:8px;overflow:hidden;margin-top:10px">
+          <div style="height:100%;border-radius:99px;background:#2ecc71;width:${pct}%;transition:width .4s"></div>
+        </div>
+        <div style="font-size:10px;color:var(--mu);margin-top:5px">Faltam ${prox.pontos-pontos} pontos pra virar ${prox.emoji} ${prox.nome}</div>
+      `:`<div style="font-size:10.5px;color:#2ecc71;font-weight:800;margin-top:6px">🎉 Você alcançou o marco mais alto!</div>`}
+    </div>`;
+}
+
 async function renderKidsConteudo(){
   const el=document.getElementById('kids-conteudo');
   if(!el)return;
@@ -3583,6 +3620,7 @@ async function renderKidsConteudo(){
     el.innerHTML='<div style="text-align:center;padding:40px 0;color:var(--mu);font-size:12.5px">Não foi possível carregar agora. Tenta de novo em alguns instantes.</div>';
     return;
   }
+  renderJornadaKids(u);
   if(kidsCategoriaAtual==='corrida-infantil'){
     el.innerHTML=`
       <div style="margin-bottom:14px;padding:12px 14px;background:rgba(243,156,18,.08);border:1px solid rgba(243,156,18,.25);border-radius:10px;font-size:11.5px;color:var(--t2);line-height:1.6">
@@ -3726,14 +3764,15 @@ function concluirRotinaKids(routineId){
   const dk=`kids_${routineId}_${hoje}`;
   if(u.mobRotinasDone[dk])return;
   u.mobRotinasDone[dk]=true;
-  u.xp=(u.xp||0)+50;u.coins=(u.coins||0)+10;
+  // XP dos Kids fica separado do XP/ranking geral (que é comparado entre TODOS os
+  // usuários, incluindo adultos desconhecidos) — crianças comparam só com o
+  // progresso delas mesmas, não competem num ranking público com estranhos.
+  u.kidsXp=(u.kidsXp||0)+50;u.coins=(u.coins||0)+10;
   atualizarStreak(u);
-  try{registrarEventoComunidade('treino',{nome:u.name,nome_treino:r.nome,titulo:tituloAtual(u)?.emoji});}catch(e){}
-  if((u.xp||0)>=(u.level||1)*1000){u.level=(u.level||1)+1;u.xp=0;setTimeout(()=>fqToast(t('msg.e4f2eae161')+(u.level||1)+'!','ok',5000),200);try{dispararConfete(40);}catch(e){}}
   DB.set('fq_users',users);
   const wrap=document.getElementById('kids-rotina-concluir');
   if(wrap) wrap.innerHTML=kidsBtnConcluirHTML(r);
-  fqToast('🎉 Treino concluído! +50 XP','ok');
+  fqToast('🎉 Treino concluído! +50 pontos de aventura','ok');
   try{dispararConfete(28);}catch(e){}
 }
 
@@ -4076,10 +4115,10 @@ function renovarMissoesSemanais(u){
   return true;
 }
 function rowToUser(data){
-  return{id:data.id,name:data.nome,email:data.email,plano:data.plano,trialInicio:data.trial_inicio,runInicio:data.run_inicio,runAjusteLesao:!!data.run_ajuste_lesao,assinaturaStatus:data.assinatura_status||'trial',assinaturaAte:data.assinatura_ate,diaConversao:data.dia_conversao,dataConversao:data.data_conversao,planoConversao:data.plano_conversao,precoTravado:data.preco_travado,promoFundador:!!data.promo_fundador,pixFundador:!!data.pix_fundador,promoVaga:data.promo_vaga,solicitouTrocaTreino:!!data.solicitou_troca,solicitouTrocaData:data.solicitou_troca_data,solicitouTrocaTipo:data.solicitou_troca_tipo,trainApproved:data.treino_liberado,isAdmin:!!data.is_admin,aiPlan:data.ai_plan,anamnese:data.anamnese,anamneseDone:!!data.anamnese_geral,anamneseGeral:data.anamnese_geral||null,anamneseMusculacao:data.anamnese_musculacao||null,anamneseCorrida:data.anamnese_corrida||null,anamneseMuscDone:!!data.anamnese_musculacao,anamneseCorridaDone:!!data.anamnese_corrida,gymWeek:data.gym_week||1,runWeek:data.run_week||1,gymDone:data.gym_done||{},runDone:data.run_done||{},loadHistory:data.load_history||{},workoutHistory:data.workout_history||[],xp:data.xp||0,level:data.level||1,streak:data.streak||1,coins:data.coins||0,badges:data.badges||[],prs:data.prs||[],stats:data.stats||{treinos:0,distancia:0,semanas:0},purchases:data.purchases||[],pacoteEbooks:!!data.pacote_ebooks,programIntakes:data.program_intakes||{},avatar:data.avatar||null,avaliacoes:data.evals||[],missions:MISSOES_PADRAO.map(m=>({...m})),createdAt:data.criado_em,lastLogin:data.ultimo_acesso};
+  return{id:data.id,name:data.nome,email:data.email,plano:data.plano,trialInicio:data.trial_inicio,runInicio:data.run_inicio,runAjusteLesao:!!data.run_ajuste_lesao,assinaturaStatus:data.assinatura_status||'trial',assinaturaAte:data.assinatura_ate,diaConversao:data.dia_conversao,dataConversao:data.data_conversao,planoConversao:data.plano_conversao,precoTravado:data.preco_travado,promoFundador:!!data.promo_fundador,pixFundador:!!data.pix_fundador,promoVaga:data.promo_vaga,solicitouTrocaTreino:!!data.solicitou_troca,solicitouTrocaData:data.solicitou_troca_data,solicitouTrocaTipo:data.solicitou_troca_tipo,trainApproved:data.treino_liberado,isAdmin:!!data.is_admin,aiPlan:data.ai_plan,anamnese:data.anamnese,anamneseDone:!!data.anamnese_geral,anamneseGeral:data.anamnese_geral||null,anamneseMusculacao:data.anamnese_musculacao||null,anamneseCorrida:data.anamnese_corrida||null,anamneseMuscDone:!!data.anamnese_musculacao,anamneseCorridaDone:!!data.anamnese_corrida,gymWeek:data.gym_week||1,runWeek:data.run_week||1,gymDone:data.gym_done||{},runDone:data.run_done||{},loadHistory:data.load_history||{},workoutHistory:data.workout_history||[],xp:data.xp||0,kidsXp:data.kids_xp||0,level:data.level||1,streak:data.streak||1,coins:data.coins||0,badges:data.badges||[],prs:data.prs||[],stats:data.stats||{treinos:0,distancia:0,semanas:0},purchases:data.purchases||[],pacoteEbooks:!!data.pacote_ebooks,programIntakes:data.program_intakes||{},avatar:data.avatar||null,avaliacoes:data.evals||[],missions:MISSOES_PADRAO.map(m=>({...m})),createdAt:data.criado_em,lastLogin:data.ultimo_acesso};
 }
 function userToRow(u){
-  return{id:u.id,nome:u.name,email:u.email,plano:u.plano||'free',trial_inicio:u.trialInicio||undefined,run_inicio:u.runInicio||null,run_ajuste_lesao:u.runAjusteLesao||false,treino_liberado:u.trainApproved||false,ai_plan:u.aiPlan||null,anamnese:u.anamnese||null,anamnese_geral:u.anamneseGeral||null,anamnese_musculacao:u.anamneseMusculacao||null,anamnese_corrida:u.anamneseCorrida||null,gym_week:u.gymWeek||1,run_week:u.runWeek||1,gym_done:u.gymDone||{},run_done:u.runDone||{},load_history:u.loadHistory||{},workout_history:u.workoutHistory||[],xp:u.xp||0,level:u.level||1,streak:u.streak||1,coins:u.coins||0,badges:u.badges||[],prs:u.prs||[],stats:u.stats||{treinos:0,distancia:0,semanas:0},avatar:u.avatar||null,evals:u.avaliacoes||[],program_intakes:u.programIntakes||{},ultimo_acesso:new Date().toISOString(),updated_at:new Date().toISOString()};
+  return{id:u.id,nome:u.name,email:u.email,plano:u.plano||'free',trial_inicio:u.trialInicio||undefined,run_inicio:u.runInicio||null,run_ajuste_lesao:u.runAjusteLesao||false,treino_liberado:u.trainApproved||false,ai_plan:u.aiPlan||null,anamnese:u.anamnese||null,anamnese_geral:u.anamneseGeral||null,anamnese_musculacao:u.anamneseMusculacao||null,anamnese_corrida:u.anamneseCorrida||null,gym_week:u.gymWeek||1,run_week:u.runWeek||1,gym_done:u.gymDone||{},run_done:u.runDone||{},load_history:u.loadHistory||{},workout_history:u.workoutHistory||[],xp:u.xp||0,kids_xp:u.kidsXp||0,level:u.level||1,streak:u.streak||1,coins:u.coins||0,badges:u.badges||[],prs:u.prs||[],stats:u.stats||{treinos:0,distancia:0,semanas:0},avatar:u.avatar||null,evals:u.avaliacoes||[],program_intakes:u.programIntakes||{},ultimo_acesso:new Date().toISOString(),updated_at:new Date().toISOString()};
   // Obs.: purchases/pacote_ebooks/is_admin/plano NÃO são enviados pelo aluno — são protegidos no banco e só mudam via webhook de pagamento ou admin.
 }
 async function syncU(u){
