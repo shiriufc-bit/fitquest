@@ -80,6 +80,18 @@ function liberarPacoteEbooks(u) {
   --b2:rgba(255,255,255,.15);
   --gr:linear-gradient(135deg,#e50914,#b00710);
 }
+/* ══ TEMA KIDS & TEENS — Selva/Aventura ══
+   Paleta própria, mais viva e brincalhona, só dentro da seção Kids.
+   O resto do app continua com a identidade séria (vermelho). Como os
+   componentes usam var(--r) etc, redefinir essas variáveis aqui já
+   repinta botões/tags/bordas que usam essas variáveis automaticamente. */
+.kids-theme{
+  --r:#27ae60;
+  --r2:#f39c12;
+  --rg:rgba(39,174,96,.3);
+  --rs:rgba(39,174,96,.12);
+  --gr:linear-gradient(135deg,#27ae60,#f39c12);
+}
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}html{overscroll-behavior:none;}
 body{background:var(--bg);color:var(--t);font-family:"Inter",system-ui,sans-serif;min-height:100vh;overflow-x:hidden;-webkit-text-size-adjust:100%;text-size-adjust:100%;}
 #sc-app{background:radial-gradient(ellipse at 50% 0%,rgba(229,9,20,.04) 0%,transparent 60%),var(--bg);}
@@ -822,7 +834,7 @@ textarea.fi{resize:vertical;min-height:80px;}
       <option value="es">🇪🇸 ES</option>
     </select>
   </div>
-  <div id="fq-version-badge" style="position:absolute;bottom:8px;right:12px;font-size:9px;color:#333;font-weight:700;z-index:5">v176</div>
+  <div id="fq-version-badge" style="position:absolute;bottom:8px;right:12px;font-size:9px;color:#333;font-weight:700;z-index:5">v177</div>
   <img src="https://images.unsplash.com/photo-1517836357463-d25dfeac3438?w=800&q=80" alt="Fitness" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center top;filter:brightness(.35);z-index:0"/>
   <div class="splash-glow"></div>
   <div class="splash-noise"></div>
@@ -1512,15 +1524,35 @@ textarea.fi{resize:vertical;min-height:80px;}
     </div>
 
     <!-- KIDS & TEENS — treinos funcionais e corrida pra crianças/adolescentes -->
-    <div class="tp" id="tp-kids">
-      <div class="wk-hero">
-        <img src="https://images.unsplash.com/photo-1502086223501-7ea6ecd79368?w=600&q=80" alt="Kids & Teens" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;filter:brightness(.45);z-index:0"/>
+    <div class="tp kids-theme" id="tp-kids">
+      <div class="wk-hero" style="background:linear-gradient(160deg,#27ae60,#1e8449 60%,#166638)">
         <div class="wk-hero-glow"></div>
         <div class="wk-hero-overlay"></div>
-        <div class="wk-hero-content">
-          <div class="wk-hero-tag">KIDS & TEENS</div>
-          <div class="wk-hero-title">Treinos com Diversão</div>
-          <div class="wk-hero-sub">Pensados pra cada fase, sempre com segurança</div>
+        <div class="wk-hero-content" style="display:flex;align-items:center;gap:16px">
+          <svg viewBox="0 0 200 200" style="width:64px;height:64px;flex-shrink:0;filter:drop-shadow(0 4px 10px rgba(0,0,0,.3))">
+            <circle cx="100" cy="100" r="88" fill="#f39c12"/>
+            <circle cx="100" cy="105" r="58" fill="#fdd48f"/>
+            <circle cx="58" cy="55" r="18" fill="#f39c12"/>
+            <circle cx="142" cy="55" r="18" fill="#f39c12"/>
+            <circle cx="58" cy="57" r="9" fill="#fdd48f"/>
+            <circle cx="142" cy="57" r="9" fill="#fdd48f"/>
+            <ellipse cx="78" cy="98" rx="9" ry="11" fill="#3a2a1a"/>
+            <ellipse cx="122" cy="98" rx="9" ry="11" fill="#3a2a1a"/>
+            <circle cx="81" cy="94" r="3" fill="#fff"/>
+            <circle cx="125" cy="94" r="3" fill="#fff"/>
+            <path d="M 66 84 Q 78 78 90 85" stroke="#3a2a1a" stroke-width="3" fill="none" stroke-linecap="round"/>
+            <path d="M 110 85 Q 122 78 134 84" stroke="#3a2a1a" stroke-width="3" fill="none" stroke-linecap="round"/>
+            <ellipse cx="100" cy="122" rx="22" ry="16" fill="#fff3e0"/>
+            <ellipse cx="100" cy="114" rx="9" ry="6" fill="#3a2a1a"/>
+            <path d="M 100 120 Q 100 132 88 130 M 100 120 Q 100 132 112 130" stroke="#3a2a1a" stroke-width="3" fill="none" stroke-linecap="round"/>
+            <circle cx="68" cy="115" r="8" fill="#f5a583" opacity="0.4"/>
+            <circle cx="132" cy="115" r="8" fill="#f5a583" opacity="0.4"/>
+          </svg>
+          <div>
+            <div class="wk-hero-tag">KIDS & TEENS</div>
+            <div class="wk-hero-title">Treinos com Diversão</div>
+            <div class="wk-hero-sub">Pensados pra cada fase, sempre com segurança</div>
+          </div>
         </div>
       </div>
       <div style="padding:18px 16px 40px">
@@ -3600,6 +3632,16 @@ function renderJornadaKids(u){
     </div>`;
 }
 
+// Ícones temáticos por rotina — escolhidos um a um pelo tema de cada
+// atividade, não um emoji genérico repetido em tudo.
+const KIDS_ICONES = {
+  'missao-selva':'🦁', 'desafio-super-herois':'🦸', 'cacada-tesouro':'🗺️',
+  'zoologico-equilibrio':'🐘', 'corrida-das-formas':'🔺', 'circo-em-casa':'🎪',
+  'full-body-divertido':'⚡', 'desafio-entre-amigos':'🤝', 'circuito-agilidade':'🏃',
+  'treino-hiit-leve':'🔥', 'forca-funcional-teen':'💪',
+};
+function kidsIcone(id){ return KIDS_ICONES[id] || '🎯'; }
+
 async function renderKidsConteudo(){
   const el=document.getElementById('kids-conteudo');
   if(!el)return;
@@ -3627,8 +3669,9 @@ async function renderKidsConteudo(){
         🎈 Isso aqui <b>não é um treino estruturado</b> — crianças até 10-11 anos não devem seguir plano sistemático de corrida (é o que recomenda o consenso internacional de corrida infantil). São só ideias de brincadeira pra incentivar o movimento, sem cobrança de distância ou tempo.
       </div>
       ${KIDS_CORRIDA_BRINCADEIRAS.map(b=>`
-        <div style="background:var(--s);border:1px solid var(--b);border-radius:14px;padding:16px;margin-bottom:12px;display:flex;gap:14px;align-items:flex-start">
-              <div>
+        <div style="background:var(--s);border:1px solid var(--b);border-radius:20px;padding:16px;margin-bottom:12px;display:flex;gap:14px;align-items:flex-start">
+          <div style="width:48px;height:48px;flex-shrink:0;border-radius:14px;background:linear-gradient(135deg,rgba(39,174,96,.18),rgba(243,156,18,.18));display:flex;align-items:center;justify-content:center;font-size:24px">${b.emoji}</div>
+          <div>
             <div style="font-size:14.5px;font-weight:800">${b.nome}</div>
             <div style="font-size:12px;color:var(--t2);margin-top:4px;line-height:1.5">${b.desc}</div>
           </div>
@@ -3670,7 +3713,8 @@ async function renderKidsConteudo(){
   // funcional-infantil ou funcional-adolescente
   const rotinas=KIDS_FUNCIONAL_ROTINAS.filter(r=>r.categoria===kidsCategoriaAtual);
   el.innerHTML=rotinas.map(r=>`
-    <div onclick="abrirRotinaKids('${r.id}')" style="display:flex;align-items:center;gap:14px;background:var(--s);border:1px solid var(--b);border-radius:14px;padding:14px 16px;margin-bottom:12px;cursor:pointer">
+    <div onclick="abrirRotinaKids('${r.id}')" style="display:flex;align-items:center;gap:14px;background:var(--s);border:1px solid var(--b);border-radius:20px;padding:14px 16px;margin-bottom:12px;cursor:pointer">
+      <div style="width:52px;height:52px;flex-shrink:0;border-radius:16px;background:linear-gradient(135deg,rgba(39,174,96,.18),rgba(243,156,18,.18));display:flex;align-items:center;justify-content:center;font-size:28px">${kidsIcone(r.id)}</div>
       <div style="flex:1">
         <div style="font-size:14.5px;font-weight:800">${r.nome}</div>
         <div style="font-size:11px;color:var(--t2);margin-top:2px">${r.desc}</div>
@@ -3710,7 +3754,8 @@ async function abrirRotinaKids(id){
   }).join('');
 
   document.getElementById('modal-rotina-content').innerHTML=`
-    <div style="padding:24px 20px 8px">
+    <div style="padding:24px 20px 8px;text-align:center">
+      <div style="width:72px;height:72px;margin:0 auto 12px;border-radius:22px;background:linear-gradient(135deg,rgba(39,174,96,.18),rgba(243,156,18,.18));display:flex;align-items:center;justify-content:center;font-size:40px">${kidsIcone(r.id)}</div>
       <div style="font-size:19px;font-weight:900;letter-spacing:-.3px">${r.nome}</div>
       <div style="font-size:12.5px;color:var(--t2);margin-top:4px">${r.desc}</div>
       <div style="font-size:10.5px;color:var(--mu);margin-top:6px">👶 ${r.faixa} · ⏱ ${r.duracao} · ${r.nivel}</div>
