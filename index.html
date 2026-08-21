@@ -838,7 +838,7 @@ textarea.fi{resize:vertical;min-height:80px;}
       <option value="es">🇪🇸 ES</option>
     </select>
   </div>
-  <div id="fq-version-badge" style="position:absolute;bottom:8px;right:12px;font-size:9px;color:#333;font-weight:700;z-index:5">v185</div>
+  <div id="fq-version-badge" style="position:absolute;bottom:8px;right:12px;font-size:9px;color:#333;font-weight:700;z-index:5">v186</div>
   <img src="https://images.unsplash.com/photo-1517836357463-d25dfeac3438?w=800&q=80" alt="Fitness" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center top;filter:brightness(.35);z-index:0"/>
   <div class="splash-glow"></div>
   <div class="splash-noise"></div>
@@ -2106,7 +2106,7 @@ textarea.fi{resize:vertical;min-height:80px;}
             <span style="color:var(--mu);font-size:18px">›</span>
           </div>
         </div>
-        <div style="text-align:center;padding:20px 0 4px;font-size:11px;color:var(--mu)">FitQuest <span id="fq-version-badge-perfil">v185</span></div>
+        <div style="text-align:center;padding:20px 0 4px;font-size:11px;color:var(--mu)">FitQuest <span id="fq-version-badge-perfil">v186</span></div>
       </div>
     </div>
 
@@ -13540,7 +13540,8 @@ async function gerarLinkPDF(blob, filename, ctx){
 // Mostra o link num card fixo na tela — com botão de abrir e de copiar.
 // Toast some sozinho e o usuário perde o link; por isso aqui é um card que
 // só sai quando ele fechar.
-function mostrarLinkPDF(url, filename){
+function mostrarLinkPDF(url, filename, opts){
+  opts = opts || {};
   const antigo = document.getElementById('fq-pdf-link-box');
   if(antigo) antigo.remove();
 
@@ -13552,11 +13553,11 @@ function mostrarLinkPDF(url, filename){
 
   const titulo = document.createElement('div');
   titulo.style.cssText='font-size:14px;font-weight:800;color:#fff;margin-bottom:6px';
-  titulo.textContent='📄 Seu PDF está pronto';
+  titulo.textContent = opts.titulo || '📄 Seu PDF está pronto';
 
   const sub = document.createElement('div');
   sub.style.cssText='font-size:12px;color:#a0a0a8;line-height:1.5;margin-bottom:12px';
-  sub.textContent='Toque em "Abrir PDF" pra visualizar e salvar no seu aparelho. O link vale por 7 dias.';
+  sub.textContent = opts.sub || 'Toque em "Abrir PDF" pra visualizar e salvar no seu aparelho. O link vale por 7 dias.';
 
   const linha = document.createElement('div');
   linha.style.cssText='display:flex;gap:8px;flex-wrap:wrap';
@@ -13625,7 +13626,13 @@ async function enviarAvaliacaoPorEmail(u, a, doc, emailDestino){
     }
 
     if(EMAILJS_CONFIG.serviceId==='SEU_SERVICE_ID' || EMAILJS_CONFIG.templateIdPdf==='SEU_TEMPLATE_PDF_ID'){
-      fqToast('⚠️ Email ainda não configurado — mas aqui está o link do PDF, copia e envia manualmente: '+linkData.signedUrl,'warn',15000);
+      // Sem EmailJS configurado, o envio automático não acontece — mas o PDF já
+      // está no servidor. Mostramos o link no mesmo card com botões de abrir e
+      // copiar (num toast o link ficava cortado, sumia sozinho e não dava pra copiar).
+      mostrarLinkPDF(linkData.signedUrl, 'Avaliacao-'+(u.name||'aluno')+'.pdf', {
+        titulo: '📄 PDF pronto — envie manualmente',
+        sub: 'O envio automático por email ainda não está configurado. Use "Copiar link" e mande pro aluno por WhatsApp ou email. O link vale 90 dias.'
+      });
       console.log('Link do PDF (EmailJS não configurado):', linkData.signedUrl);
       return false;
     }
