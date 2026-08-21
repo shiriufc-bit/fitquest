@@ -838,7 +838,7 @@ textarea.fi{resize:vertical;min-height:80px;}
       <option value="es">🇪🇸 ES</option>
     </select>
   </div>
-  <div id="fq-version-badge" style="position:absolute;bottom:8px;right:12px;font-size:9px;color:#333;font-weight:700;z-index:5">v183</div>
+  <div id="fq-version-badge" style="position:absolute;bottom:8px;right:12px;font-size:9px;color:#333;font-weight:700;z-index:5">v184</div>
   <img src="https://images.unsplash.com/photo-1517836357463-d25dfeac3438?w=800&q=80" alt="Fitness" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center top;filter:brightness(.35);z-index:0"/>
   <div class="splash-glow"></div>
   <div class="splash-noise"></div>
@@ -2106,7 +2106,7 @@ textarea.fi{resize:vertical;min-height:80px;}
             <span style="color:var(--mu);font-size:18px">›</span>
           </div>
         </div>
-        <div style="text-align:center;padding:20px 0 4px;font-size:11px;color:var(--mu)">FitQuest <span id="fq-version-badge-perfil">v183</span></div>
+        <div style="text-align:center;padding:20px 0 4px;font-size:11px;color:var(--mu)">FitQuest <span id="fq-version-badge-perfil">v184</span></div>
       </div>
     </div>
 
@@ -13412,10 +13412,45 @@ function ebIrCapitulo(idx){
 // Aqui tentamos primeiro o menu nativo de compartilhar (Web Share API),
 // que é muito mais confiável nesse contexto, e só cai pro método antigo
 // se o compartilhamento não estiver disponível (ex: desktop).
+// ══ ENTREGA O PDF PRO USUÁRIO ══
+// Regra de ouro: iOS (iPhone/iPad) exige que navigator.share() e window.open()
+// sejam chamados NO MESMO INSTANTE do toque do usuário. Como montar o PDF leva
+// tempo (await de libs, tabelas, imagens), o "crédito do gesto" já expirou quando
+// chegamos aqui — o iOS bloqueia com NotAllowedError e o download morre calado.
+// Por isso, no iPhone a gente pula direto pro link do servidor: o usuário toca no
+// botão "Abrir PDF" do card, e ESSE toque é um gesto novo e válido.
 async function baixarPDFRobusto(doc, filename, ctx){
   const blob = doc.output('blob');
+  const ua = navigator.userAgent || '';
 
-  // 1ª tentativa — Web Share API (melhor no app instalado/TWA, abre o menu nativo)
+  const ehIOS = /iPad|iPhone|iPod/.test(ua) ||
+                (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1); // iPad moderno
+  const ehWebViewAndroid = /\bwv\b/.test(ua) ||
+                (/Android/.test(ua) && !/Chrome\/\d+/.test(ua));
+  const ehStandalone = (window.matchMedia && window.matchMedia('(display-mode: standalone)').matches) ||
+                       window.navigator.standalone === true;
+
+  // Ambientes onde download programático não é confiável -> vai direto pro link.
+  const irDiretoPraLink = ehIOS || ehWebViewAndroid || ehStandalone;
+
+  if(irDiretoPraLink){
+    const ok = await gerarLinkPDF(blob, filename, ctx);
+    if(ok) return true;
+    // Se o servidor falhar, ainda tentamos abrir o PDF na própria aba —
+    // no iOS isso costuma funcionar mesmo sem gesto, diferente do window.open.
+    try{
+      const blobUrl = URL.createObjectURL(blob);
+      window.location.href = blobUrl;
+      setTimeout(()=>URL.revokeObjectURL(blobUrl), 60000);
+      return true;
+    }catch(e){ console.warn('Abrir blob na aba atual falhou:', e.message); }
+    fqToast('⚠️ Não consegui entregar o PDF. Tenta de novo, ou peça pro Rennan enviar por email.','warn',7000);
+    return false;
+  }
+
+  // ── A partir daqui: navegador de desktop/Android normal ──
+
+  // 1ª tentativa — Web Share API (quando disponível e o gesto ainda vale)
   try{
     if(navigator.share){
       const file = new File([blob], filename, {type:'application/pdf'});
@@ -13427,51 +13462,26 @@ async function baixarPDFRobusto(doc, filename, ctx){
     }
   }catch(e){
     if(e?.name==='AbortError') return true; // usuário cancelou o menu, tudo bem
-    console.warn('Compartilhamento falhou, tentando abrir em nova aba:', e.message);
+    console.warn('Compartilhamento falhou:', e.message);
   }
 
-  // 2ª tentativa — abre o PDF numa aba/janela nova via blob URL. O próprio
-  // visualizador de PDF do navegador tem botão de salvar/baixar embutido.
+  // 2ª tentativa — download tradicional do jsPDF (confiável no desktop)
   try{
-    const blobUrl = URL.createObjectURL(blob);
-    const janela = window.open(blobUrl, '_blank');
-    if(janela){
-      setTimeout(()=>URL.revokeObjectURL(blobUrl), 60000);
-      fqToast('📄 PDF aberto numa nova aba — use o botão de salvar/baixar de lá.','ok',6000);
-      return true;
-    }
-    URL.revokeObjectURL(blobUrl);
+    doc.save(filename);
+    fqToast('✅ PDF gerado! Se não aparecer nos downloads, use o link abaixo.','ok',4000);
+    // Mesmo com doc.save() aparentemente OK, geramos o link como garantia,
+    // porque esse método pode falhar sem lançar erro nenhum.
+    gerarLinkPDF(blob, filename, ctx).catch(()=>{});
+    return true;
   }catch(e){
-    console.warn('Abrir em nova aba falhou, tentando download tradicional:', e.message);
+    console.warn('doc.save falhou:', e);
   }
 
-  // 3ª tentativa — método tradicional do jsPDF. ATENÇÃO: dentro de WebView/TWA
-  // esse método FALHA EM SILÊNCIO — ele monta um link invisível e clica nele; se
-  // o WebView ignora o clique, nenhuma exceção é lançada. Por isso NÃO dizemos
-  // "baixado com sucesso" aqui: só tentamos, e a confirmação real fica por conta
-  // do usuário. Se estivermos num ambiente suspeito (TWA/WebView), pulamos direto
-  // pro link do servidor, que é o único caminho 100% confiável.
-  const pareceWebView = /\bwv\b/.test(navigator.userAgent) ||
-                        (/Android/.test(navigator.userAgent) && !/Chrome\/\d+/.test(navigator.userAgent)) ||
-                        window.matchMedia('(display-mode: standalone)').matches;
-
-  if(!pareceWebView){
-    try{
-      doc.save(filename);
-      fqToast('Se o download não começar, use o link que vou gerar agora.','ok',4000);
-      return true;
-    }catch(e){
-      console.warn('doc.save falhou:', e);
-    }
-  }
-
-  // 4ª tentativa — sobe pro Supabase Storage e entrega um link https de verdade.
-  // Diferente do download programático, abrir um link funciona em QUALQUER
-  // aparelho, inclusive no app instalado onde os métodos acima falham calados.
+  // 3ª tentativa — link do servidor
   const linkOk = await gerarLinkPDF(blob, filename, ctx);
   if(linkOk) return true;
 
-  fqToast('⚠️ Não consegui entregar o PDF. Tenta de novo, ou peça pro Rennan enviar por email.','warn',7000);
+  fqToast('FALHA ENTREGA ['+(window.__fqEntregaDiag||'sem detalhe')+']','warn',15000);
   return false;
 }
 
@@ -13480,6 +13490,7 @@ async function baixarPDFRobusto(doc, filename, ctx){
 async function gerarLinkPDF(blob, filename, ctx){
   if(typeof sb === 'undefined' || !sb){
     console.warn('Sem Supabase — não dá pra gerar link do PDF.');
+    fqToast('⚠️ Sem conexão com o servidor pra gerar o link.','warn',7000);
     return false;
   }
   try{
@@ -13493,7 +13504,10 @@ async function gerarLinkPDF(blob, filename, ctx){
       contentType:'application/pdf', upsert:true
     });
     if(erroUpload){
-      console.error('Upload do PDF falhou:', erroUpload.message);
+      console.error('Upload do PDF falhou:', erroUpload.message, erroUpload);
+      // Mensagem específica na tela: sem isso o usuário só vê "não consegui" e
+      // ninguém descobre se foi permissão, rede ou bucket faltando.
+      fqToast('⚠️ Falha ao salvar no servidor: '+(erroUpload.message||'erro desconhecido'),'warn',9000);
       return false;
     }
 
@@ -13501,6 +13515,7 @@ async function gerarLinkPDF(blob, filename, ctx){
       .createSignedUrl(caminho, 60*60*24*7); // link válido por 7 dias
     if(error || !data?.signedUrl){
       console.error('Não consegui gerar o link assinado:', error?.message);
+      fqToast('⚠️ PDF salvo, mas falhou o link: '+(error?.message||'erro desconhecido'),'warn',9000);
       return false;
     }
 
@@ -13508,6 +13523,7 @@ async function gerarLinkPDF(blob, filename, ctx){
     return true;
   }catch(e){
     console.error('gerarLinkPDF falhou:', e);
+    window.__fqEntregaDiag = 'excecao: '+(e&&e.message?e.message:e);
     return false;
   }
 }
@@ -13659,15 +13675,21 @@ async function _carregarComReserva(local, cdn, nome){
   catch(e){ console.error(nome+' não carregou de lugar nenhum:', e.message); return false; }
 }
 
+window.__fqPdfDiag = '';
 async function garantirPDFPronto(){
+  window.__fqPdfDiag = '';
   // jsPDF base
   if(typeof window.jspdf === 'undefined'){
+    window.__fqPdfDiag = 'jsPDF ausente; ';
     await _carregarComReserva(
       'lib/jspdf.umd.min.js',
       'https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js',
       'jsPDF');
   }
-  if(typeof window.jspdf === 'undefined') return false;
+  if(typeof window.jspdf === 'undefined'){
+    window.__fqPdfDiag += 'jsPDF nao carregou';
+    return false;
+  }
 
   // plugin autoTable — testa num documento descartável
   const temPlugin = ()=>{
@@ -13676,12 +13698,15 @@ async function garantirPDFPronto(){
   };
 
   if(!temPlugin()){
+    window.__fqPdfDiag += 'autoTable ausente; ';
     await _carregarComReserva(
       'lib/jspdf.plugin.autotable.min.js',
       'https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js',
       'autoTable');
   }
-  return temPlugin();
+  const ok = temPlugin();
+  if(!ok) window.__fqPdfDiag += 'autoTable nao carregou';
+  return ok;
 }
 
 async function baixarAvaliacaoPDF(evalId, modo){
@@ -13690,7 +13715,7 @@ async function baixarAvaliacaoPDF(evalId, modo){
   if(!u){ fqToast('Você precisa estar logado.','warn'); return; }
   const a = (u.avaliacoes||[]).find(e=>e.id===evalId);
   if(!a){ fqToast('Avaliação não encontrada.','warn'); return; }
-  if(!(await garantirPDFPronto())){ fqToast(t('msg.f3af71a877'),'warn'); return; }
+  if(!(await garantirPDFPronto())){ fqToast('PDF indisponivel ['+(window.__fqPdfDiag||'?')+']','warn',12000); return; }
 
   fqToast(modo==='email'?'Preparando pra enviar...':'Gerando seu PDF...','ok');
   try{
@@ -13862,7 +13887,7 @@ async function baixarAvaliacaoPDF(evalId, modo){
     // Sem isso, qualquer erro no meio da montagem do PDF matava a função em
     // silêncio: o usuário via "Gerando seu PDF..." e mais nada acontecia.
     console.error('Erro ao gerar PDF da avaliação:', err);
-    fqToast('⚠️ Não consegui gerar o PDF agora. Tenta de novo em instantes.','warn',6000);
+    fqToast('ERRO PDF: '+(err&&err.message?err.message:err),'warn',15000);
   }
 }
 
@@ -13876,7 +13901,7 @@ function ebHexToRgb(hex){
 
 async function baixarEbookPDF(){
   if(!EB_ATUAL){ fqToast('Abra um e-book primeiro','warn'); return; }
-  if(!(await garantirPDFPronto())){ fqToast(t('msg.f3af71a877'),'warn'); return; }
+  if(!(await garantirPDFPronto())){ fqToast('PDF indisponivel ['+(window.__fqPdfDiag||'?')+']','warn',12000); return; }
 
   fqToast(t('msg.ec50cdf12d'),'ok');
   try{
@@ -14002,7 +14027,7 @@ async function baixarEbookPDF(){
   await baixarPDFRobusto(doc, nomeArquivoEbook);
   }catch(err){
     console.error('Erro ao gerar PDF do ebook:', err);
-    fqToast('⚠️ Não consegui gerar o PDF agora. Tenta de novo em instantes.','warn',6000);
+    fqToast('ERRO PDF EBOOK: '+(err&&err.message?err.message:err),'warn',15000);
   }
 }
 
