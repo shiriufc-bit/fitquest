@@ -1,6 +1,6 @@
 // ══ FitQuest Service Worker v96 ══
 // Gerado em: 09/08/2026 
-const CACHE_NAME = 'fitquest-v179';
+const CACHE_NAME = 'fitquest-v181';
 
 const ASSETS = [
   '/fitquest/',
@@ -35,7 +35,10 @@ self.addEventListener('fetch', e => {
     url.hostname.includes('mercadopago') ||
     url.hostname.includes('mpago') ||
     url.hostname.includes('googleapis.com') ||
-    url.hostname.includes('jsdelivr.net')
+    url.hostname.includes('jsdelivr.net') ||
+    url.hostname.includes('cdnjs.cloudflare.com') ||
+    url.hostname.includes('api.emailjs.com') ||
+    url.hostname.includes('api.qrserver.com')
   ) return;
   e.respondWith(
     caches.match(e.request).then(cached => {
@@ -45,7 +48,13 @@ self.addEventListener('fetch', e => {
         const clone = response.clone();
         caches.open(CACHE_NAME).then(cache => cache.put(e.request, clone));
         return response;
-      }).catch(() => caches.match('/fitquest/'));
+      }).catch(() => {
+        // Só devolve a página inicial pra navegação. Antes, QUALQUER requisição
+        // que falhasse recebia o HTML de volta — inclusive scripts .js, que
+        // quebravam ao ser executados como se fossem JavaScript.
+        if(e.request.mode === 'navigate') return caches.match('/fitquest/');
+        return Response.error();
+      });
     })
   );
 });

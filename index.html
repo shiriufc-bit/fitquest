@@ -834,7 +834,7 @@ textarea.fi{resize:vertical;min-height:80px;}
       <option value="es">🇪🇸 ES</option>
     </select>
   </div>
-  <div id="fq-version-badge" style="position:absolute;bottom:8px;right:12px;font-size:9px;color:#333;font-weight:700;z-index:5">v179</div>
+  <div id="fq-version-badge" style="position:absolute;bottom:8px;right:12px;font-size:9px;color:#333;font-weight:700;z-index:5">v181</div>
   <img src="https://images.unsplash.com/photo-1517836357463-d25dfeac3438?w=800&q=80" alt="Fitness" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center top;filter:brightness(.35);z-index:0"/>
   <div class="splash-glow"></div>
   <div class="splash-noise"></div>
@@ -876,7 +876,7 @@ textarea.fi{resize:vertical;min-height:80px;}
         <div class="fg"><label class="fl" data-i18n="auth.field.pass">Senha</label><input id="reg-pass" class="fi" type="password" placeholder="Mínimo 6 caracteres"/></div>
         <div class="fg"><label class="fl" data-i18n="auth.field.pass2">Confirmar senha</label><input id="reg-pass2" class="fi" type="password" placeholder="Repita a senha"/></div>
         <button class="btn-p" id="btn-reg" data-i18n="auth.btn.register" onclick="doRegister()">Começar meus 7 dias grátis</button>
-        <div style="font-size:10.5px;color:var(--mu);text-align:center;margin-top:12px;line-height:1.6" data-i18n="auth.privacidade">Ao criar sua conta, você concorda com nossa <a href="privacidade.html" target="_blank" style="color:var(--r)" data-i18n="ui.60324c31ec">Política de Privacidade</a>. Coletamos informações de saúde para montar um treino seguro para você.</div>
+        <div style="font-size:10.5px;color:var(--mu);text-align:center;margin-top:12px;line-height:1.6" data-i18n="auth.privacidade">Ao criar sua conta, você concorda com nossos <a href="termos.html" target="_blank" style="color:var(--r)">Termos de Uso</a> e nossa <a href="privacidade.html" target="_blank" style="color:var(--r)" data-i18n="ui.60324c31ec">Política de Privacidade</a>. Coletamos informações de saúde para montar um treino seguro para você.</div>
       </div>
     </div>
   </div>
@@ -2077,6 +2077,14 @@ textarea.fi{resize:vertical;min-height:80px;}
             </div>
             <span style="color:var(--mu);font-size:18px">›</span>
           </div>
+          <div onclick="window.open('termos.html','_blank')" style="padding:14px 16px;display:flex;align-items:center;gap:12px;cursor:pointer;border-bottom:1px solid var(--b)">
+            <span style="font-size:20px">📄</span>
+            <div style="flex:1">
+              <div style="font-size:13px;font-weight:700">Termos de Uso</div>
+              <div style="font-size:10px;color:var(--mu)">Assinatura, cancelamento e reembolso</div>
+            </div>
+            <span style="color:var(--mu);font-size:18px">›</span>
+          </div>
           <div onclick="doExcluirConta()" style="padding:14px 16px;border-bottom:1px solid var(--b);display:flex;align-items:center;gap:12px;cursor:pointer">
             <span style="font-size:20px">🗑️</span>
             <div style="flex:1">
@@ -2094,7 +2102,7 @@ textarea.fi{resize:vertical;min-height:80px;}
             <span style="color:var(--mu);font-size:18px">›</span>
           </div>
         </div>
-        <div style="text-align:center;padding:20px 0 4px;font-size:11px;color:var(--mu)">FitQuest <span id="fq-version-badge-perfil">v179</span></div>
+        <div style="text-align:center;padding:20px 0 4px;font-size:11px;color:var(--mu)">FitQuest <span id="fq-version-badge-perfil">v181</span></div>
       </div>
     </div>
 
@@ -6914,7 +6922,7 @@ const FQ_I18N = {
     'home.wantgym.sub': 'Responda 3 etapas rápidas',
     'home.wantrun.sub': 'Só 2 etapas — bem rápido',
     'home.addplan': '➕ Adicionar ao seu plano',
-    'auth.privacidade': 'Ao criar sua conta, você concorda com nossa <a href="privacidade.html" target="_blank" style="color:var(--r)">Política de Privacidade</a>. Coletamos informações de saúde para montar um treino seguro para você.',
+    'auth.privacidade': 'Ao criar sua conta, você concorda com nossos <a href="termos.html" target="_blank" style="color:var(--r)">Termos de Uso</a> e nossa <a href="privacidade.html" target="_blank" style="color:var(--r)">Política de Privacidade</a>. Coletamos informações de saúde para montar um treino seguro para você.',
     // ── Anamnese ──
     'anam.71ef84890d': "Data de nascimento *",
     'anam.5c7d7a110a': "Sexo biológico *",
@@ -7418,7 +7426,7 @@ const FQ_I18N = {
     'home.wantgym.sub': 'Answer 3 quick steps',
     'home.wantrun.sub': 'Just 2 steps — very quick',
     'home.addplan': '➕ Add to your plan',
-    'auth.privacidade': 'By creating your account, you agree to our <a href="privacidade.html" target="_blank" style="color:var(--r)">Privacy Policy</a>. We collect health information to build a safe workout for you.',
+    'auth.privacidade': 'By creating your account, you agree to our <a href="termos.html" target="_blank" style="color:var(--r)">Terms of Use</a> and <a href="privacidade.html" target="_blank" style="color:var(--r)">Privacy Policy</a>. We collect health information to build a safe workout for you.',
     // ── Anamnese ──
     'anam.71ef84890d': "Date of birth *",
     'anam.5c7d7a110a': "Biological sex *",
@@ -7912,7 +7920,7 @@ const FQ_I18N = {
     'home.wantgym.sub': 'Responde 3 pasos rápidos',
     'home.wantrun.sub': 'Solo 2 pasos — muy rápido',
     'home.addplan': '➕ Añade a tu plan',
-    'auth.privacidade': 'Al crear tu cuenta, aceptas nuestra <a href="privacidade.html" target="_blank" style="color:var(--r)">Política de Privacidad</a>. Recopilamos información de salud para armar un entrenamiento seguro para ti.',
+    'auth.privacidade': 'Al crear tu cuenta, aceptas nuestros <a href="termos.html" target="_blank" style="color:var(--r)">Términos de Uso</a> y nuestra <a href="privacidade.html" target="_blank" style="color:var(--r)">Política de Privacidad</a>. Recopilamos información de salud para armar un entrenamiento seguro para ti.',
     'anam.71ef84890d': "Fecha de nacimiento *",
     'anam.5c7d7a110a': "Sexo biológico *",
     'anam.f7feaa2728': "Peso actual (kg) *",
@@ -13513,15 +13521,58 @@ async function enviarAvaliacaoPorEmail(u, a, doc, emailDestino){
   }
 }
 
+// ══ GARANTE QUE jsPDF + autoTable ESTÃO CARREGADOS ══
+// O autoTable é um plugin em <script> separado. Se ele falhar (CDN fora do ar,
+// cache ruim do service worker, rede instável), o jsPDF carrega sozinho e a
+// checagem antiga passava — aí a geração morria no meio, em doc.autoTable(),
+// deixando o usuário só com o toast de "Gerando..." e nenhum PDF. Aqui a gente
+// confere as DUAS bibliotecas e tenta recarregar sob demanda antes de desistir.
+function _carregarScript(src){
+  return new Promise((resolve,reject)=>{
+    const s=document.createElement('script');
+    s.src=src; s.async=true;
+    s.onload=()=>resolve();
+    s.onerror=()=>reject(new Error('falhou: '+src));
+    document.head.appendChild(s);
+  });
+}
+
+async function garantirPDFPronto(){
+  // jsPDF base
+  if(typeof window.jspdf === 'undefined'){
+    try{
+      await _carregarScript('https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js');
+    }catch(e){ console.error('jsPDF não carregou:',e.message); return false; }
+  }
+  if(typeof window.jspdf === 'undefined') return false;
+
+  // plugin autoTable — testa num documento descartável
+  let temAutoTable=false;
+  try{
+    const {jsPDF}=window.jspdf;
+    temAutoTable = typeof new jsPDF().autoTable === 'function';
+  }catch(e){ temAutoTable=false; }
+
+  if(!temAutoTable){
+    try{
+      await _carregarScript('https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js');
+      const {jsPDF}=window.jspdf;
+      temAutoTable = typeof new jsPDF().autoTable === 'function';
+    }catch(e){ console.error('autoTable não carregou:',e.message); return false; }
+  }
+  return temAutoTable;
+}
+
 async function baixarAvaliacaoPDF(evalId, modo){
   modo = modo || 'download';
   const u = getU();
   if(!u){ fqToast('Você precisa estar logado.','warn'); return; }
   const a = (u.avaliacoes||[]).find(e=>e.id===evalId);
   if(!a){ fqToast('Avaliação não encontrada.','warn'); return; }
-  if(typeof window.jspdf === 'undefined'){ fqToast(t('msg.f3af71a877'),'warn'); return; }
+  if(!(await garantirPDFPronto())){ fqToast(t('msg.f3af71a877'),'warn'); return; }
 
   fqToast(modo==='email'?'Preparando pra enviar...':'Gerando seu PDF...','ok');
+  try{
   const { jsPDF } = window.jspdf;
   const doc = new jsPDF({unit:'mm', format:'a4'});
   const W = 210, H = 297;
@@ -13686,6 +13737,12 @@ async function baixarAvaliacaoPDF(evalId, modo){
   }else{
     await baixarPDFRobusto(doc, nomeArquivo);
   }
+  }catch(err){
+    // Sem isso, qualquer erro no meio da montagem do PDF matava a função em
+    // silêncio: o usuário via "Gerando seu PDF..." e mais nada acontecia.
+    console.error('Erro ao gerar PDF da avaliação:', err);
+    fqToast('⚠️ Não consegui gerar o PDF agora. Tenta de novo em instantes.','warn',6000);
+  }
 }
 
 // GERADOR DE PDF PERSONALIZADO (jsPDF + autoTable)
@@ -13698,9 +13755,10 @@ function ebHexToRgb(hex){
 
 async function baixarEbookPDF(){
   if(!EB_ATUAL){ fqToast('Abra um e-book primeiro','warn'); return; }
-  if(typeof window.jspdf === 'undefined'){ fqToast(t('msg.f3af71a877'),'warn'); return; }
+  if(!(await garantirPDFPronto())){ fqToast(t('msg.f3af71a877'),'warn'); return; }
 
   fqToast(t('msg.ec50cdf12d'),'ok');
+  try{
   const { jsPDF } = window.jspdf;
   const doc = new jsPDF({unit:'mm', format:'a4'});
   const { book, perfil } = EB_ATUAL;
@@ -13821,6 +13879,10 @@ async function baixarEbookPDF(){
   const safeTitle = (book.titulo||'Ebook').replace(/[^\w]/g,'-');
   const nomeArquivoEbook = 'FitQuest-' + safeTitle + '-' + safeName + '.pdf';
   await baixarPDFRobusto(doc, nomeArquivoEbook);
+  }catch(err){
+    console.error('Erro ao gerar PDF do ebook:', err);
+    fqToast('⚠️ Não consegui gerar o PDF agora. Tenta de novo em instantes.','warn',6000);
+  }
 }
 
 
