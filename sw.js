@@ -1,6 +1,6 @@
 // ══ FitQuest Service Worker v96 ══
 // Gerado em: 09/08/2026 
-const CACHE_NAME = 'fitquest-v181';
+const CACHE_NAME = 'fitquest-v183';
 
 const ASSETS = [
   '/fitquest/',
@@ -8,6 +8,10 @@ const ASSETS = [
   '/fitquest/manifest.json',
   '/fitquest/icon-192.png',
   '/fitquest/icon-512.png',
+  // Bibliotecas de PDF servidas do próprio domínio: entram no cache junto com o
+  // app, então a geração de PDF passa a funcionar mesmo sem internet.
+  '/fitquest/lib/jspdf.umd.min.js',
+  '/fitquest/lib/jspdf.plugin.autotable.min.js',
 ];
 
 self.addEventListener('install', e => {

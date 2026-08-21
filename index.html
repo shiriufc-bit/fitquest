@@ -60,8 +60,12 @@ function liberarPacoteEbooks(u) {
 }
 </script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" onerror="console.warn('Supabase CDN failed')"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js" onerror="console.warn('jsPDF CDN failed')"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js" onerror="console.warn('jsPDF-AutoTable CDN failed')"></script>
+<!-- jsPDF + AutoTable hospedados no próprio repositório. Antes vinham da CDN, mas
+     no app instalado (TWA) qualquer instabilidade de rede deixava o usuário sem PDF.
+     Servindo do mesmo domínio, o service worker cacheia junto com o resto do app e
+     funciona offline. A CDN fica só como rede de segurança, caso o arquivo local falhe. -->
+<script src="lib/jspdf.umd.min.js" onerror="this.dataset.falhou=1;console.warn('jsPDF local falhou, tentando CDN')"></script>
+<script src="lib/jspdf.plugin.autotable.min.js" onerror="this.dataset.falhou=1;console.warn('autoTable local falhou, tentando CDN')"></script>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
 :root{
@@ -834,7 +838,7 @@ textarea.fi{resize:vertical;min-height:80px;}
       <option value="es">🇪🇸 ES</option>
     </select>
   </div>
-  <div id="fq-version-badge" style="position:absolute;bottom:8px;right:12px;font-size:9px;color:#333;font-weight:700;z-index:5">v181</div>
+  <div id="fq-version-badge" style="position:absolute;bottom:8px;right:12px;font-size:9px;color:#333;font-weight:700;z-index:5">v183</div>
   <img src="https://images.unsplash.com/photo-1517836357463-d25dfeac3438?w=800&q=80" alt="Fitness" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center top;filter:brightness(.35);z-index:0"/>
   <div class="splash-glow"></div>
   <div class="splash-noise"></div>
@@ -2102,7 +2106,7 @@ textarea.fi{resize:vertical;min-height:80px;}
             <span style="color:var(--mu);font-size:18px">›</span>
           </div>
         </div>
-        <div style="text-align:center;padding:20px 0 4px;font-size:11px;color:var(--mu)">FitQuest <span id="fq-version-badge-perfil">v181</span></div>
+        <div style="text-align:center;padding:20px 0 4px;font-size:11px;color:var(--mu)">FitQuest <span id="fq-version-badge-perfil">v183</span></div>
       </div>
     </div>
 
@@ -13408,7 +13412,7 @@ function ebIrCapitulo(idx){
 // Aqui tentamos primeiro o menu nativo de compartilhar (Web Share API),
 // que é muito mais confiável nesse contexto, e só cai pro método antigo
 // se o compartilhamento não estiver disponível (ex: desktop).
-async function baixarPDFRobusto(doc, filename){
+async function baixarPDFRobusto(doc, filename, ctx){
   const blob = doc.output('blob');
 
   // 1ª tentativa — Web Share API (melhor no app instalado/TWA, abre o menu nativo)
@@ -13427,9 +13431,7 @@ async function baixarPDFRobusto(doc, filename){
   }
 
   // 2ª tentativa — abre o PDF numa aba/janela nova via blob URL. O próprio
-  // visualizador de PDF do navegador tem botão de salvar/baixar embutido —
-  // isso costuma funcionar mesmo quando doc.save() falha em silêncio dentro
-  // de WebView/TWA (o problema original que estávamos vendo).
+  // visualizador de PDF do navegador tem botão de salvar/baixar embutido.
   try{
     const blobUrl = URL.createObjectURL(blob);
     const janela = window.open(blobUrl, '_blank');
@@ -13443,16 +13445,128 @@ async function baixarPDFRobusto(doc, filename){
     console.warn('Abrir em nova aba falhou, tentando download tradicional:', e.message);
   }
 
-  // 3ª tentativa — método tradicional do jsPDF (funciona bem em navegador normal)
-  try{
-    doc.save(filename);
-    fqToast('✅ PDF baixado!','ok');
-    return true;
-  }catch(e){
-    console.error('Todos os métodos de download falharam:', e);
-    fqToast('⚠️ Não consegui baixar o PDF. Tenta de novo, ou tira print da tela.','warn',7000);
+  // 3ª tentativa — método tradicional do jsPDF. ATENÇÃO: dentro de WebView/TWA
+  // esse método FALHA EM SILÊNCIO — ele monta um link invisível e clica nele; se
+  // o WebView ignora o clique, nenhuma exceção é lançada. Por isso NÃO dizemos
+  // "baixado com sucesso" aqui: só tentamos, e a confirmação real fica por conta
+  // do usuário. Se estivermos num ambiente suspeito (TWA/WebView), pulamos direto
+  // pro link do servidor, que é o único caminho 100% confiável.
+  const pareceWebView = /\bwv\b/.test(navigator.userAgent) ||
+                        (/Android/.test(navigator.userAgent) && !/Chrome\/\d+/.test(navigator.userAgent)) ||
+                        window.matchMedia('(display-mode: standalone)').matches;
+
+  if(!pareceWebView){
+    try{
+      doc.save(filename);
+      fqToast('Se o download não começar, use o link que vou gerar agora.','ok',4000);
+      return true;
+    }catch(e){
+      console.warn('doc.save falhou:', e);
+    }
+  }
+
+  // 4ª tentativa — sobe pro Supabase Storage e entrega um link https de verdade.
+  // Diferente do download programático, abrir um link funciona em QUALQUER
+  // aparelho, inclusive no app instalado onde os métodos acima falham calados.
+  const linkOk = await gerarLinkPDF(blob, filename, ctx);
+  if(linkOk) return true;
+
+  fqToast('⚠️ Não consegui entregar o PDF. Tenta de novo, ou peça pro Rennan enviar por email.','warn',7000);
+  return false;
+}
+
+// ══ SOBE O PDF E MOSTRA UM LINK CLICÁVEL ══
+// Último recurso quando os métodos de download local falham (típico de TWA/WebView).
+async function gerarLinkPDF(blob, filename, ctx){
+  if(typeof sb === 'undefined' || !sb){
+    console.warn('Sem Supabase — não dá pra gerar link do PDF.');
     return false;
   }
+  try{
+    fqToast('Preparando seu link de download...','ok');
+    const u = getU();
+    const pasta = (u && u.email) ? u.email : 'anonimo';
+    const nomeSeguro = String(filename||'documento.pdf').replace(/[^\w.-]/g,'_');
+    const caminho = `${pasta}/${(ctx&&ctx.id)?ctx.id+'-':''}${Date.now()}-${nomeSeguro}`;
+
+    const{error:erroUpload} = await sb.storage.from('avaliacoes-pdf').upload(caminho, blob, {
+      contentType:'application/pdf', upsert:true
+    });
+    if(erroUpload){
+      console.error('Upload do PDF falhou:', erroUpload.message);
+      return false;
+    }
+
+    const{data, error} = await sb.storage.from('avaliacoes-pdf')
+      .createSignedUrl(caminho, 60*60*24*7); // link válido por 7 dias
+    if(error || !data?.signedUrl){
+      console.error('Não consegui gerar o link assinado:', error?.message);
+      return false;
+    }
+
+    mostrarLinkPDF(data.signedUrl, filename);
+    return true;
+  }catch(e){
+    console.error('gerarLinkPDF falhou:', e);
+    return false;
+  }
+}
+
+// Mostra o link num card fixo na tela — com botão de abrir e de copiar.
+// Toast some sozinho e o usuário perde o link; por isso aqui é um card que
+// só sai quando ele fechar.
+function mostrarLinkPDF(url, filename){
+  const antigo = document.getElementById('fq-pdf-link-box');
+  if(antigo) antigo.remove();
+
+  const box = document.createElement('div');
+  box.id = 'fq-pdf-link-box';
+  box.style.cssText = 'position:fixed;left:50%;transform:translateX(-50%);bottom:88px;z-index:99999;'+
+    'width:min(520px,92vw);background:#151517;border:1px solid rgba(255,255,255,.16);'+
+    'border-radius:14px;padding:16px;box-shadow:0 12px 40px rgba(0,0,0,.6)';
+
+  const titulo = document.createElement('div');
+  titulo.style.cssText='font-size:14px;font-weight:800;color:#fff;margin-bottom:6px';
+  titulo.textContent='📄 Seu PDF está pronto';
+
+  const sub = document.createElement('div');
+  sub.style.cssText='font-size:12px;color:#a0a0a8;line-height:1.5;margin-bottom:12px';
+  sub.textContent='Toque em "Abrir PDF" pra visualizar e salvar no seu aparelho. O link vale por 7 dias.';
+
+  const linha = document.createElement('div');
+  linha.style.cssText='display:flex;gap:8px;flex-wrap:wrap';
+
+  const btnAbrir = document.createElement('a');
+  btnAbrir.href = url; btnAbrir.target='_blank'; btnAbrir.rel='noopener';
+  btnAbrir.style.cssText='flex:1;min-width:130px;text-align:center;background:#e50914;color:#fff;'+
+    'font-size:13px;font-weight:800;padding:11px 14px;border-radius:10px;text-decoration:none';
+  btnAbrir.textContent='Abrir PDF';
+
+  const btnCopiar = document.createElement('button');
+  btnCopiar.style.cssText='min-width:110px;background:rgba(255,255,255,.09);color:#e8e8ea;border:none;'+
+    'font-size:13px;font-weight:700;padding:11px 14px;border-radius:10px;cursor:pointer';
+  btnCopiar.textContent='Copiar link';
+  btnCopiar.onclick=async()=>{
+    try{ await navigator.clipboard.writeText(url); btnCopiar.textContent='Copiado!'; }
+    catch(e){
+      // clipboard bloqueado em alguns WebViews — mostra o link pra copiar na mão
+      const campo=document.createElement('input');
+      campo.value=url;
+      campo.style.cssText='width:100%;margin-top:10px;font-size:11px;padding:8px;border-radius:8px;'+
+        'border:1px solid rgba(255,255,255,.2);background:#0d0d0f;color:#c8c8cc';
+      box.appendChild(campo); campo.select();
+    }
+  };
+
+  const btnFechar = document.createElement('button');
+  btnFechar.style.cssText='background:none;color:#8a8a90;border:none;font-size:12px;'+
+    'padding:11px 6px;cursor:pointer';
+  btnFechar.textContent='Fechar';
+  btnFechar.onclick=()=>box.remove();
+
+  linha.appendChild(btnAbrir); linha.appendChild(btnCopiar); linha.appendChild(btnFechar);
+  box.appendChild(titulo); box.appendChild(sub); box.appendChild(linha);
+  document.body.appendChild(box);
 }
 
 // ══ ENVIA O PDF DE AVALIAÇÃO POR EMAIL (link, não anexo) ══
@@ -13537,30 +13651,37 @@ function _carregarScript(src){
   });
 }
 
+// Tenta o arquivo local primeiro; só se ele falhar recorre à CDN.
+async function _carregarComReserva(local, cdn, nome){
+  try{ await _carregarScript(local); return true; }
+  catch(e){ console.warn(nome+' local falhou, tentando CDN...'); }
+  try{ await _carregarScript(cdn); return true; }
+  catch(e){ console.error(nome+' não carregou de lugar nenhum:', e.message); return false; }
+}
+
 async function garantirPDFPronto(){
   // jsPDF base
   if(typeof window.jspdf === 'undefined'){
-    try{
-      await _carregarScript('https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js');
-    }catch(e){ console.error('jsPDF não carregou:',e.message); return false; }
+    await _carregarComReserva(
+      'lib/jspdf.umd.min.js',
+      'https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js',
+      'jsPDF');
   }
   if(typeof window.jspdf === 'undefined') return false;
 
   // plugin autoTable — testa num documento descartável
-  let temAutoTable=false;
-  try{
-    const {jsPDF}=window.jspdf;
-    temAutoTable = typeof new jsPDF().autoTable === 'function';
-  }catch(e){ temAutoTable=false; }
+  const temPlugin = ()=>{
+    try{ const {jsPDF}=window.jspdf; return typeof new jsPDF().autoTable === 'function'; }
+    catch(e){ return false; }
+  };
 
-  if(!temAutoTable){
-    try{
-      await _carregarScript('https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js');
-      const {jsPDF}=window.jspdf;
-      temAutoTable = typeof new jsPDF().autoTable === 'function';
-    }catch(e){ console.error('autoTable não carregou:',e.message); return false; }
+  if(!temPlugin()){
+    await _carregarComReserva(
+      'lib/jspdf.plugin.autotable.min.js',
+      'https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js',
+      'autoTable');
   }
-  return temAutoTable;
+  return temPlugin();
 }
 
 async function baixarAvaliacaoPDF(evalId, modo){
