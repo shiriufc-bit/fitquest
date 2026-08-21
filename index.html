@@ -838,7 +838,7 @@ textarea.fi{resize:vertical;min-height:80px;}
       <option value="es">🇪🇸 ES</option>
     </select>
   </div>
-  <div id="fq-version-badge" style="position:absolute;bottom:8px;right:12px;font-size:9px;color:#333;font-weight:700;z-index:5">v184</div>
+  <div id="fq-version-badge" style="position:absolute;bottom:8px;right:12px;font-size:9px;color:#333;font-weight:700;z-index:5">v185</div>
   <img src="https://images.unsplash.com/photo-1517836357463-d25dfeac3438?w=800&q=80" alt="Fitness" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center top;filter:brightness(.35);z-index:0"/>
   <div class="splash-glow"></div>
   <div class="splash-noise"></div>
@@ -2106,7 +2106,7 @@ textarea.fi{resize:vertical;min-height:80px;}
             <span style="color:var(--mu);font-size:18px">›</span>
           </div>
         </div>
-        <div style="text-align:center;padding:20px 0 4px;font-size:11px;color:var(--mu)">FitQuest <span id="fq-version-badge-perfil">v184</span></div>
+        <div style="text-align:center;padding:20px 0 4px;font-size:11px;color:var(--mu)">FitQuest <span id="fq-version-badge-perfil">v185</span></div>
       </div>
     </div>
 
@@ -10574,7 +10574,7 @@ function calcPollock7(dobras, idade, sexo, peso){
   const fatPct = ((4.95/dc) - 4.50) * 100;
   const fatKg  = (fatPct/100) * peso;
   const leanKg = peso - fatKg;
-  return { soma, dc:dc.toFixed(5), fatPct:fatPct.toFixed(1), fatKg:fatKg.toFixed(1), leanKg:leanKg.toFixed(1) };
+  return { soma, dc:parseFloat(dc.toFixed(5)), fatPct:fatPct.toFixed(1), fatKg:parseFloat(fatKg.toFixed(1)), leanKg:leanKg.toFixed(1) };
 }
 
 // Calcula em tempo real conforme digita
@@ -13419,6 +13419,15 @@ function ebIrCapitulo(idx){
 // chegamos aqui — o iOS bloqueia com NotAllowedError e o download morre calado.
 // Por isso, no iPhone a gente pula direto pro link do servidor: o usuário toca no
 // botão "Abrir PDF" do card, e ESSE toque é um gesto novo e válido.
+// Formata um valor numérico que pode ter sido salvo como número OU como texto.
+// Avaliações antigas gravaram dc/fatKg via .toFixed(), que retorna string — e aí
+// chamar .toFixed() de novo estourava "is not a function" no meio da geração do PDF.
+function fqNum(v, casas){
+  if(v===null || v===undefined || v==='') return '—';
+  const n = typeof v === 'number' ? v : parseFloat(String(v).replace(',','.'));
+  return isNaN(n) ? '—' : n.toFixed(casas);
+}
+
 async function baixarPDFRobusto(doc, filename, ctx){
   const blob = doc.output('blob');
   const ua = navigator.userAgent || '';
@@ -13481,7 +13490,7 @@ async function baixarPDFRobusto(doc, filename, ctx){
   const linkOk = await gerarLinkPDF(blob, filename, ctx);
   if(linkOk) return true;
 
-  fqToast('FALHA ENTREGA ['+(window.__fqEntregaDiag||'sem detalhe')+']','warn',15000);
+  fqToast('Não consegui entregar o PDF. ['+(window.__fqEntregaDiag||'sem detalhe')+']','warn',10000);
   return false;
 }
 
@@ -13715,7 +13724,7 @@ async function baixarAvaliacaoPDF(evalId, modo){
   if(!u){ fqToast('Você precisa estar logado.','warn'); return; }
   const a = (u.avaliacoes||[]).find(e=>e.id===evalId);
   if(!a){ fqToast('Avaliação não encontrada.','warn'); return; }
-  if(!(await garantirPDFPronto())){ fqToast('PDF indisponivel ['+(window.__fqPdfDiag||'?')+']','warn',12000); return; }
+  if(!(await garantirPDFPronto())){ fqToast('Gerador de PDF indisponível — verifique sua conexão. ['+(window.__fqPdfDiag||'?')+']','warn',10000); return; }
 
   fqToast(modo==='email'?'Preparando pra enviar...':'Gerando seu PDF...','ok');
   try{
@@ -13795,7 +13804,7 @@ async function baixarAvaliacaoPDF(evalId, modo){
   const corpo = [
     ['% de Gordura Corporal', a.fatPct + ' %'],
     ['Classificação', cls.replace(/[✅⚠️🔴]/g,'').trim()],
-    ['Massa Gorda', (a.fatKg!=null?a.fatKg.toFixed(1):'—') + ' kg'],
+    ['Massa Gorda', fqNum(a.fatKg,1) + ' kg'],
     ['Massa Magra', a.leanKg + ' kg'],
   ];
   if(a.method==='bio'){
@@ -13832,7 +13841,7 @@ async function baixarAvaliacaoPDF(evalId, modo){
     });
     y = doc.lastAutoTable.finalY + 6;
     doc.setFont('helvetica','italic'); doc.setFontSize(8); doc.setTextColor(120,120,120);
-    doc.text('Soma das 7 dobras: ' + a.soma + ' mm  |  Densidade corporal: ' + (a.dc?a.dc.toFixed(4):'—'), 15, y);
+    doc.text('Soma das 7 dobras: ' + a.soma + ' mm  |  Densidade corporal: ' + fqNum(a.dc,4), 15, y);
     y += 10;
   }
 
@@ -13887,7 +13896,7 @@ async function baixarAvaliacaoPDF(evalId, modo){
     // Sem isso, qualquer erro no meio da montagem do PDF matava a função em
     // silêncio: o usuário via "Gerando seu PDF..." e mais nada acontecia.
     console.error('Erro ao gerar PDF da avaliação:', err);
-    fqToast('ERRO PDF: '+(err&&err.message?err.message:err),'warn',15000);
+    fqToast('Não consegui gerar o PDF. ['+(err&&err.message?err.message:err)+']','warn',10000);
   }
 }
 
@@ -13901,7 +13910,7 @@ function ebHexToRgb(hex){
 
 async function baixarEbookPDF(){
   if(!EB_ATUAL){ fqToast('Abra um e-book primeiro','warn'); return; }
-  if(!(await garantirPDFPronto())){ fqToast('PDF indisponivel ['+(window.__fqPdfDiag||'?')+']','warn',12000); return; }
+  if(!(await garantirPDFPronto())){ fqToast('Gerador de PDF indisponível — verifique sua conexão. ['+(window.__fqPdfDiag||'?')+']','warn',10000); return; }
 
   fqToast(t('msg.ec50cdf12d'),'ok');
   try{
@@ -14027,7 +14036,7 @@ async function baixarEbookPDF(){
   await baixarPDFRobusto(doc, nomeArquivoEbook);
   }catch(err){
     console.error('Erro ao gerar PDF do ebook:', err);
-    fqToast('ERRO PDF EBOOK: '+(err&&err.message?err.message:err),'warn',15000);
+    fqToast('Não consegui gerar o ebook. ['+(err&&err.message?err.message:err)+']','warn',10000);
   }
 }
 
