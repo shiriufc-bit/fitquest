@@ -838,7 +838,7 @@ textarea.fi{resize:vertical;min-height:80px;}
       <option value="es">🇪🇸 ES</option>
     </select>
   </div>
-  <div id="fq-version-badge" style="position:absolute;bottom:8px;right:12px;font-size:9px;color:#333;font-weight:700;z-index:5">v186</div>
+  <div id="fq-version-badge" style="position:absolute;bottom:8px;right:12px;font-size:9px;color:#333;font-weight:700;z-index:5">v188</div>
   <img src="https://images.unsplash.com/photo-1517836357463-d25dfeac3438?w=800&q=80" alt="Fitness" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center top;filter:brightness(.35);z-index:0"/>
   <div class="splash-glow"></div>
   <div class="splash-noise"></div>
@@ -2106,7 +2106,7 @@ textarea.fi{resize:vertical;min-height:80px;}
             <span style="color:var(--mu);font-size:18px">›</span>
           </div>
         </div>
-        <div style="text-align:center;padding:20px 0 4px;font-size:11px;color:var(--mu)">FitQuest <span id="fq-version-badge-perfil">v186</span></div>
+        <div style="text-align:center;padding:20px 0 4px;font-size:11px;color:var(--mu)">FitQuest <span id="fq-version-badge-perfil">v188</span></div>
       </div>
     </div>
 
@@ -10658,7 +10658,7 @@ function abrirAvaliacoesAdmin(email){
   document.getElementById('modal-rotina-content').innerHTML = `
     <div style="padding:24px 20px 8px">
       <div style="font-size:19px;font-weight:900;letter-spacing:-.3px">Avaliações de ${escHtml(alvo.name||email)}</div>
-      <div style="font-size:12.5px;color:var(--t2);margin-top:4px">Toque numa avaliação existente pra editar, ou crie uma nova.</div>
+      <div style="font-size:12.5px;color:var(--t2);margin-top:4px">Toque numa avaliação pra editar, ou use os botões pra baixar/enviar o PDF.</div>
     </div>
     <div style="padding:0 20px 12px">
       <button onclick="closeModal('modal-rotina');openEvalModal('${email}')" style="width:100%;background:var(--r);color:#fff;border:none;border-radius:10px;padding:13px;font-size:13px;font-weight:800;cursor:pointer">+ Nova Avaliação</button>
@@ -10668,13 +10668,19 @@ function abrirAvaliacoesAdmin(email){
         const {cls,color} = classifyFat(a.fatPct||0, sexo, idade);
         const dataF = new Date(a.date+'T12:00:00').toLocaleDateString('pt-BR');
         const metodoTxt = a.method==='bio'?'Bioimpedância':'Pollock 7 dobras';
-        return `<div onclick="closeModal('modal-rotina');openEvalModal('${email}','${a.id}')" style="display:flex;align-items:center;gap:12px;background:var(--s);border:1px solid var(--b);border-radius:12px;padding:14px 16px;cursor:pointer">
-          <div style="flex:1">
-            <div style="font-size:13.5px;font-weight:800">${dataF}</div>
-            <div style="font-size:11px;color:var(--t2);margin-top:2px">${metodoTxt} · ${a.fatPct}% gordura</div>
+        return `<div style="background:var(--s);border:1px solid var(--b);border-radius:12px;padding:14px 16px">
+          <div onclick="closeModal('modal-rotina');openEvalModal('${email}','${a.id}')" style="display:flex;align-items:center;gap:12px;cursor:pointer">
+            <div style="flex:1">
+              <div style="font-size:13.5px;font-weight:800">${dataF}</div>
+              <div style="font-size:11px;color:var(--t2);margin-top:2px">${metodoTxt} · ${a.fatPct}% gordura</div>
+            </div>
+            <span style="font-size:10px;font-weight:800;padding:3px 8px;border-radius:6px;background:${color}22;color:${color}">${cls.replace(/[✅⚠️🔴]/g,'').trim()}</span>
+            <span style="color:var(--mu);font-size:16px">✏️</span>
           </div>
-          <span style="font-size:10px;font-weight:800;padding:3px 8px;border-radius:6px;background:${color}22;color:${color}">${cls.replace(/[✅⚠️🔴]/g,'').trim()}</span>
-          <span style="color:var(--mu);font-size:16px">✏️</span>
+          <div style="display:flex;gap:8px;margin-top:12px;padding-top:12px;border-top:1px solid var(--b)">
+            <button onclick="event.stopPropagation();baixarAvaliacaoPDF('${a.id}','download','${email}')" style="flex:1;background:rgba(52,152,219,.12);color:#3498db;border:1px solid rgba(52,152,219,.3);border-radius:9px;padding:9px;font-size:11.5px;font-weight:800;cursor:pointer">⬇️ Baixar PDF</button>
+            <button onclick="event.stopPropagation();baixarAvaliacaoPDF('${a.id}','email','${email}')" style="flex:1;background:rgba(255,255,255,.06);color:var(--t2);border:1px solid var(--b);border-radius:9px;padding:9px;font-size:11.5px;font-weight:800;cursor:pointer">✉️ Enviar</button>
+          </div>
         </div>`;
       }).join('')}
     </div>
@@ -13496,6 +13502,24 @@ async function baixarPDFRobusto(doc, filename, ctx){
 
 // ══ SOBE O PDF E MOSTRA UM LINK CLICÁVEL ══
 // Último recurso quando os métodos de download local falham (típico de TWA/WebView).
+// O Storage do Supabase exige sessão autenticada de verdade (auth.role()='authenticated').
+// O app considera o usuário logado pelo dado local (fq_cur), que sobrevive à expiração
+// da sessão — então dá pra estar "logado" na tela e mesmo assim levar
+// "new row violates row-level security policy" no upload. Aqui a gente confere e,
+// se possível, renova antes de tentar.
+async function garantirSessaoSupabase(){
+  if(typeof sb==='undefined' || !sb) return false;
+  try{
+    const {data:{session}} = await sb.auth.getSession();
+    if(session) return true;
+    const {data:renovada} = await sb.auth.refreshSession();
+    return !!(renovada && renovada.session);
+  }catch(e){
+    console.warn('Não consegui confirmar a sessão do Supabase:', e.message);
+    return false;
+  }
+}
+
 async function gerarLinkPDF(blob, filename, ctx){
   if(typeof sb === 'undefined' || !sb){
     console.warn('Sem Supabase — não dá pra gerar link do PDF.');
@@ -13503,6 +13527,11 @@ async function gerarLinkPDF(blob, filename, ctx){
     return false;
   }
   try{
+    if(!(await garantirSessaoSupabase())){
+      window.__fqEntregaDiag = 'sessao expirada';
+      fqToast('Sua sessão expirou. Saia e entre de novo na conta pra salvar o PDF.','warn',9000);
+      return false;
+    }
     fqToast('Preparando seu link de download...','ok');
     const u = getU();
     const pasta = (u && u.email) ? u.email : 'anonimo';
@@ -13602,6 +13631,10 @@ function mostrarLinkPDF(url, filename, opts){
 // aparelho/navegador, diferente do download programático que vinha falhando.
 async function enviarAvaliacaoPorEmail(u, a, doc, emailDestino){
   if(!sb){ fqToast('⚠️ Sem conexão com o servidor agora.','warn'); return false; }
+  if(!(await garantirSessaoSupabase())){
+    fqToast('Sua sessão expirou. Saia e entre de novo na conta pra enviar o PDF.','warn',9000);
+    return false;
+  }
   fqToast('Enviando por email...','ok');
 
   try{
@@ -13725,10 +13758,18 @@ async function garantirPDFPronto(){
   return ok;
 }
 
-async function baixarAvaliacaoPDF(evalId, modo){
+// emailAlvo (opcional): quando o admin baixa a avaliação de um aluno pelo painel.
+// Sem ele, usa o próprio usuário logado — o fluxo original do aluno.
+async function baixarAvaliacaoPDF(evalId, modo, emailAlvo){
   modo = modo || 'download';
-  const u = getU();
-  if(!u){ fqToast('Você precisa estar logado.','warn'); return; }
+  let u;
+  if(emailAlvo){
+    u = (window.ADM_CACHE||[]).find(x=>x.email===emailAlvo) || (DB.get('fq_users')||{})[emailAlvo];
+    if(!u){ fqToast('Aluno não encontrado.','warn'); return; }
+  } else {
+    u = getU();
+    if(!u){ fqToast('Você precisa estar logado.','warn'); return; }
+  }
   const a = (u.avaliacoes||[]).find(e=>e.id===evalId);
   if(!a){ fqToast('Avaliação não encontrada.','warn'); return; }
   if(!(await garantirPDFPronto())){ fqToast('Gerador de PDF indisponível — verifique sua conexão. ['+(window.__fqPdfDiag||'?')+']','warn',10000); return; }
