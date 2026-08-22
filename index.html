@@ -838,7 +838,7 @@ textarea.fi{resize:vertical;min-height:80px;}
       <option value="es">🇪🇸 ES</option>
     </select>
   </div>
-  <div id="fq-version-badge" style="position:absolute;bottom:8px;right:12px;font-size:9px;color:#333;font-weight:700;z-index:5">v188</div>
+  <div id="fq-version-badge" style="position:absolute;bottom:8px;right:12px;font-size:9px;color:#333;font-weight:700;z-index:5">v189</div>
   <img src="https://images.unsplash.com/photo-1517836357463-d25dfeac3438?w=800&q=80" alt="Fitness" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center top;filter:brightness(.35);z-index:0"/>
   <div class="splash-glow"></div>
   <div class="splash-noise"></div>
@@ -1948,6 +1948,9 @@ textarea.fi{resize:vertical;min-height:80px;}
             </svg>
           </div>
 
+          <!-- Botão do Comparativo completo -->
+          <button onclick="abrirComparativo()" style="width:100%;background:rgba(52,152,219,.1);color:#3498db;border:1px solid rgba(52,152,219,.3);border-radius:10px;padding:12px;font-size:13px;font-weight:800;cursor:pointer;margin-bottom:16px">📊 Ver Comparativo Completo</button>
+
           <!-- Histórico de avaliações -->
           <div style="margin-bottom:14px">
             <div style="font-size:10px;font-weight:800;color:var(--mu);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:10px" data-i18n="ui.7e3dac1b73">Histórico de avaliações</div>
@@ -2106,7 +2109,7 @@ textarea.fi{resize:vertical;min-height:80px;}
             <span style="color:var(--mu);font-size:18px">›</span>
           </div>
         </div>
-        <div style="text-align:center;padding:20px 0 4px;font-size:11px;color:var(--mu)">FitQuest <span id="fq-version-badge-perfil">v188</span></div>
+        <div style="text-align:center;padding:20px 0 4px;font-size:11px;color:var(--mu)">FitQuest <span id="fq-version-badge-perfil">v189</span></div>
       </div>
     </div>
 
@@ -10660,8 +10663,9 @@ function abrirAvaliacoesAdmin(email){
       <div style="font-size:19px;font-weight:900;letter-spacing:-.3px">Avaliações de ${escHtml(alvo.name||email)}</div>
       <div style="font-size:12.5px;color:var(--t2);margin-top:4px">Toque numa avaliação pra editar, ou use os botões pra baixar/enviar o PDF.</div>
     </div>
-    <div style="padding:0 20px 12px">
-      <button onclick="closeModal('modal-rotina');openEvalModal('${email}')" style="width:100%;background:var(--r);color:#fff;border:none;border-radius:10px;padding:13px;font-size:13px;font-weight:800;cursor:pointer">+ Nova Avaliação</button>
+    <div style="padding:0 20px 12px;display:flex;gap:8px">
+      <button onclick="closeModal('modal-rotina');openEvalModal('${email}')" style="flex:1;background:var(--r);color:#fff;border:none;border-radius:10px;padding:13px;font-size:13px;font-weight:800;cursor:pointer">+ Nova Avaliação</button>
+      ${avals.length>0?`<button onclick="abrirComparativo('${email}')" style="flex:1;background:rgba(52,152,219,.1);color:#3498db;border:1px solid rgba(52,152,219,.3);border-radius:10px;padding:13px;font-size:13px;font-weight:800;cursor:pointer">📊 Comparativo</button>`:''}
     </div>
     <div style="padding:0 20px 28px;display:flex;flex-direction:column;gap:10px">
       ${avals.length===0?`<div style="text-align:center;padding:30px 0;color:var(--mu);font-size:12.5px">Nenhuma avaliação registrada ainda.</div>`:avals.map(a=>{
@@ -11107,6 +11111,296 @@ function drawEmptyPizza(id){
   ctx.textAlign='center';ctx.textBaseline='middle';
   ctx.fillStyle='rgba(255,255,255,.2)';
   ctx.fillText('sem dados', cx, cy);
+}
+
+// ══════════════════════════════════════════════════════════════
+// COMPARATIVO — tela de comparação entre avaliações (aluno e admin)
+// ══════════════════════════════════════════════════════════════
+
+// IMC: mesma fórmula usada no restante do app (peso / altura em metros ao quadrado)
+function calcIMC(peso, alturaCm){
+  if(!peso || !alturaCm) return null;
+  return peso / Math.pow(alturaCm/100, 2);
+}
+
+// RCQ (Relação Cintura-Quadril) — indicador de risco cardiovascular.
+// Referência: OMS — homens < 0,90 é baixo risco, mulheres < 0,85.
+function calcRCQ(cintura, quadril){
+  if(!cintura || !quadril) return null;
+  return cintura / quadril;
+}
+function faixaRCQ(sexo){
+  const isMasc = (sexo||'Masculino').toLowerCase().includes('masc');
+  return { limite: isMasc?0.90:0.85, texto: isMasc?'< 0,90':'< 0,85' };
+}
+
+// Faixa saudável de %gordura — mesmos limiares de classifyFat(), só que
+// devolvendo a banda "Boa forma" como texto pra exibir na tabela de diagnóstico.
+function faixaGorduraSaudavel(sexo){
+  const isMasc = (sexo||'Masculino').toLowerCase().includes('masc');
+  return isMasc ? '14 – 18%' : '20 – 25%';
+}
+
+// Monta as linhas da tabela comparativa (avaliação atual vs anterior).
+// Cada linha diz se a mudança foi favorável (verde) ou desfavorável (laranja/vermelho) —
+// exceto o peso, que fica neutro porque a direção "boa" depende do objetivo do aluno.
+function montarLinhasComparativo(atual, anterior){
+  const linhas = [];
+  const push = (label, vAtual, vAnt, unidade, favoravel) => {
+    if(vAtual==null || isNaN(vAtual)) return;
+    let deltaTxt = '—', cor = 'var(--mu)';
+    if(vAnt!=null && !isNaN(vAnt)){
+      const delta = vAtual - vAnt;
+      const sinal = delta>0?'+':'';
+      deltaTxt = `${sinal}${delta.toFixed(1)}${unidade}`;
+      if(Math.abs(delta) < 0.05){ cor = 'var(--mu)'; }
+      else if(favoravel===null){ cor = 'var(--t2)'; }
+      else{
+        const foiGanho = delta > 0;
+        const bom = favoravel==='aumentar' ? foiGanho : !foiGanho;
+        cor = bom ? '#2ecc71' : '#e67e22';
+      }
+    }
+    linhas.push({ label, valor: `${vAtual.toFixed(1)}${unidade}`, delta: deltaTxt, cor });
+  };
+  push('Peso', atual.peso, anterior?.peso, 'kg', null);
+  if(atual.fatPct!=null) push('% de Gordura', parseFloat(atual.fatPct), anterior?parseFloat(anterior.fatPct):null, '%', 'diminuir');
+  if(atual.fatKg!=null)  push('Massa Gorda', parseFloat(atual.fatKg), anterior?parseFloat(anterior.fatKg):null, 'kg', 'diminuir');
+  if(atual.leanKg!=null) push('Massa Magra', parseFloat(atual.leanKg), anterior?parseFloat(anterior.leanKg):null, 'kg', 'aumentar');
+  if(atual.method==='pollock' && atual.soma!=null) push('Soma das Dobras', atual.soma, anterior?.method==='pollock'?anterior.soma:null, 'mm', 'diminuir');
+  return linhas;
+}
+
+// ── GRÁFICO DE BARRAS AGRUPADAS (comparação de perímetros ao longo do tempo) ──
+// series: [{label, color, values:[...por data, pode ter null]}]
+function drawBarGroup(canvasId, datas, series){
+  const canvas = document.getElementById(canvasId);
+  if(!canvas) return;
+  const ctx = canvas.getContext('2d');
+  const W = canvas.width, H = canvas.height;
+  ctx.clearRect(0,0,W,H);
+
+  const pad = {t:14, r:10, b:26, l:30};
+  const cW = W-pad.l-pad.r, cH = H-pad.t-pad.b;
+
+  const todosValores = series.flatMap(s=>s.values).filter(v=>v!=null && !isNaN(v));
+  if(!todosValores.length){
+    ctx.font='11px Inter,sans-serif'; ctx.textAlign='center'; ctx.fillStyle='rgba(255,255,255,.2)';
+    ctx.fillText('Sem dados de perímetro registrados', W/2, H/2);
+    return;
+  }
+  const maxV = Math.max(...todosValores)*1.15;
+  const minV = Math.min(0, Math.min(...todosValores)*0.9);
+  const range = (maxV-minV)||1;
+  const toY = v => pad.t + cH - ((v-minV)/range)*cH;
+
+  // Linhas de grade horizontais
+  [0,.25,.5,.75,1].forEach(t=>{
+    const y = pad.t + cH*(1-t);
+    const v = minV + range*t;
+    ctx.strokeStyle='rgba(255,255,255,.06)'; ctx.lineWidth=1;
+    ctx.beginPath(); ctx.moveTo(pad.l,y); ctx.lineTo(W-pad.r,y); ctx.stroke();
+    ctx.font='8px Inter,sans-serif'; ctx.textAlign='right'; ctx.fillStyle='rgba(255,255,255,.3)';
+    ctx.fillText(v.toFixed(0), pad.l-3, y+3);
+  });
+
+  const groupW = cW/datas.length;
+  const barW = (groupW*0.82)/series.length;
+
+  datas.forEach((data, gi)=>{
+    series.forEach((s, si)=>{
+      const v = s.values[gi];
+      if(v==null || isNaN(v)) return;
+      const x = pad.l + gi*groupW + groupW*0.09 + si*barW;
+      const y = toY(v);
+      const yBase = toY(0) > (H-pad.b) ? (H-pad.b) : toY(0);
+      const h = Math.max(1, yBase - y);
+      ctx.fillStyle = s.color;
+      ctx.fillRect(x, y, barW*0.88, h);
+    });
+    // rótulo da data embaixo do grupo
+    const dataShort = data.split('-').slice(1).join('/');
+    ctx.font='8px Inter,sans-serif'; ctx.textAlign='center'; ctx.fillStyle='rgba(255,255,255,.35)';
+    ctx.fillText(dataShort, pad.l + gi*groupW + groupW/2, H-8);
+  });
+}
+
+// Monta a legenda HTML de um grupo de séries (usado embaixo dos gráficos de barra)
+function legendaSeries(series){
+  return `<div style="display:flex;flex-wrap:wrap;gap:8px 14px;justify-content:center;margin-top:8px">
+    ${series.map(s=>`<div style="display:flex;align-items:center;gap:5px">
+      <div style="width:9px;height:9px;border-radius:2px;background:${s.color}"></div>
+      <span style="font-size:9.5px;color:var(--t2)">${s.label}</span>
+    </div>`).join('')}
+  </div>`;
+}
+
+// Extrai a série de um campo de perimetria ao longo das últimas N avaliações
+function serieDePerimetria(avs, campo){
+  return avs.map(a=>{
+    const v = a.perimetria?.[campo];
+    return v!=null && v!=='' ? parseFloat(v) : null;
+  });
+}
+
+// ── MONTA E ABRE A TELA DE COMPARATIVO ──
+// emailAlvo (opcional): quando o admin abre o comparativo de um aluno pelo painel.
+function abrirComparativo(emailAlvo){
+  let u;
+  if(emailAlvo){
+    u = (window.ADM_CACHE||[]).find(x=>x.email===emailAlvo) || (DB.get('fq_users')||{})[emailAlvo];
+  } else {
+    u = getU();
+  }
+  if(!u){ fqToast('Aluno não encontrado.','warn'); return; }
+
+  const avs = (u.avaliacoes||[]).slice().sort((a,b)=>new Date(a.date)-new Date(b.date));
+  if(!avs.length){ fqToast('Esse aluno ainda não tem avaliações registradas.','warn'); return; }
+
+  const atual = avs[avs.length-1];
+  const anterior = avs.length>1 ? avs[avs.length-2] : null;
+  const sexo = u.anamnese?.sexo || 'Masculino';
+  const idade = u.anamnese?.nasc ? Math.floor((Date.now()-new Date(u.anamnese.nasc))/(365.25*24*3600*1000)) : 30;
+  const altura = u.anamnese?.altura ? parseFloat(u.anamnese.altura) : null;
+
+  const {cls, color} = classifyFat(parseFloat(atual.fatPct||0), sexo, idade);
+  const imc = calcIMC(atual.peso, altura);
+  const rcq = calcRCQ(atual.perimetria?.cintura, atual.perimetria?.quadril);
+  const rcqFaixa = faixaRCQ(sexo);
+
+  const linhasComp = montarLinhasComparativo(atual, anterior);
+
+  // últimas até 5 avaliações, pra não poluir os gráficos de barra
+  const avsRecentes = avs.slice(-5);
+  const datasRecentes = avsRecentes.map(a=>a.date);
+
+  const html = `
+    <div style="padding:24px 20px 8px">
+      <div style="font-size:19px;font-weight:900;letter-spacing:-.3px">📊 Comparativo</div>
+      <div style="font-size:12.5px;color:var(--t2);margin-top:4px">${escHtml(u.name||u.email)}${idade?` · ${idade} anos`:''}</div>
+    </div>
+
+    <div style="padding:0 20px 8px">
+      <div style="font-size:10px;font-weight:800;color:var(--mu);text-transform:uppercase;letter-spacing:1.2px;margin-bottom:8px">
+        ${anterior ? 'Última avaliação vs anterior' : 'Última avaliação (cadastre outra pra comparar)'}
+      </div>
+      <div style="background:var(--s);border:1px solid var(--b);border-radius:12px;overflow:hidden">
+        ${linhasComp.map((l,i)=>`
+          <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 14px;${i<linhasComp.length-1?'border-bottom:1px solid var(--b)':''}">
+            <span style="font-size:12.5px;color:var(--t2)">${l.label}</span>
+            <div style="display:flex;align-items:center;gap:10px">
+              <span style="font-size:13px;font-weight:800">${l.valor}</span>
+              <span style="font-size:11px;font-weight:700;color:${l.cor};min-width:52px;text-align:right">${l.delta}</span>
+            </div>
+          </div>`).join('')}
+      </div>
+    </div>
+
+    <div style="padding:16px 20px 8px">
+      <div style="font-size:10px;font-weight:800;color:var(--mu);text-transform:uppercase;letter-spacing:1.2px;margin-bottom:8px">Diagnóstico</div>
+      <div style="background:var(--s);border:1px solid var(--b);border-radius:12px;overflow:hidden">
+        <div style="display:grid;grid-template-columns:1.4fr .8fr 1fr;padding:8px 14px;background:rgba(255,255,255,.03);font-size:9.5px;font-weight:800;color:var(--mu);text-transform:uppercase">
+          <span>Indicador</span><span style="text-align:center">Atual</span><span style="text-align:right">Faixa saudável</span>
+        </div>
+        ${imc!=null?`<div style="display:grid;grid-template-columns:1.4fr .8fr 1fr;padding:10px 14px;border-top:1px solid var(--b);align-items:center">
+          <span style="font-size:12px;color:var(--t2)">IMC (kg/m²)</span>
+          <span style="font-size:13px;font-weight:800;text-align:center">${imc.toFixed(1)}</span>
+          <span style="font-size:11px;color:var(--mu);text-align:right">18,5 – 24,9</span>
+        </div>`:''}
+        <div style="display:grid;grid-template-columns:1.4fr .8fr 1fr;padding:10px 14px;border-top:1px solid var(--b);align-items:center">
+          <span style="font-size:12px;color:var(--t2)">% Gordura Corporal</span>
+          <span style="font-size:13px;font-weight:800;text-align:center;color:${color}">${atual.fatPct}%</span>
+          <span style="font-size:11px;color:var(--mu);text-align:right">${faixaGorduraSaudavel(sexo)}</span>
+        </div>
+        ${rcq!=null?`<div style="display:grid;grid-template-columns:1.4fr .8fr 1fr;padding:10px 14px;border-top:1px solid var(--b);align-items:center">
+          <span style="font-size:12px;color:var(--t2)">RCQ (Cintura/Quadril)</span>
+          <span style="font-size:13px;font-weight:800;text-align:center">${rcq.toFixed(2)}</span>
+          <span style="font-size:11px;color:var(--mu);text-align:right">${rcqFaixa.texto}</span>
+        </div>`:''}
+      </div>
+    </div>
+
+    <div style="padding:16px 20px 8px">
+      <div style="font-size:10px;font-weight:800;color:var(--mu);text-transform:uppercase;letter-spacing:1.2px;margin-bottom:8px">Composição — ${new Date(atual.date+'T12:00:00').toLocaleDateString('pt-BR')}</div>
+      <div style="background:var(--s);border:1px solid var(--b);border-radius:12px;padding:16px;display:flex;justify-content:center">
+        <canvas id="cmp-donut" width="160" height="140" style="width:100%;max-width:160px"></canvas>
+      </div>
+    </div>
+
+    <div style="padding:16px 20px 8px">
+      <div style="font-size:10px;font-weight:800;color:var(--mu);text-transform:uppercase;letter-spacing:1.2px;margin-bottom:8px">Evolução do Peso</div>
+      <div class="chart-wrap" style="margin:0">
+        <svg class="chart-svg" height="110" id="cmp-peso-svg" viewBox="0 0 300 110" preserveAspectRatio="none"></svg>
+      </div>
+    </div>
+
+    ${avsRecentes.some(a=>a.perimetria) ? `
+    <div style="padding:16px 20px 8px">
+      <div style="font-size:10px;font-weight:800;color:var(--mu);text-transform:uppercase;letter-spacing:1.2px;margin-bottom:8px">Perímetros — Membros Superiores</div>
+      <div style="background:var(--s);border:1px solid var(--b);border-radius:12px;padding:12px">
+        <canvas id="cmp-perim-sup" width="320" height="170" style="width:100%"></canvas>
+        <div id="cmp-legend-sup"></div>
+      </div>
+    </div>
+    <div style="padding:0 20px 8px">
+      <div style="font-size:10px;font-weight:800;color:var(--mu);text-transform:uppercase;letter-spacing:1.2px;margin-bottom:8px">Perímetros — Membros Inferiores</div>
+      <div style="background:var(--s);border:1px solid var(--b);border-radius:12px;padding:12px">
+        <canvas id="cmp-perim-inf" width="320" height="170" style="width:100%"></canvas>
+        <div id="cmp-legend-inf"></div>
+      </div>
+    </div>
+    <div style="padding:0 20px 24px">
+      <div style="font-size:10px;font-weight:800;color:var(--mu);text-transform:uppercase;letter-spacing:1.2px;margin-bottom:8px">Perímetros — Tronco</div>
+      <div style="background:var(--s);border:1px solid var(--b);border-radius:12px;padding:12px">
+        <canvas id="cmp-perim-tro" width="320" height="170" style="width:100%"></canvas>
+        <div id="cmp-legend-tro"></div>
+      </div>
+    </div>` : `<div style="padding:8px 20px 24px;font-size:11.5px;color:var(--mu);text-align:center">Nenhum perímetro registrado nas avaliações recentes.</div>`}
+  `;
+
+  document.getElementById('modal-rotina-content').innerHTML = html;
+  abrirModal('modal-rotina');
+
+  // Donut de composição — reaproveita o mesmo desenho 3D usado na aba Evolução
+  const fatKgN = parseFloat(atual.fatKg||0), leanKgN = parseFloat(atual.leanKg||0);
+  draw3DPizza('cmp-donut', [
+    {val: fatKgN,  color:'#e50914', label:'Gordura'},
+    {val: leanKgN, color:'#2ecc71', label:'Magra'},
+  ]);
+
+  // Linha de evolução do peso — reaproveita renderChart (mesmo componente da aba Evolução)
+  const pesoData = avs.filter(a=>a.peso).map(a=>({val:parseFloat(a.peso), date:a.date}));
+  renderChart('cmp-peso-svg', pesoData, '#3498db', 'kg', 110, 'Peso');
+
+  // Gráficos de barra de perímetros (só desenha se existir pelo menos 1 dado)
+  if(avsRecentes.some(a=>a.perimetria)){
+    const seriesSup = [
+      {label:'Braço D.',      color:'#9b59b6', values:serieDePerimetria(avsRecentes,'bracoDir')},
+      {label:'Braço E.',      color:'#8e44ad', values:serieDePerimetria(avsRecentes,'bracoEsq')},
+      {label:'Antebraço D.',  color:'#3498db', values:serieDePerimetria(avsRecentes,'antebracoDir')},
+      {label:'Antebraço E.',  color:'#2980b9', values:serieDePerimetria(avsRecentes,'antebracoEsq')},
+    ];
+    drawBarGroup('cmp-perim-sup', datasRecentes, seriesSup);
+    document.getElementById('cmp-legend-sup').innerHTML = legendaSeries(seriesSup);
+
+    const seriesInf = [
+      {label:'Perna D.',        color:'#f39c12', values:serieDePerimetria(avsRecentes,'pernaDir')},
+      {label:'Perna E.',        color:'#e67e22', values:serieDePerimetria(avsRecentes,'pernaEsq')},
+      {label:'Panturrilha D.',  color:'#2ecc71', values:serieDePerimetria(avsRecentes,'panturrilhaDir')},
+      {label:'Panturrilha E.',  color:'#27ae60', values:serieDePerimetria(avsRecentes,'panturrilhaEsq')},
+    ];
+    drawBarGroup('cmp-perim-inf', datasRecentes, seriesInf);
+    document.getElementById('cmp-legend-inf').innerHTML = legendaSeries(seriesInf);
+
+    const seriesTro = [
+      {label:'Tórax',    color:'#e50914', values:serieDePerimetria(avsRecentes,'torax')},
+      {label:'Cintura',  color:'#f1c40f', values:serieDePerimetria(avsRecentes,'cintura')},
+      {label:'Abdômen',  color:'#e74c3c', values:serieDePerimetria(avsRecentes,'abdomen')},
+      {label:'Quadril',  color:'#1abc9c', values:serieDePerimetria(avsRecentes,'quadril')},
+    ];
+    drawBarGroup('cmp-perim-tro', datasRecentes, seriesTro);
+    document.getElementById('cmp-legend-tro').innerHTML = legendaSeries(seriesTro);
+  }
 }
 
 // ── RENDER EVOLUÇÃO TAB ──
