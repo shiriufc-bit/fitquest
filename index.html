@@ -838,7 +838,7 @@ textarea.fi{resize:vertical;min-height:80px;}
       <option value="es">🇪🇸 ES</option>
     </select>
   </div>
-  <div id="fq-version-badge" style="position:absolute;bottom:8px;right:12px;font-size:9px;color:#333;font-weight:700;z-index:5">v189</div>
+  <div id="fq-version-badge" style="position:absolute;bottom:8px;right:12px;font-size:9px;color:#333;font-weight:700;z-index:5">v190</div>
   <img src="https://images.unsplash.com/photo-1517836357463-d25dfeac3438?w=800&q=80" alt="Fitness" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center top;filter:brightness(.35);z-index:0"/>
   <div class="splash-glow"></div>
   <div class="splash-noise"></div>
@@ -2109,7 +2109,7 @@ textarea.fi{resize:vertical;min-height:80px;}
             <span style="color:var(--mu);font-size:18px">›</span>
           </div>
         </div>
-        <div style="text-align:center;padding:20px 0 4px;font-size:11px;color:var(--mu)">FitQuest <span id="fq-version-badge-perfil">v189</span></div>
+        <div style="text-align:center;padding:20px 0 4px;font-size:11px;color:var(--mu)">FitQuest <span id="fq-version-badge-perfil">v190</span></div>
       </div>
     </div>
 
@@ -9171,13 +9171,11 @@ function renderMeuTreino(u){
 
   const exs=mt.dias[MT_DIA_ATUAL]||[];
   elEx.innerHTML=`
+    <div id="mt-ex-list">
     ${exs.length?exs.map((ex,i)=>`
-      <div style="background:var(--s);border:1px solid var(--b);border-radius:10px;padding:12px 14px;margin-bottom:8px">
+      <div class="mt-ex-card" data-idx="${i}" style="background:var(--s);border:1px solid var(--b);border-radius:10px;padding:12px 14px;margin-bottom:8px">
         <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
-          <div style="display:flex;flex-direction:column;gap:2px;flex-shrink:0">
-            <button onclick="mtMoverEx(${i},-1)" ${i===0?'disabled':''} style="background:${i===0?'rgba(255,255,255,.03)':'rgba(255,255,255,.08)'};border:1px solid var(--b);color:${i===0?'var(--mu)':'#fff'};border-radius:5px;width:26px;height:20px;font-size:11px;cursor:${i===0?'default':'pointer'};line-height:1;padding:0" title="Mover para cima">▲</button>
-            <button onclick="mtMoverEx(${i},1)" ${i===exs.length-1?'disabled':''} style="background:${i===exs.length-1?'rgba(255,255,255,.03)':'rgba(255,255,255,.08)'};border:1px solid var(--b);color:${i===exs.length-1?'var(--mu)':'#fff'};border-radius:5px;width:26px;height:20px;font-size:11px;cursor:${i===exs.length-1?'default':'pointer'};line-height:1;padding:0" title="Mover para baixo">▼</button>
-          </div>
+          <div class="mt-drag-handle" style="display:flex;align-items:center;justify-content:center;flex-shrink:0;width:22px;height:30px;color:var(--mu);font-size:15px;cursor:grab;letter-spacing:-1px" title="Segure e arraste pra reordenar">⠿</div>
           <div style="background:var(--r);color:#fff;border-radius:6px;min-width:24px;height:24px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:900;flex-shrink:0">${i+1}</div>
           <div style="flex:1;min-width:0">
             <div style="font-size:13px;font-weight:800;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${ex.nome}${!ex.custom?` <button onclick="abrirFichaExercicio('${ex.id}')" style="background:rgba(255,255,255,.08);border:1px solid var(--b);color:var(--t2);border-radius:50%;width:20px;height:20px;font-size:11px;cursor:pointer;vertical-align:middle;margin-left:4px;padding:0;line-height:1" title="Ver ficha completa">ℹ️</button>`:''}</div>
@@ -9195,6 +9193,8 @@ function renderMeuTreino(u){
         </div>
       </div>`).join('')
       :'<div style="text-align:center;color:var(--mu);padding:26px;font-size:12px">'+t('tpl.ee0cf86b50')+'</div>'}
+    </div>
+    ${exs.length>1?`<div style="text-align:center;font-size:10px;color:var(--mu);margin:2px 0 10px">Segure num exercício pra arrastar e reordenar</div>`:''}
     <button class="btn-p" style="margin-top:6px;background:rgba(46,204,113,.12);color:#2ecc71;border:1px solid rgba(46,204,113,.3)" onclick="abrirAddExercicio()" data-i18n="ui.0a9eed7c84">+ Adicionar Exercício</button>
     ${nomesDias.length>1?`<button onclick="mtRemoverDia()" style="width:100%;margin-top:8px;background:none;border:none;color:var(--mu);font-size:11px;cursor:pointer;padding:8px">Remover dia "${MT_DIA_ATUAL}"</button>`:''}
   `;
@@ -9202,6 +9202,9 @@ function renderMeuTreino(u){
   if(elBtn) elBtn.innerHTML = exs.length
     ? `<button class="btn-p" style="margin-top:10px" onclick="concluirTreinoProprio()">✅ Concluir Treino de Hoje</button>`
     : '';
+
+  // (re)liga o arrastar-pra-reordenar nos cards recém-desenhados
+  mtSetupDrag();
 }
 
 function mtAddDia(){
@@ -9235,6 +9238,150 @@ function mtEditarEx(idx,campo,valor){
   }
   saveU(u);
 }
+
+// ══════════════════════════════════════════════════════════════
+// ARRASTAR PRA REORDENAR — "Meu Treino"
+// Segurar ~250ms num exercício "solta" o card; aí é só mover pra cima/baixo.
+// Usa Pointer Events (funciona igual em toque e mouse) em vez de HTML5 drag,
+// que praticamente não funciona em navegador de celular.
+// ══════════════════════════════════════════════════════════════
+let _mtDrag = null;
+
+function mtSetupDrag(){
+  const container = document.getElementById('mt-ex-list');
+  if(!container) return;
+  const cards = [...container.querySelectorAll('.mt-ex-card')];
+  if(cards.length < 2) return; // com 1 item só não há o que reordenar
+
+  cards.forEach(card=>{
+    card.style.touchAction = 'pan-y'; // deixa a rolagem normal funcionar até o long-press
+    card.addEventListener('pointerdown', e=>mtPointerDown(e, card, cards, container));
+  });
+}
+
+function mtPointerDown(e, card, cards, container){
+  // Não sequestra o toque em campos e botões — o aluno precisa poder digitar
+  // séries/reps e clicar em remover/ficha normalmente.
+  if(e.target.closest('input,button,select,textarea,a')) return;
+  if(e.pointerType==='mouse' && e.button!==0) return;
+
+  const startY = e.clientY;
+  const idx = parseInt(card.dataset.idx,10);
+
+  const timer = setTimeout(()=>{
+    // Long-press confirmado: entra em modo arrasto
+    _mtDrag = {
+      card, cards, container, idx,
+      startY,
+      alturas: cards.map(cd=>cd.getBoundingClientRect().height + 8), // +8 = margin-bottom
+      movido: 0,
+      alvo: idx,
+      pointerId: e.pointerId,
+    };
+    card.style.transition = 'none';
+    card.style.zIndex = '50';
+    card.style.position = 'relative';
+    card.style.boxShadow = '0 10px 30px rgba(0,0,0,.55)';
+    card.style.borderColor = 'var(--r)';
+    card.style.opacity = '0.95';
+    card.style.transform = 'scale(1.02)';
+    if(navigator.vibrate) { try{ navigator.vibrate(18); }catch(_){} }
+    try{ card.setPointerCapture(e.pointerId); }catch(_){}
+  }, 250);
+
+  const cancelar = ()=>{
+    clearTimeout(timer);
+    card.removeEventListener('pointerup', cancelar);
+    card.removeEventListener('pointercancel', cancelar);
+    card.removeEventListener('pointermove', checarMovimento);
+  };
+  // Se o dedo se mover muito antes dos 250ms, é rolagem — não é arrasto
+  const checarMovimento = ev=>{
+    if(!_mtDrag && Math.abs(ev.clientY-startY) > 10) cancelar();
+  };
+  card.addEventListener('pointerup', cancelar);
+  card.addEventListener('pointercancel', cancelar);
+  card.addEventListener('pointermove', checarMovimento);
+}
+
+function mtPointerMove(e){
+  if(!_mtDrag || e.pointerId!==_mtDrag.pointerId) return;
+  e.preventDefault(); // trava a rolagem enquanto arrasta
+
+  const d = _mtDrag;
+  d.movido = e.clientY - d.startY;
+  d.card.style.transform = `translateY(${d.movido}px) scale(1.02)`;
+
+  // Descobre em que posição o card cairia agora
+  let alvo = d.idx;
+  let acumulado = 0;
+  if(d.movido > 0){
+    for(let i=d.idx+1; i<d.cards.length; i++){
+      acumulado += d.alturas[i];
+      if(d.movido > acumulado - d.alturas[i]/2) alvo = i; else break;
+    }
+  } else if(d.movido < 0){
+    for(let i=d.idx-1; i>=0; i--){
+      acumulado += d.alturas[i];
+      if(-d.movido > acumulado - d.alturas[i]/2) alvo = i; else break;
+    }
+  }
+  if(alvo !== d.alvo){
+    d.alvo = alvo;
+    if(navigator.vibrate){ try{ navigator.vibrate(8); }catch(_){} }
+  }
+
+  // Abre espaço: desloca os cards entre a posição original e a de destino
+  d.cards.forEach((cd,i)=>{
+    if(i===d.idx) return;
+    let deslocamento = 0;
+    if(d.alvo > d.idx && i>d.idx && i<=d.alvo)      deslocamento = -d.alturas[d.idx];
+    else if(d.alvo < d.idx && i>=d.alvo && i<d.idx) deslocamento =  d.alturas[d.idx];
+    cd.style.transition = 'transform .16s ease';
+    cd.style.transform = deslocamento ? `translateY(${deslocamento}px)` : '';
+  });
+}
+
+function mtPointerUp(e){
+  if(!_mtDrag || (e && e.pointerId!==_mtDrag.pointerId)) return;
+  const d = _mtDrag;
+  _mtDrag = null;
+
+  // Limpa os estilos temporários
+  d.cards.forEach(cd=>{
+    cd.style.transition='';
+    cd.style.transform='';
+    cd.style.zIndex='';
+    cd.style.position='';
+    cd.style.boxShadow='';
+    cd.style.opacity='';
+    cd.style.borderColor='';
+  });
+
+  if(d.alvo !== d.idx){
+    mtReordenarEx(d.idx, d.alvo);
+  }
+}
+
+// Tira o exercício da posição antiga e insere na nova (não é troca simples:
+// arrastar do 1º pro 4º empurra os do meio pra cima, e não inverte dois)
+function mtReordenarEx(de, para){
+  const u=getU(); if(!u||!u.meuTreino) return;
+  const lista=u.meuTreino.dias[MT_DIA_ATUAL];
+  if(!lista || de===para) return;
+  if(de<0||de>=lista.length||para<0||para>=lista.length) return;
+  const [item] = lista.splice(de,1);
+  lista.splice(para,0,item);
+  saveU(u);
+  renderGym(u);
+  if(navigator.vibrate){ try{ navigator.vibrate(12); }catch(_){} }
+}
+
+// Listeners globais: o dedo costuma sair de cima do card durante o arrasto,
+// então quem escuta o movimento é o documento, não o card.
+document.addEventListener('pointermove', mtPointerMove, {passive:false});
+document.addEventListener('pointerup', mtPointerUp);
+document.addEventListener('pointercancel', mtPointerUp);
 
 // Move um exercício do "Meu Treino" para cima (-1) ou para baixo (+1) na ordem
 function mtMoverEx(idx, direcao){
