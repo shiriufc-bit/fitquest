@@ -838,7 +838,7 @@ textarea.fi{resize:vertical;min-height:80px;}
       <option value="es">🇪🇸 ES</option>
     </select>
   </div>
-  <div id="fq-version-badge" style="position:absolute;bottom:8px;right:12px;font-size:9px;color:#333;font-weight:700;z-index:5">v190</div>
+  <div id="fq-version-badge" style="position:absolute;bottom:8px;right:12px;font-size:9px;color:#333;font-weight:700;z-index:5">v191</div>
   <img src="https://images.unsplash.com/photo-1517836357463-d25dfeac3438?w=800&q=80" alt="Fitness" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center top;filter:brightness(.35);z-index:0"/>
   <div class="splash-glow"></div>
   <div class="splash-noise"></div>
@@ -2109,7 +2109,7 @@ textarea.fi{resize:vertical;min-height:80px;}
             <span style="color:var(--mu);font-size:18px">›</span>
           </div>
         </div>
-        <div style="text-align:center;padding:20px 0 4px;font-size:11px;color:var(--mu)">FitQuest <span id="fq-version-badge-perfil">v190</span></div>
+        <div style="text-align:center;padding:20px 0 4px;font-size:11px;color:var(--mu)">FitQuest <span id="fq-version-badge-perfil">v191</span></div>
       </div>
     </div>
 
@@ -9247,22 +9247,28 @@ function mtEditarEx(idx,campo,valor){
 // ══════════════════════════════════════════════════════════════
 let _mtDrag = null;
 
-function mtSetupDrag(){
-  const container = document.getElementById('mt-ex-list');
+// containerId: onde estão os cards | seletor: classe dos cards | aoReordenar(de,para)
+function fqSetupDrag(containerId, seletor, aoReordenar){
+  const container = document.getElementById(containerId);
   if(!container) return;
-  const cards = [...container.querySelectorAll('.mt-ex-card')];
+  const cards = [...container.querySelectorAll(seletor)];
   if(cards.length < 2) return; // com 1 item só não há o que reordenar
 
-  cards.forEach(card=>{
+  cards.forEach((card,i)=>{
+    card.dataset.idx = i;
     card.style.touchAction = 'pan-y'; // deixa a rolagem normal funcionar até o long-press
-    card.addEventListener('pointerdown', e=>mtPointerDown(e, card, cards, container));
+    card.addEventListener('pointerdown', e=>mtPointerDown(e, card, cards, container, aoReordenar));
   });
 }
 
-function mtPointerDown(e, card, cards, container){
+function mtSetupDrag(){
+  fqSetupDrag('mt-ex-list', '.mt-ex-card', mtReordenarEx);
+}
+
+function mtPointerDown(e, card, cards, container, aoReordenar){
   // Não sequestra o toque em campos e botões — o aluno precisa poder digitar
   // séries/reps e clicar em remover/ficha normalmente.
-  if(e.target.closest('input,button,select,textarea,a')) return;
+  if(e.target.closest('input,button,select,textarea,a,.set-chk')) return;
   if(e.pointerType==='mouse' && e.button!==0) return;
 
   const startY = e.clientY;
@@ -9277,6 +9283,7 @@ function mtPointerDown(e, card, cards, container){
       movido: 0,
       alvo: idx,
       pointerId: e.pointerId,
+      aoReordenar,
     };
     card.style.transition = 'none';
     card.style.zIndex = '50';
@@ -9358,9 +9365,18 @@ function mtPointerUp(e){
     cd.style.borderColor='';
   });
 
-  if(d.alvo !== d.idx){
-    mtReordenarEx(d.idx, d.alvo);
+  // Um clique costuma disparar logo após soltar — este carimbo permite ignorá-lo,
+  // senão arrastar um exercício abriria/fecharia o card sem querer.
+  window._fqDragFim = Date.now();
+
+  if(d.alvo !== d.idx && typeof d.aoReordenar === 'function'){
+    d.aoReordenar(d.idx, d.alvo);
   }
+}
+
+// true se um arrasto acabou de terminar (usado pra ignorar o clique fantasma)
+function fqAcabouDeArrastar(){
+  return window._fqDragFim && (Date.now() - window._fqDragFim) < 350;
 }
 
 // Tira o exercício da posição antiga e insere na nova (não é troca simples:
@@ -9580,8 +9596,9 @@ function renderGymDay(w,d,u){
   document.getElementById('gym-exercises').innerHTML=exs.map((ed,i)=>{
     const ex=getExById(ed.id);if(!ex)return '';
     const lk=`${w}_${d}_${ex.id}`;const sl=(u.loadHistory&&u.loadHistory[lk])||ed.load||'';
-    return `<div class="ep-card" id="ep-${i}">
+    return `<div class="ep-card" id="ep-${i}" data-idx="${i}">
       <div class="ep-header" onclick="togEp(${i})">
+        <div class="ep-drag-handle" style="display:flex;align-items:center;justify-content:center;flex-shrink:0;width:18px;color:var(--mu);font-size:14px;letter-spacing:-1px;margin-right:2px" title="Segure e arraste pra reordenar">⠿</div>
         <div class="ep-num ${dayDone?'done':''}">${i+1}</div>
         <div class="ep-info"><div class="ep-title">${exNome(ex)} <button onclick="event.stopPropagation();abrirFichaExercicio('${ex.id}')" style="background:rgba(255,255,255,.08);border:1px solid var(--b);color:var(--t2);border-radius:50%;width:20px;height:20px;font-size:11px;cursor:pointer;vertical-align:middle;margin-left:4px;padding:0;line-height:1" title="Ver ficha completa">ℹ️</button></div><div class="ep-sub">${ex.muscle} · ${ex.equipment}</div></div>
         <div class="ep-chips"><span class="ep-chip">${ed.sets}×${ed.reps}</span><span class="ep-chip">⏱${ed.rest||60}s</span>${ed.tecnica?`<span class="ep-chip" style="background:rgba(229,9,20,.18);color:#ff5a63;border:1px solid rgba(229,9,20,.35)">${ed.turbo?'⚡':'🔥'} ${ed.tecnica}</span>`:''}</div>
@@ -9600,6 +9617,8 @@ function renderGymDay(w,d,u){
     </div>`;
   }).join('');
   initGifCanvases(document.getElementById('gym-exercises'));
+  // liga o arrastar-pra-reordenar nos cards recém-desenhados
+  fqSetupDrag('gym-exercises', '.ep-card', gymReordenarEx);
   document.getElementById('gym-complete-btn').innerHTML=`<button class="btn-ep-done" onclick="completeWk('${w}','${d}')" ${dayDone?'disabled':''} style="${dayDone?'opacity:.5':''}">${dayDone?'✅ Treino concluído!':'▶ Concluir treino do dia'}</button>`;
 }
 // ══ MODO TURBO — liga/desliga ══
@@ -9629,7 +9648,106 @@ async function toggleTurbo(){
   }
   if(typeof renderGym==='function')renderGym(u);
 }
-function togEp(i){document.getElementById(`ep-${i}`).classList.toggle('open');}
+// ══════════════════════════════════════════════════════════════
+// REORDENAR EXERCÍCIO DO TREINO GERADO (aiPlan)
+// Diferente do "Meu Treino", aqui há três cuidados:
+//  1) os ✓ das séries são gravados por POSIÇÃO (chave `semana_dia_indice_sN`),
+//     então a marcação precisa acompanhar o exercício, não a posição;
+//  2) a nova ordem se propaga para as semanas seguintes, casando por id do
+//     exercício — assim o aluno não precisa reordenar tudo de novo toda semana;
+//  3) o modo Turbo grava técnicas nos objetos só pra exibição; antes de salvar
+//     elas são removidas, senão ficariam presas no plano pra sempre.
+// ══════════════════════════════════════════════════════════════
+
+// Refaz as chaves de séries concluídas de um dia depois de uma mudança de ordem.
+// novaPosDe[posicaoAntiga] = posicaoNova
+function fqRemapearDone(u, w, d, novaPosDe){
+  if(!u.gymDone) return;
+  const prefixo = `${w}_${d}_`;
+  const antigas = Object.keys(u.gymDone).filter(k=>k.startsWith(prefixo) && /_\d+_s\d+$/.test(k));
+  if(!antigas.length) return;
+  const valores = {};
+  antigas.forEach(k=>{
+    const m = k.match(/^(.*)_(\d+)_s(\d+)$/);
+    if(!m) return;
+    const posAntiga = parseInt(m[2],10);
+    const serie = m[3];
+    const posNova = novaPosDe[posAntiga];
+    if(posNova===undefined) return;
+    valores[`${prefixo}${posNova}_s${serie}`] = u.gymDone[k];
+    delete u.gymDone[k];
+  });
+  Object.assign(u.gymDone, valores);
+}
+
+// Remove as técnicas que o Turbo aplicou só pra exibição (mantém as do motor,
+// que não têm a marca .turbo)
+function fqLimparTurbo(lista){
+  (lista||[]).forEach(ed=>{
+    if(ed && ed.turbo){ delete ed.tecnica; delete ed.tecnicaObs; delete ed.turbo; }
+  });
+}
+
+function gymReordenarEx(de, para){
+  const u = getU(); if(!u) return;
+  const P = getGP(u);
+  const w = curGymWeek, d = curGymDay;
+  const lista = P?.[w]?.days?.[d];
+  if(!lista || de===para) return;
+  if(de<0||de>=lista.length||para<0||para>=lista.length) return;
+
+  // 1) move na semana atual
+  const [item] = lista.splice(de,1);
+  lista.splice(para,0,item);
+
+  // 2) marcações de série acompanham o exercício
+  const novaPosDe = {};
+  lista.forEach((_,novaPos)=>{
+    let posAntiga;
+    if(novaPos===para) posAntiga = de;
+    else if(de<para && novaPos>=de && novaPos<para) posAntiga = novaPos+1;
+    else if(de>para && novaPos>para && novaPos<=de) posAntiga = novaPos-1;
+    else posAntiga = novaPos;
+    novaPosDe[posAntiga] = novaPos;
+  });
+  fqRemapearDone(u, w, d, novaPosDe);
+
+  // 3) propaga a ordem para as semanas SEGUINTES (mesmo nome de dia)
+  const numAtual = parseInt(String(w).replace(/\D/g,''),10) || 0;
+  const refIds = lista.map(e=>e.id);
+  Object.keys(P).forEach(w2=>{
+    const num2 = parseInt(String(w2).replace(/\D/g,''),10) || 0;
+    if(num2 <= numAtual) return;              // não mexe em semanas já passadas
+    const arr = P[w2]?.days?.[d];
+    if(!Array.isArray(arr) || arr.length<2) return;
+
+    const usados = new Set();
+    const ordenado = [];
+    const mapaPos = {};
+    // primeiro os que existem na ordem de referência
+    refIds.forEach(id=>{
+      const k = arr.findIndex((e,i)=>e.id===id && !usados.has(i));
+      if(k>=0){ usados.add(k); mapaPos[k]=ordenado.length; ordenado.push(arr[k]); }
+    });
+    // exercícios que só existem nessa semana (progressão trocou algo) vão pro fim,
+    // mantendo a ordem relativa original
+    arr.forEach((e,i)=>{ if(!usados.has(i)){ mapaPos[i]=ordenado.length; ordenado.push(e); } });
+
+    P[w2].days[d] = ordenado;
+    fqRemapearDone(u, w2, d, mapaPos);
+    fqLimparTurbo(ordenado);
+  });
+
+  // 4) tira as técnicas do Turbo antes de gravar
+  fqLimparTurbo(lista);
+
+  saveU(u);
+  renderGymDay(w, d, u);
+  if(navigator.vibrate){ try{ navigator.vibrate(12); }catch(_){} }
+  fqToast('Ordem atualizada — vale também para as próximas semanas.','ok',3500);
+}
+
+function togEp(i){ if(fqAcabouDeArrastar()) return; document.getElementById(`ep-${i}`).classList.toggle('open'); }
 function saveCarga(lk,ei,si){const email=DB.get('fq_cur');const users=DB.get('fq_users')||{};const u=users[email];if(!u)return;const v=document.getElementById(`ci-${ei}-${si}`)?.value||'';if(!u.loadHistory)u.loadHistory={};u.loadHistory[lk]=v;DB.set('fq_users',users);}
 function chkSet(w,d,ei,si,total,rest,lk){
   const email=DB.get('fq_cur');const users=DB.get('fq_users')||{};const u=users[email];if(!u)return;
