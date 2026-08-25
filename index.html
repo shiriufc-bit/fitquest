@@ -1620,6 +1620,7 @@ textarea.fi{resize:vertical;min-height:80px;}
         </div>
         <div id="run-unlock-info"></div>
         <div style="padding:0 20px 14px" id="run-teste-wrap"></div>
+        <div style="padding:0 20px 14px" id="run-strength-wrap"></div>
         <div id="run-sessions"></div>
         <div style="padding:8px 20px 20px" id="run-troca-wrap"></div>
       </div>
@@ -3704,6 +3705,572 @@ function closeModal(id){
 }
 function getExById(id){return EXERCISE_BANK.find(e=>e.id===id)||null;}
 
+// ══════════════════════════════════════════════════════════════════════
+// ══ FORÇA PRA CORRIDA — biblioteca de pacotes (somente admin) ══
+// Programas de musculação voltados ao corredor: prevenção, correção de
+// deficiências e desempenho. Nada aparece pro aluno automaticamente —
+// o Rennan escolhe e libera pacote a pacote.
+// A triagem sugere; quem decide é sempre o profissional.
+// ══════════════════════════════════════════════════════════════════════
+const RUN_PACKS=[
+{
+  id:'base-iniciante',
+  nome:'Base do Corredor — Iniciante',
+  foco:'Tolerância de carga e controle básico',
+  nivel:'Iniciante', local:'Casa ou academia', semanas:4, freq:'2x por semana',
+  resumo:'Primeiro contato com força pra quem começou a correr agora. Constrói base de glúteo, panturrilha e core antes de subir volume de corrida.',
+  alerta:'Fazer em dia de corrida leve ou em dia sem corrida. Nunca antes de treino intervalado.',
+  dias:{
+    'Treino A':[
+      {id:'e364',sets:3,reps:'12',load:'Peso do corpo',rest:45,obs:'Suba empurrando pelo calcanhar, aperte o glúteo 1s no topo.'},
+      {id:'e343',sets:3,reps:'15 cada lado',load:'Peso do corpo',rest:40,obs:'Movimento pequeno e controlado. O quadril não roda pra trás.'},
+      {id:'e037',sets:3,reps:'10 cada perna',load:'Peso do corpo',rest:60,obs:'Desça devagar — 3s pra descer. É aí que o joelho aprende a frear.'},
+      {id:'e090',sets:3,reps:'12 cada pé',load:'Peso do corpo',rest:45,obs:'Amplitude total: desce até esticar bem e sobe até o topo.'},
+      {id:'e029',sets:3,reps:'30s',load:'Isometria',rest:40,obs:'Costela pra baixo, glúteo apertado. Sem deixar a lombar afundar.'},
+      {id:'e136',sets:3,reps:'8 cada lado',load:'Peso do corpo',rest:40,obs:'Estenda braço e perna opostos sem deixar o quadril girar.'}
+    ],
+    'Treino B':[
+      {id:'e295',sets:3,reps:'15',load:'Peso do corpo',rest:60,obs:'Desça até onde controlar sem a lombar arredondar.'},
+      {id:'e127',sets:3,reps:'10 cada perna',load:'Peso do corpo',rest:60,obs:'Passo pra trás protege mais o joelho que o afundo pra frente.'},
+      {id:'e130',sets:3,reps:'10 cada lado',load:'Peso do corpo',rest:45,obs:'Quadril nivelado — não deixe o lado solto cair.'},
+      {id:'e039',sets:3,reps:'25s cada lado',load:'Isometria',rest:40,obs:'Corpo em linha reta, quadril alto.'},
+      {id:'e163',sets:2,reps:'15',load:'Mini band leve',rest:30,obs:'Ativação — deve queimar na lateral do quadril.'},
+      {id:'e160',sets:2,reps:'40s cada',load:'Alongamento',rest:20,obs:'Uma versão com joelho esticado e outra com joelho dobrado.'}
+    ]
+  }
+},
+{
+  id:'forca-intermediario',
+  nome:'Força do Corredor — Intermediário',
+  foco:'Economia de corrida e força máxima',
+  nivel:'Intermediário', local:'Academia', semanas:6, freq:'2x por semana',
+  resumo:'Cargas mais altas com poucas repetições. É o protocolo que mais melhora economia de corrida sem gerar hipertrofia relevante.',
+  alerta:'Manter 24h de intervalo entre este treino e sessões de qualidade na corrida.',
+  dias:{
+    'Treino A':[
+      {id:'e019',sets:4,reps:'5',load:'Pesado (~80% 1RM)',rest:180,obs:'Força, não fadiga. Termine a série sentindo que faria mais 2.'},
+      {id:'e021',sets:3,reps:'8',load:'Moderada-alta',rest:120,obs:'Quadril pra trás, coluna neutra. Sente o posterior alongar.'},
+      {id:'e027',sets:3,reps:'10',load:'Moderada-alta',rest:90,obs:'Pausa de 1s no topo com o glúteo travado.'},
+      {id:'e090',sets:4,reps:'12 cada pé',load:'Halter na mão',rest:60,obs:'A panturrilha do corredor precisa de volume. Não pule.'},
+      {id:'e134',sets:3,reps:'10 cada lado',load:'Leve-moderada',rest:45,obs:'O tronco não pode girar. É anti-rotação, não rotação.'},
+      {id:'e164',sets:2,reps:'15 cada lado',load:'Mini band',rest:30,obs:'Finalização de glúteo médio.'}
+    ],
+    'Treino B':[
+      {id:'e079',sets:3,reps:'8 cada perna',load:'Moderada-alta',rest:120,obs:'A perna de trás só equilibra. O trabalho é da da frente.'},
+      {id:'e100',sets:4,reps:'5',load:'Pesado',rest:180,obs:'Técnica acima da carga. Barra colada na canela.'},
+      {id:'e037',sets:3,reps:'10 cada perna',load:'Halteres',rest:75,obs:'Caixa na altura do joelho. Sem impulso da perna de baixo.'},
+      {id:'e206',sets:3,reps:'15',load:'Moderada',rest:60,obs:'Joelho dobrado ativa o sóleo — o músculo mais exigido na corrida.'},
+      {id:'e039',sets:3,reps:'35s cada lado',load:'Isometria',rest:40,obs:'Estabilidade lateral do quadril.'},
+      {id:'e088',sets:3,reps:'12 cada lado',load:'Leve-moderada',rest:45,obs:'Sem inclinar o tronco pro lado oposto.'}
+    ]
+  }
+},
+{
+  id:'potencia-avancado',
+  nome:'Potência e Economia — Avançado',
+  foco:'Rigidez elástica, potência e velocidade',
+  nivel:'Avançado', local:'Academia', semanas:6, freq:'2x por semana',
+  resumo:'Combina força máxima com pliometria. Melhora o aproveitamento elástico do tendão — corredor gasta menos energia no mesmo ritmo.',
+  alerta:'Só pra quem já tem 3+ meses de força consistente e está sem dor. Pliometria sempre no início, com o músculo descansado.',
+  dias:{
+    'Treino A':[
+      {id:'e117',sets:4,reps:'5',load:'Peso do corpo',rest:120,obs:'Explosão máxima, contato curto com o chão. Qualidade > quantidade.'},
+      {id:'e019',sets:4,reps:'4',load:'Pesado (~85% 1RM)',rest:180,obs:'Subida rápida e intencional.'},
+      {id:'e131',sets:3,reps:'6',load:'Peso do corpo',rest:120,obs:'Excêntrico lento. Melhor exercício preventivo pra posterior de coxa.'},
+      {id:'e090',sets:4,reps:'10 cada pé',load:'Carga externa',rest:60,obs:'Pausa de 2s embaixo pra recrutar tendão.'},
+      {id:'e134',sets:3,reps:'10 cada lado',load:'Moderada',rest:45,obs:'Anti-rotação sob fadiga.'}
+    ],
+    'Treino B':[
+      {id:'e119',sets:4,reps:'6 cada lado',load:'Peso do corpo',rest:90,obs:'Salto lateral — trabalha o plano que a corrida ignora.'},
+      {id:'e100',sets:4,reps:'4',load:'Pesado',rest:180,obs:'Força máxima do posterior.'},
+      {id:'e116',sets:3,reps:'5',load:'Caixa moderada',rest:120,obs:'Suba saltando, desça andando. Poupa a articulação.'},
+      {id:'e079',sets:3,reps:'8 cada perna',load:'Moderada-alta',rest:90,obs:'Unilateral é o que mais transfere pra corrida.'},
+      {id:'e132',sets:3,reps:'20s cada lado',load:'Isometria',rest:45,obs:'Adutor forte previne lesão de virilha e pubalgia.'}
+    ]
+  }
+},
+{
+  id:'joelho',
+  nome:'Joelho Blindado — Dor Patelofemoral',
+  foco:'Dor na frente do joelho (joelho de corredor)',
+  nivel:'Todos', local:'Casa ou academia', semanas:6, freq:'2 a 3x por semana',
+  resumo:'A dor na frente do joelho quase sempre vem de glúteo médio fraco e quadríceps sem controle excêntrico. Este pacote ataca os dois.',
+  alerta:'⚠️ Dor acima de 3/10 durante ou depois do exercício pede reavaliação. Se houver inchaço, travamento ou estalo com dor, encaminhar pro ortopedista antes de progredir.',
+  dias:{
+    'Treino A':[
+      {id:'e036',sets:3,reps:'30s',load:'Isometria',rest:60,obs:'Isometria reduz dor. Ângulo confortável, sem passar de 90°.'},
+      {id:'e033',sets:3,reps:'12',load:'Peso do corpo',rest:45,obs:'Aperte o quadríceps 3s no topo.'},
+      {id:'e164',sets:3,reps:'15 cada lado',load:'Mini band',rest:40,obs:'Glúteo médio é a raiz do problema na maioria dos casos.'},
+      {id:'e130',sets:3,reps:'10 cada lado',load:'Peso do corpo',rest:45,obs:'Quadril sempre nivelado.'},
+      {id:'e039',sets:3,reps:'25s cada lado',load:'Isometria',rest:40,obs:'Controle lateral do quadril.'}
+    ],
+    'Treino B':[
+      {id:'e037',sets:3,reps:'8 cada perna',load:'Peso do corpo',rest:60,obs:'DESÇA em 4 segundos. O controle excêntrico é o remédio aqui.'},
+      {id:'e360',sets:3,reps:'8 cada perna',load:'Peso do corpo',rest:60,obs:'Amplitude curta se doer. Progrida só sem dor.'},
+      {id:'e088',sets:3,reps:'12 cada lado',load:'Leve',rest:45,obs:'Sem compensar com o tronco.'},
+      {id:'e343',sets:3,reps:'15 cada lado',load:'Peso do corpo',rest:40,obs:'Movimento pequeno, glúteo queimando.'},
+      {id:'e136',sets:3,reps:'8 cada lado',load:'Peso do corpo',rest:40,obs:'Estabilidade de tronco pra corrida.'}
+    ]
+  }
+},
+{
+  id:'canela',
+  nome:'Canela e Panturrilha — Canelite',
+  foco:'Dor na canela (síndrome do estresse tibial)',
+  nivel:'Todos', local:'Casa ou academia', semanas:6, freq:'3x por semana',
+  resumo:'Canelite é quase sempre volume de corrida crescendo mais rápido que a capacidade da panturrilha. O trabalho é construir essa capacidade.',
+  alerta:'⚠️ Dor pontual e localizada num ponto do osso, que piora à noite ou ao toque, pode ser fratura por estresse — encaminhar pra imagem antes de continuar correndo.',
+  dias:{
+    'Treino A':[
+      {id:'e090',sets:4,reps:'15 cada pé',load:'Peso do corpo',rest:60,obs:'Base do tratamento. Amplitude completa, subida em 2s e descida em 3s.'},
+      {id:'e206',sets:3,reps:'20',load:'Moderada',rest:60,obs:'Joelho dobrado isola o sóleo, o mais sobrecarregado na corrida.'},
+      {id:'e345',sets:3,reps:'12 cada lado',load:'Mobilidade',rest:30,obs:'Tornozelo travado força a canela a absorver impacto.'},
+      {id:'e160',sets:2,reps:'40s cada',load:'Alongamento',rest:20,obs:'Faça as duas versões: joelho reto e joelho dobrado.'},
+      {id:'e029',sets:3,reps:'30s',load:'Isometria',rest:40,obs:'Core estável reduz sobrecarga na perna.'}
+    ],
+    'Treino B':[
+      {id:'e025',sets:4,reps:'15',load:'Progredir carga',rest:60,obs:'Suba a carga semana a semana — é o que gera adaptação óssea.'},
+      {id:'e090',sets:3,reps:'12 cada pé',load:'Halter',rest:60,obs:'Unilateral revela e corrige assimetrias.'},
+      {id:'e364',sets:3,reps:'15',load:'Peso do corpo',rest:45,obs:'Glúteo forte tira carga da perna de baixo.'},
+      {id:'e163',sets:3,reps:'15',load:'Mini band',rest:30,obs:'Ativação de quadril.'},
+      {id:'e136',sets:3,reps:'8 cada lado',load:'Peso do corpo',rest:40,obs:'Controle de tronco.'}
+    ]
+  }
+},
+{
+  id:'aquiles',
+  nome:'Tendão de Aquiles — Progressão',
+  foco:'Dor ou histórico no tendão de Aquiles',
+  nivel:'Todos', local:'Casa ou academia', semanas:8, freq:'Diário no início, depois 3x',
+  resumo:'Tendão responde a carga progressiva, não a repouso. Começa com isometria pra tirar dor, evolui pra excêntrico e depois carga pesada.',
+  alerta:'⚠️ Dor até 4/10 durante o exercício é aceitável em tendinopatia, desde que normalize em 24h. Dor que piora no dia seguinte = reduzir carga. Dor súbita com estalo exige avaliação imediata.',
+  dias:{
+    'Treino A':[
+      {id:'e090',sets:5,reps:'30s isometria cada pé',load:'Peso do corpo',rest:60,obs:'FASE 1 — segure na ponta do pé. Isometria analgésica, faça diariamente.'},
+      {id:'e206',sets:3,reps:'15',load:'Leve-moderada',rest:60,obs:'Sóleo é o mais afetado na porção baixa do tendão.'},
+      {id:'e345',sets:3,reps:'12 cada lado',load:'Mobilidade',rest:30,obs:'Ganho de dorsiflexão sem forçar o tendão.'},
+      {id:'e160',sets:2,reps:'40s cada',load:'Alongamento suave',rest:20,obs:'Sem dor. Alongamento agressivo irrita tendinopatia.'}
+    ],
+    'Treino B':[
+      {id:'e090',sets:3,reps:'12 cada pé (3s descida)',load:'Progredir carga',rest:90,obs:'FASE 2 — excêntrico: sobe com os dois pés, desce só com o afetado em 3s.'},
+      {id:'e025',sets:3,reps:'12',load:'Progredir carga',rest:75,obs:'FASE 3 — carga pesada quando a dor estiver controlada.'},
+      {id:'e364',sets:3,reps:'15',load:'Peso do corpo',rest:45,obs:'Cadeia posterior completa.'},
+      {id:'e039',sets:3,reps:'25s cada lado',load:'Isometria',rest:40,obs:'Estabilidade de quadril.'}
+    ]
+  }
+},
+{
+  id:'pe-plantar',
+  nome:'Pé e Fascite Plantar',
+  foco:'Dor na sola do pé, principalmente no primeiro passo do dia',
+  nivel:'Todos', local:'Casa', semanas:8, freq:'3 a 4x por semana',
+  resumo:'Fáscia plantar e panturrilha são um sistema só. Fortalecer a panturrilha com carga alta é hoje o tratamento com melhor evidência.',
+  alerta:'⚠️ Se a dor for em queimação, formigamento ou irradiar pro calcanhar, pode ser origem nervosa — avaliar antes de progredir.',
+  dias:{
+    'Treino A':[
+      {id:'e090',sets:4,reps:'12 cada pé',load:'Com toalha sob os dedos',rest:60,obs:'Toalha enrolada sob os dedos aumenta a tensão na fáscia — é o detalhe que faz funcionar.'},
+      {id:'e345',sets:3,reps:'12 cada lado',load:'Mobilidade',rest:30,obs:'Dorsiflexão livre tira carga da fáscia.'},
+      {id:'e160',sets:3,reps:'40s cada',load:'Alongamento',rest:25,obs:'Panturrilha curta puxa a fáscia o dia inteiro.'},
+      {id:'e029',sets:3,reps:'30s',load:'Isometria',rest:40,obs:'Base de core.'}
+    ],
+    'Treino B':[
+      {id:'e206',sets:4,reps:'15',load:'Moderada',rest:60,obs:'Sóleo — trabalha a porção que mais influencia o calcanhar.'},
+      {id:'e025',sets:3,reps:'15',load:'Progredir',rest:60,obs:'Carga progressiva na panturrilha.'},
+      {id:'e364',sets:3,reps:'15',load:'Peso do corpo',rest:45,obs:'Glúteo distribui melhor a carga na pisada.'},
+      {id:'e343',sets:3,reps:'15 cada lado',load:'Peso do corpo',rest:40,obs:'Controle de quadril reduz colapso do pé.'}
+    ]
+  }
+},
+{
+  id:'itb-quadril',
+  nome:'Banda Iliotibial e Quadril',
+  foco:'Dor na lateral do joelho ou quadril instável',
+  nivel:'Todos', local:'Casa ou academia', semanas:6, freq:'3x por semana',
+  resumo:'Dor na lateral do joelho raramente é problema da banda em si — é o quadril que não sustenta. O foco é glúteo médio e controle no plano frontal.',
+  alerta:'⚠️ Evitar alongamento agressivo e liberação intensa direto no ponto de dor na fase aguda. Priorizar fortalecimento.',
+  dias:{
+    'Treino A':[
+      {id:'e164',sets:3,reps:'15 cada lado',load:'Mini band',rest:40,obs:'Sem rodar o quadril pra trás — o movimento é só do fêmur.'},
+      {id:'e165',sets:3,reps:'12 passos cada lado',load:'Mini band',rest:45,obs:'Joelhos afastados o tempo todo, passos curtos.'},
+      {id:'e130',sets:3,reps:'10 cada lado',load:'Peso do corpo',rest:45,obs:'Quadril nivelado é o objetivo.'},
+      {id:'e039',sets:3,reps:'30s cada lado',load:'Isometria',rest:40,obs:'Isometria lateral é o exercício-chave deste pacote.'},
+      {id:'e343',sets:3,reps:'15 cada lado',load:'Peso do corpo',rest:35,obs:'Finalização de glúteo médio.'}
+    ],
+    'Treino B':[
+      {id:'e315',sets:3,reps:'10 cada lado',load:'Peso do corpo ou halter',rest:60,obs:'Controle de rotação — não deixe o joelho cair pra dentro.'},
+      {id:'e128',sets:3,reps:'10 cada lado',load:'Peso do corpo',rest:60,obs:'Plano frontal, o que a corrida nunca treina.'},
+      {id:'e088',sets:3,reps:'12 cada lado',load:'Leve-moderada',rest:45,obs:'Abdução com carga.'},
+      {id:'e226',sets:3,reps:'10 cada lado',load:'Peso do corpo',rest:45,obs:'Prancha lateral dinâmica.'},
+      {id:'e119',sets:3,reps:'8 cada lado',load:'Peso do corpo',rest:60,obs:'Só quando estiver sem dor — aterrissagem controlada.'}
+    ]
+  }
+},
+{
+  id:'core-lombar',
+  nome:'Core e Lombar do Corredor',
+  foco:'Dor lombar ou perda de postura no fim da corrida',
+  nivel:'Todos', local:'Casa ou academia', semanas:6, freq:'2 a 3x por semana',
+  resumo:'Core do corredor não é abdominal — é resistir à rotação e à extensão por 40 minutos seguidos. O treino é isométrico e anti-movimento.',
+  alerta:'⚠️ Dor lombar que irradia pra perna, com formigamento ou perda de força, precisa de avaliação antes de qualquer programa.',
+  dias:{
+    'Treino A':[
+      {id:'e134',sets:3,reps:'12 cada lado',load:'Leve-moderada',rest:45,obs:'Resistir à rotação é exatamente o que o tronco faz correndo.'},
+      {id:'e040',sets:3,reps:'10 cada lado',load:'Peso do corpo',rest:40,obs:'Lombar colada no chão o tempo todo.'},
+      {id:'e136',sets:3,reps:'10 cada lado',load:'Peso do corpo',rest:40,obs:'Anti-rotação em quatro apoios.'},
+      {id:'e039',sets:3,reps:'35s cada lado',load:'Isometria',rest:40,obs:'Resistência lateral.'},
+      {id:'e041',sets:3,reps:'12',load:'Peso do corpo',rest:40,obs:'Extensores da lombar com controle.'}
+    ],
+    'Treino B':[
+      {id:'e133',sets:3,reps:'10 cada lado',load:'Peso do corpo',rest:45,obs:'Quadril imóvel — se balançar, abra mais os pés.'},
+      {id:'e171',sets:3,reps:'25m cada lado',load:'Halter pesado',rest:60,obs:'Carga de um lado só. O tronco luta pra não inclinar.'},
+      {id:'e029',sets:3,reps:'45s',load:'Isometria',rest:45,obs:'Resistência, não força máxima.'},
+      {id:'e240',sets:3,reps:'12',load:'Peso do corpo',rest:45,obs:'Amplitude controlada, sem hiperextender.'},
+      {id:'e364',sets:3,reps:'15',load:'Peso do corpo',rest:40,obs:'Glúteo tira carga da lombar.'}
+    ]
+  }
+},
+{
+  id:'mobilidade',
+  nome:'Mobilidade e Encurtamentos',
+  foco:'Rigidez de posterior, panturrilha, flexores de quadril ou tornozelo',
+  nivel:'Todos', local:'Casa', semanas:4, freq:'4 a 5x por semana',
+  resumo:'Complementar, não substitui força. Indicado quando a triagem aponta restrição de amplitude limitando a passada.',
+  alerta:'Fazer depois da corrida ou em dia separado. Alongamento estático longo antes de correr reduz desempenho.',
+  dias:{
+    'Treino A':[
+      {id:'e154',sets:2,reps:'45s cada lado',load:'Mobilidade',rest:20,obs:'Rotação de quadril — a mais esquecida pelo corredor.'},
+      {id:'e155',sets:3,reps:'40s cada lado',load:'Mobilidade',rest:20,obs:'Quem senta muito tem esse encurtamento. Aperte o glúteo do lado alongado.'},
+      {id:'e160',sets:3,reps:'40s cada',load:'Mobilidade',rest:20,obs:'Joelho reto e joelho dobrado — são dois músculos diferentes.'},
+      {id:'e162',sets:2,reps:'45s',load:'Mobilidade',rest:20,obs:'Cadeia posterior inteira.'},
+      {id:'e347',sets:2,reps:'45s cada lado',load:'Mobilidade',rest:20,obs:'Sem forçar o joelho. Ajuste o ângulo pelo conforto.'}
+    ],
+    'Treino B':[
+      {id:'e345',sets:3,reps:'12 cada lado',load:'Mobilidade',rest:25,obs:'Dorsiflexão: joelho passa da ponta do pé sem tirar o calcanhar.'},
+      {id:'e346',sets:2,reps:'40s cada lado',load:'Mobilidade',rest:20,obs:'Posterior de coxa com quadril estável.'},
+      {id:'e350',sets:2,reps:'45s cada lado',load:'Mobilidade',rest:20,obs:'Glúteo profundo e rotadores.'},
+      {id:'e152',sets:2,reps:'10 ciclos',load:'Mobilidade',rest:20,obs:'Mobilidade de coluna, respirando junto com o movimento.'},
+      {id:'e159',sets:2,reps:'45s cada lado',load:'Liberação',rest:20,obs:'Pressão moderada. Se doer muito, reduza o peso apoiado.'}
+    ]
+  }
+}
+];
+
+function runPackById(id){ return RUN_PACKS.find(p=>p.id===id)||null; }
+
+// ══ TRIAGEM — sugere pacotes a partir das respostas do aluno ══
+const RUN_TRIAGEM_PERGUNTAS=[
+  {k:'experiencia', q:'Há quanto tempo você corre?', ops:['Ainda não corro','Menos de 6 meses','De 6 meses a 2 anos','Mais de 2 anos']},
+  {k:'volume', q:'Quantos km você corre por semana hoje?', ops:['Menos de 10','10 a 25','25 a 45','Mais de 45']},
+  {k:'dores', q:'Sentiu alguma dessas dores nos últimos 6 meses?', multi:true, ops:['Frente do joelho','Lateral do joelho','Canela','Tendão de Aquiles','Sola do pé','Lombar','Quadril','Nenhuma']},
+  {k:'quandoDoi', q:'Quando a dor costuma aparecer?', ops:['Não tenho dor','No começo e melhora','Durante a corrida','Depois, ou no dia seguinte']},
+  {k:'forcaHoje', q:'Você faz musculação hoje?', ops:['Não faço','1x por semana','2x por semana','3x ou mais']},
+  {k:'equilibrio', q:'Consegue ficar 30 segundos em um pé só sem desequilibrar?', ops:['Sim, tranquilo','Com dificuldade','Não consigo']},
+  {k:'agacho', q:'Consegue agachar fundo com os calcanhares no chão?', ops:['Sim','Não, o calcanhar sobe','Não sei dizer']},
+  {k:'rigidez', q:'Sente rigidez ou encurtamento em algum destes?', multi:true, ops:['Posterior de coxa','Panturrilha','Flexores do quadril','Nenhum']},
+  {k:'objetivo', q:'Qual seu objetivo com a musculação?', ops:['Prevenir lesão','Melhorar desempenho','Voltar de uma lesão','Começar do zero com segurança']},
+  {k:'local', q:'Onde você vai treinar?', ops:['Academia','Casa com elásticos e halteres','Casa sem equipamento']}
+];
+
+// Sugestão automática — é ponto de partida pro Rennan, nunca decisão final
+function runSugerirPacks(tri){
+  if(!tri) return [];
+  const sug=[], add=(id,motivo,peso)=>{
+    const j=sug.find(x=>x.id===id);
+    if(j){ j.motivos.push(motivo); j.peso+=peso; }
+    else sug.push({id,motivos:[motivo],peso});
+  };
+  const dores=tri.dores||[], rig=tri.rigidez||[];
+
+  if(dores.includes('Frente do joelho')) add('joelho','dor na frente do joelho relatada',10);
+  if(dores.includes('Lateral do joelho')||dores.includes('Quadril')) add('itb-quadril','dor lateral do joelho ou quadril',10);
+  if(dores.includes('Canela')) add('canela','canelite relatada',10);
+  if(dores.includes('Tendão de Aquiles')) add('aquiles','dor no tendão de Aquiles',10);
+  if(dores.includes('Sola do pé')) add('pe-plantar','dor na sola do pé',10);
+  if(dores.includes('Lombar')) add('core-lombar','dor lombar relatada',10);
+
+  if(tri.equilibrio==='Não consigo'||tri.equilibrio==='Com dificuldade')
+    add('itb-quadril','dificuldade no apoio unipodal (controle de quadril)',5);
+  if(tri.agacho==='Não, o calcanhar sobe') add('mobilidade','restrição de dorsiflexão de tornozelo',5);
+  if(rig.length&&!rig.includes('Nenhum')) add('mobilidade','encurtamento relatado: '+rig.join(', '),4);
+
+  if(tri.objetivo==='Começar do zero com segurança'||tri.forcaHoje==='Não faço'||tri.experiencia==='Ainda não corro'||tri.experiencia==='Menos de 6 meses')
+    add('base-iniciante','pouca ou nenhuma base de força',7);
+  if(tri.objetivo==='Melhorar desempenho'&&(tri.forcaHoje==='2x por semana'||tri.forcaHoje==='3x ou mais'))
+    add('forca-intermediario','já treina força e busca desempenho',7);
+  if(tri.objetivo==='Melhorar desempenho'&&tri.experiencia==='Mais de 2 anos'&&tri.volume==='Mais de 45'&&!dores.filter(d=>d!=='Nenhuma').length)
+    add('potencia-avancado','corredor experiente, alto volume e sem dor',6);
+  if(tri.objetivo==='Prevenir lesão'&&!sug.length) add('base-iniciante','prevenção sem queixa específica',5);
+
+  // Filtra por equipamento disponível
+  const semAcademia = tri.local && tri.local.indexOf('Casa')===0;
+  return sug.sort((a,b)=>b.peso-a.peso)
+            .filter(x=>{ const p=runPackById(x.id); return p && (!semAcademia || p.local!=='Academia'); });
+}
+
+
+// ══ ADMIN: biblioteca, triagem e liberação dos pacotes ══
+let packAdminEmail=null;
+
+function openRunPacks(email){
+  const users=DB.get('fq_users')||{}; const u=users[email];
+  if(!u){ fqToast('Aluno não encontrado.','warn'); return; }
+  packAdminEmail=email;
+  document.getElementById('runed-title').textContent='🦵 Força pra corrida — '+u.name;
+
+  const tri=u.runTriagem||null;
+  const sug=runSugerirPacks(tri);
+  const liberados=u.runStrength||[];
+
+  let h='';
+
+  // Triagem
+  if(tri){
+    h+=`<div style="padding:11px 13px;background:rgba(52,152,219,.07);border:1px solid rgba(52,152,219,.25);border-radius:9px;margin-bottom:12px">
+      <div style="font-size:11px;font-weight:800;color:#3498db;margin-bottom:5px">📋 Triagem respondida em ${new Date(tri.data).toLocaleDateString('pt-BR')}</div>
+      ${RUN_TRIAGEM_PERGUNTAS.map(p=>{
+        const v=tri[p.k]; const txt=Array.isArray(v)?v.join(', '):(v||'—');
+        return `<div style="font-size:10.5px;color:var(--t2);line-height:1.55">• ${escHtml(p.q)} <strong style="color:#fff">${escHtml(txt)}</strong></div>`;
+      }).join('')}
+    </div>`;
+  }else{
+    h+=`<div style="padding:11px 13px;background:rgba(243,156,18,.07);border:1px solid rgba(243,156,18,.25);border-radius:9px;margin-bottom:12px;font-size:11px;color:#f39c12;line-height:1.55">
+      O aluno ainda não respondeu a triagem de corrida. Você pode liberar um pacote manualmente mesmo assim.</div>`;
+  }
+
+  // Sugestões
+  if(sug.length){
+    h+=`<div style="font-size:11px;font-weight:800;color:#2ecc71;margin:14px 0 7px">✅ Sugestões pela triagem <span style="color:var(--mu);font-weight:500">— confira antes de liberar</span></div>`;
+    h+=sug.slice(0,3).map(sx=>{
+      const p=runPackById(sx.id);
+      return `<div style="padding:10px 12px;background:rgba(46,204,113,.06);border:1px solid rgba(46,204,113,.22);border-radius:9px;margin-bottom:7px">
+        <div style="font-size:11.5px;font-weight:800">${escHtml(p.nome)}</div>
+        <div style="font-size:10px;color:var(--mu);line-height:1.5;margin-top:3px">Por quê: ${escHtml(sx.motivos.join(' · '))}</div>
+      </div>`;
+    }).join('');
+  }
+
+  // Liberados
+  if(liberados.length){
+    h+=`<div style="font-size:11px;font-weight:800;color:var(--t2);margin:16px 0 7px">Liberados pra este aluno</div>`;
+    h+=liberados.map(l=>`<div style="display:flex;justify-content:space-between;align-items:center;gap:8px;padding:10px 12px;background:var(--s);border:1px solid var(--b);border-radius:9px;margin-bottom:6px">
+      <div><div style="font-size:11.5px;font-weight:700">${escHtml(l.nome)}</div><div style="font-size:9.5px;color:var(--mu)">desde ${new Date(l.liberadoEm).toLocaleDateString('pt-BR')}</div></div>
+      <button onclick="runPackRemover('${l.packId}')" style="background:rgba(229,9,20,.08);border:1px solid rgba(229,9,20,.2);color:var(--r);border-radius:6px;padding:5px 9px;font-size:10px;font-weight:700;cursor:pointer">Remover</button>
+    </div>`).join('');
+  }
+
+  // Biblioteca
+  h+=`<div style="font-size:11px;font-weight:800;color:var(--t2);margin:18px 0 7px">Biblioteca de pacotes</div>`;
+  h+=RUN_PACKS.map(p=>{
+    const jaTem=liberados.some(l=>l.packId===p.id);
+    return `<div style="padding:12px 13px;background:var(--s);border:1px solid var(--b);border-radius:10px;margin-bottom:8px">
+      <div style="font-size:12px;font-weight:800;margin-bottom:3px">${escHtml(p.nome)}</div>
+      <div style="font-size:10px;color:var(--mu);margin-bottom:6px">${escHtml(p.nivel)} · ${escHtml(p.local)} · ${p.semanas} semanas · ${escHtml(p.freq)}</div>
+      <div style="font-size:10.5px;color:var(--t2);line-height:1.55;margin-bottom:8px">${escHtml(p.resumo)}</div>
+      <div style="display:flex;gap:7px">
+        <button onclick="runPackPreview('${p.id}')" style="flex:1;background:transparent;border:1px solid var(--b);color:var(--t2);border-radius:8px;padding:9px;font-size:10.5px;font-weight:700;cursor:pointer">👁 Ver treinos</button>
+        <button onclick="runPackLiberar('${p.id}')" ${jaTem?'disabled':''} style="flex:1;background:${jaTem?'rgba(255,255,255,.04)':'rgba(46,204,113,.14)'};border:1px solid ${jaTem?'var(--b)':'rgba(46,204,113,.35)'};color:${jaTem?'var(--mu)':'#2ecc71'};border-radius:8px;padding:9px;font-size:10.5px;font-weight:800;cursor:${jaTem?'default':'pointer'}">${jaTem?'✓ Liberado':'+ Liberar'}</button>
+      </div>
+    </div>`;
+  }).join('');
+
+  document.getElementById('runed-body').innerHTML=h;
+  abrirModal('modal-run-edit');
+}
+
+function runPackPreview(id){
+  const p=runPackById(id); if(!p) return;
+  document.getElementById('runed-title').textContent=p.nome;
+  let h=`<div style="font-size:10.5px;color:var(--mu);margin-bottom:8px">${escHtml(p.nivel)} · ${escHtml(p.local)} · ${p.semanas} semanas · ${escHtml(p.freq)}</div>
+    <div style="font-size:11.5px;color:var(--t2);line-height:1.6;margin-bottom:10px">${escHtml(p.resumo)}</div>
+    <div style="padding:10px 12px;background:rgba(243,156,18,.07);border:1px solid rgba(243,156,18,.25);border-radius:9px;font-size:10.5px;color:#f39c12;line-height:1.55;margin-bottom:14px">${escHtml(p.alerta)}</div>`;
+  Object.keys(p.dias).forEach(d=>{
+    h+=`<div style="font-size:11.5px;font-weight:800;color:var(--r);margin:12px 0 6px">${escHtml(d)}</div>`;
+    h+=p.dias[d].map(ed=>{
+      const ex=getExById(ed.id);
+      return `<div style="padding:9px 11px;background:var(--s);border:1px solid var(--b);border-radius:8px;margin-bottom:5px">
+        <div style="font-size:11.5px;font-weight:700">${ex?escHtml(ex.emoji+' '+ex.name):escHtml(ed.id)}</div>
+        <div style="font-size:10px;color:var(--mu);font-family:monospace;margin-top:2px">${ed.sets} x ${escHtml(ed.reps)} · ${escHtml(ed.load)} · ${ed.rest}s</div>
+        ${ed.obs?`<div style="font-size:10px;color:var(--t2);line-height:1.5;margin-top:4px">${escHtml(ed.obs)}</div>`:''}
+      </div>`;
+    }).join('');
+  });
+  h+=`<button onclick="runPackLiberar('${p.id}')" class="btn-savewk" style="margin-top:14px">+ Liberar pra este aluno</button>
+      <button onclick="openRunPacks('${packAdminEmail}')" style="width:100%;margin-top:8px;background:transparent;border:1px solid var(--b);color:var(--mu);border-radius:8px;padding:10px;font-size:11px;font-weight:600;cursor:pointer">← Voltar</button>`;
+  document.getElementById('runed-body').innerHTML=h;
+}
+
+async function runPackLiberar(id){
+  const p=runPackById(id); if(!p||!packAdminEmail) return;
+  const users=DB.get('fq_users')||{}; const u=users[packAdminEmail]; if(!u) return;
+  u.runStrength=u.runStrength||[];
+  if(u.runStrength.some(l=>l.packId===id)){ fqToast('Esse pacote já está liberado.','info'); return; }
+  u.runStrength.push({
+    packId:p.id, nome:p.nome, foco:p.foco, alerta:p.alerta,
+    freq:p.freq, semanas:p.semanas, dias:JSON.parse(JSON.stringify(p.dias)),
+    liberadoEm:new Date().toISOString()
+  });
+  DB.set('fq_users',users);
+  try{ await syncU(u); }
+  catch(e){ console.error(e); fqToast('⚠️ Salvo aqui, mas não sincronizou. Verifique a conexão.','warn',7000); return; }
+  fqToast('✅ '+p.nome+' liberado pro aluno.','ok',5000);
+  openRunPacks(packAdminEmail);
+}
+
+async function runPackRemover(id){
+  if(!packAdminEmail) return;
+  const ok=await fqConfirm('Remover este pacote?','O aluno perde o acesso a esses treinos. O histórico de execução é mantido.','Remover','🗑️');
+  if(!ok) return;
+  const users=DB.get('fq_users')||{}; const u=users[packAdminEmail]; if(!u) return;
+  u.runStrength=(u.runStrength||[]).filter(l=>l.packId!==id);
+  DB.set('fq_users',users);
+  try{ await syncU(u); }catch(e){ console.error(e); }
+  openRunPacks(packAdminEmail);
+}
+
+// ══ ALUNO: triagem + treinos liberados na aba de corrida ══
+let triRespostas={};
+
+function abrirRunTriagem(){
+  const u=getU(); if(!u) return;
+  triRespostas=Object.assign({},u.runTriagem||{});
+  document.getElementById('runfb-title').textContent='📋 Triagem de corrida';
+  document.getElementById('runfb-body').innerHTML=
+    `<div style="font-size:11.5px;color:var(--t2);line-height:1.6;margin-bottom:16px">Dez perguntas rápidas sobre corrida. O Rennan usa as respostas pra montar seu treino de força.</div>`
+    + RUN_TRIAGEM_PERGUNTAS.map(p=>`
+      <div style="margin-bottom:16px">
+        <div class="ml2" style="margin-bottom:7px">${escHtml(p.q)}${p.multi?' <span style="color:var(--mu);font-weight:400">(pode marcar mais de uma)</span>':''}</div>
+        <div style="display:flex;flex-wrap:wrap;gap:6px" data-tri="${p.k}">
+          ${p.ops.map(o=>`<button type="button" onclick="triSel('${p.k}',this,${p.multi?'true':'false'})" data-val="${escHtml(o)}" style="padding:9px 12px;border-radius:8px;border:1.5px solid var(--b);background:var(--s);color:var(--t2);font-size:11px;font-weight:600;cursor:pointer">${escHtml(o)}</button>`).join('')}
+        </div>
+      </div>`).join('')
+    + `<button class="btn-savewk" onclick="salvarRunTriagem()">Enviar triagem</button>
+       <button onclick="closeModal('modal-run-fb')" style="width:100%;margin-top:8px;background:transparent;border:1px solid var(--b);color:var(--mu);border-radius:8px;padding:10px;font-size:11.5px;font-weight:600;cursor:pointer">Agora não</button>`;
+  abrirModal('modal-run-fb');
+
+  // Repõe as respostas anteriores, se já respondeu antes
+  RUN_TRIAGEM_PERGUNTAS.forEach(p=>{
+    const v=triRespostas[p.k]; if(!v) return;
+    document.querySelectorAll(`[data-tri="${p.k}"] [data-val]`).forEach(b=>{
+      const marcado=Array.isArray(v)?v.includes(b.dataset.val):v===b.dataset.val;
+      if(marcado) triPintar(b,true);
+    });
+  });
+}
+
+function triPintar(btn,on){
+  btn.style.borderColor = on ? 'var(--r)' : 'var(--b)';
+  btn.style.background  = on ? 'rgba(229,9,20,.12)' : 'var(--s)';
+  btn.style.color       = on ? '#fff' : 'var(--t2)';
+}
+
+function triSel(k,btn,multi){
+  const val=btn.dataset.val;
+  if(multi){
+    const atual=Array.isArray(triRespostas[k])?triRespostas[k]:[];
+    if(atual.includes(val)){ triRespostas[k]=atual.filter(x=>x!==val); triPintar(btn,false); }
+    else{
+      // "Nenhuma/Nenhum" é exclusivo — marcar limpa o resto
+      if(val.indexOf('Nenhum')===0){
+        triRespostas[k]=[val];
+        document.querySelectorAll(`[data-tri="${k}"] [data-val]`).forEach(b=>triPintar(b,b===btn));
+        return;
+      }
+      triRespostas[k]=atual.filter(x=>x.indexOf('Nenhum')!==0).concat([val]);
+      document.querySelectorAll(`[data-tri="${k}"] [data-val]`).forEach(b=>{
+        if(b.dataset.val.indexOf('Nenhum')===0) triPintar(b,false);
+      });
+      triPintar(btn,true);
+    }
+  }else{
+    triRespostas[k]=val;
+    document.querySelectorAll(`[data-tri="${k}"] [data-val]`).forEach(b=>triPintar(b,b===btn));
+  }
+}
+
+async function salvarRunTriagem(){
+  const faltando=RUN_TRIAGEM_PERGUNTAS.filter(p=>{
+    const v=triRespostas[p.k];
+    return !v || (Array.isArray(v)&&!v.length);
+  });
+  if(faltando.length){ fqToast('Faltou responder: '+faltando[0].q,'warn',6000); return; }
+  const email=DB.get('fq_cur'); const users=DB.get('fq_users')||{}; const u=users[email]; if(!u) return;
+  u.runTriagem=Object.assign({},triRespostas,{data:new Date().toISOString()});
+  DB.set('fq_users',users);
+  try{ await syncU(u); }catch(e){ console.error(e); }
+  closeModal('modal-run-fb');
+  fqToast('✅ Triagem enviada! O Rennan vai avaliar e liberar seu treino de força.','ok',6000);
+  loadApp(email);
+}
+
+// Seção na aba de corrida: triagem pendente + pacotes liberados
+function renderRunStrength(u){
+  const el=document.getElementById('run-strength-wrap'); if(!el) return;
+  const packs=u.runStrength||[];
+  let h='';
+
+  if(!u.runTriagem && u.anamneseCorridaDone){
+    h+=`<div style="padding:13px 15px;background:rgba(52,152,219,.07);border:1px solid rgba(52,152,219,.25);border-radius:11px;margin-bottom:12px">
+      <div style="font-size:12px;font-weight:800;color:#3498db;margin-bottom:4px">🦵 Quer treino de força pra corrida?</div>
+      <div style="font-size:11px;color:var(--t2);line-height:1.55;margin-bottom:10px">Responda 10 perguntas rápidas. O Rennan avalia e libera o programa certo pro seu caso.</div>
+      <button onclick="abrirRunTriagem()" style="width:100%;background:rgba(52,152,219,.14);border:1px solid rgba(52,152,219,.35);color:#3498db;border-radius:9px;padding:11px;font-size:12px;font-weight:800;cursor:pointer">Fazer triagem</button>
+    </div>`;
+  }
+
+  if(packs.length){
+    h+=`<div style="font-size:13px;font-weight:800;margin:4px 0 8px">🦵 Sua força pra corrida</div>`;
+    h+=packs.map(p=>{
+      const dias=Object.keys(p.dias||{});
+      return `<div style="background:var(--s);border:1px solid var(--b);border-radius:11px;padding:14px;margin-bottom:10px">
+        <div style="font-size:12.5px;font-weight:800;margin-bottom:2px">${escHtml(p.nome)}</div>
+        <div style="font-size:10px;color:var(--mu);margin-bottom:8px">${escHtml(p.foco)} · ${escHtml(p.freq||'')}</div>
+        ${p.alerta?`<div style="padding:9px 11px;background:rgba(243,156,18,.07);border:1px solid rgba(243,156,18,.22);border-radius:8px;font-size:10px;color:#f39c12;line-height:1.5;margin-bottom:9px">${escHtml(p.alerta)}</div>`:''}
+        <div style="display:flex;gap:7px">
+          ${dias.map(d=>`<button onclick="abrirRunPackDia('${p.packId}','${escHtml(d)}')" style="flex:1;background:rgba(229,9,20,.08);border:1px solid rgba(229,9,20,.2);color:var(--r);border-radius:8px;padding:10px;font-size:11.5px;font-weight:800;cursor:pointer">${escHtml(d)}</button>`).join('')}
+        </div>
+      </div>`;
+    }).join('');
+  }
+  el.innerHTML=h;
+}
+
+function abrirRunPackDia(packId,dia){
+  const u=getU(); if(!u) return;
+  const p=(u.runStrength||[]).find(x=>x.packId===packId); if(!p) return;
+  const lista=p.dias[dia]||[];
+  const feitoKey=`rs_${packId}_${dia}_${new Date().toISOString().slice(0,10)}`;
+  const feito=(u.runStrengthDone||{})[feitoKey];
+
+  document.getElementById('runfb-title').textContent=p.nome+' — '+dia;
+  document.getElementById('runfb-body').innerHTML=
+    (p.alerta?`<div style="padding:10px 12px;background:rgba(243,156,18,.07);border:1px solid rgba(243,156,18,.25);border-radius:9px;font-size:10.5px;color:#f39c12;line-height:1.55;margin-bottom:12px">${escHtml(p.alerta)}</div>`:'')
+    + lista.map(ed=>{
+      const ex=getExById(ed.id);
+      return `<div style="padding:11px 13px;background:var(--s);border:1px solid var(--b);border-radius:9px;margin-bottom:7px">
+        <div style="font-size:12px;font-weight:700;margin-bottom:3px">${ex?escHtml(ex.emoji+' '+ex.name):escHtml(ed.id)}</div>
+        <div style="font-size:10.5px;color:var(--r);font-family:monospace;font-weight:700;margin-bottom:4px">${ed.sets} x ${escHtml(ed.reps)} · ${escHtml(ed.load)} · descanso ${ed.rest}s</div>
+        ${ed.obs?`<div style="font-size:10.5px;color:var(--t2);line-height:1.55">💡 ${escHtml(ed.obs)}</div>`:''}
+        ${ex&&ex.obs?`<div style="font-size:10px;color:var(--mu);line-height:1.5;margin-top:3px">${escHtml(ex.obs)}</div>`:''}
+      </div>`;
+    }).join('')
+    + `<button class="btn-savewk" onclick="marcarRunPackFeito('${packId}','${escHtml(dia)}')" ${feito?'disabled':''} style="${feito?'opacity:.5':''}">${feito?'✅ Feito hoje':'✅ Marcar como feito'}</button>
+       <button onclick="closeModal('modal-run-fb')" style="width:100%;margin-top:8px;background:transparent;border:1px solid var(--b);color:var(--mu);border-radius:8px;padding:10px;font-size:11.5px;font-weight:600;cursor:pointer">Fechar</button>`;
+  abrirModal('modal-run-fb');
+}
+
+function marcarRunPackFeito(packId,dia){
+  const email=DB.get('fq_cur'); const users=DB.get('fq_users')||{}; const u=users[email]; if(!u) return;
+  if(!u.runStrengthDone) u.runStrengthDone={};
+  u.runStrengthDone[`rs_${packId}_${dia}_${new Date().toISOString().slice(0,10)}`]=new Date().toISOString();
+  u.xp=(u.xp||0)+40; u.coins=(u.coins||0)+8;
+  DB.set('fq_users',users);
+  syncU(u).catch(()=>{});
+  closeModal('modal-run-fb');
+  fqToast('✅ Treino de força registrado! +40 XP','ok',4000);
+  loadApp(email);
+}
+
+
+
 // ══ ALONGAMENTO & MOBILIDADE — rotinas prontas por objetivo ══
 // Diferente de Musculação/Corrida, aqui não tem anamnese nem plano gerado por IA:
 // são rotinas curadas, a pessoa escolhe pelo objetivo e segue direto.
@@ -4357,10 +4924,10 @@ function renovarMissoesSemanais(u){
   return true;
 }
 function rowToUser(data){
-  return{id:data.id,name:data.nome,email:data.email,plano:data.plano,trialInicio:data.trial_inicio,runInicio:data.run_inicio,runAjusteLesao:!!data.run_ajuste_lesao,assinaturaStatus:data.assinatura_status||'trial',assinaturaAte:data.assinatura_ate,diaConversao:data.dia_conversao,dataConversao:data.data_conversao,planoConversao:data.plano_conversao,precoTravado:data.preco_travado,promoFundador:!!data.promo_fundador,pixFundador:!!data.pix_fundador,promoVaga:data.promo_vaga,solicitouTrocaTreino:!!data.solicitou_troca,solicitouTrocaData:data.solicitou_troca_data,solicitouTrocaTipo:data.solicitou_troca_tipo,trainApproved:data.treino_liberado,isAdmin:!!data.is_admin,aiPlan:data.ai_plan,anamnese:data.anamnese,anamneseDone:!!data.anamnese_geral,anamneseGeral:data.anamnese_geral||null,anamneseMusculacao:data.anamnese_musculacao||null,anamneseCorrida:data.anamnese_corrida||null,anamneseMuscDone:!!data.anamnese_musculacao,anamneseCorridaDone:!!data.anamnese_corrida,gymWeek:data.gym_week||1,runWeek:data.run_week||1,gymDone:data.gym_done||{},runDone:data.run_done||{},runFeedback:data.run_feedback||{},runAtividades:data.run_atividades||[],runTestes:data.run_testes||[],runTestPace:data.run_test_pace||null,loadHistory:data.load_history||{},workoutHistory:data.workout_history||[],xp:data.xp||0,kidsXp:data.kids_xp||0,level:data.level||1,streak:data.streak||1,coins:data.coins||0,badges:data.badges||[],prs:data.prs||[],stats:data.stats||{treinos:0,distancia:0,semanas:0},purchases:data.purchases||[],pacoteEbooks:!!data.pacote_ebooks,programIntakes:data.program_intakes||{},avatar:data.avatar||null,avaliacoes:data.evals||[],missions:MISSOES_PADRAO.map(m=>({...m})),createdAt:data.criado_em,lastLogin:data.ultimo_acesso};
+  return{id:data.id,name:data.nome,email:data.email,plano:data.plano,trialInicio:data.trial_inicio,runInicio:data.run_inicio,runAjusteLesao:!!data.run_ajuste_lesao,assinaturaStatus:data.assinatura_status||'trial',assinaturaAte:data.assinatura_ate,diaConversao:data.dia_conversao,dataConversao:data.data_conversao,planoConversao:data.plano_conversao,precoTravado:data.preco_travado,promoFundador:!!data.promo_fundador,pixFundador:!!data.pix_fundador,promoVaga:data.promo_vaga,solicitouTrocaTreino:!!data.solicitou_troca,solicitouTrocaData:data.solicitou_troca_data,solicitouTrocaTipo:data.solicitou_troca_tipo,trainApproved:data.treino_liberado,isAdmin:!!data.is_admin,aiPlan:data.ai_plan,anamnese:data.anamnese,anamneseDone:!!data.anamnese_geral,anamneseGeral:data.anamnese_geral||null,anamneseMusculacao:data.anamnese_musculacao||null,anamneseCorrida:data.anamnese_corrida||null,anamneseMuscDone:!!data.anamnese_musculacao,anamneseCorridaDone:!!data.anamnese_corrida,gymWeek:data.gym_week||1,runWeek:data.run_week||1,gymDone:data.gym_done||{},runDone:data.run_done||{},runFeedback:data.run_feedback||{},runAtividades:data.run_atividades||[],runTriagem:data.run_triagem||null,runStrength:data.run_strength||[],runStrengthDone:data.run_strength_done||{},runTestes:data.run_testes||[],runTestPace:data.run_test_pace||null,loadHistory:data.load_history||{},workoutHistory:data.workout_history||[],xp:data.xp||0,kidsXp:data.kids_xp||0,level:data.level||1,streak:data.streak||1,coins:data.coins||0,badges:data.badges||[],prs:data.prs||[],stats:data.stats||{treinos:0,distancia:0,semanas:0},purchases:data.purchases||[],pacoteEbooks:!!data.pacote_ebooks,programIntakes:data.program_intakes||{},avatar:data.avatar||null,avaliacoes:data.evals||[],missions:MISSOES_PADRAO.map(m=>({...m})),createdAt:data.criado_em,lastLogin:data.ultimo_acesso};
 }
 function userToRow(u){
-  return{id:u.id,nome:u.name,email:u.email,plano:u.plano||'free',trial_inicio:u.trialInicio||undefined,run_inicio:u.runInicio||null,run_ajuste_lesao:u.runAjusteLesao||false,treino_liberado:u.trainApproved||false,ai_plan:u.aiPlan||null,anamnese:u.anamnese||null,anamnese_geral:u.anamneseGeral||null,anamnese_musculacao:u.anamneseMusculacao||null,anamnese_corrida:u.anamneseCorrida||null,gym_week:u.gymWeek||1,run_week:u.runWeek||1,gym_done:u.gymDone||{},run_done:u.runDone||{},run_feedback:u.runFeedback||{},run_atividades:u.runAtividades||[],run_testes:u.runTestes||[],run_test_pace:u.runTestPace||null,load_history:u.loadHistory||{},workout_history:u.workoutHistory||[],xp:u.xp||0,kids_xp:u.kidsXp||0,level:u.level||1,streak:u.streak||1,coins:u.coins||0,badges:u.badges||[],prs:u.prs||[],stats:u.stats||{treinos:0,distancia:0,semanas:0},avatar:u.avatar||null,evals:u.avaliacoes||[],program_intakes:u.programIntakes||{},ultimo_acesso:new Date().toISOString(),updated_at:new Date().toISOString()};
+  return{id:u.id,nome:u.name,email:u.email,plano:u.plano||'free',trial_inicio:u.trialInicio||undefined,run_inicio:u.runInicio||null,run_ajuste_lesao:u.runAjusteLesao||false,treino_liberado:u.trainApproved||false,ai_plan:u.aiPlan||null,anamnese:u.anamnese||null,anamnese_geral:u.anamneseGeral||null,anamnese_musculacao:u.anamneseMusculacao||null,anamnese_corrida:u.anamneseCorrida||null,gym_week:u.gymWeek||1,run_week:u.runWeek||1,gym_done:u.gymDone||{},run_done:u.runDone||{},run_feedback:u.runFeedback||{},run_atividades:u.runAtividades||[],run_triagem:u.runTriagem||null,run_strength:u.runStrength||[],run_strength_done:u.runStrengthDone||{},run_testes:u.runTestes||[],run_test_pace:u.runTestPace||null,load_history:u.loadHistory||{},workout_history:u.workoutHistory||[],xp:u.xp||0,kids_xp:u.kidsXp||0,level:u.level||1,streak:u.streak||1,coins:u.coins||0,badges:u.badges||[],prs:u.prs||[],stats:u.stats||{treinos:0,distancia:0,semanas:0},avatar:u.avatar||null,evals:u.avaliacoes||[],program_intakes:u.programIntakes||{},ultimo_acesso:new Date().toISOString(),updated_at:new Date().toISOString()};
   // Obs.: purchases/pacote_ebooks/is_admin/plano NÃO são enviados pelo aluno — são protegidos no banco e só mudam via webhook de pagamento ou admin.
 }
 async function syncU(u){
@@ -10072,6 +10639,7 @@ async function solicitarTrocaTreino(tipo){
 function selRW(w){const u=getU();if(!u)return;document.querySelectorAll('#run-wtabs .wk-week-btn').forEach(t=>t.classList.toggle('active',t.textContent.includes(w.replace('Semana ',''))));renderRunWeek(w,u);}
 function renderRunWeek(w,u){
   renderRunTesteCard(u);
+  renderRunStrength(u);
   const R=getRP(u);const prog=R[w];
   document.getElementById('run-sessions').innerHTML=prog.sessions.map((s,i)=>{
     const dk=`run_${w}_${i}`;const dn=u.runDone&&u.runDone[dk];
@@ -11189,6 +11757,7 @@ function admStudentCard(u, compact=false){
       <button class="st-btn edit" onclick="openEditSt('${u.email}')">✏️ Editar</button>
       <button class="st-btn" onclick="openEditRun('${u.email}')" style="background:rgba(46,204,113,.12);color:#2ecc71;border:1px solid rgba(46,204,113,.3)">🏃 Editar corrida</button>
       <button class="st-btn" onclick="openRunFeedback('${u.email}')" style="background:rgba(155,89,182,.12);color:#9b59b6;border:1px solid rgba(155,89,182,.3)">💬 Feedback corrida</button>
+      <button class="st-btn" onclick="openRunPacks('${u.email}')" style="background:rgba(52,152,219,.12);color:#3498db;border:1px solid rgba(52,152,219,.3)">🦵 Força pra corrida</button>
       <button class="st-btn" onclick="admResetSenha('${u.email}')" style="background:rgba(52,152,219,.12);color:#3498db;border:1px solid rgba(52,152,219,.3)">🔑 Redefinir senha</button>
       <button class="st-btn anam" onclick="openAnam('${u.email}')">📋 Anamnese</button>
       <button class="st-btn ebook" onclick="openEbooksAdmin('${u.email}')">📚 E-Books</button>
