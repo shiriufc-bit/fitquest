@@ -2234,6 +2234,7 @@ textarea.fi{resize:vertical;min-height:80px;}
 
 <!-- MODALS -->
 <div class="modal-ov" id="modal-student"><div class="modal-bx"><div class="modal-t"><span id="modal-st-name">Aluno</span><button class="modal-cl" onclick="closeModal('modal-student')">✕</button></div><div id="modal-st-content"></div></div></div>
+<div class="modal-ov" id="modal-run-edit" style="align-items:flex-start"><div class="modal-bx"><div class="modal-t"><span id="runed-title">🏃 Editar corrida</span><button class="modal-cl" onclick="closeModal('modal-run-edit')">✕</button></div><div id="runed-body"></div></div></div>
 <div class="modal-ov" id="modal-anam"><div class="modal-bx"><div class="modal-t"><span>📋 Anamnese</span><button class="modal-cl" onclick="closeModal('modal-anam')">✕</button></div><div id="modal-anam-content"></div></div></div>
 <div class="modal-ov" id="modal-ficha-ex" style="align-items:flex-start">
   <div class="modal-bx" style="max-width:480px;width:100%;max-height:92vh;overflow-y:auto;padding:0;border-radius:16px 16px 0 0;margin-top:auto">
@@ -4791,7 +4792,20 @@ function anamPrev(tipo){
   tipo=tipo||'geral';
   if(anamStepState[tipo]>1){ anamStepState[tipo]--; updAnam(tipo); window.scrollTo(0,0); }
   else if(tipo==='geral'){ show('sc-auth'); } // anamnese geral é a primeira coisa após o cadastro — "Voltar" leva pro login
-  else{ show('sc-app'); } // anamnese de musc/corrida é iniciada de DENTRO do app — "Voltar" deve levar pra tela inicial logada, não pro login
+  else{
+    // Se estiver no meio de uma troca de objetivo, sair aqui DEVOLVE a troca —
+    // ninguém perde uma das 3 (ou da única) por ter desistido no caminho.
+    if(window.FQ_REFAZENDO){
+      fqConfirm('Cancelar a troca?','Você ainda não respondeu a nova anamnese. Se sair agora, sua troca <strong>não será usada</strong> e seu treino atual continua exatamente como está.','Sair sem trocar','↩️').then(async ok=>{
+        if(!ok) return;
+        await cancelarTrocaPendente();
+        fqToast('Troca cancelada — nada foi alterado no seu treino.','info',5000);
+        goToApp();
+      });
+      return;
+    }
+    show('sc-app');
+  } // anamnese de musc/corrida é iniciada de DENTRO do app — "Voltar" deve levar pra tela inicial logada, não pro login
 }
 // ── ANAMNESE GERAL — obrigatória logo após cadastro, vai direto pra Home (sem gerar plano) ──
 async function submitAnamGeral(){
@@ -4843,6 +4857,8 @@ async function submitAnamMusc(){
   };
   users[email].anamneseMusculacao=especifica;
   users[email].anamneseMuscDone=true;
+  // Troca de objetivo: zera o ciclo de musculação antes de montar o novo plano
+  if(window.FQ_REFAZENDO==='gym') resetarProgresso(users[email],'gym');
   const anCompleta=mesclarAnamnese(users[email],especifica);
   users[email].anamnese=anCompleta; // usado por PDF, painel admin, Turbo e regeração de plano
   DB.set('fq_users',users);
@@ -4893,6 +4909,8 @@ async function submitAnamCorrida(){
   }
   users[email].anamneseCorrida=especifica;
   users[email].anamneseCorridaDone=true;
+  // Troca de objetivo: zera o ciclo de corrida antes de montar o novo plano
+  if(window.FQ_REFAZENDO==='run') resetarProgresso(users[email],'run');
   const anCompleta=mesclarAnamnese(users[email],especifica);
   users[email].anamnese=anCompleta; // usado por PDF, painel admin, Turbo e regeração de plano
   DB.set('fq_users',users);
@@ -4923,9 +4941,14 @@ function gerarTreinoAgoraNaTela(tipo){
   if(!u)return;
   const an=u.anamnese||{};
   fqToast(tipo==='gym' ? '🤖 Montando seu treino...' : '🤖 Montando seu plano...','info',4000);
-  setTimeout(()=>{
+  setTimeout(async ()=>{
     try{ gerarTreinoFallback(email,an,tipo); }
-    catch(e){ console.error('Erro ao gerar treino:',e); fqToast(t('msg.929abf4871'),'warn'); return; }
+    catch(e){
+      console.error('Erro ao gerar treino:',e);
+      if(window.FQ_REFAZENDO===tipo){ await cancelarTrocaPendente(); fqToast('⚠️ Não deu pra gerar o treino agora. Sua troca NÃO foi usada — tenta de novo.','warn',7000); return; }
+      fqToast(t('msg.929abf4871'),'warn'); return;
+    }
+    if(window.FQ_REFAZENDO===tipo){ await concluirTrocaPendente(tipo); fqToast('✅ Objetivo atualizado! Seu novo plano está pronto.','ok',5000); }
     const uAtualizado=(DB.get('fq_users')||{})[email];
     if(tipo==='gym' && typeof renderGym==='function') renderGym(uAtualizado);
     if(tipo==='run' && typeof renderRun==='function') renderRun(uAtualizado);
@@ -4942,9 +4965,13 @@ function gerarTreinoAgora(tipo){
   if(sub) sub.textContent = tipo==='gym' ? 'Analisando sua anamnese e montando seu treino...' : 'Analisando sua anamnese e montando seu plano de corrida...';
   // Pequeno atraso só pra o texto "montando..." aparecer de fato na tela
   // antes do processamento síncrono do motor (senão passa despercebido).
-  setTimeout(()=>{
+  setTimeout(async ()=>{
     try{ gerarTreinoFallback(email,an,tipo); }
-    catch(e){ console.error('Erro ao gerar treino:',e); }
+    catch(e){
+      console.error('Erro ao gerar treino:',e);
+      if(window.FQ_REFAZENDO===tipo){ await cancelarTrocaPendente(); fqToast('⚠️ Não deu pra gerar o treino agora. Sua troca NÃO foi usada — tenta de novo.','warn',7000); }
+    }
+    if(window.FQ_REFAZENDO===tipo){ await concluirTrocaPendente(tipo); fqToast('✅ Objetivo atualizado! Seu novo plano está pronto.','ok',5000); }
     goToApp();
     if(typeof switchTab==='function'){
       const idx = tipo==='gym' ? 1 : 1;
@@ -9512,6 +9539,7 @@ function renderGym(u){
     document.getElementById('gym-complete-btn').innerHTML='';
     return;
   }
+  const _twGym=document.getElementById('gym-troca-wrap'); if(_twGym)_twGym.innerHTML='';
   const P=getGP(u);const wks=Object.keys(P);curGymWeek=`Semana ${u.gymWeek||1}`;const prog=P[curGymWeek]||P[wks[0]]||{fase:'',days:{}};if(!P[curGymWeek]&&wks[0])curGymWeek=wks[0];
   if(!u.trainApproved){
     document.getElementById('gym-hero-tag').textContent='EM BREVE';
@@ -9531,6 +9559,7 @@ function renderGym(u){
   // Week tabs
   document.getElementById('gym-wtabs').innerHTML=wks.map(w=>{const wn=parseInt(w.split(' ')[1]);const lk=wn>(u.gymWeek||1);const dn=wn<(u.gymWeek||1);return `<div class="wk-week-btn ${w===curGymWeek?'active':''}" onclick="${lk?'':'selGW(\''+w+'\')' }" style="${lk?'opacity:.3;cursor:not-allowed':''}">${dn?'✅ ':lk?'🔒 ':''}${w}</div>`;}).join('');
   renderGymWeek(curGymWeek,u);
+  renderBotaoTrocaTreino(u,'gym');
 }
 function selGW(w){const u=getU();if(!u)return;curGymWeek=w;document.querySelectorAll('#gym-wtabs .wk-week-btn').forEach(t=>t.classList.toggle('active',t.textContent.includes(w.replace('Semana ',''))));renderGymWeek(w,u);}
 function renderGymWeek(w,u){
@@ -9872,13 +9901,152 @@ function renderRun(u){
   renderRunWeek(cw,u);
   renderBotaoTrocaTreino(u,'run');
 }
+
+// ══════════════════════════════════════════════════════════════════════
+// ══ REFAZER OBJETIVO — o aluno troca o próprio treino, com limite ══
+// Musculação: 3 trocas por ciclo de plano. Corrida: 1 troca por ciclo.
+// Contadores independentes. Zeram sozinhos quando o plano é renovado.
+// Esgotado o limite, cai no fluxo manual (falar com o Rennan).
+// ══════════════════════════════════════════════════════════════════════
+const TROCA_LIMITES = { gym: 3, run: 1 };
+const TROCA_ROTULO  = { gym: 'musculação', run: 'corrida' };
+
+// Identidade do ciclo de plano vigente. Quando o aluno renova/assina, esse id
+// muda e os contadores zeram automaticamente — sem intervenção manual.
+function cicloAtualId(u){
+  return [u.plano||'free', u.assinaturaAte||u.dataConversao||u.trialInicio||'inicial'].join('|');
+}
+function garantirTrocasDoCiclo(u){
+  const ciclo = cicloAtualId(u);
+  if(!u.trocas || u.trocas.cicloId !== ciclo){
+    u.trocas = { cicloId: ciclo, gym: 0, run: 0 };
+    return true;
+  }
+  if(typeof u.trocas.gym!=='number') u.trocas.gym=0;
+  if(typeof u.trocas.run!=='number') u.trocas.run=0;
+  return false;
+}
+function trocasRestantes(u,tipo){
+  garantirTrocasDoCiclo(u);
+  return Math.max(0, TROCA_LIMITES[tipo] - (u.trocas[tipo]||0));
+}
+function semanaAtualDe(u,tipo){ return (tipo==='gym' ? u.gymWeek : u.runWeek) || 1; }
+function objetivoAtualDe(u,tipo){
+  return tipo==='gym' ? ((u.anamneseMusculacao&&u.anamneseMusculacao.obj)||[]).join(', ')
+                      : ((u.anamneseCorrida&&u.anamneseCorrida.mc)||[]).join(', ');
+}
+async function persistirTrocas(u){
+  const users=DB.get('fq_users')||{}; users[u.email]=u; DB.set('fq_users',users);
+  if(typeof sb!=='undefined'&&sb&&typeof syncU==='function'){
+    try{ await syncU(u); }catch(e){ console.error('Erro ao sincronizar trocas:',e); }
+  }
+}
+function resetarProgresso(u,tipo){
+  if(tipo==='gym'){ u.gymWeek=1; u.gymDone={}; if(u.aiPlan) u.aiPlan.gym=null; }
+  else{ u.runWeek=1; u.runDone={}; u.runInicio=null; if(u.aiPlan) u.aiPlan.run=null; }
+}
+
+// ── Passo 1: aluno toca em "Mudar meu objetivo" ──
+async function refazerObjetivo(tipo){
+  const email=DB.get('fq_cur'); const users=DB.get('fq_users')||{}; const u=users[email];
+  if(!u) return;
+  if(garantirTrocasDoCiclo(u)) DB.set('fq_users',users);
+
+  const restantes = trocasRestantes(u,tipo);
+  if(restantes<=0){ return solicitarTrocaTreino(tipo); }
+
+  const rotulo=TROCA_ROTULO[tipo], limite=TROCA_LIMITES[tipo];
+  const semana=semanaAtualDe(u,tipo), usadaAgora=(u.trocas[tipo]||0)+1;
+
+  let msg = 'Você está na <strong>semana '+semana+'</strong> do seu programa de '+rotulo+'. '
+          + 'Mudar o objetivo agora <strong>reinicia seu ciclo</strong> — o progresso desta fase é perdido.<br><br>'
+          + 'Esta é a troca <strong>'+usadaAgora+' de '+limite+'</strong> do seu plano.';
+  if(restantes===1){
+    msg += '<br><br>⚠️ <strong>É a sua última troca de '+rotulo+'.</strong> Depois dela, novas mudanças precisam ser combinadas diretamente com o Rennan.';
+  }
+  const ok = await fqConfirm('Mudar objetivo de '+rotulo, msg, 'Continuar', '🔄');
+  if(!ok) return;
+
+  // Conta na confirmação, mas fica PENDENTE: se o aluno desistir no meio da
+  // anamnese ou a geração falhar, a troca é devolvida (não queima à toa).
+  u.trocas[tipo]=(u.trocas[tipo]||0)+1;
+  u.historicoTrocas=u.historicoTrocas||[];
+  u.historicoTrocas.push({
+    id:Date.now().toString(36), tipo, status:'pendente',
+    data:new Date().toISOString(), cicloId:u.trocas.cicloId,
+    semanaAnterior:semana, objetivoAnterior:objetivoAtualDe(u,tipo), objetivoNovo:null
+  });
+  window.FQ_REFAZENDO=tipo;
+  await persistirTrocas(u);
+
+  if(tipo==='gym'){ initAnam('musc'); show('sc-anam-musc'); }
+  else{ initAnam('corrida'); show('sc-anam-corrida'); }
+  window.scrollTo(0,0);
+  fqToast('Responda de novo o que mudou no seu objetivo 👇','info',5000);
+}
+
+// ── Devolve a troca (aluno desistiu ou a geração falhou) ──
+async function cancelarTrocaPendente(){
+  const tipo=window.FQ_REFAZENDO; window.FQ_REFAZENDO=null;
+  if(!tipo) return;
+  const email=DB.get('fq_cur'); const users=DB.get('fq_users')||{}; const u=users[email];
+  if(!u||!u.trocas) return;
+  u.trocas[tipo]=Math.max(0,(u.trocas[tipo]||1)-1);
+  u.historicoTrocas=(u.historicoTrocas||[]).filter(h=>h.status!=='pendente');
+  await persistirTrocas(u);
+}
+
+// ── Fecha a troca com sucesso, já com o treino novo gerado ──
+async function concluirTrocaPendente(tipo){
+  window.FQ_REFAZENDO=null;
+  const email=DB.get('fq_cur'); const users=DB.get('fq_users')||{}; const u=users[email];
+  if(!u) return;
+  const pend=(u.historicoTrocas||[]).find(h=>h.status==='pendente'&&h.tipo===tipo);
+  if(pend){
+    pend.status='concluida';
+    pend.objetivoNovo=objetivoAtualDe(u,tipo);
+    pend.concluidaEm=new Date().toISOString();
+  }
+  await persistirTrocas(u);
+}
+
+// ══ Histórico de trocas de objetivo — visível pro admin no card do aluno ══
+function admHistoricoTrocas(u){
+  const hist=(u.historicoTrocas||[]).filter(h=>h.status==='concluida');
+  const tr=u.trocas||{gym:0,run:0};
+  const usouAlgo=(tr.gym||0)+(tr.run||0)>0;
+  if(!usouAlgo && !hist.length) return '';
+  const linhas=hist.slice(-4).reverse().map(h=>{
+    const d=new Date(h.data).toLocaleDateString('pt-BR');
+    const rot=h.tipo==='run'?'corrida':'musculação';
+    const de=h.objetivoAnterior||'—', pra=h.objetivoNovo||'—';
+    return `<div style="font-size:10px;color:var(--t2);line-height:1.5;margin-top:4px">• ${d} · <strong style="color:#fff">${rot}</strong> · semana ${h.semanaAnterior||1}<br><span style="color:var(--mu)">${de} → ${pra}</span></div>`;
+  }).join('');
+  return `<div style="margin:0 14px 10px;padding:10px 12px;background:rgba(155,89,182,.08);border:1px solid rgba(155,89,182,.28);border-radius:8px">
+    <div style="font-size:10.5px;color:#9b59b6;font-weight:800">🔄 Trocas de objetivo · musculação ${tr.gym||0}/3 · corrida ${tr.run||0}/1</div>
+    ${linhas}
+  </div>`;
+}
 function renderBotaoTrocaTreino(u,tipo){
   const el=document.getElementById(tipo+'-troca-wrap');
   if(!el)return;
   if(u.solicitouTrocaTreino){
     el.innerHTML=`<div style="text-align:center;padding:12px;background:rgba(243,156,18,.08);border:1px solid rgba(243,156,18,.25);border-radius:10px;font-size:11.5px;color:#f39c12;line-height:1.5">⏳ Pedido enviado — o Rennan vai revisar e ajustar seu treino em breve.</div>`;
+    return;
+  }
+  garantirTrocasDoCiclo(u);
+  const restantes=trocasRestantes(u,tipo);
+  const limite=TROCA_LIMITES[tipo];
+  const rotulo=TROCA_ROTULO[tipo];
+
+  if(restantes>0){
+    const avisoUltima = restantes===1
+      ? `<div style="margin-bottom:8px;padding:9px 11px;background:rgba(243,156,18,.08);border:1px solid rgba(243,156,18,.25);border-radius:9px;font-size:11px;color:#f39c12;line-height:1.5">⚠️ Última troca de ${rotulo} disponível neste plano.</div>`
+      : '';
+    el.innerHTML = avisoUltima + `<button onclick="refazerObjetivo('${tipo}')" style="width:100%;background:var(--s);border:1px solid var(--b);color:var(--t2);border-radius:10px;padding:12px;font-size:12.5px;font-weight:700;cursor:pointer">🔄 Mudar meu objetivo <span style="opacity:.55;font-weight:600">· ${restantes} de ${limite} ${limite===1?'disponível':'restantes'}</span></button>`;
   }else{
-    el.innerHTML=`<button onclick="solicitarTrocaTreino('${tipo}')" style="width:100%;background:var(--s);border:1px solid var(--b);color:var(--t2);border-radius:10px;padding:12px;font-size:12.5px;font-weight:700;cursor:pointer">🔄 Quero trocar meu treino</button>`;
+    el.innerHTML = `<div style="padding:11px 13px;background:rgba(255,255,255,.03);border:1px solid var(--b);border-radius:10px;font-size:11.5px;color:var(--t2);line-height:1.55;margin-bottom:8px">Você já usou ${limite===1?'sua troca':'suas '+limite+' trocas'} de ${rotulo} neste plano. Pra mudar de novo, é só combinar direto com o Rennan.</div>
+      <button onclick="solicitarTrocaTreino('${tipo}')" style="width:100%;background:rgba(229,9,20,.1);border:1px solid rgba(229,9,20,.3);color:var(--r);border-radius:10px;padding:12px;font-size:12.5px;font-weight:800;cursor:pointer">💬 Falar com o Rennan</button>`;
   }
 }
 async function solicitarTrocaTreino(tipo){
@@ -10437,6 +10605,7 @@ function admStudentCard(u, compact=false){
     </div>`:''}
     <!-- Alerta de saúde — condições, medicamentos e cirurgias (antes invisível para o admin) -->
     ${admAlertaSaude(u.anamnese)}
+    ${admHistoricoTrocas(u)}
     <!-- Pedido de troca de treino — precisa da SUA aprovação, nunca troca sozinho -->
     ${u.solicitouTrocaTreino?`<div style="margin:0 14px 10px;padding:10px 12px;background:rgba(243,156,18,.12);border:1px solid rgba(243,156,18,.45);border-radius:8px;display:flex;align-items:center;justify-content:space-between;gap:10px;animation:pulseTroca 1.8s ease-in-out infinite">
       <div style="font-size:11px;color:#f39c12;font-weight:800;line-height:1.4">🔄 Quer trocar o treino${u.solicitouTrocaTipo?' de '+(u.solicitouTrocaTipo==='run'?'corrida':'musculação'):''}${u.solicitouTrocaData?' · pedido em '+new Date(u.solicitouTrocaData).toLocaleDateString('pt-BR'):''}</div>
@@ -10447,6 +10616,7 @@ function admStudentCard(u, compact=false){
       ${!u.trainApproved?`<button class="st-btn approve" onclick="admApprove('${u.email}')">✅ Liberar</button>`:''}
       ${u.trainApproved?`<button class="st-btn revoke" onclick="admRevoke('${u.email}')">🚫 Revogar</button>`:''}
       <button class="st-btn edit" onclick="openEditSt('${u.email}')">✏️ Editar</button>
+      <button class="st-btn" onclick="openEditRun('${u.email}')" style="background:rgba(46,204,113,.12);color:#2ecc71;border:1px solid rgba(46,204,113,.3)">🏃 Editar corrida</button>
       <button class="st-btn" onclick="admResetSenha('${u.email}')" style="background:rgba(52,152,219,.12);color:#3498db;border:1px solid rgba(52,152,219,.3)">🔑 Redefinir senha</button>
       <button class="st-btn anam" onclick="openAnam('${u.email}')">📋 Anamnese</button>
       <button class="st-btn ebook" onclick="openEbooksAdmin('${u.email}')">📚 E-Books</button>
@@ -10651,6 +10821,190 @@ function addSEx(w,d){const users=DB.get('fq_users')||{};const u=users[editEmail]
 function remSEx(w,d,i){const users=DB.get('fq_users')||{};const u=users[editEmail];if(!u)return;u.aiPlan.gym[w].days[d].splice(i,1);DB.set('fq_users',users);renderEGW(w,u);}
 function addSRun(w){const users=DB.get('fq_users')||{};const u=users[editEmail];if(!u)return;ensureAP(u);u.aiPlan.run[w].sessions.push({day:'Seg',type:'Corrida Leve',dist:'5 km',pace:'7:00 min/km',dur:'~35 min',tip:'Ritmo confortável.'});DB.set('fq_users',users);renderERW(w,u);}
 function remSRun(w,i){const users=DB.get('fq_users')||{};const u=users[editEmail];if(!u)return;u.aiPlan.run[w].sessions.splice(i,1);DB.set('fq_users',users);renderERW(w,u);}
+// ══════════════════════════════════════════════════════════════════════
+// ══ EDITOR DE CORRIDA (ADMIN) — botão "🏃 Editar corrida" no card ══
+// Editor dedicado do plano de corrida do aluno: semanas, sessões e os
+// BLOCOS da sessão (que é o que o aluno realmente lê na tela dele).
+// Tudo é capturado antes de qualquer re-render, então nada se perde ao
+// adicionar/remover sessão. Só grava no Supabase ao tocar em "Salvar".
+// ══════════════════════════════════════════════════════════════════════
+let runEdEmail=null, runEdW='Semana 1';
+
+function runEdGetU(){ const us=DB.get('fq_users')||{}; return us[runEdEmail]||null; }
+function runEdPersistLocal(u){ const us=DB.get('fq_users')||{}; us[u.email]=u; DB.set('fq_users',us); }
+function runEdSemanas(u){
+  return Object.keys(u.aiPlan.run).sort((a,b)=>(parseInt(a.replace(/\D/g,''))||0)-(parseInt(b.replace(/\D/g,''))||0));
+}
+
+function openEditRun(email){
+  const us=DB.get('fq_users')||{}; const u=us[email];
+  if(!u){ fqToast('Aluno não encontrado.','warn'); return; }
+  runEdEmail=email;
+  ensureAP(u);
+  const wks=runEdSemanas(u);
+  runEdW = wks.includes('Semana '+(u.runWeek||1)) ? 'Semana '+(u.runWeek||1) : (wks[0]||'Semana 1');
+  document.getElementById('runed-title').textContent='🏃 Corrida — '+u.name;
+  document.getElementById('runed-body').innerHTML=`
+    <div style="font-size:10.5px;color:var(--mu);line-height:1.5;margin-bottom:10px">
+      Aluno está na <strong style="color:#fff">${'Semana '+(u.runWeek||1)}</strong>${u.anamneseCorrida&&u.anamneseCorrida.mc&&u.anamneseCorrida.mc.length?' · meta: '+escHtml(u.anamneseCorrida.mc.join(', ')):''}
+    </div>
+    <div class="wsel" id="runed-tabs"></div>
+    <div id="runed-content"></div>`;
+  abrirModal('modal-run-edit');
+  runEdRenderTabs(u);
+  renderRunEdW(runEdW);
+}
+
+function runEdRenderTabs(u){
+  const el=document.getElementById('runed-tabs'); if(!el)return;
+  el.innerHTML=runEdSemanas(u).map(w=>`<div class="wsb ${w===runEdW?'active':''}" onclick="selRunEdW('${w}')">${w}</div>`).join('')
+    +`<div class="wsb" onclick="runEdAddSemana()" style="border-color:rgba(46,204,113,.35);color:#2ecc71">+ Semana</div>`;
+}
+
+function selRunEdW(w){
+  runEdCapturar(runEdW);
+  runEdW=w;
+  const u=runEdGetU(); if(!u)return;
+  runEdRenderTabs(u);
+  renderRunEdW(w);
+}
+
+// Lê o que está na tela e joga de volta no objeto — chamado ANTES de
+// qualquer re-render, pra nenhuma edição em andamento se perder.
+function runEdCapturar(w){
+  const u=runEdGetU(); if(!u||!u.aiPlan||!u.aiPlan.run||!u.aiPlan.run[w])return;
+  const prog=u.aiPlan.run[w];
+  const meta=document.getElementById('runed-meta'); if(meta)prog.meta=meta.value;
+  document.querySelectorAll('#runed-content [data-si][data-field]').forEach(inp=>{
+    const si=parseInt(inp.dataset.si), f=inp.dataset.field;
+    if(isNaN(si)||!prog.sessions[si])return;
+    if(f==='blocos'){
+      prog.sessions[si].blocos=inp.value.split('\n').map(x=>x.trim()).filter(Boolean);
+    }else{
+      prog.sessions[si][f]=inp.value;
+    }
+  });
+  // Mantém distKm coerente com o texto da distância (usado no volume da semana)
+  prog.sessions.forEach(sx=>{
+    const m=String(sx.dist||'').match(/([\d.,]+)\s*km/i);
+    sx.distKm = m ? (parseFloat(m[1].replace(',','.'))||0) : 0;
+  });
+  prog.volumeSemana=Math.round(prog.sessions.reduce((a,sx)=>a+(sx.distKm||0),0)*10)/10;
+  runEdPersistLocal(u);
+}
+
+function renderRunEdW(w){
+  const u=runEdGetU(); if(!u)return;
+  ensureAP(u);
+  if(!u.aiPlan.run[w]) u.aiPlan.run[w]={meta:'Nova semana',sessions:[]};
+  const prog=u.aiPlan.run[w];
+  if(!Array.isArray(prog.sessions)) prog.sessions=[];
+
+  let h=`<div class="fg"><label class="fl">Meta da semana</label>
+    <input class="mi" id="runed-meta" style="font-size:13px;padding:8px;width:100%;margin-bottom:10px" value="${escHtml(prog.meta||'')}"/></div>`;
+
+  if(!prog.sessions.length){
+    h+=`<div style="padding:18px;text-align:center;font-size:12px;color:var(--mu)">Nenhuma sessão nesta semana ainda.</div>`;
+  }
+
+  prog.sessions.forEach((sx,si)=>{
+    const blocos=(sx.blocos||[]).join('\n');
+    h+=`<div class="exer">
+      <div class="exer-t">
+        <div style="font-size:12px;font-weight:700">${escHtml(sx.day||'—')} – ${escHtml(sx.type||'—')}</div>
+        <button onclick="runEdRemSes('${w}',${si})" style="background:rgba(229,9,20,.08);border:1px solid rgba(229,9,20,.15);border-radius:4px;padding:2px 7px;color:var(--r);font-size:9px;cursor:pointer">✕</button>
+      </div>
+      <div class="exer-g">
+        <div><div class="ml2">Dia</div><input class="mi" data-si="${si}" data-field="day" value="${escHtml(sx.day||'')}"/></div>
+        <div><div class="ml2">Tipo</div><input class="mi" data-si="${si}" data-field="type" value="${escHtml(sx.type||'')}"/></div>
+        <div><div class="ml2">Distância</div><input class="mi" data-si="${si}" data-field="dist" value="${escHtml(sx.dist||'')}"/></div>
+      </div>
+      <div class="exer-g">
+        <div><div class="ml2">Pace</div><input class="mi" data-si="${si}" data-field="pace" value="${escHtml(sx.pace||'')}"/></div>
+        <div><div class="ml2">Duração</div><input class="mi" data-si="${si}" data-field="dur" value="${escHtml(sx.dur||'')}"/></div>
+        <div><div class="ml2">Zona / FC</div><input class="mi" data-si="${si}" data-field="fc" value="${escHtml(sx.fc||'')}"/></div>
+      </div>
+      <div style="margin-top:8px">
+        <div class="ml2">Blocos da sessão — um por linha (é o que o aluno lê)</div>
+        <textarea class="mi" data-si="${si}" data-field="blocos" rows="4" style="width:100%;font-size:11.5px;line-height:1.5;resize:vertical">${escHtml(blocos)}</textarea>
+      </div>
+      <div style="margin-top:8px">
+        <div class="ml2">Dica</div>
+        <input class="mi" data-si="${si}" data-field="tip" style="width:100%" value="${escHtml(sx.tip||'')}"/>
+      </div>
+    </div>`;
+  });
+
+  h+=`<button class="btn-addex" onclick="runEdAddSes('${w}')" style="border-color:rgba(229,9,20,.2);color:var(--r)">+ Sessão</button>
+    <button class="btn-savewk" onclick="salvarRunEd('${w}')" style="margin-top:8px">💾 Salvar plano de corrida</button>
+    <button onclick="runEdRemSemana('${w}')" style="width:100%;margin-top:8px;background:rgba(229,9,20,.06);border:1px solid rgba(229,9,20,.2);color:var(--r);border-radius:8px;padding:10px;font-size:11px;font-weight:700;cursor:pointer">🗑️ Excluir ${w}</button>`;
+
+  document.getElementById('runed-content').innerHTML=h;
+}
+
+function runEdAddSes(w){
+  runEdCapturar(w);
+  const u=runEdGetU(); if(!u)return;
+  u.aiPlan.run[w].sessions.push({
+    day:'Seg', type:'Corrida Leve', dist:'5 km', distKm:5,
+    pace:'7:00 min/km', dur:'~35 min', fc:'Z2',
+    blocos:['10 min aquecimento','20 min ritmo confortável','5 min desaceleração'],
+    tip:'Ritmo confortável — dá pra conversar durante.'
+  });
+  runEdPersistLocal(u);
+  renderRunEdW(w);
+}
+
+function runEdRemSes(w,i){
+  runEdCapturar(w);
+  const u=runEdGetU(); if(!u)return;
+  u.aiPlan.run[w].sessions.splice(i,1);
+  runEdPersistLocal(u);
+  renderRunEdW(w);
+}
+
+function runEdAddSemana(){
+  runEdCapturar(runEdW);
+  const u=runEdGetU(); if(!u)return;
+  const nums=Object.keys(u.aiPlan.run).map(k=>parseInt(k.replace(/\D/g,''))||0);
+  const nova='Semana '+((nums.length?Math.max.apply(null,nums):0)+1);
+  u.aiPlan.run[nova]={meta:'Nova semana',sessions:[],volumeSemana:0};
+  runEdPersistLocal(u);
+  runEdW=nova;
+  runEdRenderTabs(u);
+  renderRunEdW(nova);
+}
+
+async function runEdRemSemana(w){
+  const u=runEdGetU(); if(!u)return;
+  if(Object.keys(u.aiPlan.run).length<=1){ fqToast('O plano precisa ter pelo menos uma semana.','warn'); return; }
+  const ok=await fqConfirm('Excluir '+w+'?','Todas as sessões desta semana serão removidas do plano do aluno. Não dá pra desfazer.','Excluir','🗑️');
+  if(!ok)return;
+  delete u.aiPlan.run[w];
+  runEdPersistLocal(u);
+  const wks=runEdSemanas(u);
+  runEdW=wks[0];
+  runEdRenderTabs(u);
+  renderRunEdW(runEdW);
+  fqToast(w+' excluída. Toque em salvar pra confirmar.','info',5000);
+}
+
+async function salvarRunEd(w){
+  runEdCapturar(w);
+  const u=runEdGetU(); if(!u)return;
+  u.trainApproved=true;
+  runEdPersistLocal(u);
+  if(typeof sb!=='undefined'&&sb&&typeof syncU==='function'){
+    try{ await syncU(u); }
+    catch(e){
+      console.error('Erro ao salvar plano de corrida:',e);
+      fqToast('⚠️ Salvo no aparelho, mas não sincronizou. Verifique a conexão e salve de novo.','warn',7000);
+      return;
+    }
+  }
+  fqToast('✅ Plano de corrida salvo e enviado pro aluno.','ok',5000);
+}
+
 function openAnam(email){
   const users=DB.get('fq_users')||{};const u=users[email];if(!u)return;const a=u.anamnese||{};
   const row=(k,v)=>`<div class="an-row"><span class="an-k">${escHtml(k)}</span><span class="an-v">${v?escHtml(v):'—'}</span></div>`;
