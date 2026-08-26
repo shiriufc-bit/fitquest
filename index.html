@@ -838,7 +838,7 @@ textarea.fi{resize:vertical;min-height:80px;}
       <option value="es">🇪🇸 ES</option>
     </select>
   </div>
-  <div id="fq-version-badge" style="position:absolute;bottom:8px;right:12px;font-size:9px;color:#333;font-weight:700;z-index:5">v191</div>
+  <div id="fq-version-badge" style="position:absolute;bottom:8px;right:12px;font-size:9px;color:#333;font-weight:700;z-index:5">v197</div>
   <img src="https://images.unsplash.com/photo-1517836357463-d25dfeac3438?w=800&q=80" alt="Fitness" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center top;filter:brightness(.35);z-index:0"/>
   <div class="splash-glow"></div>
   <div class="splash-noise"></div>
@@ -2111,7 +2111,7 @@ textarea.fi{resize:vertical;min-height:80px;}
             <span style="color:var(--mu);font-size:18px">›</span>
           </div>
         </div>
-        <div style="text-align:center;padding:20px 0 4px;font-size:11px;color:var(--mu)">FitQuest <span id="fq-version-badge-perfil">v191</span></div>
+        <div style="text-align:center;padding:20px 0 4px;font-size:11px;color:var(--mu)">FitQuest <span id="fq-version-badge-perfil">v197</span></div>
       </div>
     </div>
 
@@ -11397,6 +11397,15 @@ function switchTab(name,btn){
 
 // ══ ADMIN (dados vêm do Supabase — todos os alunos, de qualquer aparelho) ══
 window.ADM_CACHE=[];
+
+// Busca um aluno pelo e-mail. O painel do admin carrega os alunos do Supabase
+// para o ADM_CACHE; o DB local (fq_users) só guarda o usuário logado no aparelho.
+// Procurar só no local fazia os editores devolverem "undefined" e o botão não abrir.
+function admGetAluno(email){
+  return (window.ADM_CACHE||[]).find(a=>a.email===email)
+      || (DB.get('fq_users')||{})[email]
+      || null;
+}
 window.ADM_COMPRAS=[];
 async function adminLogout(){try{if(sb)await sb.auth.signOut();}catch(e){}DB.del('fq_cur');show('sc-splash');}
 // ══ ADMIN: TROCAR TREINO — regenera os exercícios da semana atual do aluno,
@@ -11917,8 +11926,9 @@ let editEmail=null;let editGW='Semana 1';let editRW='Semana 1';
 function ensureAP(u){if(!u.aiPlan)u.aiPlan={gym:JSON.parse(JSON.stringify(DG)),run:JSON.parse(JSON.stringify(DR))};if(!u.aiPlan.gym)u.aiPlan.gym=JSON.parse(JSON.stringify(DG));if(!u.aiPlan.run)u.aiPlan.run=JSON.parse(JSON.stringify(DR));}
 function openEditSt(email){
   editEmail=email;editGW='Semana 1';editRW='Semana 1';
-  const users=DB.get('fq_users')||{};const u=users[email];
-  document.getElementById('modal-st-name').textContent='✏️ '+u.name;
+  const u=admGetAluno(email);
+  if(!u){ fqToast('Aluno não encontrado.','warn'); return; }
+  document.getElementById('modal-st-name').textContent='✏️ '+(u.name||u.email);
   const GP=u.aiPlan?.gym||DG;const RP=u.aiPlan?.run||DR;
   document.getElementById('modal-st-content').innerHTML=`
     <div class="ed-sec"><div class="ed-stt">🏋️ Musculação</div><div class="wsel" id="egw-tabs">${Object.keys(GP).map(w=>`<div class="wsb ${w===editGW?'active':''}" onclick="selEGW('${w}',this)">${w}</div>`).join('')}</div><div id="egw-content"></div></div>
@@ -11926,8 +11936,8 @@ function openEditSt(email){
   abrirModal('modal-student');
   renderEGW(editGW,u);renderERW(editRW,u);
 }
-function selEGW(w,el){editGW=w;document.querySelectorAll('#egw-tabs .wsb').forEach(b=>b.classList.remove('active'));el.classList.add('active');const users=DB.get('fq_users')||{};renderEGW(w,users[editEmail]);}
-function selERW(w,el){editRW=w;document.querySelectorAll('#erw-tabs .wsb').forEach(b=>b.classList.remove('active'));el.classList.add('active');const users=DB.get('fq_users')||{};renderERW(w,users[editEmail]);}
+function selEGW(w,el){editGW=w;document.querySelectorAll('#egw-tabs .wsb').forEach(b=>b.classList.remove('active'));el.classList.add('active');renderEGW(w,admGetAluno(editEmail));}
+function selERW(w,el){editRW=w;document.querySelectorAll('#erw-tabs .wsb').forEach(b=>b.classList.remove('active'));el.classList.add('active');renderERW(w,admGetAluno(editEmail));}
 function renderEGW(w,u){
   ensureAP(u);if(!u.aiPlan.gym[w])u.aiPlan.gym[w]=JSON.parse(JSON.stringify(DG[w]||{fase:'Nova fase',days:{'Treino A':[]}}));
   const prog=u.aiPlan.gym[w];
@@ -11956,12 +11966,12 @@ function renderERW(w,u){
   h+=`<button class="btn-addex" onclick="addSRun('${w}')" style="border-color:rgba(229,9,20,.2);color:var(--r)">+ Sessão</button><button class="btn-savewk" onclick="saveERW('${w}')" style="margin-top:8px">💾 Salvar corrida</button>`;
   document.getElementById('erw-content').innerHTML=h;
 }
-function saveEGW(w){const users=DB.get('fq_users')||{};const u=users[editEmail];if(!u)return;ensureAP(u);const ef=document.getElementById('ef');if(ef)u.aiPlan.gym[w].fase=ef.value;document.querySelectorAll('#egw-content .mi[data-field],#egw-content select[data-field]').forEach(inp=>{const day=inp.dataset.day;const idx=parseInt(inp.dataset.idx);const field=inp.dataset.field;if(day&&!isNaN(idx)&&field&&u.aiPlan.gym[w].days[day]?.[idx]!==undefined)u.aiPlan.gym[w].days[day][idx][field]=['sets','rest'].includes(field)?parseInt(inp.value)||1:inp.value;});u.trainApproved=true;DB.set('fq_users',users);syncU(u).catch(()=>{});fqToast(t('msg.c72391b3b3'),'ok');}
-function saveERW(w){const users=DB.get('fq_users')||{};const u=users[editEmail];if(!u)return;ensureAP(u);const ef=document.getElementById('erf');if(ef)u.aiPlan.run[w].meta=ef.value;document.querySelectorAll('#erw-content .mi[data-field]').forEach(inp=>{const si=parseInt(inp.dataset.si);const field=inp.dataset.field;if(!isNaN(si)&&field&&u.aiPlan.run[w].sessions[si])u.aiPlan.run[w].sessions[si][field]=inp.value;});u.trainApproved=true;DB.set('fq_users',users);syncU(u).catch(()=>{});fqToast(t('msg.c72391b3b3'),'ok');}
-function addSEx(w,d){const users=DB.get('fq_users')||{};const u=users[editEmail];if(!u)return;ensureAP(u);u.aiPlan.gym[w].days[d].push({id:EXERCISE_BANK[0]?.id||'e001',sets:3,reps:'12',load:'Moderada',rest:60});DB.set('fq_users',users);renderEGW(w,u);}
-function remSEx(w,d,i){const users=DB.get('fq_users')||{};const u=users[editEmail];if(!u)return;u.aiPlan.gym[w].days[d].splice(i,1);DB.set('fq_users',users);renderEGW(w,u);}
-function addSRun(w){const users=DB.get('fq_users')||{};const u=users[editEmail];if(!u)return;ensureAP(u);u.aiPlan.run[w].sessions.push({day:'Seg',type:'Corrida Leve',dist:'5 km',pace:'7:00 min/km',dur:'~35 min',tip:'Ritmo confortável.'});DB.set('fq_users',users);renderERW(w,u);}
-function remSRun(w,i){const users=DB.get('fq_users')||{};const u=users[editEmail];if(!u)return;u.aiPlan.run[w].sessions.splice(i,1);DB.set('fq_users',users);renderERW(w,u);}
+function saveEGW(w){const users=DB.get('fq_users')||{};const u=admGetAluno(editEmail);if(!u)return;users[editEmail]=u;ensureAP(u);const ef=document.getElementById('ef');if(ef)u.aiPlan.gym[w].fase=ef.value;document.querySelectorAll('#egw-content .mi[data-field],#egw-content select[data-field]').forEach(inp=>{const day=inp.dataset.day;const idx=parseInt(inp.dataset.idx);const field=inp.dataset.field;if(day&&!isNaN(idx)&&field&&u.aiPlan.gym[w].days[day]?.[idx]!==undefined)u.aiPlan.gym[w].days[day][idx][field]=['sets','rest'].includes(field)?parseInt(inp.value)||1:inp.value;});u.trainApproved=true;DB.set('fq_users',users);syncU(u).catch(()=>{});fqToast(t('msg.c72391b3b3'),'ok');}
+function saveERW(w){const users=DB.get('fq_users')||{};const u=admGetAluno(editEmail);if(!u)return;users[editEmail]=u;ensureAP(u);const ef=document.getElementById('erf');if(ef)u.aiPlan.run[w].meta=ef.value;document.querySelectorAll('#erw-content .mi[data-field]').forEach(inp=>{const si=parseInt(inp.dataset.si);const field=inp.dataset.field;if(!isNaN(si)&&field&&u.aiPlan.run[w].sessions[si])u.aiPlan.run[w].sessions[si][field]=inp.value;});u.trainApproved=true;DB.set('fq_users',users);syncU(u).catch(()=>{});fqToast(t('msg.c72391b3b3'),'ok');}
+function addSEx(w,d){const users=DB.get('fq_users')||{};const u=admGetAluno(editEmail);if(!u)return;users[editEmail]=u;ensureAP(u);u.aiPlan.gym[w].days[d].push({id:EXERCISE_BANK[0]?.id||'e001',sets:3,reps:'12',load:'Moderada',rest:60});DB.set('fq_users',users);renderEGW(w,u);}
+function remSEx(w,d,i){const users=DB.get('fq_users')||{};const u=admGetAluno(editEmail);if(!u)return;users[editEmail]=u;u.aiPlan.gym[w].days[d].splice(i,1);DB.set('fq_users',users);renderEGW(w,u);}
+function addSRun(w){const users=DB.get('fq_users')||{};const u=admGetAluno(editEmail);if(!u)return;users[editEmail]=u;ensureAP(u);u.aiPlan.run[w].sessions.push({day:'Seg',type:'Corrida Leve',dist:'5 km',pace:'7:00 min/km',dur:'~35 min',tip:'Ritmo confortável.'});DB.set('fq_users',users);renderERW(w,u);}
+function remSRun(w,i){const users=DB.get('fq_users')||{};const u=admGetAluno(editEmail);if(!u)return;users[editEmail]=u;u.aiPlan.run[w].sessions.splice(i,1);DB.set('fq_users',users);renderERW(w,u);}
 // ══════════════════════════════════════════════════════════════════════
 // ══ EDITOR DE CORRIDA (ADMIN) — botão "🏃 Editar corrida" no card ══
 // Editor dedicado do plano de corrida do aluno: semanas, sessões e os
@@ -11971,14 +11981,14 @@ function remSRun(w,i){const users=DB.get('fq_users')||{};const u=users[editEmail
 // ══════════════════════════════════════════════════════════════════════
 let runEdEmail=null, runEdW='Semana 1';
 
-function runEdGetU(){ const us=DB.get('fq_users')||{}; return us[runEdEmail]||null; }
+function runEdGetU(){ return admGetAluno(runEdEmail); }
 function runEdPersistLocal(u){ const us=DB.get('fq_users')||{}; us[u.email]=u; DB.set('fq_users',us); }
 function runEdSemanas(u){
   return Object.keys(u.aiPlan.run).sort((a,b)=>(parseInt(a.replace(/\D/g,''))||0)-(parseInt(b.replace(/\D/g,''))||0));
 }
 
 function openEditRun(email){
-  const us=DB.get('fq_users')||{}; const u=us[email];
+  const u=admGetAluno(email);
   if(!u){ fqToast('Aluno não encontrado.','warn'); return; }
   runEdEmail=email;
   ensureAP(u);
