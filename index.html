@@ -449,6 +449,10 @@ textarea.fi{resize:vertical;min-height:80px;}
 .st-btn.anam{background:rgba(243,156,18,.1);color:#f39c12;border:1px solid rgba(243,156,18,.2);}
 .st-btn.del{background:rgba(255,255,255,.05);color:var(--mu);border:1px solid rgba(255,255,255,.08);margin-left:auto;}
 .st-btn.ebook{background:rgba(155,89,182,.1);color:#9b59b6;border:1px solid rgba(155,89,182,.2);}
+/* Categorias dentro do card do aluno (Treino/Financeiro/Conta) */
+.st-cat-tabs{display:flex;gap:6px;padding:10px 14px 0;}
+.st-cat-btn{padding:6px 12px;border-radius:8px;font-size:10.5px;font-weight:800;cursor:pointer;border:1px solid rgba(255,255,255,.08);background:rgba(255,255,255,.03);color:var(--mu);transition:all .15s;}
+.st-cat-btn.active{background:rgba(229,9,20,.12);border-color:rgba(229,9,20,.35);color:#fff;}
 /* Filter bar */
 .adm-filter{display:flex;gap:6px;padding:0 12px 10px;overflow-x:auto;}
 .adm-filter::-webkit-scrollbar{display:none;}
@@ -838,7 +842,7 @@ textarea.fi{resize:vertical;min-height:80px;}
       <option value="es">🇪🇸 ES</option>
     </select>
   </div>
-  <div id="fq-version-badge" style="position:absolute;bottom:8px;right:12px;font-size:9px;color:#333;font-weight:700;z-index:5">v198</div>
+  <div id="fq-version-badge" style="position:absolute;bottom:8px;right:12px;font-size:9px;color:#333;font-weight:700;z-index:5">v200</div>
   <img src="https://images.unsplash.com/photo-1517836357463-d25dfeac3438?w=800&q=80" alt="Fitness" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center top;filter:brightness(.35);z-index:0"/>
   <div class="splash-glow"></div>
   <div class="splash-noise"></div>
@@ -2122,7 +2126,7 @@ textarea.fi{resize:vertical;min-height:80px;}
             <span style="color:var(--mu);font-size:18px">›</span>
           </div>
         </div>
-        <div style="text-align:center;padding:20px 0 4px;font-size:11px;color:var(--mu)">FitQuest <span id="fq-version-badge-perfil">v198</span></div>
+        <div style="text-align:center;padding:20px 0 4px;font-size:11px;color:var(--mu)">FitQuest <span id="fq-version-badge-perfil">v200</span></div>
       </div>
     </div>
 
@@ -3363,6 +3367,78 @@ let EXERCISE_BANK=[
   {id:'e750',name:'Mergulhos em Agachamento de Yoga',muscle:'Quadril/Mobilidade',equipment:'Peso do Corpo',emoji:'🧘',obs:'A partir do agachamento profundo, faça pequenos movimentos de mergulho pra frente, mobilizando o quadril.'},
   {id:'e751',name:'Postura do Raio (Vajrasana)',muscle:'Joelho/Tornozelo/Relaxamento',equipment:'Peso do Corpo',emoji:'🧘',obs:'Sentado sobre os calcanhares com os joelhos dobrados, postura tradicional de descanso e respiração.'},
 ];
+
+// ══════════════════════════════════════════════════════════════════════
+// ══ PACOTES DE TREINO PRONTOS (ADMIN) ══
+// Sugestões pré-moldadas que o admin pode inserir com 1 clique no plano
+// de um aluno, na tela de edição. Usam exercícios já existentes no
+// EXERCISE_BANK (nenhum dado novo/inventado) — o admin edita livremente
+// depois, pelos mesmos campos que já existem no editor de musculação.
+// ══════════════════════════════════════════════════════════════════════
+const TREINOS_PRONTOS = {
+  emagrecimento: {
+    nome: '🔥 Emagrecimento',
+    dia: 'Emagrecimento',
+    exercicios: [
+      {id:'e144', sets:4, reps:'45s', load:'Peso do corpo', rest:15},
+      {id:'e097', sets:4, reps:'30s', load:'Peso do corpo', rest:20},
+      {id:'e019', sets:4, reps:'15',  load:'Leve/Moderada', rest:30},
+      {id:'e110', sets:3, reps:'12',  load:'Leve', rest:30},
+      {id:'e098', sets:4, reps:'15',  load:'Moderada', rest:30},
+      {id:'e029', sets:3, reps:'40s', load:'Peso do corpo', rest:20},
+    ]
+  },
+  gluteos_pernas: {
+    nome:'🍑 Glúteos e Pernas',
+    dia:'Glúteos e Pernas',
+    exercicios: [
+      {id:'e019', sets:4, reps:'10', load:'Pesada', rest:90},
+      {id:'e027', sets:4, reps:'12', load:'Moderada/Pesada', rest:90},
+      {id:'e021', sets:3, reps:'12', load:'Moderada', rest:75},
+      {id:'e022', sets:3, reps:'12 (cada perna)', load:'Moderada', rest:60},
+      {id:'e023', sets:3, reps:'15', load:'Moderada', rest:45},
+      {id:'e024', sets:3, reps:'15', load:'Moderada', rest:45},
+      {id:'e025', sets:4, reps:'15', load:'Moderada', rest:45},
+    ]
+  },
+  peito_triceps: {
+    nome:'💪 Peitoral e Tríceps',
+    dia:'Peitoral e Tríceps',
+    exercicios: [
+      {id:'e001', sets:4, reps:'10', load:'Pesada', rest:90},
+      {id:'e002', sets:3, reps:'10', load:'Moderada/Pesada', rest:75},
+      {id:'e003', sets:3, reps:'12', load:'Moderada', rest:60},
+      {id:'e050', sets:3, reps:'12', load:'Peso do corpo/Moderada', rest:60},
+      {id:'e016', sets:3, reps:'12', load:'Moderada', rest:60},
+      {id:'e017', sets:3, reps:'12', load:'Moderada', rest:60},
+    ]
+  },
+  costas_biceps: {
+    nome:'🎣 Costas e Bíceps',
+    dia:'Costas e Bíceps',
+    exercicios: [
+      {id:'e005', sets:4, reps:'10', load:'Pesada', rest:90},
+      {id:'e006', sets:3, reps:'10', load:'Moderada/Pesada', rest:75},
+      {id:'e007', sets:3, reps:'12', load:'Moderada', rest:60},
+      {id:'e059', sets:3, reps:'12', load:'Moderada', rest:60},
+      {id:'e013', sets:3, reps:'12', load:'Moderada', rest:60},
+      {id:'e014', sets:3, reps:'12', load:'Moderada', rest:60},
+    ]
+  },
+  geral: {
+    nome:'⚙️ Geral (Corpo Todo)',
+    dia:'Corpo Todo',
+    exercicios: [
+      {id:'e019', sets:3, reps:'12', load:'Moderada', rest:75},
+      {id:'e001', sets:3, reps:'12', load:'Moderada', rest:75},
+      {id:'e005', sets:3, reps:'12', load:'Moderada', rest:75},
+      {id:'e010', sets:3, reps:'12', load:'Moderada', rest:60},
+      {id:'e013', sets:2, reps:'12', load:'Moderada', rest:45},
+      {id:'e016', sets:2, reps:'12', load:'Moderada', rest:45},
+      {id:'e028', sets:3, reps:'15', load:'Peso do corpo', rest:30},
+    ]
+  }
+};
 
 const DG={
   // ══ MESOCICLO 1: ADAPTAÇÃO (Semanas 1-4) ══
@@ -11784,6 +11860,18 @@ async function admResolverTrocaTreino(email){
   await loadAdmin();
   fqToast('✅ Marcado como resolvido.','ok');
 }
+// Alterna qual grupo de ações (Treino/Financeiro/Conta) aparece dentro do
+// card do aluno. Manipula só o card clicado — não re-renderiza a lista
+// inteira, então o admin não perde a posição do scroll.
+function admSwitchCardCat(btn, cat){
+  const card = btn.closest('.st-card');
+  if(!card) return;
+  card.querySelectorAll('.st-cat-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  card.querySelectorAll('[data-cat-group]').forEach(g=>{
+    g.style.display = (g.dataset.catGroup===cat) ? 'flex' : 'none';
+  });
+}
 function admStudentCard(u, compact=false){
   const purchases=u.purchases||[];
   const ebookCount=u.pacoteEbooks?10:purchases.length;
@@ -11829,20 +11917,30 @@ function admStudentCard(u, compact=false){
       <div style="font-size:11px;color:#f39c12;font-weight:800;line-height:1.4">🔄 Quer trocar o treino${u.solicitouTrocaTipo?' de '+(u.solicitouTrocaTipo==='run'?'corrida':'musculação'):''}${u.solicitouTrocaData?' · pedido em '+new Date(u.solicitouTrocaData).toLocaleDateString('pt-BR'):''}</div>
       <button onclick="event.stopPropagation();admResolverTrocaTreino('${u.email}')" style="background:rgba(46,204,113,.15);border:1px solid rgba(46,204,113,.4);color:#2ecc71;border-radius:6px;padding:5px 10px;font-size:10px;font-weight:800;cursor:pointer;white-space:nowrap;flex-shrink:0">✅ Resolvido</button>
     </div>`:''}
-    <!-- Actions -->
-    <div class="st-actions">
-      ${!u.trainApproved?`<button class="st-btn approve" onclick="admApprove('${u.email}')">✅ Liberar</button>`:''}
-      ${u.trainApproved?`<button class="st-btn revoke" onclick="admRevoke('${u.email}')">🚫 Revogar</button>`:''}
+    <!-- Categorias -->
+    <div class="st-cat-tabs">
+      <button class="st-cat-btn active" data-cat="treino" onclick="admSwitchCardCat(this,'treino')">🏋️ Treino</button>
+      <button class="st-cat-btn" data-cat="financeiro" onclick="admSwitchCardCat(this,'financeiro')">💳 Financeiro</button>
+      <button class="st-cat-btn" data-cat="conta" onclick="admSwitchCardCat(this,'conta')">⚙️ Conta</button>
+    </div>
+    <!-- Actions — agrupadas por categoria, só a categoria ativa fica visível -->
+    <div class="st-actions" data-cat-group="treino">
       <button class="st-btn edit" onclick="openEditSt('${u.email}')">✏️ Editar</button>
       <button class="st-btn" onclick="openEditRun('${u.email}')" style="background:rgba(46,204,113,.12);color:#2ecc71;border:1px solid rgba(46,204,113,.3)">🏃 Editar corrida</button>
       <button class="st-btn" onclick="openRunFeedback('${u.email}')" style="background:rgba(155,89,182,.12);color:#9b59b6;border:1px solid rgba(155,89,182,.3)">💬 Feedback corrida</button>
       <button class="st-btn" onclick="openRunPacks('${u.email}')" style="background:rgba(52,152,219,.12);color:#3498db;border:1px solid rgba(52,152,219,.3)">🦵 Força pra corrida</button>
+      <button class="st-btn" onclick="abrirAvaliacoesAdmin('${u.email}')" style="background:rgba(52,152,219,.12);color:#3498db;border:1px solid rgba(52,152,219,.3)">📊 Avaliações</button>
+    </div>
+    <div class="st-actions" data-cat-group="financeiro" style="display:none">
+      <button class="st-btn" onclick="abrirMarcarPago('${u.email}')" style="background:rgba(46,204,113,.12);color:#2ecc71;border:1px solid rgba(46,204,113,.3)">💳 Marcar como pago</button>
+      <button class="st-btn ebook" onclick="openEbooksAdmin('${u.email}')">📚 E-Books</button>
+    </div>
+    <div class="st-actions" data-cat-group="conta" style="display:none">
+      ${!u.trainApproved?`<button class="st-btn approve" onclick="admApprove('${u.email}')">✅ Liberar</button>`:''}
+      ${u.trainApproved?`<button class="st-btn revoke" onclick="admRevoke('${u.email}')">🚫 Revogar</button>`:''}
       <button class="st-btn" onclick="admResetSenha('${u.email}')" style="background:rgba(52,152,219,.12);color:#3498db;border:1px solid rgba(52,152,219,.3)">🔑 Redefinir senha</button>
       <button class="st-btn anam" onclick="openAnam('${u.email}')">📋 Anamnese</button>
-      <button class="st-btn ebook" onclick="openEbooksAdmin('${u.email}')">📚 E-Books</button>
-      <button class="st-btn" onclick="abrirMarcarPago('${u.email}')" style="background:rgba(46,204,113,.12);color:#2ecc71;border:1px solid rgba(46,204,113,.3)">💳 Marcar como pago</button>
-      <button class="st-btn" onclick="abrirAvaliacoesAdmin('${u.email}')" style="background:rgba(52,152,219,.12);color:#3498db;border:1px solid rgba(52,152,219,.3)">📊 Avaliações</button>
-      <button class="st-btn del" onclick="admDel('${u.email}')">🗑️</button>
+      <button class="st-btn del" onclick="admDel('${u.email}')">🗑️ Excluir aluno</button>
     </div>
     <div style="padding:8px 14px 0;font-size:10px;color:var(--mu)">${admStatusAssinaturaTxt(u)}</div>
   </div>`;
@@ -12001,7 +12099,12 @@ function openEditSt(email){
   document.getElementById('modal-st-name').textContent='✏️ '+(u.name||u.email);
   const GP=u.aiPlan?.gym||DG;const RP=u.aiPlan?.run||DR;
   document.getElementById('modal-st-content').innerHTML=`
-    <div class="ed-sec"><div class="ed-stt">🏋️ Musculação</div><div class="wsel" id="egw-tabs">${Object.keys(GP).map(w=>`<div class="wsb ${w===editGW?'active':''}" onclick="selEGW('${w}',this)">${w}</div>`).join('')}</div><div id="egw-content"></div></div>
+    <div class="ed-sec"><div class="ed-stt">🏋️ Musculação</div>
+      <div style="font-size:10.5px;color:var(--mu);margin-bottom:6px">+ Sugestão pronta (adiciona como novo dia na semana selecionada):</div>
+      <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px">
+        ${Object.keys(TREINOS_PRONTOS).map(k=>`<button onclick="admAplicarPack('${k}')" style="background:var(--s2);border:1px solid var(--b);border-radius:8px;padding:7px 11px;color:#fff;font-size:11px;font-weight:700;cursor:pointer;white-space:nowrap">${TREINOS_PRONTOS[k].nome}</button>`).join('')}
+      </div>
+      <div class="wsel" id="egw-tabs">${Object.keys(GP).map(w=>`<div class="wsb ${w===editGW?'active':''}" onclick="selEGW('${w}',this)">${w}</div>`).join('')}</div><div id="egw-content"></div></div>
     <div class="ed-sec"><div class="ed-stt">🏃 Corrida</div><div class="wsel" id="erw-tabs">${Object.keys(RP).map(w=>`<div class="wsb ${w===editRW?'active':''}" onclick="selERW('${w}',this)">${w}</div>`).join('')}</div><div id="erw-content"></div></div>`;
   abrirModal('modal-student');
   renderEGW(editGW,u);renderERW(editRW,u);
@@ -12040,6 +12143,33 @@ function saveEGW(w){const users=DB.get('fq_users')||{};const u=admGetAluno(editE
 function saveERW(w){const users=DB.get('fq_users')||{};const u=admGetAluno(editEmail);if(!u)return;users[editEmail]=u;ensureAP(u);const ef=document.getElementById('erf');if(ef)u.aiPlan.run[w].meta=ef.value;document.querySelectorAll('#erw-content .mi[data-field]').forEach(inp=>{const si=parseInt(inp.dataset.si);const field=inp.dataset.field;if(!isNaN(si)&&field&&u.aiPlan.run[w].sessions[si])u.aiPlan.run[w].sessions[si][field]=inp.value;});u.trainApproved=true;DB.set('fq_users',users);syncU(u).catch(()=>{});fqToast(t('msg.c72391b3b3'),'ok');}
 function addSEx(w,d){const users=DB.get('fq_users')||{};const u=admGetAluno(editEmail);if(!u)return;users[editEmail]=u;ensureAP(u);u.aiPlan.gym[w].days[d].push({id:EXERCISE_BANK[0]?.id||'e001',sets:3,reps:'12',load:'Moderada',rest:60});DB.set('fq_users',users);renderEGW(w,u);}
 function remSEx(w,d,i){const users=DB.get('fq_users')||{};const u=admGetAluno(editEmail);if(!u)return;users[editEmail]=u;u.aiPlan.gym[w].days[d].splice(i,1);DB.set('fq_users',users);renderEGW(w,u);}
+// ── Aplica um pacote de treino pronto (TREINOS_PRONTOS) na semana em edição ──
+// Cria um novo dia com o nome do pacote (ou reaproveita se já existir um dia
+// com esse nome nessa semana) e copia os exercícios pra dentro. Não salva no
+// Supabase sozinho — só grava local e re-renderiza; o admin confirma com o
+// mesmo botão "💾 Salvar semana" que já existe, podendo editar tudo antes.
+function admAplicarPack(packKey){
+  const pack=TREINOS_PRONTOS[packKey];
+  if(!pack){ fqToast('Pacote não encontrado.','warn'); return; }
+  const users=DB.get('fq_users')||{};
+  const u=admGetAluno(editEmail);
+  if(!u){ fqToast('Aluno não encontrado.','warn'); return; }
+  users[editEmail]=u; ensureAP(u);
+  const w=editGW;
+  if(!u.aiPlan.gym[w]) u.aiPlan.gym[w]=JSON.parse(JSON.stringify(DG[w]||{fase:'Nova fase',days:{}}));
+  let diaNome=pack.dia;
+  // se já existe um dia com esse nome nessa semana, numera (evita sobrescrever)
+  if(u.aiPlan.gym[w].days[diaNome]){
+    let n=2;
+    while(u.aiPlan.gym[w].days[`${pack.dia} ${n}`]) n++;
+    diaNome=`${pack.dia} ${n}`;
+  }
+  u.aiPlan.gym[w].days[diaNome]=pack.exercicios.map(ex=>({...ex}));
+  u.trainApproved=true;
+  DB.set('fq_users',users);
+  renderEGW(w,u);
+  fqToast(`${pack.nome} adicionado — revise e clique em Salvar semana`,'ok',4000);
+}
 function addSRun(w){const users=DB.get('fq_users')||{};const u=admGetAluno(editEmail);if(!u)return;users[editEmail]=u;ensureAP(u);u.aiPlan.run[w].sessions.push({day:'Seg',type:'Corrida Leve',dist:'5 km',pace:'7:00 min/km',dur:'~35 min',tip:'Ritmo confortável.'});DB.set('fq_users',users);renderERW(w,u);}
 function remSRun(w,i){const users=DB.get('fq_users')||{};const u=admGetAluno(editEmail);if(!u)return;users[editEmail]=u;u.aiPlan.run[w].sessions.splice(i,1);DB.set('fq_users',users);renderERW(w,u);}
 // ══════════════════════════════════════════════════════════════════════
