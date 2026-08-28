@@ -843,7 +843,7 @@ textarea.fi{resize:vertical;min-height:80px;}
       <option value="es">🇪🇸 ES</option>
     </select>
   </div>
-  <div id="fq-version-badge" style="position:absolute;bottom:8px;right:12px;font-size:9px;color:#333;font-weight:700;z-index:5">v206</div>
+  <div id="fq-version-badge" style="position:absolute;bottom:8px;right:12px;font-size:9px;color:#333;font-weight:700;z-index:5">v207</div>
   <img src="https://images.unsplash.com/photo-1517836357463-d25dfeac3438?w=800&q=80" alt="Fitness" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center top;filter:brightness(.35);z-index:0"/>
   <div class="splash-glow"></div>
   <div class="splash-noise"></div>
@@ -2135,7 +2135,7 @@ textarea.fi{resize:vertical;min-height:80px;}
             <span style="color:var(--mu);font-size:18px">›</span>
           </div>
         </div>
-        <div style="text-align:center;padding:20px 0 4px;font-size:11px;color:var(--mu)">FitQuest <span id="fq-version-badge-perfil">v206</span></div>
+        <div style="text-align:center;padding:20px 0 4px;font-size:11px;color:var(--mu)">FitQuest <span id="fq-version-badge-perfil">v207</span></div>
       </div>
     </div>
 
@@ -12441,7 +12441,7 @@ function openEditSt(email){
   const GP=u.aiPlan?.gym||DG;const RP=u.aiPlan?.run||DR;
   document.getElementById('modal-st-content').innerHTML=`
     <div class="ed-sec"><div class="ed-stt">🏋️ Musculação</div>
-      <div style="font-size:10.5px;color:var(--mu);margin-bottom:6px">+ Sugestão pronta (adiciona como novo dia na semana selecionada):</div>
+      <div style="font-size:10.5px;color:var(--mu);margin-bottom:6px">📦 Adicionar pacote pronto como <b>dia novo</b> (pra substituir um dia já existente, use o seletor "Usar pronto..." dentro de cada dia, mais abaixo):</div>
       <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px">
         ${Object.keys(TREINOS_PRONTOS).map(k=>`<button onclick="admAplicarPack('${k}')" style="background:var(--s2);border:1px solid var(--b);border-radius:8px;padding:7px 11px;color:#fff;font-size:11px;font-weight:700;cursor:pointer;white-space:nowrap">${TREINOS_PRONTOS[k].nome}</button>`).join('')}
       </div>
@@ -12457,7 +12457,19 @@ function renderEGW(w,u){
   const prog=u.aiPlan.gym[w];
   let h=`<div class="fg"><label class="fl">Fase</label><input class="mi" style="font-size:13px;padding:8px;width:100%;margin-bottom:8px" id="ef" value="${prog.fase||''}"/></div>`;
   Object.keys(prog.days).forEach(day=>{
-    h+=`<div style="font-size:11px;font-weight:800;color:var(--r);margin:8px 0 5px">${day}</div>`;
+    h+=`<div style="display:flex;justify-content:space-between;align-items:center;gap:6px;margin:10px 0 5px;flex-wrap:wrap">
+      <div style="font-size:11px;font-weight:800;color:var(--r)">${day}</div>
+      <div style="display:flex;gap:6px;flex-wrap:wrap">
+        <select onchange="if(this.value){admAplicarPackNoDia('${w}','${day}',this.value);this.value='';}" style="font-size:9.5px;padding:4px 6px;border-radius:6px;background:var(--s2);color:#fff;border:1px solid var(--b);max-width:150px">
+          <option value="">📦 Usar pronto...</option>
+          ${Object.keys(TREINOS_PRONTOS).map(k=>`<option value="${k}">${TREINOS_PRONTOS[k].nome}</option>`).join('')}
+        </select>
+        <button onclick="limparTreinoDia('${w}','${day}')" style="background:rgba(229,9,20,.08);border:1px solid rgba(229,9,20,.2);border-radius:6px;padding:4px 9px;color:var(--r);font-size:9.5px;font-weight:700;cursor:pointer">🗑️ Limpar</button>
+      </div>
+    </div>`;
+    if(prog.days[day].length===0){
+      h+=`<div style="font-size:10.5px;color:var(--mu);padding:6px 0;font-style:italic">Nenhum exercício ainda — adicione manualmente ou use um pacote pronto acima.</div>`;
+    }
     prog.days[day].forEach((ed,ei)=>{const ex=getExById(ed.id,u);
       h+=`<div class="exer"><div class="exer-t"><div style="font-size:12px;font-weight:700">${ex?ex.name:ed.id}</div><button onclick="remSEx('${w}','${day}',${ei})" style="background:rgba(229,9,20,.08);border:1px solid rgba(229,9,20,.15);border-radius:4px;padding:2px 7px;color:var(--r);font-size:9px;cursor:pointer;">✕</button></div>
       <div class="exer-g"><div><div class="ml2">Exercício</div><select class="mi" data-day="${day}" data-idx="${ei}" data-field="id">${[...EXERCISE_BANK,...(u.exerciciosCustom||[])].map(e=>`<option value="${e.id}" ${e.id===ed.id?'selected':''}>${e.name}${(u.exerciciosCustom||[]).some(c=>c.id===e.id)?' 🎬':''}</option>`).join('')}</select></div><div><div class="ml2">Séries</div><input class="mi" type="number" data-day="${day}" data-idx="${ei}" data-field="sets" value="${ed.sets}"/></div><div><div class="ml2">Reps</div><input class="mi" data-day="${day}" data-idx="${ei}" data-field="reps" value="${ed.reps}"/></div></div>
@@ -12465,8 +12477,27 @@ function renderEGW(w,u){
     });
     h+=`<button class="btn-addex" onclick="addSEx('${w}','${day}')">+ Exercício em ${day}</button>`;
   });
+  h+=`<button class="btn-addex" onclick="novoDiaEGW('${w}')" style="border-color:rgba(52,152,219,.3);color:#3498db;margin-top:4px">+ Novo dia em branco</button>`;
   h+=`<button class="btn-savewk" onclick="saveEGW('${w}')">💾 Salvar semana</button>`;
   document.getElementById('egw-content').innerHTML=h;
+}
+function limparTreinoDia(w,day){
+  const u=admGetAluno(editEmail);if(!u)return;
+  if(!confirm(`Apagar todos os exercícios de "${day}"? Isso não pode ser desfeito.`)) return;
+  const users=DB.get('fq_users')||{};users[editEmail]=u;ensureAP(u);
+  u.aiPlan.gym[w].days[day]=[];
+  DB.set('fq_users',users);renderEGW(w,u);
+  syncU(u).catch(()=>{});
+  fqToast(`"${day}" foi limpo — adicione exercícios ou use um pacote pronto.`,'ok',3000);
+}
+function novoDiaEGW(w){
+  const u=admGetAluno(editEmail);if(!u)return;
+  const nome=prompt('Nome do novo dia (ex: Treino E, Pernas 2...):','');
+  if(!nome||!nome.trim())return;
+  const users=DB.get('fq_users')||{};users[editEmail]=u;ensureAP(u);
+  if(u.aiPlan.gym[w].days[nome]){ fqToast('Já existe um dia com esse nome.','warn'); return; }
+  u.aiPlan.gym[w].days[nome]=[];
+  DB.set('fq_users',users);renderEGW(w,u);
 }
 function renderERW(w,u){
   ensureAP(u);if(!u.aiPlan.run[w])u.aiPlan.run[w]=JSON.parse(JSON.stringify(DR[w]||{meta:'Nova semana',sessions:[]}));
@@ -12486,9 +12517,10 @@ function addSEx(w,d){const users=DB.get('fq_users')||{};const u=admGetAluno(edit
 function remSEx(w,d,i){const users=DB.get('fq_users')||{};const u=admGetAluno(editEmail);if(!u)return;users[editEmail]=u;u.aiPlan.gym[w].days[d].splice(i,1);DB.set('fq_users',users);renderEGW(w,u);}
 // ── Aplica um pacote de treino pronto (TREINOS_PRONTOS) na semana em edição ──
 // Cria um novo dia com o nome do pacote (ou reaproveita se já existir um dia
-// com esse nome nessa semana) e copia os exercícios pra dentro. Não salva no
-// Supabase sozinho — só grava local e re-renderiza; o admin confirma com o
-// mesmo botão "💾 Salvar semana" que já existe, podendo editar tudo antes.
+// com esse nome nessa semana) e copia os exercícios pra dentro. Sincroniza
+// com o Supabase NA HORA (não depende de um segundo clique em "Salvar
+// semana") — antes disso, se o admin esquecesse desse segundo passo, o
+// aluno nunca recebia a mudança, mesmo vendo a mensagem de sucesso.
 function admAplicarPack(packKey){
   const pack=TREINOS_PRONTOS[packKey];
   if(!pack){ fqToast('Pacote não encontrado.','warn'); return; }
@@ -12509,7 +12541,22 @@ function admAplicarPack(packKey){
   u.trainApproved=true;
   DB.set('fq_users',users);
   renderEGW(w,u);
-  fqToast(`${pack.nome} adicionado — revise e clique em Salvar semana`,'ok',4000);
+  syncU(u).catch(()=>{ fqToast('⚠️ Salvo no seu celular, mas não consegui enviar pro servidor agora — confira sua internet e clique em "Salvar semana" pra tentar de novo.','warn',6000); });
+  fqToast(`${pack.nome} adicionado e já enviado pro aluno`,'ok',4000);
+}
+// ── Substitui os exercícios de UM DIA específico pelos de um pacote pronto ──
+// (diferente de admAplicarPack, que cria um dia novo — este aqui preenche o
+// dia que o admin já está olhando). Também sincroniza na hora.
+function admAplicarPackNoDia(w,day,packKey){
+  const pack=TREINOS_PRONTOS[packKey];
+  if(!pack){ fqToast('Pacote não encontrado.','warn'); return; }
+  const u=admGetAluno(editEmail);if(!u)return;
+  const users=DB.get('fq_users')||{};users[editEmail]=u;ensureAP(u);
+  u.aiPlan.gym[w].days[day]=pack.exercicios.map(ex=>({...ex}));
+  u.trainApproved=true;
+  DB.set('fq_users',users);renderEGW(w,u);
+  syncU(u).catch(()=>{ fqToast('⚠️ Salvo no seu celular, mas não consegui enviar pro servidor agora — confira sua internet e clique em "Salvar semana" pra tentar de novo.','warn',6000); });
+  fqToast(`${pack.nome} aplicado em "${day}" e já enviado pro aluno`,'ok',3500);
 }
 function addSRun(w){const users=DB.get('fq_users')||{};const u=admGetAluno(editEmail);if(!u)return;users[editEmail]=u;ensureAP(u);u.aiPlan.run[w].sessions.push({day:'Seg',type:'Corrida Leve',dist:'5 km',pace:'7:00 min/km',dur:'~35 min',tip:'Ritmo confortável.'});DB.set('fq_users',users);renderERW(w,u);}
 function remSRun(w,i){const users=DB.get('fq_users')||{};const u=admGetAluno(editEmail);if(!u)return;users[editEmail]=u;u.aiPlan.run[w].sessions.splice(i,1);DB.set('fq_users',users);renderERW(w,u);}
