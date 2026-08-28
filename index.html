@@ -843,7 +843,7 @@ textarea.fi{resize:vertical;min-height:80px;}
       <option value="es">🇪🇸 ES</option>
     </select>
   </div>
-  <div id="fq-version-badge" style="position:absolute;bottom:8px;right:12px;font-size:9px;color:#333;font-weight:700;z-index:5">v205</div>
+  <div id="fq-version-badge" style="position:absolute;bottom:8px;right:12px;font-size:9px;color:#333;font-weight:700;z-index:5">v206</div>
   <img src="https://images.unsplash.com/photo-1517836357463-d25dfeac3438?w=800&q=80" alt="Fitness" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center top;filter:brightness(.35);z-index:0"/>
   <div class="splash-glow"></div>
   <div class="splash-noise"></div>
@@ -2135,7 +2135,7 @@ textarea.fi{resize:vertical;min-height:80px;}
             <span style="color:var(--mu);font-size:18px">›</span>
           </div>
         </div>
-        <div style="text-align:center;padding:20px 0 4px;font-size:11px;color:var(--mu)">FitQuest <span id="fq-version-badge-perfil">v205</span></div>
+        <div style="text-align:center;padding:20px 0 4px;font-size:11px;color:var(--mu)">FitQuest <span id="fq-version-badge-perfil">v206</span></div>
       </div>
     </div>
 
@@ -2315,6 +2315,18 @@ textarea.fi{resize:vertical;min-height:80px;}
       <div style="font-size:11px;color:var(--mu);margin-bottom:10px">Exercícios que você cria aqui aparecem só pra você. Se quiser que entrem oficialmente no seu treino, avise seu treinador.</div>
       <button class="btn-addex" onclick="gvAbrirNovoExercicio()" style="width:100%;margin-bottom:10px">+ Criar novo exercício</button>
       <div id="meus-exercicios-lista"></div>
+    </div>
+  </div>
+</div>
+<!-- Escolher em qual semana/dia inserir um exercício da pasta "Meus Exercícios" -->
+<div class="modal-ov" id="modal-add-treino">
+  <div class="modal-bx">
+    <div class="modal-t"><span>➕ Adicionar a um treino</span><button class="modal-cl" onclick="closeModal('modal-add-treino')">✕</button></div>
+    <div style="padding:16px">
+      <div style="font-size:11px;color:var(--mu);margin-bottom:12px">Escolha em qual semana e dia do seu treino você quer usar esse exercício. Dá pra adicionar em vários dias, um de cada vez.</div>
+      <div class="fg"><label class="fl">Semana</label><select class="fi" id="at-semana" onchange="atAtualizarDias()"></select></div>
+      <div class="fg"><label class="fl">Dia de treino</label><select class="fi" id="at-dia"></select></div>
+      <button class="btn-addex" onclick="atConfirmarAdicionar()" style="width:100%;margin-top:6px">Adicionar a esse dia</button>
     </div>
   </div>
 </div>
@@ -10031,9 +10043,45 @@ function renderMeusExercicios(){
   el.innerHTML = lista.length ? lista.map(e=>`
     <div style="display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--b)">
       <img src="${e.gifUrl}" style="width:44px;height:44px;border-radius:8px;object-fit:cover;background:#000"/>
-      <div style="flex:1"><div style="font-size:13px;font-weight:700">${e.name}</div><div style="font-size:10px;color:var(--mu)">${e.muscle}</div></div>
+      <div style="flex:1;min-width:0"><div style="font-size:13px;font-weight:700">${e.name}</div><div style="font-size:10px;color:var(--mu)">${e.muscle}</div></div>
+      <button onclick="gvAbrirAdicionarATreino('${e.id}')" style="background:rgba(46,204,113,.1);border:1px solid rgba(46,204,113,.3);border-radius:6px;padding:5px 9px;color:#2ecc71;font-size:10px;font-weight:700;cursor:pointer;white-space:nowrap">➕ Add a um treino</button>
       <button onclick="gvExcluirCustom('${e.id}')" style="background:rgba(229,9,20,.08);border:1px solid rgba(229,9,20,.15);border-radius:6px;padding:5px 9px;color:var(--r);font-size:10px;cursor:pointer">🗑️</button>
     </div>`).join('') : `<div style="font-size:11.5px;color:var(--mu);text-align:center;padding:14px 0">Você ainda não criou nenhum exercício.</div>`;
+}
+// ── Adicionar um exercício da pasta "Meus Exercícios" a um dia específico
+// do próprio treino do aluno (self-service — não depende do admin). ──
+let atExIdAlvo=null;
+function gvAbrirAdicionarATreino(exId){
+  const u=getU(); if(!u) return;
+  ensureAP(u);
+  atExIdAlvo=exId;
+  const semSel=document.getElementById('at-semana');
+  semSel.innerHTML = Object.keys(u.aiPlan.gym).map(w=>`<option value="${w}">${w}</option>`).join('');
+  closeModal('modal-meus-exercicios');
+  abrirModal('modal-add-treino');
+  atAtualizarDias();
+}
+function atAtualizarDias(){
+  const u=getU(); if(!u) return;
+  const w=document.getElementById('at-semana').value;
+  const diaSel=document.getElementById('at-dia');
+  const dias = (u.aiPlan.gym[w]&&u.aiPlan.gym[w].days) ? Object.keys(u.aiPlan.gym[w].days) : [];
+  diaSel.innerHTML = dias.length ? dias.map(d=>`<option value="${d}">${d}</option>`).join('') : '<option value="">— nenhum dia nessa semana —</option>';
+}
+async function atConfirmarAdicionar(){
+  const u=getU(); if(!u || !atExIdAlvo){ fqToast('Erro: exercício não identificado.','warn'); return; }
+  const w=document.getElementById('at-semana').value;
+  const d=document.getElementById('at-dia').value;
+  if(!w||!d){ fqToast('Escolha semana e dia.','warn'); return; }
+  const users=DB.get('fq_users')||{};
+  ensureAP(u);
+  if(!u.aiPlan.gym[w].days[d]) u.aiPlan.gym[w].days[d]=[];
+  u.aiPlan.gym[w].days[d].push({id:atExIdAlvo,sets:3,reps:'12',load:'Moderada',rest:60});
+  users[u.email]=u; DB.set('fq_users',users);
+  await syncU(u).catch(()=>{});
+  fqToast(`✅ Adicionado em "${d}" (${w})!`,'ok',3000);
+  closeModal('modal-add-treino');
+  atExIdAlvo=null;
 }
 
 function getExImg(muscle){
