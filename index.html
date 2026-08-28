@@ -843,7 +843,7 @@ textarea.fi{resize:vertical;min-height:80px;}
       <option value="es">🇪🇸 ES</option>
     </select>
   </div>
-  <div id="fq-version-badge" style="position:absolute;bottom:8px;right:12px;font-size:9px;color:#333;font-weight:700;z-index:5">v207</div>
+  <div id="fq-version-badge" style="position:absolute;bottom:8px;right:12px;font-size:9px;color:#333;font-weight:700;z-index:5">v209</div>
   <img src="https://images.unsplash.com/photo-1517836357463-d25dfeac3438?w=800&q=80" alt="Fitness" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center top;filter:brightness(.35);z-index:0"/>
   <div class="splash-glow"></div>
   <div class="splash-noise"></div>
@@ -2135,7 +2135,7 @@ textarea.fi{resize:vertical;min-height:80px;}
             <span style="color:var(--mu);font-size:18px">›</span>
           </div>
         </div>
-        <div style="text-align:center;padding:20px 0 4px;font-size:11px;color:var(--mu)">FitQuest <span id="fq-version-badge-perfil">v207</span></div>
+        <div style="text-align:center;padding:20px 0 4px;font-size:11px;color:var(--mu)">FitQuest <span id="fq-version-badge-perfil">v209</span></div>
       </div>
     </div>
 
@@ -3505,6 +3505,28 @@ const TREINOS_PRONTOS = {
       {id:'e010', sets:3, reps:'12', load:'Moderada', rest:60},
       {id:'e013', sets:2, reps:'12', load:'Moderada', rest:45},
       {id:'e016', sets:2, reps:'12', load:'Moderada', rest:45},
+      {id:'e028', sets:3, reps:'15', load:'Peso do corpo', rest:30},
+    ]
+  },
+  retorno_corrida: {
+    nome:'🩺 Fortalecimento p/ Corrida (Retorno)',
+    dia:'Fortalecimento pra Corrida',
+    // Pensado pra quem está voltando a treinar depois de afastamento clínico
+    // (ex: pós-trombose com liberação médica) e quer construir base pra
+    // corrida sem impacto/explosão: sem saltos, sem exercícios balísticos,
+    // sem posições isométricas longas. Destaque pra panturrilha — a
+    // contração ajuda o retorno venoso da perna, favorável em quadros
+    // vasculares. SEMPRE confirmar liberação médica e uso de
+    // anticoagulante (afeta risco de hematoma/queda) antes de aplicar.
+    exercicios: [
+      {id:'e019', sets:3, reps:'12', load:'Leve/Moderada', rest:60},
+      {id:'e027', sets:3, reps:'12', load:'Moderada', rest:60},
+      {id:'e021', sets:3, reps:'10', load:'Leve/Moderada', rest:60},
+      {id:'e022', sets:3, reps:'10 (cada perna)', load:'Leve', rest:60},
+      {id:'e023', sets:3, reps:'12', load:'Leve', rest:45},
+      {id:'e024', sets:3, reps:'12', load:'Leve', rest:45},
+      {id:'e025', sets:3, reps:'15', load:'Moderada', rest:45},
+      {id:'e029', sets:3, reps:'20-30s', load:'Peso do corpo', rest:30},
       {id:'e028', sets:3, reps:'15', load:'Peso do corpo', rest:30},
     ]
   }
@@ -5123,6 +5145,28 @@ async function syncU(u){
     }
   }catch(e){
     console.error('sync falhou (exceção):',e.message,e);
+    fqToast('⚠️ Não foi possível salvar no servidor: '+e.message,'warn',6000);
+  }
+}
+// ── Versão pro ADMIN salvar o plano de OUTRO aluno ──
+// syncU() faz upsert (insere-ou-atualiza), e o Supabase avalia upsert contra
+// a política de INSERT da tabela — que só permite o próprio usuário gravar
+// a própria linha (auth.uid() = id). Como o admin está autenticado com o
+// PRÓPRIO uid, tentando gravar na linha de outro aluno, o upsert é barrado
+// por RLS ("new row violates row-level security policy"), mesmo a linha do
+// aluno já existindo. Um UPDATE simples (sem checar política de INSERT)
+// resolve — é o mesmo padrão que admApprove/admRevoke já usam com sucesso.
+async function syncAlunoAdmin(u){
+  if(!sb||!u){console.warn('sync admin: sem sb ou sem usuário');return;}
+  if(!u.id){console.warn('sync admin: usuário sem id, não sincroniza');return;}
+  try{
+    const{error}=await sb.from('alunos').update(userToRow(u)).eq('id',u.id);
+    if(error){
+      console.error('sync admin falhou:',error.message,error);
+      fqToast('⚠️ Não foi possível salvar no servidor: '+error.message,'warn',6000);
+    }
+  }catch(e){
+    console.error('sync admin falhou (exceção):',e.message,e);
     fqToast('⚠️ Não foi possível salvar no servidor: '+e.message,'warn',6000);
   }
 }
@@ -12487,7 +12531,7 @@ function limparTreinoDia(w,day){
   const users=DB.get('fq_users')||{};users[editEmail]=u;ensureAP(u);
   u.aiPlan.gym[w].days[day]=[];
   DB.set('fq_users',users);renderEGW(w,u);
-  syncU(u).catch(()=>{});
+  syncAlunoAdmin(u).catch(()=>{});
   fqToast(`"${day}" foi limpo — adicione exercícios ou use um pacote pronto.`,'ok',3000);
 }
 function novoDiaEGW(w){
@@ -12511,8 +12555,8 @@ function renderERW(w,u){
   h+=`<button class="btn-addex" onclick="addSRun('${w}')" style="border-color:rgba(229,9,20,.2);color:var(--r)">+ Sessão</button><button class="btn-savewk" onclick="saveERW('${w}')" style="margin-top:8px">💾 Salvar corrida</button>`;
   document.getElementById('erw-content').innerHTML=h;
 }
-function saveEGW(w){const users=DB.get('fq_users')||{};const u=admGetAluno(editEmail);if(!u)return;users[editEmail]=u;ensureAP(u);const ef=document.getElementById('ef');if(ef)u.aiPlan.gym[w].fase=ef.value;document.querySelectorAll('#egw-content .mi[data-field],#egw-content select[data-field]').forEach(inp=>{const day=inp.dataset.day;const idx=parseInt(inp.dataset.idx);const field=inp.dataset.field;if(day&&!isNaN(idx)&&field&&u.aiPlan.gym[w].days[day]?.[idx]!==undefined)u.aiPlan.gym[w].days[day][idx][field]=['sets','rest'].includes(field)?parseInt(inp.value)||1:inp.value;});u.trainApproved=true;DB.set('fq_users',users);syncU(u).catch(()=>{});fqToast(t('msg.c72391b3b3'),'ok');}
-function saveERW(w){const users=DB.get('fq_users')||{};const u=admGetAluno(editEmail);if(!u)return;users[editEmail]=u;ensureAP(u);const ef=document.getElementById('erf');if(ef)u.aiPlan.run[w].meta=ef.value;document.querySelectorAll('#erw-content .mi[data-field]').forEach(inp=>{const si=parseInt(inp.dataset.si);const field=inp.dataset.field;if(!isNaN(si)&&field&&u.aiPlan.run[w].sessions[si])u.aiPlan.run[w].sessions[si][field]=inp.value;});u.trainApproved=true;DB.set('fq_users',users);syncU(u).catch(()=>{});fqToast(t('msg.c72391b3b3'),'ok');}
+function saveEGW(w){const users=DB.get('fq_users')||{};const u=admGetAluno(editEmail);if(!u)return;users[editEmail]=u;ensureAP(u);const ef=document.getElementById('ef');if(ef)u.aiPlan.gym[w].fase=ef.value;document.querySelectorAll('#egw-content .mi[data-field],#egw-content select[data-field]').forEach(inp=>{const day=inp.dataset.day;const idx=parseInt(inp.dataset.idx);const field=inp.dataset.field;if(day&&!isNaN(idx)&&field&&u.aiPlan.gym[w].days[day]?.[idx]!==undefined)u.aiPlan.gym[w].days[day][idx][field]=['sets','rest'].includes(field)?parseInt(inp.value)||1:inp.value;});u.trainApproved=true;DB.set('fq_users',users);syncAlunoAdmin(u).catch(()=>{});fqToast(t('msg.c72391b3b3'),'ok');}
+function saveERW(w){const users=DB.get('fq_users')||{};const u=admGetAluno(editEmail);if(!u)return;users[editEmail]=u;ensureAP(u);const ef=document.getElementById('erf');if(ef)u.aiPlan.run[w].meta=ef.value;document.querySelectorAll('#erw-content .mi[data-field]').forEach(inp=>{const si=parseInt(inp.dataset.si);const field=inp.dataset.field;if(!isNaN(si)&&field&&u.aiPlan.run[w].sessions[si])u.aiPlan.run[w].sessions[si][field]=inp.value;});u.trainApproved=true;DB.set('fq_users',users);syncAlunoAdmin(u).catch(()=>{});fqToast(t('msg.c72391b3b3'),'ok');}
 function addSEx(w,d){const users=DB.get('fq_users')||{};const u=admGetAluno(editEmail);if(!u)return;users[editEmail]=u;ensureAP(u);u.aiPlan.gym[w].days[d].push({id:EXERCISE_BANK[0]?.id||'e001',sets:3,reps:'12',load:'Moderada',rest:60});DB.set('fq_users',users);renderEGW(w,u);}
 function remSEx(w,d,i){const users=DB.get('fq_users')||{};const u=admGetAluno(editEmail);if(!u)return;users[editEmail]=u;u.aiPlan.gym[w].days[d].splice(i,1);DB.set('fq_users',users);renderEGW(w,u);}
 // ── Aplica um pacote de treino pronto (TREINOS_PRONTOS) na semana em edição ──
@@ -12541,7 +12585,7 @@ function admAplicarPack(packKey){
   u.trainApproved=true;
   DB.set('fq_users',users);
   renderEGW(w,u);
-  syncU(u).catch(()=>{ fqToast('⚠️ Salvo no seu celular, mas não consegui enviar pro servidor agora — confira sua internet e clique em "Salvar semana" pra tentar de novo.','warn',6000); });
+  syncAlunoAdmin(u).catch(()=>{ fqToast('⚠️ Salvo no seu celular, mas não consegui enviar pro servidor agora — confira sua internet e clique em "Salvar semana" pra tentar de novo.','warn',6000); });
   fqToast(`${pack.nome} adicionado e já enviado pro aluno`,'ok',4000);
 }
 // ── Substitui os exercícios de UM DIA específico pelos de um pacote pronto ──
@@ -12555,7 +12599,7 @@ function admAplicarPackNoDia(w,day,packKey){
   u.aiPlan.gym[w].days[day]=pack.exercicios.map(ex=>({...ex}));
   u.trainApproved=true;
   DB.set('fq_users',users);renderEGW(w,u);
-  syncU(u).catch(()=>{ fqToast('⚠️ Salvo no seu celular, mas não consegui enviar pro servidor agora — confira sua internet e clique em "Salvar semana" pra tentar de novo.','warn',6000); });
+  syncAlunoAdmin(u).catch(()=>{ fqToast('⚠️ Salvo no seu celular, mas não consegui enviar pro servidor agora — confira sua internet e clique em "Salvar semana" pra tentar de novo.','warn',6000); });
   fqToast(`${pack.nome} aplicado em "${day}" e já enviado pro aluno`,'ok',3500);
 }
 function addSRun(w){const users=DB.get('fq_users')||{};const u=admGetAluno(editEmail);if(!u)return;users[editEmail]=u;ensureAP(u);u.aiPlan.run[w].sessions.push({day:'Seg',type:'Corrida Leve',dist:'5 km',pace:'7:00 min/km',dur:'~35 min',tip:'Ritmo confortável.'});DB.set('fq_users',users);renderERW(w,u);}
