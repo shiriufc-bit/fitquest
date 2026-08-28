@@ -66,6 +66,7 @@ function liberarPacoteEbooks(u) {
      funciona offline. A CDN fica só como rede de segurança, caso o arquivo local falhe. -->
 <script src="lib/jspdf.umd.min.js" onerror="this.dataset.falhou=1;console.warn('jsPDF local falhou, tentando CDN')"></script>
 <script src="lib/jspdf.plugin.autotable.min.js" onerror="this.dataset.falhou=1;console.warn('autoTable local falhou, tentando CDN')"></script>
+<script src="lib/gif.js" onerror="this.dataset.falhou=1;console.warn('gif.js local falhou — gravação de vídeo personalizado ficará indisponível')"></script>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
 :root{
@@ -842,7 +843,7 @@ textarea.fi{resize:vertical;min-height:80px;}
       <option value="es">🇪🇸 ES</option>
     </select>
   </div>
-  <div id="fq-version-badge" style="position:absolute;bottom:8px;right:12px;font-size:9px;color:#333;font-weight:700;z-index:5">v201</div>
+  <div id="fq-version-badge" style="position:absolute;bottom:8px;right:12px;font-size:9px;color:#333;font-weight:700;z-index:5">v203</div>
   <img src="https://images.unsplash.com/photo-1517836357463-d25dfeac3438?w=800&q=80" alt="Fitness" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center top;filter:brightness(.35);z-index:0"/>
   <div class="splash-glow"></div>
   <div class="splash-noise"></div>
@@ -2109,6 +2110,14 @@ textarea.fi{resize:vertical;min-height:80px;}
             </div>
             <span style="color:var(--mu);font-size:18px">›</span>
           </div>
+          <div onclick="abrirMeusExercicios()" style="padding:14px 16px;display:flex;align-items:center;gap:12px;cursor:pointer;border-bottom:1px solid var(--b)">
+            <span style="font-size:20px">🎬</span>
+            <div style="flex:1">
+              <div style="font-size:13px;font-weight:700">Meus Exercícios</div>
+              <div style="font-size:10px;color:var(--mu)">Crie exercícios com seu próprio vídeo</div>
+            </div>
+            <span style="color:var(--mu);font-size:18px">›</span>
+          </div>
           <div onclick="doExcluirConta()" style="padding:14px 16px;border-bottom:1px solid var(--b);display:flex;align-items:center;gap:12px;cursor:pointer">
             <span style="font-size:20px">🗑️</span>
             <div style="flex:1">
@@ -2126,7 +2135,7 @@ textarea.fi{resize:vertical;min-height:80px;}
             <span style="color:var(--mu);font-size:18px">›</span>
           </div>
         </div>
-        <div style="text-align:center;padding:20px 0 4px;font-size:11px;color:var(--mu)">FitQuest <span id="fq-version-badge-perfil">v201</span></div>
+        <div style="text-align:center;padding:20px 0 4px;font-size:11px;color:var(--mu)">FitQuest <span id="fq-version-badge-perfil">v203</span></div>
       </div>
     </div>
 
@@ -2258,6 +2267,55 @@ textarea.fi{resize:vertical;min-height:80px;}
   <div class="modal-bx" style="max-width:480px;width:100%;max-height:92vh;overflow-y:auto;padding:0;border-radius:16px 16px 0 0;margin-top:auto">
     <button class="modal-cl" onclick="closeModal('modal-ficha-ex')" style="position:absolute;top:14px;right:14px;z-index:5;background:rgba(0,0,0,.55);border-radius:50%;width:34px;height:34px;display:flex;align-items:center;justify-content:center">✕</button>
     <div id="ficha-ex-content"></div>
+  </div>
+</div>
+<!-- Gravação de vídeo → GIF (personalizar exercício existente OU criar exercício novo privado) -->
+<div class="modal-ov" id="modal-gravar-video" style="align-items:flex-start">
+  <div class="modal-bx" style="max-width:420px;width:100%;padding:0;border-radius:16px 16px 0 0;margin-top:auto;max-height:92vh;overflow-y:auto">
+    <div class="modal-t"><span id="gv-titulo">🎥 Gravar meu vídeo</span><button class="modal-cl" onclick="gvCancelar()">✕</button></div>
+    <div style="padding:16px">
+      <div id="gv-form-novo" style="display:none">
+        <div class="fg"><label class="fl">Nome do exercício</label><input class="fi" id="gv-nome" placeholder="Ex: Elevação lateral com faixa"/></div>
+        <div class="fg"><label class="fl">Grupo muscular</label>
+          <select class="fi" id="gv-musculo">
+            <option>Peito</option><option>Costas</option><option>Ombro</option><option>Bíceps</option><option>Tríceps</option>
+            <option>Quadríceps</option><option>Posterior</option><option>Glúteo</option><option>Panturrilha</option>
+            <option>Abdômen</option><option>Cardio</option><option>Corpo Todo</option><option>Outro</option>
+          </select>
+        </div>
+        <button class="btn-addex" onclick="gvContinuarParaCamera()" style="width:100%;margin-top:6px">Continuar pra gravação →</button>
+      </div>
+      <div id="gv-camera-wrap" style="display:none;text-align:center">
+        <div style="position:relative;width:100%;aspect-ratio:1/1;background:#000;border-radius:12px;overflow:hidden">
+          <video id="gv-video" autoplay muted playsinline style="width:100%;height:100%;object-fit:cover"></video>
+          <div id="gv-contador" style="display:none;position:absolute;inset:0;align-items:center;justify-content:center;font-size:56px;font-weight:900;color:#fff;background:rgba(0,0,0,.35)"></div>
+        </div>
+        <div style="font-size:11px;color:var(--mu);margin-top:10px">Grave uns 3 segundos mostrando o movimento completo do exercício.</div>
+        <button class="btn-addex" id="gv-btn-gravar" onclick="gvComecarGravacao()" style="width:100%;margin-top:10px">⏺ Gravar (3s)</button>
+      </div>
+      <div id="gv-processando" style="display:none;text-align:center;padding:30px 0">
+        <div style="font-size:32px">⏳</div>
+        <div style="font-size:12.5px;color:var(--mu);margin-top:8px">Convertendo em GIF...</div>
+      </div>
+      <div id="gv-resultado-wrap" style="display:none;text-align:center">
+        <img id="gv-resultado-img" style="width:100%;aspect-ratio:1/1;object-fit:cover;border-radius:12px;background:#000"/>
+        <div style="display:flex;gap:8px;margin-top:12px">
+          <button class="btn-addex" onclick="gvRegravar()" style="flex:1">🔁 Gravar de novo</button>
+          <button class="btn-savewk" onclick="gvSalvarResultado()" style="flex:1;margin-top:0">✅ Usar este</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- Lista de exercícios privados criados pelo próprio aluno -->
+<div class="modal-ov" id="modal-meus-exercicios">
+  <div class="modal-bx">
+    <div class="modal-t"><span>🎬 Meus Exercícios</span><button class="modal-cl" onclick="closeModal('modal-meus-exercicios')">✕</button></div>
+    <div style="padding:16px">
+      <div style="font-size:11px;color:var(--mu);margin-bottom:10px">Exercícios que você cria aqui aparecem só pra você. Se quiser que entrem oficialmente no seu treino, avise seu treinador.</div>
+      <button class="btn-addex" onclick="gvAbrirNovoExercicio()" style="width:100%;margin-bottom:10px">+ Criar novo exercício</button>
+      <div id="meus-exercicios-lista"></div>
+    </div>
   </div>
 </div>
 <div class="modal-ov" id="modal-adm-ex"><div class="modal-bx"><div class="modal-t"><span id="modal-ex-title" data-i18n="ui.19393fa797">➕ Exercício</span><button class="modal-cl" onclick="closeModal('modal-adm-ex')">✕</button></div><div id="modal-ex-content"></div></div></div>
@@ -3790,7 +3848,20 @@ function closeModal(id){
     try{ history.back(); }catch(e){ _fqConsumindoHistorico=false; }
   }
 }
-function getExById(id){return EXERCISE_BANK.find(e=>e.id===id)||null;}
+// `uCtx` opcional: quando informado, também procura nos exercícios PRIVADOS
+// desse aluno (criados por ele mesmo). Sem uCtx, usa o aluno logado (getU()).
+// Isso permite ao admin ver/editar os exercícios que um aluno específico
+// criou, sem misturar com os de outros alunos.
+function getExById(id, uCtx){
+  const doBanco = EXERCISE_BANK.find(e=>e.id===id);
+  if(doBanco) return doBanco;
+  const u = uCtx!==undefined ? uCtx : ((typeof getU==='function') ? getU() : null);
+  if(u?.exerciciosCustom){
+    const custom = u.exerciciosCustom.find(e=>e.id===id);
+    if(custom) return custom;
+  }
+  return null;
+}
 
 // ══════════════════════════════════════════════════════════════════════
 // ══ FORÇA PRA CORRIDA — biblioteca de pacotes (somente admin) ══
@@ -4874,6 +4945,15 @@ function abrirFichaExercicio(exId){
       ${(typeof temGifDemo==='function' && temGifDemo(ex.id)) ?
         gifCanvasHTML(ex.id, 'position:absolute;inset:0;width:100%;height:100%;object-fit:contain;background:#f6f2e4', '.ficha-hero-thumb')
         : renderExThumbFallback(ex.id)}
+      ${u?.gifsPersonalizados?.[ex.id] ? `<div style="position:absolute;top:10px;left:10px;background:rgba(46,204,113,.9);color:#fff;font-size:9.5px;font-weight:800;padding:3px 8px;border-radius:20px;z-index:2">📹 SEU VÍDEO</div>` : ''}
+    </div>
+    <div style="padding:10px 20px 0;display:flex;gap:8px;flex-wrap:wrap">
+      ${u?.gifsPersonalizados?.[ex.id] ? `
+        <button onclick="gvAbrirParaExercicio('${ex.id}')" style="flex:1;background:var(--s2);border:1px solid var(--b);border-radius:8px;padding:8px 10px;color:#fff;font-size:11px;font-weight:700;cursor:pointer">🔁 Gravar de novo</button>
+        <button onclick="gvRemoverPersonalizado('${ex.id}')" style="flex:1;background:rgba(255,255,255,.03);border:1px solid var(--b);border-radius:8px;padding:8px 10px;color:var(--mu);font-size:11px;font-weight:700;cursor:pointer">↩️ Usar gif original</button>
+      ` : `
+        <button onclick="gvAbrirParaExercicio('${ex.id}')" style="flex:1;background:var(--s2);border:1px solid var(--b);border-radius:8px;padding:8px 10px;color:#fff;font-size:11px;font-weight:700;cursor:pointer">🎥 Gravar meu vídeo deste exercício</button>
+      `}
     </div>
     <div style="padding:18px 20px 6px">
       <h2 style="margin:0 0 3px;font-size:20px;font-weight:900;line-height:1.25">${nomeExibido}${nomeEN?` <span style="font-size:13px;color:var(--mu);font-weight:500">(${nomeEN})</span>`:''}</h2>
@@ -5011,10 +5091,10 @@ function renovarMissoesSemanais(u){
   return true;
 }
 function rowToUser(data){
-  return{id:data.id,name:data.nome,email:data.email,plano:data.plano,trialInicio:data.trial_inicio,runInicio:data.run_inicio,runAjusteLesao:!!data.run_ajuste_lesao,assinaturaStatus:data.assinatura_status||'trial',assinaturaAte:data.assinatura_ate,diaConversao:data.dia_conversao,dataConversao:data.data_conversao,planoConversao:data.plano_conversao,precoTravado:data.preco_travado,promoFundador:!!data.promo_fundador,pixFundador:!!data.pix_fundador,promoVaga:data.promo_vaga,solicitouTrocaTreino:!!data.solicitou_troca,solicitouTrocaData:data.solicitou_troca_data,solicitouTrocaTipo:data.solicitou_troca_tipo,trainApproved:data.treino_liberado,isAdmin:!!data.is_admin,aiPlan:data.ai_plan,anamnese:data.anamnese,anamneseDone:!!data.anamnese_geral,anamneseGeral:data.anamnese_geral||null,anamneseMusculacao:data.anamnese_musculacao||null,anamneseCorrida:data.anamnese_corrida||null,anamneseMuscDone:!!data.anamnese_musculacao,anamneseCorridaDone:!!data.anamnese_corrida,gymWeek:data.gym_week||1,runWeek:data.run_week||1,gymDone:data.gym_done||{},runDone:data.run_done||{},runFeedback:data.run_feedback||{},runAtividades:data.run_atividades||[],runTriagem:data.run_triagem||null,runStrength:data.run_strength||[],runStrengthDone:data.run_strength_done||{},runTestes:data.run_testes||[],runTestPace:data.run_test_pace||null,loadHistory:data.load_history||{},workoutHistory:data.workout_history||[],xp:data.xp||0,kidsXp:data.kids_xp||0,level:data.level||1,streak:data.streak||1,coins:data.coins||0,badges:data.badges||[],prs:data.prs||[],stats:data.stats||{treinos:0,distancia:0,semanas:0},purchases:data.purchases||[],pacoteEbooks:!!data.pacote_ebooks,programIntakes:data.program_intakes||{},avatar:data.avatar||null,avaliacoes:data.evals||[],missions:MISSOES_PADRAO.map(m=>({...m})),createdAt:data.criado_em,lastLogin:data.ultimo_acesso};
+  return{id:data.id,name:data.nome,email:data.email,plano:data.plano,trialInicio:data.trial_inicio,runInicio:data.run_inicio,runAjusteLesao:!!data.run_ajuste_lesao,assinaturaStatus:data.assinatura_status||'trial',assinaturaAte:data.assinatura_ate,diaConversao:data.dia_conversao,dataConversao:data.data_conversao,planoConversao:data.plano_conversao,precoTravado:data.preco_travado,promoFundador:!!data.promo_fundador,pixFundador:!!data.pix_fundador,promoVaga:data.promo_vaga,solicitouTrocaTreino:!!data.solicitou_troca,solicitouTrocaData:data.solicitou_troca_data,solicitouTrocaTipo:data.solicitou_troca_tipo,trainApproved:data.treino_liberado,isAdmin:!!data.is_admin,aiPlan:data.ai_plan,anamnese:data.anamnese,anamneseDone:!!data.anamnese_geral,anamneseGeral:data.anamnese_geral||null,anamneseMusculacao:data.anamnese_musculacao||null,anamneseCorrida:data.anamnese_corrida||null,anamneseMuscDone:!!data.anamnese_musculacao,anamneseCorridaDone:!!data.anamnese_corrida,gymWeek:data.gym_week||1,runWeek:data.run_week||1,gymDone:data.gym_done||{},runDone:data.run_done||{},runFeedback:data.run_feedback||{},runAtividades:data.run_atividades||[],runTriagem:data.run_triagem||null,runStrength:data.run_strength||[],runStrengthDone:data.run_strength_done||{},runTestes:data.run_testes||[],runTestPace:data.run_test_pace||null,loadHistory:data.load_history||{},workoutHistory:data.workout_history||[],xp:data.xp||0,kidsXp:data.kids_xp||0,level:data.level||1,streak:data.streak||1,coins:data.coins||0,badges:data.badges||[],prs:data.prs||[],stats:data.stats||{treinos:0,distancia:0,semanas:0},purchases:data.purchases||[],pacoteEbooks:!!data.pacote_ebooks,programIntakes:data.program_intakes||{},avatar:data.avatar||null,avaliacoes:data.evals||[],gifsPersonalizados:data.gifs_personalizados||{},exerciciosCustom:data.exercicios_custom||[],missions:MISSOES_PADRAO.map(m=>({...m})),createdAt:data.criado_em,lastLogin:data.ultimo_acesso};
 }
 function userToRow(u){
-  return{id:u.id,nome:u.name,email:u.email,plano:u.plano||'free',trial_inicio:u.trialInicio||undefined,run_inicio:u.runInicio||null,run_ajuste_lesao:u.runAjusteLesao||false,treino_liberado:u.trainApproved||false,ai_plan:u.aiPlan||null,anamnese:u.anamnese||null,anamnese_geral:u.anamneseGeral||null,anamnese_musculacao:u.anamneseMusculacao||null,anamnese_corrida:u.anamneseCorrida||null,gym_week:u.gymWeek||1,run_week:u.runWeek||1,gym_done:u.gymDone||{},run_done:u.runDone||{},run_feedback:u.runFeedback||{},run_atividades:u.runAtividades||[],run_triagem:u.runTriagem||null,run_strength:u.runStrength||[],run_strength_done:u.runStrengthDone||{},run_testes:u.runTestes||[],run_test_pace:u.runTestPace||null,load_history:u.loadHistory||{},workout_history:u.workoutHistory||[],xp:u.xp||0,kids_xp:u.kidsXp||0,level:u.level||1,streak:u.streak||1,coins:u.coins||0,badges:u.badges||[],prs:u.prs||[],stats:u.stats||{treinos:0,distancia:0,semanas:0},avatar:u.avatar||null,evals:u.avaliacoes||[],program_intakes:u.programIntakes||{},ultimo_acesso:new Date().toISOString(),updated_at:new Date().toISOString()};
+  return{id:u.id,nome:u.name,email:u.email,plano:u.plano||'free',trial_inicio:u.trialInicio||undefined,run_inicio:u.runInicio||null,run_ajuste_lesao:u.runAjusteLesao||false,treino_liberado:u.trainApproved||false,ai_plan:u.aiPlan||null,anamnese:u.anamnese||null,anamnese_geral:u.anamneseGeral||null,anamnese_musculacao:u.anamneseMusculacao||null,anamnese_corrida:u.anamneseCorrida||null,gym_week:u.gymWeek||1,run_week:u.runWeek||1,gym_done:u.gymDone||{},run_done:u.runDone||{},run_feedback:u.runFeedback||{},run_atividades:u.runAtividades||[],run_triagem:u.runTriagem||null,run_strength:u.runStrength||[],run_strength_done:u.runStrengthDone||{},run_testes:u.runTestes||[],run_test_pace:u.runTestPace||null,load_history:u.loadHistory||{},workout_history:u.workoutHistory||[],xp:u.xp||0,kids_xp:u.kidsXp||0,level:u.level||1,streak:u.streak||1,coins:u.coins||0,badges:u.badges||[],prs:u.prs||[],stats:u.stats||{treinos:0,distancia:0,semanas:0},avatar:u.avatar||null,evals:u.avaliacoes||[],program_intakes:u.programIntakes||{},gifs_personalizados:u.gifsPersonalizados||{},exercicios_custom:u.exerciciosCustom||[],ultimo_acesso:new Date().toISOString(),updated_at:new Date().toISOString()};
   // Obs.: purchases/pacote_ebooks/is_admin/plano NÃO são enviados pelo aluno — são protegidos no banco e só mudam via webhook de pagamento ou admin.
 }
 async function syncU(u){
@@ -9293,6 +9373,29 @@ function renderBannerTrial(u){
   if(st === 'trial'){
     const dias = diasRestantesTrial(u);
     const urgente = dias <= 3;
+
+    // Enquanto a oferta Fundador (R$100/ano, vagas limitadas) estiver ativa,
+    // o banner da tela inicial vira a PRÓPRIA chamada da promoção — é a
+    // primeira coisa que o aluno vê, bem mais chamativo que o texto
+    // genérico de "teste grátis" que estava passando despercebido.
+    if(pixFundadorAtiva()){
+      const restantes = pixFundadorVagasRestantes();
+      el.innerHTML = `
+      <div onclick="abrirAssinatura()" style="margin:0 20px 12px;cursor:pointer;position:relative;overflow:hidden;
+        background:linear-gradient(135deg,#2ecc71,#1e9e5c);border-radius:14px;padding:16px;
+        box-shadow:0 6px 22px rgba(46,204,113,.4)">
+        <div style="position:absolute;top:-22px;right:-22px;width:100px;height:100px;background:rgba(255,255,255,.08);border-radius:50%"></div>
+        <div style="position:absolute;bottom:-30px;left:-10px;width:70px;height:70px;background:rgba(255,255,255,.06);border-radius:50%"></div>
+        <div style="position:relative">
+          <span style="font-size:10px;font-weight:900;background:#fff;color:#177a45;padding:3px 9px;border-radius:20px;letter-spacing:.4px">🔥 OFERTA DE LANÇAMENTO</span>
+          <div style="font-size:20px;font-weight:900;color:#fff;line-height:1.3;margin-top:8px">R$100 o ano inteiro</div>
+          <div style="font-size:11.5px;color:rgba(255,255,255,.92);margin-top:2px">Só pros ${PIX_FUNDADOR_LIMITE} primeiros alunos${PIX_FUNDADOR_CONTAGEM_OK?` — restam <strong>${restantes} vaga${restantes===1?'':'s'}</strong>`:''}</div>
+          <button onclick="event.stopPropagation();abrirAssinatura()" style="margin-top:12px;width:100%;background:#fff;border:none;border-radius:9px;padding:12px;color:#177a45;font-size:13.5px;font-weight:900;cursor:pointer">Garantir minha vaga →</button>
+        </div>
+      </div>`;
+      return;
+    }
+
     el.innerHTML = `<div style="margin:0 20px 12px;background:${urgente?'rgba(243,156,18,.12)':'rgba(46,204,113,.1)'};border:1px solid ${urgente?'rgba(243,156,18,.35)':'rgba(46,204,113,.25)'};border-radius:10px;padding:11px 14px;display:flex;align-items:center;gap:11px">
       <div style="font-size:20px">${urgente?'⏳':'🎁'}</div>
       <div style="flex:1;min-width:0">
@@ -9315,6 +9418,7 @@ function renderModalAssinatura(){
   const el = document.getElementById('modal-assinatura-content');
   if(!el) return;
   el.innerHTML = `
+    ${renderCardPixFundador()}
     ${renderSeletorPlanos()}
     <div style="background:var(--s);border:1px solid var(--b);border-radius:10px;padding:16px;text-align:left;font-size:12px;color:var(--t2);line-height:2;margin-bottom:16px">
       ✅ Musculação e corrida sob medida<br/>
@@ -9324,17 +9428,17 @@ function renderModalAssinatura(){
       ✅ Acompanhamento de evolução
     </div>
     <button class="btn-p" onclick="irParaPagamento(_planoSelecionado)">Assinar plano ${_planoSelecionado==='anual'?'anual':'mensal'}</button>
-    ${renderCardPixFundador()}`;
+    ${pixFundadorAtiva()?`<div style="text-align:center;font-size:10.5px;color:var(--mu);margin-top:10px">ou role pra cima e garanta a oferta Fundador por R$${PIX_FUNDADOR_PRECO}</div>`:''}`;
 }
 
 function renderCardPixFundador(){
   if(!pixFundadorAtiva()) return '';
   const restantes = pixFundadorVagasRestantes();
   return `
-    <div style="margin-top:22px;padding-top:20px;border-top:1px solid var(--b)">
+    <div style="margin-bottom:20px">
       <div style="background:linear-gradient(135deg,rgba(46,204,113,.12),rgba(46,204,113,.03));border:1px solid rgba(46,204,113,.35);border-radius:14px;padding:16px">
         <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">
-          <span style="font-size:13.5px;font-weight:900;color:#2ecc71">OFERTA FUNDADOR — PAGUE NO PIX</span>
+          <span style="font-size:13.5px;font-weight:900;color:#2ecc71">🔥 OFERTA FUNDADOR — PAGUE NO PIX</span>
         </div>
         <div style="font-size:26px;font-weight:900;color:#fff">R$${PIX_FUNDADOR_PRECO} <span style="font-size:12px;color:var(--t2);font-weight:400">à vista · 1 ano de acesso</span></div>
         ${PIX_FUNDADOR_CONTAGEM_OK?`<div style="font-size:11.5px;color:var(--t2);margin-top:4px">Restam <strong style="color:#2ecc71">${restantes} de ${PIX_FUNDADOR_LIMITE} vagas</strong></div>`:''}
@@ -9349,6 +9453,7 @@ function renderCardPixFundador(){
         <button onclick="confirmarJaPagueiPix()" style="width:100%;margin-top:8px;background:#2ecc71;border:none;color:#0a0a0a;border-radius:9px;padding:12px;font-size:13px;font-weight:900;cursor:pointer">✅ Já paguei</button>
         <div style="font-size:10px;color:var(--mu);margin-top:8px;line-height:1.5">Depois de pagar, clica em "Já paguei" — o Rennan confirma manualmente e libera seu acesso.</div>
       </div>
+      <div style="text-align:center;font-size:10px;color:var(--mu);margin-top:10px">ou veja os planos mensal/anual abaixo ↓</div>
     </div>`;
 }
 
@@ -9657,11 +9762,21 @@ function renderPerfil(u){
 // Lista cresce conforme os gifs vão sendo adicionados à pasta /exercicios do repositório.
 // Fallback automático pro emoji+foto quando ausente.
 const EXERCICIOS_COM_GIF = new Set(['e001','e002','e003','e004','e005','e006','e007','e008','e009','e010','e011','e012','e015','e017','e018','e020','e021','e022','e023','e024','e025','e026','e027','e030','e032','e036','e041','e044','e046','e048','e049','e052','e057','e058','e059','e061','e062','e063','e064','e065','e067','e068','e069','e070','e072','e074','e075','e076','e077','e078','e079','e080','e081','e083','e084','e086','e095','e097','e098','e100','e101','e102','e103','e110','e120','e121','e125','e127','e129','e130','e131','e136','e147','e148','e149','e150','e151','e154','e155','e164','e168','e187','e192','e193','e194','e195','e196','e198','e199','e200','e201','e202','e205','e210','e212','e214','e215','e217','e218','e219','e220','e225','e237','e238','e239','e240','e241','e242','e243','e244','e245','e246','e247','e248','e249','e250','e251','e252','e264','e265','e266','e267','e268','e269','e270','e271','e272','e273','e274','e275','e276','e277','e278','e280','e281','e282','e283','e284','e285','e286','e287','e288','e289','e290','e291','e292','e294','e295','e296','e297','e298','e299','e300','e301','e303','e304','e305','e306','e307','e308','e309','e310','e311','e312','e313','e314','e315','e316','e317','e318','e319','e320','e321','e322','e323','e324','e325','e326','e327','e328','e329','e330','e331','e332','e333','e334','e335','e336','e337','e338','e339','e340','e341','e342','e343','e344','e345','e346','e347','e348','e349','e350','e351','e352','e353','e354','e355','e356','e357','e358','e359','e360','e361','e362','e363','e364','e365','e366','e367','e368','e369','e370','e371','e372','e373','e374','e375','e376','e377','e378','e379','e380','e381','e382','e383','e384','e385','e386','e387','e388','e389','e390','e391','e392','e393','e394','e395','e396','e397','e398','e399','e400','e401','e402','e403','e404','e405','e406','e407','e408','e409','e410','e411','e412','e413','e414','e415','e416','e417','e418','e419','e420','e421','e422','e423','e424','e425','e426','e427','e428','e429','e430','e431','e432','e433','e434','e435','e436','e437','e438','e439','e440','e441','e442','e443','e444','e445','e446','e447','e448','e449','e450','e451','e452','e453','e454','e455','e456','e457','e458','e459','e460','e461','e462','e463','e464','e465','e466','e467','e468','e469','e470','e471','e472','e473','e474','e475','e476','e477','e478','e479','e480','e481','e482','e483','e484','e485','e486','e487','e488','e489','e490','e491','e492','e493','e494','e495','e496','e497','e498','e499','e500','e501','e502','e503','e504','e505','e506','e532','e533','e534','e535','e536','e537','e538','e539','e540','e541','e542','e543','e544','e545','e546','e547','e548','e549','e550','e551','e552','e553','e554','e555','e556','e557','e558','e559','e560','e561','e562','e563','e564','e565','e566','e567','e568','e569','e570','e571','e572','e573']);
-function temGifDemo(exId){ return EXERCICIOS_COM_GIF.has(exId); }
+function temGifDemo(exId){
+  const u = (typeof getU==='function') ? getU() : null;
+  if(u?.gifsPersonalizados?.[exId]) return true;
+  return EXERCICIOS_COM_GIF.has(exId);
+}
 // Tenta o gif em várias pastas do repo, na ordem abaixo, antes de cair no ícone de reserva.
 // Isso cobre uploads que acabaram indo parar em pastas diferentes ao longo do tempo.
 const GIF_SEARCH_PATHS=['exercicios/','assets/gifs/',''];
-function getExGif(exId){ return GIF_SEARCH_PATHS[0]+exId+'.gif'; }
+// Se o ALUNO logado gravou um vídeo pessoal pra esse exercício, usa ele —
+// senão cai no gif padrão do banco (comportamento de sempre).
+function getExGif(exId){
+  const u = (typeof getU==='function') ? getU() : null;
+  if(u?.gifsPersonalizados?.[exId]) return u.gifsPersonalizados[exId];
+  return GIF_SEARCH_PATHS[0]+exId+'.gif';
+}
 function gifFallback(imgEl,exId,containerSelector){
   const tentativa=(parseInt(imgEl.dataset.gifAttempt||'0',10))+1;
   if(tentativa<GIF_SEARCH_PATHS.length){
@@ -9679,17 +9794,28 @@ function gifFallback(imgEl,exId,containerSelector){
 // manualmente em <canvas> usando a lib gifler — funciona em qualquer WebView
 // que saiba desenhar canvas, o que é universal.
 function gifCanvasHTML(exId, style, containerSelector){
-  return `<canvas class="gif-cv" data-gif="${getExGif(exId)}" data-exid="${exId}" data-fallback="${containerSelector}" data-attempt="0" style="${style}"></canvas>`;
+  const u = (typeof getU==='function') ? getU() : null;
+  const urlPersonal = u?.gifsPersonalizados?.[exId] || null;
+  return `<canvas class="gif-cv" data-gif="${urlPersonal||(GIF_SEARCH_PATHS[0]+exId+'.gif')}" data-personalizado="${urlPersonal?'1':'0'}" data-exid="${exId}" data-fallback="${containerSelector}" data-attempt="0" style="${style}"></canvas>`;
 }
 function gifCanvasTentar(cv, exId, containerSelector, tentativa){
   tentativa = tentativa||0;
-  if(tentativa >= GIF_SEARCH_PATHS.length){
+  const personalizado = cv.getAttribute('data-personalizado')==='1';
+  // Gif pessoal do aluno: é uma URL só (Supabase Storage), não tem múltiplas
+  // pastas de fallback como o gif padrão — se falhar, vai direto pro ícone.
+  if(personalizado){
+    if(tentativa>0){
+      const cont = cv.closest(containerSelector);
+      if(cont) cont.innerHTML = renderExThumbFallback(exId);
+      return;
+    }
+  } else if(tentativa >= GIF_SEARCH_PATHS.length){
     console.warn('GIF: esgotou as tentativas para', exId, '— usando ícone de reserva.');
     const cont = cv.closest(containerSelector);
     if(cont) cont.innerHTML = renderExThumbFallback(exId);
     return;
   }
-  const url = GIF_SEARCH_PATHS[tentativa]+exId+'.gif';
+  const url = personalizado ? cv.getAttribute('data-gif') : GIF_SEARCH_PATHS[tentativa]+exId+'.gif';
   if(typeof gifler === 'undefined'){
     console.warn('GIF: gifler não carregou — usando <img> como alternativa.');
     // Lib não carregou (ex: sem internet no instante do load) — tenta o jeito
@@ -9741,6 +9867,173 @@ function renderExThumbFallback(exId){
       <div style="font-size:13px;font-weight:800;text-shadow:0 2px 8px rgba(0,0,0,.8)">${ex.name}</div>
       <div style="font-size:10px;color:var(--r);font-weight:700;background:rgba(229,9,20,.15);padding:3px 10px;border-radius:4px;border:1px solid rgba(229,9,20,.3)">${ex.muscle}</div>
     </div>`;
+}
+
+// ══════════════════════════════════════════════════════════════════════
+// ══ GRAVAÇÃO DE VÍDEO → GIF (aluno personaliza gif OU cria exercício) ══
+// Captura frames direto da câmera ao vivo num canvas offscreen (sem
+// precisar gravar+decodificar vídeo depois) e converte em GIF pequeno com
+// a lib gif.js — tudo no celular do aluno, sem servidor de conversão. O
+// resultado sobe pro bucket 'exercicios-midia' do Supabase Storage.
+// ══════════════════════════════════════════════════════════════════════
+let gvStream=null, gvExIdAlvo=null, gvModoNovoExercicio=false, gvGifBlobPronto=null, gvIntervaloCaptura=null, gvCanvasOff=null, gvCtxOff=null;
+
+function gvSetEstado(nome){
+  ['gv-form-novo','gv-camera-wrap','gv-processando','gv-resultado-wrap'].forEach(id=>{
+    const el=document.getElementById(id); if(el) el.style.display = (id===nome) ? 'block' : 'none';
+  });
+}
+function gvAbrirParaExercicio(exId){
+  gvExIdAlvo = exId; gvModoNovoExercicio = false; gvGifBlobPronto = null;
+  document.getElementById('gv-titulo').textContent = '🎥 Gravar meu vídeo';
+  abrirModal('modal-gravar-video');
+  gvSetEstado('gv-camera-wrap');
+  gvIniciarCamera();
+}
+function gvAbrirNovoExercicio(){
+  gvExIdAlvo = null; gvModoNovoExercicio = true; gvGifBlobPronto = null;
+  document.getElementById('gv-titulo').textContent = '🎬 Criar meu exercício';
+  const inpNome=document.getElementById('gv-nome'); if(inpNome) inpNome.value='';
+  abrirModal('modal-gravar-video');
+  gvSetEstado('gv-form-novo');
+}
+function gvContinuarParaCamera(){
+  const nome=(document.getElementById('gv-nome').value||'').trim();
+  if(!nome){ fqToast('Dá um nome pro exercício.','warn'); return; }
+  gvSetEstado('gv-camera-wrap');
+  gvIniciarCamera();
+}
+async function gvIniciarCamera(){
+  try{
+    gvStream = await navigator.mediaDevices.getUserMedia({video:{facingMode:'user'},audio:false});
+    const v=document.getElementById('gv-video');
+    v.srcObject = gvStream;
+  }catch(e){
+    fqToast('Não consegui acessar a câmera. Verifique a permissão do navegador.','warn',5000);
+    closeModal('modal-gravar-video');
+  }
+}
+function gvPararCamera(){
+  if(gvStream){ gvStream.getTracks().forEach(tr=>tr.stop()); gvStream=null; }
+  if(gvIntervaloCaptura){ clearInterval(gvIntervaloCaptura); gvIntervaloCaptura=null; }
+}
+function gvCancelar(){ gvPararCamera(); closeModal('modal-gravar-video'); }
+function gvComecarGravacao(){
+  if(typeof GIF==='undefined'){
+    fqToast('A ferramenta de conversão não carregou — verifique sua internet e tente de novo.','warn',5000);
+    return;
+  }
+  const v=document.getElementById('gv-video');
+  const btn=document.getElementById('gv-btn-gravar');
+  btn.disabled=true; btn.style.opacity='.5';
+  const cont=document.getElementById('gv-contador');
+  cont.style.display='flex';
+
+  const TAMANHO=240, FPS=8, DURACAO_S=3, TOTAL_FRAMES=FPS*DURACAO_S;
+  gvCanvasOff=document.createElement('canvas');
+  gvCanvasOff.width=TAMANHO; gvCanvasOff.height=TAMANHO;
+  gvCtxOff=gvCanvasOff.getContext('2d');
+
+  const gif=new GIF({workers:2,quality:15,width:TAMANHO,height:TAMANHO,workerScript:'lib/gif.worker.js'});
+  let frame=0;
+  gvIntervaloCaptura=setInterval(()=>{
+    frame++;
+    const vw=v.videoWidth||TAMANHO, vh=v.videoHeight||TAMANHO;
+    const lado=Math.min(vw,vh);
+    const sx=(vw-lado)/2, sy=(vh-lado)/2;
+    gvCtxOff.drawImage(v, sx, sy, lado, lado, 0, 0, TAMANHO, TAMANHO);
+    gif.addFrame(gvCtxOff, {copy:true, delay:Math.round(1000/FPS)});
+    const restante=DURACAO_S-Math.floor(frame/FPS);
+    cont.textContent = restante>0 ? restante : '';
+    if(frame>=TOTAL_FRAMES){
+      clearInterval(gvIntervaloCaptura); gvIntervaloCaptura=null;
+      cont.style.display='none';
+      gvSetEstado('gv-processando');
+      gif.on('finished', (blob)=>{
+        gvGifBlobPronto=blob;
+        document.getElementById('gv-resultado-img').src=URL.createObjectURL(blob);
+        gvSetEstado('gv-resultado-wrap');
+        gvPararCamera();
+      });
+      gif.render();
+    }
+  }, 1000/FPS);
+}
+function gvRegravar(){
+  gvGifBlobPronto=null;
+  gvSetEstado('gv-camera-wrap');
+  const btn=document.getElementById('gv-btn-gravar'); if(btn){btn.disabled=false;btn.style.opacity='1';}
+  if(!gvStream) gvIniciarCamera();
+}
+async function gvSalvarResultado(){
+  if(!gvGifBlobPronto){ fqToast('Nada gravado ainda.','warn'); return; }
+  const u=getU(); if(!u){ fqToast('Faça login de novo.','warn'); return; }
+  if(!sb){ fqToast('Sem conexão com o servidor agora — tente de novo com internet.','warn'); return; }
+  fqToast('Enviando...','ok',2000);
+  const timestamp=Date.now();
+  const exIdFinal = gvModoNovoExercicio ? `custom_${timestamp}` : gvExIdAlvo;
+  const caminho = `${u.email}/${exIdFinal}_${timestamp}.gif`;
+  try{
+    const{error:erroUpload}=await sb.storage.from('exercicios-midia').upload(caminho, gvGifBlobPronto, {contentType:'image/gif', upsert:true});
+    if(erroUpload){ fqToast('Erro ao enviar o vídeo: '+erroUpload.message,'warn',5000); return; }
+    const{data:pub}=sb.storage.from('exercicios-midia').getPublicUrl(caminho);
+    const url=pub?.publicUrl;
+    if(!url){ fqToast('Erro ao gerar o link do vídeo.','warn'); return; }
+
+    const users=DB.get('fq_users')||{};
+    if(gvModoNovoExercicio){
+      const nome=(document.getElementById('gv-nome').value||'Meu exercício').trim();
+      const musculo=document.getElementById('gv-musculo').value;
+      if(!u.exerciciosCustom) u.exerciciosCustom=[];
+      u.exerciciosCustom.push({id:exIdFinal,name:nome,muscle:musculo,equipment:'—',emoji:'🎬',obs:'Exercício criado por você.',gifUrl:url,criadoEm:new Date().toISOString()});
+      if(!u.gifsPersonalizados) u.gifsPersonalizados={};
+      u.gifsPersonalizados[exIdFinal]=url;
+    } else {
+      if(!u.gifsPersonalizados) u.gifsPersonalizados={};
+      u.gifsPersonalizados[exIdFinal]=url;
+    }
+    users[u.email]=u; DB.set('fq_users',users);
+    await syncU(u).catch(()=>{});
+    fqToast(gvModoNovoExercicio?'🎉 Exercício criado!':'🎉 Seu vídeo foi salvo!','ok',3000);
+    closeModal('modal-gravar-video');
+    if(!gvModoNovoExercicio && typeof abrirFichaExercicio==='function') abrirFichaExercicio(gvExIdAlvo);
+    if(gvModoNovoExercicio && typeof renderMeusExercicios==='function') renderMeusExercicios();
+  }catch(e){
+    fqToast('Erro inesperado ao salvar: '+e.message,'warn',5000);
+  }
+}
+function gvRemoverPersonalizado(exId){
+  const u=getU(); if(!u) return;
+  if(!confirm('Voltar a usar o gif original deste exercício?')) return;
+  const users=DB.get('fq_users')||{};
+  if(u.gifsPersonalizados) delete u.gifsPersonalizados[exId];
+  users[u.email]=u; DB.set('fq_users',users);
+  syncU(u).catch(()=>{});
+  fqToast('Voltamos pro gif original.','ok',2500);
+  if(typeof abrirFichaExercicio==='function') abrirFichaExercicio(exId);
+}
+function gvExcluirCustom(exId){
+  const u=getU(); if(!u) return;
+  if(!confirm('Excluir este exercício que você criou? Isso não pode ser desfeito.')) return;
+  const users=DB.get('fq_users')||{};
+  u.exerciciosCustom=(u.exerciciosCustom||[]).filter(e=>e.id!==exId);
+  if(u.gifsPersonalizados) delete u.gifsPersonalizados[exId];
+  users[u.email]=u; DB.set('fq_users',users);
+  syncU(u).catch(()=>{});
+  if(typeof renderMeusExercicios==='function') renderMeusExercicios();
+}
+function abrirMeusExercicios(){ abrirModal('modal-meus-exercicios'); renderMeusExercicios(); }
+function renderMeusExercicios(){
+  const u=getU(); if(!u) return;
+  const lista=u.exerciciosCustom||[];
+  const el=document.getElementById('meus-exercicios-lista');
+  if(!el) return;
+  el.innerHTML = lista.length ? lista.map(e=>`
+    <div style="display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--b)">
+      <img src="${e.gifUrl}" style="width:44px;height:44px;border-radius:8px;object-fit:cover;background:#000"/>
+      <div style="flex:1"><div style="font-size:13px;font-weight:700">${e.name}</div><div style="font-size:10px;color:var(--mu)">${e.muscle}</div></div>
+      <button onclick="gvExcluirCustom('${e.id}')" style="background:rgba(229,9,20,.08);border:1px solid rgba(229,9,20,.15);border-radius:6px;padding:5px 9px;color:var(--r);font-size:10px;cursor:pointer">🗑️</button>
+    </div>`).join('') : `<div style="font-size:11.5px;color:var(--mu);text-align:center;padding:14px 0">Você ainda não criou nenhum exercício.</div>`;
 }
 
 function getExImg(muscle){
@@ -12100,7 +12393,7 @@ function openEditSt(email){
   const GP=u.aiPlan?.gym||DG;const RP=u.aiPlan?.run||DR;
   document.getElementById('modal-st-content').innerHTML=`
     <div class="ed-sec"><div class="ed-stt">🏋️ Musculação</div>
-      <div style="font-size:10.5px;color:var(--mu);margin-bottom:6px">📦 Adicionar pacote pronto como <b>dia novo</b> (pra substituir um dia já existente, use o seletor "Usar pronto..." dentro de cada dia, mais abaixo):</div>
+      <div style="font-size:10.5px;color:var(--mu);margin-bottom:6px">+ Sugestão pronta (adiciona como novo dia na semana selecionada):</div>
       <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px">
         ${Object.keys(TREINOS_PRONTOS).map(k=>`<button onclick="admAplicarPack('${k}')" style="background:var(--s2);border:1px solid var(--b);border-radius:8px;padding:7px 11px;color:#fff;font-size:11px;font-weight:700;cursor:pointer;white-space:nowrap">${TREINOS_PRONTOS[k].nome}</button>`).join('')}
       </div>
@@ -12116,27 +12409,14 @@ function renderEGW(w,u){
   const prog=u.aiPlan.gym[w];
   let h=`<div class="fg"><label class="fl">Fase</label><input class="mi" style="font-size:13px;padding:8px;width:100%;margin-bottom:8px" id="ef" value="${prog.fase||''}"/></div>`;
   Object.keys(prog.days).forEach(day=>{
-    h+=`<div style="display:flex;justify-content:space-between;align-items:center;gap:6px;margin:10px 0 5px;flex-wrap:wrap">
-      <div style="font-size:11px;font-weight:800;color:var(--r)">${day}</div>
-      <div style="display:flex;gap:6px;flex-wrap:wrap">
-        <select onchange="if(this.value){admAplicarPackNoDia('${w}','${day}',this.value);this.value='';}" style="font-size:9.5px;padding:4px 6px;border-radius:6px;background:var(--s2);color:#fff;border:1px solid var(--b);max-width:150px">
-          <option value="">📦 Usar pronto...</option>
-          ${Object.keys(TREINOS_PRONTOS).map(k=>`<option value="${k}">${TREINOS_PRONTOS[k].nome}</option>`).join('')}
-        </select>
-        <button onclick="limparTreinoDia('${w}','${day}')" style="background:rgba(229,9,20,.08);border:1px solid rgba(229,9,20,.2);border-radius:6px;padding:4px 9px;color:var(--r);font-size:9.5px;font-weight:700;cursor:pointer">🗑️ Limpar</button>
-      </div>
-    </div>`;
-    if(prog.days[day].length===0){
-      h+=`<div style="font-size:10.5px;color:var(--mu);padding:6px 0;font-style:italic">Nenhum exercício ainda — adicione manualmente ou use um pacote pronto acima.</div>`;
-    }
-    prog.days[day].forEach((ed,ei)=>{const ex=getExById(ed.id);
+    h+=`<div style="font-size:11px;font-weight:800;color:var(--r);margin:8px 0 5px">${day}</div>`;
+    prog.days[day].forEach((ed,ei)=>{const ex=getExById(ed.id,u);
       h+=`<div class="exer"><div class="exer-t"><div style="font-size:12px;font-weight:700">${ex?ex.name:ed.id}</div><button onclick="remSEx('${w}','${day}',${ei})" style="background:rgba(229,9,20,.08);border:1px solid rgba(229,9,20,.15);border-radius:4px;padding:2px 7px;color:var(--r);font-size:9px;cursor:pointer;">✕</button></div>
-      <div class="exer-g"><div><div class="ml2">Exercício</div><select class="mi" data-day="${day}" data-idx="${ei}" data-field="id">${EXERCISE_BANK.map(e=>`<option value="${e.id}" ${e.id===ed.id?'selected':''}>${e.name}</option>`).join('')}</select></div><div><div class="ml2">Séries</div><input class="mi" type="number" data-day="${day}" data-idx="${ei}" data-field="sets" value="${ed.sets}"/></div><div><div class="ml2">Reps</div><input class="mi" data-day="${day}" data-idx="${ei}" data-field="reps" value="${ed.reps}"/></div></div>
+      <div class="exer-g"><div><div class="ml2">Exercício</div><select class="mi" data-day="${day}" data-idx="${ei}" data-field="id">${[...EXERCISE_BANK,...(u.exerciciosCustom||[])].map(e=>`<option value="${e.id}" ${e.id===ed.id?'selected':''}>${e.name}${(u.exerciciosCustom||[]).some(c=>c.id===e.id)?' 🎬':''}</option>`).join('')}</select></div><div><div class="ml2">Séries</div><input class="mi" type="number" data-day="${day}" data-idx="${ei}" data-field="sets" value="${ed.sets}"/></div><div><div class="ml2">Reps</div><input class="mi" data-day="${day}" data-idx="${ei}" data-field="reps" value="${ed.reps}"/></div></div>
       <div class="exer-g"><div><div class="ml2">Carga</div><input class="mi" data-day="${day}" data-idx="${ei}" data-field="load" value="${ed.load||''}"/></div><div><div class="ml2">Descanso(s)</div><input class="mi" type="number" data-day="${day}" data-idx="${ei}" data-field="rest" value="${ed.rest||60}"/></div></div></div>`;
     });
     h+=`<button class="btn-addex" onclick="addSEx('${w}','${day}')">+ Exercício em ${day}</button>`;
   });
-  h+=`<button class="btn-addex" onclick="novoDiaEGW('${w}')" style="border-color:rgba(52,152,219,.3);color:#3498db;margin-top:4px">+ Novo dia em branco</button>`;
   h+=`<button class="btn-savewk" onclick="saveEGW('${w}')">💾 Salvar semana</button>`;
   document.getElementById('egw-content').innerHTML=h;
 }
@@ -12156,38 +12436,6 @@ function saveEGW(w){const users=DB.get('fq_users')||{};const u=admGetAluno(editE
 function saveERW(w){const users=DB.get('fq_users')||{};const u=admGetAluno(editEmail);if(!u)return;users[editEmail]=u;ensureAP(u);const ef=document.getElementById('erf');if(ef)u.aiPlan.run[w].meta=ef.value;document.querySelectorAll('#erw-content .mi[data-field]').forEach(inp=>{const si=parseInt(inp.dataset.si);const field=inp.dataset.field;if(!isNaN(si)&&field&&u.aiPlan.run[w].sessions[si])u.aiPlan.run[w].sessions[si][field]=inp.value;});u.trainApproved=true;DB.set('fq_users',users);syncU(u).catch(()=>{});fqToast(t('msg.c72391b3b3'),'ok');}
 function addSEx(w,d){const users=DB.get('fq_users')||{};const u=admGetAluno(editEmail);if(!u)return;users[editEmail]=u;ensureAP(u);u.aiPlan.gym[w].days[d].push({id:EXERCISE_BANK[0]?.id||'e001',sets:3,reps:'12',load:'Moderada',rest:60});DB.set('fq_users',users);renderEGW(w,u);}
 function remSEx(w,d,i){const users=DB.get('fq_users')||{};const u=admGetAluno(editEmail);if(!u)return;users[editEmail]=u;u.aiPlan.gym[w].days[d].splice(i,1);DB.set('fq_users',users);renderEGW(w,u);}
-// ── Apaga TODOS os exercícios de um dia de uma vez (facilita reconstruir do zero) ──
-function limparTreinoDia(w,day){
-  const u=admGetAluno(editEmail);if(!u)return;
-  if(!confirm(`Apagar todos os exercícios de "${day}"? Isso não pode ser desfeito.`)) return;
-  const users=DB.get('fq_users')||{};users[editEmail]=u;ensureAP(u);
-  u.aiPlan.gym[w].days[day]=[];
-  DB.set('fq_users',users);renderEGW(w,u);
-  fqToast(`"${day}" foi limpo — adicione exercícios ou use um pacote pronto.`,'ok',3000);
-}
-// ── Substitui os exercícios de UM DIA específico pelos de um pacote pronto ──
-// (diferente de admAplicarPack, que cria um dia novo — este aqui preenche o
-// dia que o admin já está olhando, é o fluxo "limpar + usar pronto" junto)
-function admAplicarPackNoDia(w,day,packKey){
-  const pack=TREINOS_PRONTOS[packKey];
-  if(!pack){ fqToast('Pacote não encontrado.','warn'); return; }
-  const u=admGetAluno(editEmail);if(!u)return;
-  const users=DB.get('fq_users')||{};users[editEmail]=u;ensureAP(u);
-  u.aiPlan.gym[w].days[day]=pack.exercicios.map(ex=>({...ex}));
-  u.trainApproved=true;
-  DB.set('fq_users',users);renderEGW(w,u);
-  fqToast(`${pack.nome} aplicado em "${day}" — revise e clique em Salvar semana`,'ok',3500);
-}
-// ── Cria um dia em branco pra montar treino do zero ──
-function novoDiaEGW(w){
-  const u=admGetAluno(editEmail);if(!u)return;
-  const nome=prompt('Nome do novo dia (ex: Treino E, Pernas 2...):','');
-  if(!nome||!nome.trim())return;
-  const users=DB.get('fq_users')||{};users[editEmail]=u;ensureAP(u);
-  if(u.aiPlan.gym[w].days[nome]){ fqToast('Já existe um dia com esse nome.','warn'); return; }
-  u.aiPlan.gym[w].days[nome]=[];
-  DB.set('fq_users',users);renderEGW(w,u);
-}
 // ── Aplica um pacote de treino pronto (TREINOS_PRONTOS) na semana em edição ──
 // Cria um novo dia com o nome do pacote (ou reaproveita se já existir um dia
 // com esse nome nessa semana) e copia os exercícios pra dentro. Não salva no
