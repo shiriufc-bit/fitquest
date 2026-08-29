@@ -843,7 +843,7 @@ textarea.fi{resize:vertical;min-height:80px;}
       <option value="es">🇪🇸 ES</option>
     </select>
   </div>
-  <div id="fq-version-badge" style="position:absolute;bottom:8px;right:12px;font-size:9px;color:#333;font-weight:700;z-index:5">v209</div>
+  <div id="fq-version-badge" style="position:absolute;bottom:8px;right:12px;font-size:9px;color:#333;font-weight:700;z-index:5">v210</div>
   <img src="https://images.unsplash.com/photo-1517836357463-d25dfeac3438?w=800&q=80" alt="Fitness" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center top;filter:brightness(.35);z-index:0"/>
   <div class="splash-glow"></div>
   <div class="splash-noise"></div>
@@ -2135,7 +2135,7 @@ textarea.fi{resize:vertical;min-height:80px;}
             <span style="color:var(--mu);font-size:18px">›</span>
           </div>
         </div>
-        <div style="text-align:center;padding:20px 0 4px;font-size:11px;color:var(--mu)">FitQuest <span id="fq-version-badge-perfil">v209</span></div>
+        <div style="text-align:center;padding:20px 0 4px;font-size:11px;color:var(--mu)">FitQuest <span id="fq-version-badge-perfil">v210</span></div>
       </div>
     </div>
 
@@ -2308,6 +2308,17 @@ textarea.fi{resize:vertical;min-height:80px;}
   </div>
 </div>
 <!-- Lista de exercícios privados criados pelo próprio aluno -->
+<!-- Busca de exercício por texto, agrupado por grupo muscular — substitui o
+     dropdown gigante de 719 itens que o admin tinha que rolar manualmente. -->
+<div class="modal-ov" id="modal-buscar-exercicio" style="align-items:flex-start">
+  <div class="modal-bx" style="max-width:480px;width:100%;padding:0;border-radius:16px 16px 0 0;margin-top:auto;max-height:88vh;display:flex;flex-direction:column">
+    <div class="modal-t"><span>🔍 Escolher exercício</span><button class="modal-cl" onclick="closeModal('modal-buscar-exercicio')">✕</button></div>
+    <div style="padding:12px 16px 8px">
+      <input type="text" id="be-input" placeholder="Digite pra buscar (ex: agachamento, remada...)" oninput="renderListaBusca(this.value)" style="width:100%;padding:11px 12px;border-radius:9px;background:var(--s2);border:1px solid var(--b);color:#fff;font-size:14px"/>
+    </div>
+    <div id="be-lista" style="overflow-y:auto;flex:1;padding:0 16px 16px"></div>
+  </div>
+</div>
 <div class="modal-ov" id="modal-meus-exercicios">
   <div class="modal-bx">
     <div class="modal-t"><span>🎬 Meus Exercícios</span><button class="modal-cl" onclick="closeModal('modal-meus-exercicios')">✕</button></div>
@@ -12257,6 +12268,64 @@ function admSwitchCardCat(btn, cat){
     g.style.display = (g.dataset.catGroup===cat) ? 'flex' : 'none';
   });
 }
+// ── Busca de exercício por texto, agrupado por grupo muscular ──
+// Substitui o <select> gigante (719+ itens) por um campo de busca + lista
+// agrupada. Selecionar um resultado aplica a troca NA HORA (igual aos
+// pacotes prontos) — não depende de "Salvar semana" pra esse campo
+// específico, os outros campos (séries/reps/carga/descanso) continuam
+// dependendo do salvar normalmente.
+let buscaExAlvo = null;   // {w, day, ei}
+function abrirBuscaExercicio(w, day, ei){
+  buscaExAlvo = {w, day, ei};
+  const inp = document.getElementById('be-input');
+  inp.value = '';
+  renderListaBusca('');
+  abrirModal('modal-buscar-exercicio');
+  setTimeout(()=>inp.focus(), 150);
+}
+function renderListaBusca(termo){
+  const u = admGetAluno(editEmail);
+  const todos = [...EXERCISE_BANK, ...(u?.exerciciosCustom||[])];
+  const termoNorm = (termo||'').trim().toLowerCase();
+  const filtrados = termoNorm
+    ? todos.filter(e => e.name.toLowerCase().includes(termoNorm) || (e.muscle||'').toLowerCase().includes(termoNorm))
+    : todos;
+
+  const grupos = {};
+  filtrados.forEach(e=>{
+    const grupo = (e.muscle||'Outro').split('/')[0].trim() || 'Outro';
+    (grupos[grupo] = grupos[grupo] || []).push(e);
+  });
+  const nomesGrupos = Object.keys(grupos).sort((a,b)=>a.localeCompare(b,'pt-BR'));
+
+  let h = '';
+  if(!filtrados.length){
+    h = `<div style="text-align:center;color:var(--mu);font-size:12.5px;padding:24px 0">Nenhum exercício encontrado pra "${termo}".</div>`;
+  } else {
+    nomesGrupos.forEach(g=>{
+      h += `<div style="font-size:10px;font-weight:800;color:var(--r);text-transform:uppercase;letter-spacing:.4px;padding:12px 2px 5px;position:sticky;top:0;background:var(--bg2,#0a0a0a)">${g} (${grupos[g].length})</div>`;
+      grupos[g].forEach(e=>{
+        const ehCustom = (u?.exerciciosCustom||[]).some(c=>c.id===e.id);
+        h += `<div onclick="selecionarExercicioBusca('${e.id}')" style="padding:10px 6px;border-bottom:1px solid var(--b);cursor:pointer;font-size:13px;color:#fff">${e.name}${ehCustom?' 🎬':''}</div>`;
+      });
+    });
+  }
+  document.getElementById('be-lista').innerHTML = h;
+}
+function selecionarExercicioBusca(exId){
+  if(!buscaExAlvo) return;
+  const {w, day, ei} = buscaExAlvo;
+  const u = admGetAluno(editEmail);
+  if(!u){ fqToast('Aluno não encontrado.','warn'); return; }
+  const users = DB.get('fq_users')||{};
+  users[editEmail]=u; ensureAP(u);
+  if(!u.aiPlan.gym[w]?.days[day]?.[ei]){ fqToast('Não encontrei essa sessão pra editar.','warn'); return; }
+  u.aiPlan.gym[w].days[day][ei].id = exId;
+  DB.set('fq_users',users);
+  renderEGW(w,u);
+  closeModal('modal-buscar-exercicio');
+  buscaExAlvo = null;
+}
 function admStudentCard(u, compact=false){
   const purchases=u.purchases||[];
   const ebookCount=u.pacoteEbooks?10:purchases.length;
@@ -12516,7 +12585,7 @@ function renderEGW(w,u){
     }
     prog.days[day].forEach((ed,ei)=>{const ex=getExById(ed.id,u);
       h+=`<div class="exer"><div class="exer-t"><div style="font-size:12px;font-weight:700">${ex?ex.name:ed.id}</div><button onclick="remSEx('${w}','${day}',${ei})" style="background:rgba(229,9,20,.08);border:1px solid rgba(229,9,20,.15);border-radius:4px;padding:2px 7px;color:var(--r);font-size:9px;cursor:pointer;">✕</button></div>
-      <div class="exer-g"><div><div class="ml2">Exercício</div><select class="mi" data-day="${day}" data-idx="${ei}" data-field="id">${[...EXERCISE_BANK,...(u.exerciciosCustom||[])].map(e=>`<option value="${e.id}" ${e.id===ed.id?'selected':''}>${e.name}${(u.exerciciosCustom||[]).some(c=>c.id===e.id)?' 🎬':''}</option>`).join('')}</select></div><div><div class="ml2">Séries</div><input class="mi" type="number" data-day="${day}" data-idx="${ei}" data-field="sets" value="${ed.sets}"/></div><div><div class="ml2">Reps</div><input class="mi" data-day="${day}" data-idx="${ei}" data-field="reps" value="${ed.reps}"/></div></div>
+      <div class="exer-g"><div><div class="ml2">Exercício</div><button type="button" onclick="abrirBuscaExercicio('${w}','${day}',${ei})" style="width:100%;text-align:left;background:var(--s2);border:1px solid var(--b);border-radius:8px;padding:8px 10px;color:#fff;font-size:12.5px;cursor:pointer;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${ex?ex.name:ed.id}${(u.exerciciosCustom||[]).some(c=>c.id===ed.id)?' 🎬':''} ▾</button></div><div><div class="ml2">Séries</div><input class="mi" type="number" data-day="${day}" data-idx="${ei}" data-field="sets" value="${ed.sets}"/></div><div><div class="ml2">Reps</div><input class="mi" data-day="${day}" data-idx="${ei}" data-field="reps" value="${ed.reps}"/></div></div>
       <div class="exer-g"><div><div class="ml2">Carga</div><input class="mi" data-day="${day}" data-idx="${ei}" data-field="load" value="${ed.load||''}"/></div><div><div class="ml2">Descanso(s)</div><input class="mi" type="number" data-day="${day}" data-idx="${ei}" data-field="rest" value="${ed.rest||60}"/></div></div></div>`;
     });
     h+=`<button class="btn-addex" onclick="addSEx('${w}','${day}')">+ Exercício em ${day}</button>`;
@@ -12777,8 +12846,8 @@ async function salvarRunEd(w){
   const u=runEdGetU(); if(!u)return;
   u.trainApproved=true;
   runEdPersistLocal(u);
-  if(typeof sb!=='undefined'&&sb&&typeof syncU==='function'){
-    try{ await syncU(u); }
+  if(typeof sb!=='undefined'&&sb&&typeof syncAlunoAdmin==='function'){
+    try{ await syncAlunoAdmin(u); }
     catch(e){
       console.error('Erro ao salvar plano de corrida:',e);
       fqToast('⚠️ Salvo no aparelho, mas não sincronizou. Verifique a conexão e salve de novo.','warn',7000);
