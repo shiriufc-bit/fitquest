@@ -843,7 +843,7 @@ textarea.fi{resize:vertical;min-height:80px;}
       <option value="es">🇪🇸 ES</option>
     </select>
   </div>
-  <div id="fq-version-badge" style="position:absolute;bottom:8px;right:12px;font-size:9px;color:#333;font-weight:700;z-index:5">v213</div>
+  <div id="fq-version-badge" style="position:absolute;bottom:8px;right:12px;font-size:9px;color:#333;font-weight:700;z-index:5">v215</div>
   <img src="https://images.unsplash.com/photo-1517836357463-d25dfeac3438?w=800&q=80" alt="Fitness" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center top;filter:brightness(.35);z-index:0"/>
   <div class="splash-glow"></div>
   <div class="splash-noise"></div>
@@ -2135,7 +2135,7 @@ textarea.fi{resize:vertical;min-height:80px;}
             <span style="color:var(--mu);font-size:18px">›</span>
           </div>
         </div>
-        <div style="text-align:center;padding:20px 0 4px;font-size:11px;color:var(--mu)">FitQuest <span id="fq-version-badge-perfil">v213</span></div>
+        <div style="text-align:center;padding:20px 0 4px;font-size:11px;color:var(--mu)">FitQuest <span id="fq-version-badge-perfil">v215</span></div>
       </div>
     </div>
 
@@ -10670,8 +10670,46 @@ function renderGym(u){
 function selGW(w){const u=getU();if(!u)return;curGymWeek=w;document.querySelectorAll('#gym-wtabs .wk-week-btn').forEach(t=>t.classList.toggle('active',t.textContent.includes(w.replace('Semana ',''))));renderGymWeek(w,u);}
 function renderGymWeek(w,u){
   const P=getGP(u);const days=Object.keys(P[w].days);curGymDay=days[0];
-  document.getElementById('gym-day-btns').innerHTML=days.map((d,i)=>{const dk=`${w}_${d}`;const dn=u.gymDone&&u.gymDone[dk];return `<div class="wk-day-btn ${i===0?'active':''} ${dn?'done':''}" onclick="selGD('${w}','${d}',this)">${dn?'✅ ':'▶ '}${d}</div>`;}).join('');
+  document.getElementById('gym-day-btns').innerHTML=days.map((d,i)=>{const dk=`${w}_${d}`;const dn=u.gymDone&&u.gymDone[dk];return `<div class="wk-day-btn ${i===0?'active':''} ${dn?'done':''}" onclick="selGD('${w}','${d}',this)">${dn?'✅ ':'▶ '}${d} <span onclick="event.stopPropagation();alunoRenomearDia('${w}','${d}')" style="margin-left:4px;opacity:.55;cursor:pointer" title="Renomear este dia">✏️</span></div>`;}).join('');
   renderGymDay(w,days[0],u);
+}
+// ── Aluno renomeia um dia do PRÓPRIO treino atribuído (o mesmo recurso que
+// o admin já tem). Mexe direto em u.aiPlan.gym (nunca no DG, o molde padrão
+// compartilhado — por isso o guard logo no início). Mesma lógica de
+// "renomear em todas as semanas também?" do lado do admin. ──
+async function alunoRenomearDia(w, day){
+  const u=getU(); if(!u || !u.aiPlan?.gym?.[w]?.days?.[day]) return;
+  const novoNome=prompt('Novo nome deste dia:', day);
+  if(!novoNome || !novoNome.trim() || novoNome.trim()===day) return;
+  const nomeFinal=novoNome.trim();
+  if(u.aiPlan.gym[w].days[nomeFinal]){ fqToast('Já existe um dia com esse nome nessa semana.','warn'); return; }
+
+  const renomeiaNaSemana=(wAlvo)=>{
+    const diasAtuais=u.aiPlan.gym[wAlvo]?.days;
+    if(!diasAtuais || !diasAtuais[day]) return false;
+    if(diasAtuais[nomeFinal]) return false;
+    const novosDays={};
+    Object.keys(diasAtuais).forEach(d=>{ novosDays[d===day?nomeFinal:d]=diasAtuais[d]; });
+    u.aiPlan.gym[wAlvo].days=novosDays;
+    return true;
+  };
+  renomeiaNaSemana(w);
+
+  const outrasComMesmoNome=Object.keys(u.aiPlan.gym).filter(wOutra=>wOutra!==w && u.aiPlan.gym[wOutra]?.days?.[day]);
+  if(outrasComMesmoNome.length){
+    const tambem=await fqConfirm(
+      'Renomear em todas as semanas?',
+      `Esse dia também se chama "${day}" em ${outrasComMesmoNome.length} outra(s) semana(s) do seu plano. Quer renomear em todas, pra manter consistente?`,
+      'Sim, em todas', '🔁'
+    );
+    if(tambem) outrasComMesmoNome.forEach(renomeiaNaSemana);
+  }
+
+  saveU(u);
+  await syncU(u).catch(()=>{ fqToast('⚠️ Salvo no aparelho, mas não sincronizou. Confira sua internet.','warn',6000); });
+  if(curGymDay===day) curGymDay=nomeFinal;
+  renderGymWeek(w,u);
+  fqToast(`Dia renomeado pra "${nomeFinal}".`,'ok',3000);
 }
 function selGD(w,d,el){const u=getU();if(!u)return;curGymDay=d;document.querySelectorAll('#gym-day-btns .wk-day-btn').forEach(t=>t.classList.remove('active'));el.classList.add('active');renderGymDay(w,d,u);}
 function renderGymDay(w,d,u){
@@ -12591,7 +12629,10 @@ function renderEGW(w,u){
   const nomesDias=Object.keys(prog.days);
   nomesDias.forEach((day,dayIdx)=>{
     h+=`<div style="display:flex;justify-content:space-between;align-items:center;gap:6px;margin:10px 0 5px;flex-wrap:wrap">
-      <div style="font-size:11px;font-weight:800;color:var(--r)">${day}</div>
+      <div style="font-size:11px;font-weight:800;color:var(--r);display:flex;align-items:center;gap:5px">
+        <span>${day}</span>
+        <button onclick="renomearDiaEGW('${w}','${day}')" style="background:none;border:none;color:var(--mu);font-size:12px;cursor:pointer;padding:2px 4px;line-height:1" title="Renomear este dia">✏️</button>
+      </div>
       <div style="display:flex;gap:6px;flex-wrap:wrap">
         <select onchange="if(this.value){admAplicarPackNoDia('${w}','${day}',this.value);this.value='';}" style="font-size:9.5px;padding:4px 6px;border-radius:6px;background:var(--s2);color:#fff;border:1px solid var(--b);max-width:150px">
           <option value="">📦 Usar pronto...</option>
@@ -12660,6 +12701,46 @@ function novoDiaEGW(w){
   if(u.aiPlan.gym[w].days[nome]){ fqToast('Já existe um dia com esse nome.','warn'); return; }
   u.aiPlan.gym[w].days[nome]=[];
   DB.set('fq_users',users);renderEGW(w,u);
+  syncAlunoAdmin(u).catch(()=>{});
+}
+// ── Renomeia um dia já existente (ex: "Treino A — Peito/Tríceps" -> qualquer
+// nome, numérico ou não). Se o mesmo nome aparecer em outras semanas, pergunta
+// se quer renomear em todas de uma vez, pra manter consistência no plano. ──
+async function renomearDiaEGW(w, day){
+  const u=admGetAluno(editEmail); if(!u) return;
+  const novoNome=prompt('Novo nome deste dia:', day);
+  if(!novoNome || !novoNome.trim() || novoNome.trim()===day) return;
+  const nomeFinal=novoNome.trim();
+  if(u.aiPlan.gym[w].days[nomeFinal]){ fqToast('Já existe um dia com esse nome nessa semana.','warn'); return; }
+
+  const users=DB.get('fq_users')||{};users[editEmail]=u;
+
+  const renomeiaNaSemana=(wAlvo)=>{
+    const diasAtuais=u.aiPlan.gym[wAlvo]?.days;
+    if(!diasAtuais || !diasAtuais[day]) return false;
+    if(diasAtuais[nomeFinal]) return false; // colisão nessa semana, pula
+    const novosDays={};
+    Object.keys(diasAtuais).forEach(d=>{ novosDays[d===day?nomeFinal:d]=diasAtuais[d]; });
+    u.aiPlan.gym[wAlvo].days=novosDays;
+    return true;
+  };
+  renomeiaNaSemana(w);
+
+  // Verifica se o mesmo nome aparece em outras semanas do plano
+  const outrasComMesmoNome=Object.keys(u.aiPlan.gym).filter(wOutra=>wOutra!==w && u.aiPlan.gym[wOutra]?.days?.[day]);
+  if(outrasComMesmoNome.length){
+    const tambem=await fqConfirm(
+      'Renomear em todas as semanas?',
+      `Esse dia também se chama "${day}" em ${outrasComMesmoNome.length} outra(s) semana(s). Quer renomear em todas, pra manter o plano consistente?`,
+      'Sim, em todas', '🔁'
+    );
+    if(tambem) outrasComMesmoNome.forEach(renomeiaNaSemana);
+  }
+
+  DB.set('fq_users',users);
+  renderEGW(w,u);
+  syncAlunoAdmin(u).catch(()=>{ fqToast('⚠️ Salvo no celular, mas não sincronizou. Confira a internet.','warn',6000); });
+  fqToast(`Dia renomeado pra "${nomeFinal}".`,'ok',3000);
 }
 function renderERW(w,u){
   ensureAP(u);if(!u.aiPlan.run[w])u.aiPlan.run[w]=JSON.parse(JSON.stringify(DR[w]||{meta:'Nova semana',sessions:[]}));
