@@ -843,7 +843,7 @@ textarea.fi{resize:vertical;min-height:80px;}
       <option value="es">🇪🇸 ES</option>
     </select>
   </div>
-  <div id="fq-version-badge" style="position:absolute;bottom:8px;right:12px;font-size:9px;color:#333;font-weight:700;z-index:5">v211</div>
+  <div id="fq-version-badge" style="position:absolute;bottom:8px;right:12px;font-size:9px;color:#333;font-weight:700;z-index:5">v212</div>
   <img src="https://images.unsplash.com/photo-1517836357463-d25dfeac3438?w=800&q=80" alt="Fitness" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center top;filter:brightness(.35);z-index:0"/>
   <div class="splash-glow"></div>
   <div class="splash-noise"></div>
@@ -2135,7 +2135,7 @@ textarea.fi{resize:vertical;min-height:80px;}
             <span style="color:var(--mu);font-size:18px">›</span>
           </div>
         </div>
-        <div style="text-align:center;padding:20px 0 4px;font-size:11px;color:var(--mu)">FitQuest <span id="fq-version-badge-perfil">v211</span></div>
+        <div style="text-align:center;padding:20px 0 4px;font-size:11px;color:var(--mu)">FitQuest <span id="fq-version-badge-perfil">v212</span></div>
       </div>
     </div>
 
@@ -12599,6 +12599,7 @@ function renderEGW(w,u){
     h+=`<button class="btn-addex" onclick="addSEx('${w}','${day}')">+ Exercício em ${day}</button>`;
   });
   h+=`<button class="btn-addex" onclick="novoDiaEGW('${w}')" style="border-color:rgba(52,152,219,.3);color:#3498db;margin-top:4px">+ Novo dia em branco</button>`;
+  h+=`<button class="btn-addex" onclick="admAplicarProgressaoSemanas('${w}')" style="border-color:rgba(46,204,113,.35);color:#2ecc71;margin-top:8px">📈 Progredir estes exercícios pras próximas semanas</button>`;
   h+=`<button class="btn-savewk" onclick="saveEGW('${w}')">💾 Salvar semana</button>`;
   document.getElementById('egw-content').innerHTML=h;
   // (re)liga o arrastar-pra-reordenar em cada dia — cada um tem seu próprio
@@ -12654,6 +12655,92 @@ function renderERW(w,u){
   document.getElementById('erw-content').innerHTML=h;
 }
 function saveEGW(w){const users=DB.get('fq_users')||{};const u=admGetAluno(editEmail);if(!u)return;users[editEmail]=u;ensureAP(u);const ef=document.getElementById('ef');if(ef)u.aiPlan.gym[w].fase=ef.value;document.querySelectorAll('#egw-content .mi[data-field],#egw-content select[data-field]').forEach(inp=>{const day=inp.dataset.day;const idx=parseInt(inp.dataset.idx);const field=inp.dataset.field;if(day&&!isNaN(idx)&&field&&u.aiPlan.gym[w].days[day]?.[idx]!==undefined)u.aiPlan.gym[w].days[day][idx][field]=['sets','rest'].includes(field)?parseInt(inp.value)||1:inp.value;});u.trainApproved=true;DB.set('fq_users',users);syncAlunoAdmin(u).catch(()=>{});fqToast(t('msg.c72391b3b3'),'ok');}
+
+// ══════════════════════════════════════════════════════════════════════
+// ══ PROGRESSÃO AUTOMÁTICA DO TREINO EDITADO ══
+// Pega os exercícios de UMA semana (editada pelo admin) e projeta uma
+// progressão pras semanas seguintes, mantendo os MESMOS exercícios (em
+// vez do molde genérico da anamnese). Regra (periodização em blocos de 4
+// semanas, padrão double progression):
+//   • dentro do bloco: reps sobem +1/+2/+3 até a 3ª semana
+//   • 4ª semana do bloco = DELOAD (série -1, reps volta ao normal, +15s
+//     de descanso) — mesma lógica de recuperação já usada no motor de
+//     corrida
+//   • cada bloco novo começa com 1 série a mais que o bloco anterior
+//     (esse é o ganho de volume real ao longo do tempo)
+// A CARGA (peso) não é alterada automaticamente — isso depende de avaliar
+// o aluno na prática, não dá pra automatizar com segurança.
+// ══════════════════════════════════════════════════════════════════════
+function progredirExercicio(base, offset){
+  if(offset <= 0) return {...base};
+  const ciclo = Math.ceil(offset/4);
+  const posNoCiclo = offset - (ciclo-1)*4;
+  const ehDeload = posNoCiclo === 4;
+
+  const setsBaseCiclo = Math.min(base.sets + (ciclo-1), base.sets + 3);
+  const repsNum = parseInt(base.reps);
+  const repsEhNumero = !isNaN(repsNum) && String(repsNum) === String(base.reps).trim();
+
+  let sets, reps, rest = base.rest||60;
+  if(ehDeload){
+    sets = Math.max(2, setsBaseCiclo - 1);
+    reps = base.reps;
+    rest = (base.rest||60) + 15;
+  } else {
+    sets = setsBaseCiclo;
+    reps = repsEhNumero ? String(repsNum + posNoCiclo) : base.reps;
+  }
+  return {...base, sets, reps, rest};
+}
+
+async function admAplicarProgressaoSemanas(w){
+  const u = admGetAluno(editEmail); if(!u){ fqToast('Aluno não encontrado.','warn'); return; }
+  ensureAP(u);
+
+  // Captura o que está no formulário AGORA (mesmo que ainda não tenha
+  // clicado em "Salvar semana") — a progressão parte do que está na tela.
+  const efEl = document.getElementById('ef');
+  if(efEl) u.aiPlan.gym[w].fase = efEl.value;
+  document.querySelectorAll('#egw-content .mi[data-field],#egw-content select[data-field]').forEach(inp=>{
+    const day=inp.dataset.day, idx=parseInt(inp.dataset.idx), field=inp.dataset.field;
+    if(day && !isNaN(idx) && field && u.aiPlan.gym[w].days[day]?.[idx]!==undefined)
+      u.aiPlan.gym[w].days[day][idx][field] = ['sets','rest'].includes(field) ? (parseInt(inp.value)||1) : inp.value;
+  });
+
+  const baseDays = u.aiPlan.gym[w].days;
+  const numeroBase = parseInt(String(w).replace(/\D/g,''))||1;
+  const proximasSemanas = Object.keys(u.aiPlan.gym)
+    .filter(k => (parseInt(String(k).replace(/\D/g,''))||0) > numeroBase)
+    .sort((a,b)=>(parseInt(a.replace(/\D/g,''))||0)-(parseInt(b.replace(/\D/g,''))||0));
+
+  if(!proximasSemanas.length){ fqToast('Não há semanas depois dessa pra progredir.','warn'); return; }
+
+  const ok = await fqConfirm(
+    `Progredir pra ${proximasSemanas.length} semana(s)?`,
+    `Isso vai SUBSTITUIR os exercícios de ${proximasSemanas.join(', ')} pelos mesmos exercícios de ${w}, com séries e reps aumentando gradualmente (com deload a cada 4ª semana). A carga (peso) não muda sozinha. Não dá pra desfazer.`,
+    'Aplicar progressão', '📈'
+  );
+  if(!ok) return;
+
+  const users = DB.get('fq_users')||{};
+  users[editEmail] = u;
+  proximasSemanas.forEach(wAlvo=>{
+    const numeroAlvo = parseInt(String(wAlvo).replace(/\D/g,''))||0;
+    const offset = numeroAlvo - numeroBase;
+    const novosDays = {};
+    Object.keys(baseDays).forEach(day=>{
+      novosDays[day] = baseDays[day].map(ex=>progredirExercicio(ex, offset));
+    });
+    if(!u.aiPlan.gym[wAlvo]) u.aiPlan.gym[wAlvo] = {fase:'', days:{}};
+    u.aiPlan.gym[wAlvo].fase = (u.aiPlan.gym[w].fase||'') + ` (progressão de ${w})`;
+    u.aiPlan.gym[wAlvo].days = novosDays;
+  });
+  u.trainApproved = true;
+  DB.set('fq_users', users);
+  renderEGW(w, u);
+  await syncAlunoAdmin(u).catch(()=>{ fqToast('⚠️ Salvo no celular, mas não sincronizou. Confira a internet e tente de novo.','warn',6000); });
+  fqToast(`📈 Progressão aplicada em ${proximasSemanas.length} semana(s) — já enviado pro aluno.`,'ok',5000);
+}
 function saveERW(w){const users=DB.get('fq_users')||{};const u=admGetAluno(editEmail);if(!u)return;users[editEmail]=u;ensureAP(u);const ef=document.getElementById('erf');if(ef)u.aiPlan.run[w].meta=ef.value;document.querySelectorAll('#erw-content .mi[data-field]').forEach(inp=>{const si=parseInt(inp.dataset.si);const field=inp.dataset.field;if(!isNaN(si)&&field&&u.aiPlan.run[w].sessions[si])u.aiPlan.run[w].sessions[si][field]=inp.value;});u.trainApproved=true;DB.set('fq_users',users);syncAlunoAdmin(u).catch(()=>{});fqToast(t('msg.c72391b3b3'),'ok');}
 function addSEx(w,d){const users=DB.get('fq_users')||{};const u=admGetAluno(editEmail);if(!u)return;users[editEmail]=u;ensureAP(u);u.aiPlan.gym[w].days[d].push({id:EXERCISE_BANK[0]?.id||'e001',sets:3,reps:'12',load:'Moderada',rest:60});DB.set('fq_users',users);renderEGW(w,u);}
 function remSEx(w,d,i){const users=DB.get('fq_users')||{};const u=admGetAluno(editEmail);if(!u)return;users[editEmail]=u;u.aiPlan.gym[w].days[d].splice(i,1);DB.set('fq_users',users);renderEGW(w,u);}
