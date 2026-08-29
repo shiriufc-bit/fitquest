@@ -843,7 +843,7 @@ textarea.fi{resize:vertical;min-height:80px;}
       <option value="es">🇪🇸 ES</option>
     </select>
   </div>
-  <div id="fq-version-badge" style="position:absolute;bottom:8px;right:12px;font-size:9px;color:#333;font-weight:700;z-index:5">v210</div>
+  <div id="fq-version-badge" style="position:absolute;bottom:8px;right:12px;font-size:9px;color:#333;font-weight:700;z-index:5">v211</div>
   <img src="https://images.unsplash.com/photo-1517836357463-d25dfeac3438?w=800&q=80" alt="Fitness" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center top;filter:brightness(.35);z-index:0"/>
   <div class="splash-glow"></div>
   <div class="splash-noise"></div>
@@ -2135,7 +2135,7 @@ textarea.fi{resize:vertical;min-height:80px;}
             <span style="color:var(--mu);font-size:18px">›</span>
           </div>
         </div>
-        <div style="text-align:center;padding:20px 0 4px;font-size:11px;color:var(--mu)">FitQuest <span id="fq-version-badge-perfil">v210</span></div>
+        <div style="text-align:center;padding:20px 0 4px;font-size:11px;color:var(--mu)">FitQuest <span id="fq-version-badge-perfil">v211</span></div>
       </div>
     </div>
 
@@ -12569,7 +12569,8 @@ function renderEGW(w,u){
   ensureAP(u);if(!u.aiPlan.gym[w])u.aiPlan.gym[w]=JSON.parse(JSON.stringify(DG[w]||{fase:'Nova fase',days:{'Treino A':[]}}));
   const prog=u.aiPlan.gym[w];
   let h=`<div class="fg"><label class="fl">Fase</label><input class="mi" style="font-size:13px;padding:8px;width:100%;margin-bottom:8px" id="ef" value="${prog.fase||''}"/></div>`;
-  Object.keys(prog.days).forEach(day=>{
+  const nomesDias=Object.keys(prog.days);
+  nomesDias.forEach((day,dayIdx)=>{
     h+=`<div style="display:flex;justify-content:space-between;align-items:center;gap:6px;margin:10px 0 5px;flex-wrap:wrap">
       <div style="font-size:11px;font-weight:800;color:var(--r)">${day}</div>
       <div style="display:flex;gap:6px;flex-wrap:wrap">
@@ -12583,16 +12584,44 @@ function renderEGW(w,u){
     if(prog.days[day].length===0){
       h+=`<div style="font-size:10.5px;color:var(--mu);padding:6px 0;font-style:italic">Nenhum exercício ainda — adicione manualmente ou use um pacote pronto acima.</div>`;
     }
+    h+=`<div id="egw-ex-list-${dayIdx}">`;
     prog.days[day].forEach((ed,ei)=>{const ex=getExById(ed.id,u);
-      h+=`<div class="exer"><div class="exer-t"><div style="font-size:12px;font-weight:700">${ex?ex.name:ed.id}</div><button onclick="remSEx('${w}','${day}',${ei})" style="background:rgba(229,9,20,.08);border:1px solid rgba(229,9,20,.15);border-radius:4px;padding:2px 7px;color:var(--r);font-size:9px;cursor:pointer;">✕</button></div>
+      h+=`<div class="exer" style="position:relative"><div class="exer-t" style="display:flex;align-items:center;gap:6px">
+      <div class="egw-drag-handle" style="display:flex;align-items:center;justify-content:center;flex-shrink:0;width:20px;height:24px;color:var(--mu);font-size:14px;cursor:grab;letter-spacing:-1px" title="Segure e arraste pra reordenar">⠿</div>
+      <div style="background:var(--r);color:#fff;border-radius:5px;min-width:20px;height:20px;display:flex;align-items:center;justify-content:center;font-size:9.5px;font-weight:900;flex-shrink:0">${ei+1}</div>
+      <div style="font-size:12px;font-weight:700;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${ex?ex.name:ed.id}</div>
+      <button onclick="remSEx('${w}','${day}',${ei})" style="background:rgba(229,9,20,.08);border:1px solid rgba(229,9,20,.15);border-radius:4px;padding:2px 7px;color:var(--r);font-size:9px;cursor:pointer;flex-shrink:0">✕</button></div>
       <div class="exer-g"><div><div class="ml2">Exercício</div><button type="button" onclick="abrirBuscaExercicio('${w}','${day}',${ei})" style="width:100%;text-align:left;background:var(--s2);border:1px solid var(--b);border-radius:8px;padding:8px 10px;color:#fff;font-size:12.5px;cursor:pointer;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${ex?ex.name:ed.id}${(u.exerciciosCustom||[]).some(c=>c.id===ed.id)?' 🎬':''} ▾</button></div><div><div class="ml2">Séries</div><input class="mi" type="number" data-day="${day}" data-idx="${ei}" data-field="sets" value="${ed.sets}"/></div><div><div class="ml2">Reps</div><input class="mi" data-day="${day}" data-idx="${ei}" data-field="reps" value="${ed.reps}"/></div></div>
       <div class="exer-g"><div><div class="ml2">Carga</div><input class="mi" data-day="${day}" data-idx="${ei}" data-field="load" value="${ed.load||''}"/></div><div><div class="ml2">Descanso(s)</div><input class="mi" type="number" data-day="${day}" data-idx="${ei}" data-field="rest" value="${ed.rest||60}"/></div></div></div>`;
     });
+    h+=`</div>`;
+    if(prog.days[day].length>1) h+=`<div style="text-align:center;font-size:10px;color:var(--mu);margin:2px 0 10px">Segure num exercício pra arrastar e reordenar</div>`;
     h+=`<button class="btn-addex" onclick="addSEx('${w}','${day}')">+ Exercício em ${day}</button>`;
   });
   h+=`<button class="btn-addex" onclick="novoDiaEGW('${w}')" style="border-color:rgba(52,152,219,.3);color:#3498db;margin-top:4px">+ Novo dia em branco</button>`;
   h+=`<button class="btn-savewk" onclick="saveEGW('${w}')">💾 Salvar semana</button>`;
   document.getElementById('egw-content').innerHTML=h;
+  // (re)liga o arrastar-pra-reordenar em cada dia — cada um tem seu próprio
+  // container, então arrastar não mistura exercícios de dias diferentes.
+  nomesDias.forEach((day,dayIdx)=>{
+    fqSetupDrag(`egw-ex-list-${dayIdx}`, '.exer', (de,para)=>admReordenarEx(w,day,de,para));
+  });
+}
+// Tira o exercício da posição antiga e insere na nova, dentro do MESMO dia.
+// Mesma lógica do reordenar que o aluno já usa no "Meu Treino" (mtReordenarEx),
+// só que mexendo no plano de OUTRO aluno (por isso syncAlunoAdmin, não syncU).
+function admReordenarEx(w,day,de,para){
+  const u=admGetAluno(editEmail); if(!u)return;
+  const lista=u.aiPlan.gym[w]?.days?.[day];
+  if(!lista || de===para) return;
+  if(de<0||de>=lista.length||para<0||para>=lista.length) return;
+  const users=DB.get('fq_users')||{};users[editEmail]=u;
+  const [item]=lista.splice(de,1);
+  lista.splice(para,0,item);
+  DB.set('fq_users',users);
+  renderEGW(w,u);
+  syncAlunoAdmin(u).catch(()=>{});
+  if(navigator.vibrate){ try{ navigator.vibrate(12); }catch(_){} }
 }
 function limparTreinoDia(w,day){
   const u=admGetAluno(editEmail);if(!u)return;
