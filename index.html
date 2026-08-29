@@ -843,7 +843,7 @@ textarea.fi{resize:vertical;min-height:80px;}
       <option value="es">🇪🇸 ES</option>
     </select>
   </div>
-  <div id="fq-version-badge" style="position:absolute;bottom:8px;right:12px;font-size:9px;color:#333;font-weight:700;z-index:5">v215</div>
+  <div id="fq-version-badge" style="position:absolute;bottom:8px;right:12px;font-size:9px;color:#333;font-weight:700;z-index:5">v216</div>
   <img src="https://images.unsplash.com/photo-1517836357463-d25dfeac3438?w=800&q=80" alt="Fitness" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center top;filter:brightness(.35);z-index:0"/>
   <div class="splash-glow"></div>
   <div class="splash-noise"></div>
@@ -2135,7 +2135,7 @@ textarea.fi{resize:vertical;min-height:80px;}
             <span style="color:var(--mu);font-size:18px">›</span>
           </div>
         </div>
-        <div style="text-align:center;padding:20px 0 4px;font-size:11px;color:var(--mu)">FitQuest <span id="fq-version-badge-perfil">v215</span></div>
+        <div style="text-align:center;padding:20px 0 4px;font-size:11px;color:var(--mu)">FitQuest <span id="fq-version-badge-perfil">v216</span></div>
       </div>
     </div>
 
@@ -2317,6 +2317,37 @@ textarea.fi{resize:vertical;min-height:80px;}
       <input type="text" id="be-input" placeholder="Digite pra buscar (ex: agachamento, remada...)" oninput="renderListaBusca(this.value)" style="width:100%;padding:11px 12px;border-radius:9px;background:var(--s2);border:1px solid var(--b);color:#fff;font-size:14px"/>
     </div>
     <div id="be-lista" style="overflow-y:auto;flex:1;padding:0 16px 16px"></div>
+  </div>
+</div>
+<!-- Copiar treino de UM aluno pra outro (admin) -->
+<div class="modal-ov" id="modal-copiar-treino" style="align-items:flex-start">
+  <div class="modal-bx" style="max-width:480px;width:100%;padding:0;border-radius:16px 16px 0 0;margin-top:auto;max-height:88vh;overflow-y:auto">
+    <div class="modal-t"><span>📋 Copiar treino</span><button class="modal-cl" onclick="closeModal('modal-copiar-treino')">✕</button></div>
+    <div style="padding:16px">
+      <div id="ct-origem-label" style="font-size:12.5px;color:var(--t2);margin-bottom:10px"></div>
+
+      <div class="fg"><label class="fl">Semana de origem (o que copiar)</label>
+        <select class="fi" id="ct-semana-origem" onchange="ctAtualizarBotao()"></select>
+      </div>
+
+      <div class="fg"><label class="fl">Copiar para qual aluno?</label>
+        <input type="text" id="ct-busca-aluno" placeholder="Digite o nome ou e-mail..." oninput="ctFiltrarAlunos(this.value)" class="fi"/>
+        <div id="ct-lista-alunos" style="max-height:160px;overflow-y:auto;margin-top:6px;border:1px solid var(--b);border-radius:8px"></div>
+      </div>
+
+      <div class="fg" id="ct-semana-destino-wrap" style="display:none">
+        <label class="fl">Semana de destino (no aluno escolhido)</label>
+        <input type="text" id="ct-semana-destino" class="fi" placeholder="Ex: Semana 1"/>
+        <div style="font-size:10px;color:var(--mu);margin-top:4px">Se já existir uma semana com esse nome no aluno de destino, ela será <b>substituída</b>.</div>
+      </div>
+
+      <label style="display:flex;align-items:center;gap:8px;margin:10px 0;font-size:12px;color:var(--t2);cursor:pointer">
+        <input type="checkbox" id="ct-progredir" style="width:16px;height:16px"/>
+        Também aplicar progressão automática nas semanas seguintes do destino
+      </label>
+
+      <button class="btn-savewk" onclick="ctExecutarCopia()" id="ct-btn-copiar" disabled style="opacity:.5">Copiar treino</button>
+    </div>
   </div>
 </div>
 <div class="modal-ov" id="modal-meus-exercicios">
@@ -12419,6 +12450,7 @@ function admStudentCard(u, compact=false){
     <div class="st-actions" data-cat-group="treino">
       <button class="st-btn edit" onclick="openEditSt('${u.email}')">✏️ Editar</button>
       <button class="st-btn" onclick="admAtalhoProgressao('${u.email}')" style="background:rgba(46,204,113,.12);color:#2ecc71;border:1px solid rgba(46,204,113,.3)">📈 Progredir treino</button>
+      <button class="st-btn" onclick="ctAbrir('${u.email}')" style="background:rgba(52,152,219,.12);color:#3498db;border:1px solid rgba(52,152,219,.3)">📋 Copiar treino</button>
       <button class="st-btn" onclick="openEditRun('${u.email}')" style="background:rgba(46,204,113,.12);color:#2ecc71;border:1px solid rgba(46,204,113,.3)">🏃 Editar corrida</button>
       <button class="st-btn" onclick="openRunFeedback('${u.email}')" style="background:rgba(155,89,182,.12);color:#9b59b6;border:1px solid rgba(155,89,182,.3)">💬 Feedback corrida</button>
       <button class="st-btn" onclick="openRunPacks('${u.email}')" style="background:rgba(52,152,219,.12);color:#3498db;border:1px solid rgba(52,152,219,.3)">🦵 Força pra corrida</button>
@@ -12619,6 +12651,133 @@ function admAtalhoProgressao(email){
   }
   openEditSt(email, alvo);
   fqToast(`Aberto em "${alvo}" (última semana com exercícios). Revise e clique em "📈 Progredir" lá embaixo.`,'ok',5500);
+}
+
+// ══════════════════════════════════════════════════════════════════════
+// ══ COPIAR TREINO DE UM ALUNO PRA OUTRO ══
+// Copia os exercícios de uma semana inteira (todos os dias) de um aluno
+// pra dentro do plano de outro. Se algum exercício copiado for PRIVADO do
+// aluno de origem (criado por ele com vídeo próprio), a definição desse
+// exercício também é copiada pro aluno de destino — senão apareceria
+// quebrado (só o código, sem nome/gif) na tela dele.
+// ══════════════════════════════════════════════════════════════════════
+let CT_ORIGEM_EMAIL=null, CT_DESTINO_EMAIL=null;
+
+function ctAbrir(email){
+  const u=admGetAluno(email);
+  if(!u || !u.aiPlan?.gym || !Object.keys(u.aiPlan.gym).length){ fqToast('Esse aluno ainda não tem plano de treino pra copiar.','warn'); return; }
+  CT_ORIGEM_EMAIL=email; CT_DESTINO_EMAIL=null;
+
+  document.getElementById('ct-origem-label').innerHTML=`Copiando o treino de <b>${u.name||u.email}</b>`;
+
+  const semanasComConteudo=Object.keys(u.aiPlan.gym)
+    .filter(w=>Object.values(u.aiPlan.gym[w]?.days||{}).some(lista=>Array.isArray(lista)&&lista.length>0))
+    .sort((a,b)=>(parseInt(a.replace(/\D/g,''))||0)-(parseInt(b.replace(/\D/g,''))||0));
+  const semOrigemSel=document.getElementById('ct-semana-origem');
+  semOrigemSel.innerHTML = semanasComConteudo.length
+    ? semanasComConteudo.map(w=>`<option value="${w}">${w}</option>`).join('')
+    : '<option value="">— nenhuma semana com exercícios —</option>';
+
+  document.getElementById('ct-busca-aluno').value='';
+  document.getElementById('ct-semana-destino-wrap').style.display='none';
+  document.getElementById('ct-progredir').checked=false;
+  ctAtualizarBotao();
+  ctFiltrarAlunos('');
+  abrirModal('modal-copiar-treino');
+}
+
+function ctFiltrarAlunos(termo){
+  const todos=(window.ADM_CACHE||[]).filter(a=>!a.isAdmin && a.email!==CT_ORIGEM_EMAIL);
+  const termoNorm=(termo||'').trim().toLowerCase();
+  const filtrados=termoNorm
+    ? todos.filter(a=>(a.name||'').toLowerCase().includes(termoNorm) || (a.email||'').toLowerCase().includes(termoNorm))
+    : todos;
+  const lista=document.getElementById('ct-lista-alunos');
+  lista.innerHTML = filtrados.slice(0,30).map(a=>`
+    <div onclick="ctEscolherDestino('${a.email}')" style="padding:9px 10px;border-bottom:1px solid var(--b);cursor:pointer;font-size:12.5px;display:flex;justify-content:space-between;align-items:center;${a.email===CT_DESTINO_EMAIL?'background:rgba(46,204,113,.12)':''}">
+      <span>${a.name||a.email}</span>
+      ${a.email===CT_DESTINO_EMAIL?'<span style="color:#2ecc71;font-weight:800">✓</span>':''}
+    </div>`).join('') || `<div style="padding:12px;text-align:center;color:var(--mu);font-size:11.5px">Nenhum aluno encontrado.</div>`;
+}
+
+function ctEscolherDestino(email){
+  CT_DESTINO_EMAIL=email;
+  const semOrigem=document.getElementById('ct-semana-origem').value;
+  document.getElementById('ct-semana-destino').value=semOrigem||'Semana 1';
+  document.getElementById('ct-semana-destino-wrap').style.display='block';
+  ctFiltrarAlunos(document.getElementById('ct-busca-aluno').value); // re-renderiza pra marcar o ✓
+  ctAtualizarBotao();
+}
+
+function ctAtualizarBotao(){
+  const btn=document.getElementById('ct-btn-copiar');
+  const pronto = !!CT_DESTINO_EMAIL && !!document.getElementById('ct-semana-origem').value;
+  btn.disabled=!pronto;
+  btn.style.opacity=pronto?'1':'.5';
+}
+
+async function ctExecutarCopia(){
+  const semanaOrigem=document.getElementById('ct-semana-origem').value;
+  const semanaDestino=(document.getElementById('ct-semana-destino').value||'').trim();
+  if(!CT_ORIGEM_EMAIL || !CT_DESTINO_EMAIL || !semanaOrigem || !semanaDestino){
+    fqToast('Escolha a semana de origem, o aluno de destino e a semana de destino.','warn'); return;
+  }
+  const origemU=admGetAluno(CT_ORIGEM_EMAIL);
+  const destinoU=admGetAluno(CT_DESTINO_EMAIL);
+  if(!origemU || !destinoU){ fqToast('Aluno não encontrado.','warn'); return; }
+
+  const jaExiste = destinoU.aiPlan?.gym?.[semanaDestino] && Object.values(destinoU.aiPlan.gym[semanaDestino].days||{}).some(l=>l.length>0);
+  const ok = await fqConfirm(
+    'Copiar treino?',
+    `Copiar "${semanaOrigem}" de ${origemU.name||origemU.email} pra "${semanaDestino}" de ${destinoU.name||destinoU.email}?${jaExiste?' Isso vai SUBSTITUIR o que já existe lá.':''}${document.getElementById('ct-progredir').checked?' A progressão automática também será aplicada nas semanas seguintes do destino.':''}`,
+    'Copiar', '📋'
+  );
+  if(!ok) return;
+
+  ensureAP(destinoU);
+  const diasOrigem=origemU.aiPlan.gym[semanaOrigem].days;
+  const diasCopiados={};
+  Object.keys(diasOrigem).forEach(day=>{
+    diasCopiados[day]=diasOrigem[day].map(ex=>{
+      // Exercício privado do aluno de origem (não está no banco global)?
+      // Copia a definição junto, senão fica quebrado pro aluno de destino.
+      if(!EXERCISE_BANK.find(e=>e.id===ex.id)){
+        const defOrigem=(origemU.exerciciosCustom||[]).find(c=>c.id===ex.id);
+        if(defOrigem && !(destinoU.exerciciosCustom||[]).some(c=>c.id===ex.id)){
+          if(!destinoU.exerciciosCustom) destinoU.exerciciosCustom=[];
+          destinoU.exerciciosCustom.push({...defOrigem});
+        }
+      }
+      return {...ex};
+    });
+  });
+
+  const users=DB.get('fq_users')||{};
+  users[CT_DESTINO_EMAIL]=destinoU;
+  if(!destinoU.aiPlan.gym[semanaDestino]) destinoU.aiPlan.gym[semanaDestino]={fase:'', days:{}};
+  destinoU.aiPlan.gym[semanaDestino].fase = origemU.aiPlan.gym[semanaOrigem].fase || destinoU.aiPlan.gym[semanaDestino].fase || '';
+  destinoU.aiPlan.gym[semanaDestino].days = diasCopiados;
+  destinoU.trainApproved=true;
+
+  if(document.getElementById('ct-progredir').checked){
+    const numeroBase=parseInt(String(semanaDestino).replace(/\D/g,''))||1;
+    const proximas=Object.keys(destinoU.aiPlan.gym)
+      .filter(k=>(parseInt(String(k).replace(/\D/g,''))||0) > numeroBase);
+    proximas.forEach(wAlvo=>{
+      const offset=(parseInt(String(wAlvo).replace(/\D/g,''))||0) - numeroBase;
+      const novosDays={};
+      Object.keys(diasCopiados).forEach(day=>{
+        novosDays[day]=diasCopiados[day].map(ex=>progredirExercicio(ex, offset));
+      });
+      if(!destinoU.aiPlan.gym[wAlvo]) destinoU.aiPlan.gym[wAlvo]={fase:'', days:{}};
+      destinoU.aiPlan.gym[wAlvo].days=novosDays;
+    });
+  }
+
+  DB.set('fq_users',users);
+  closeModal('modal-copiar-treino');
+  await syncAlunoAdmin(destinoU).catch(()=>{ fqToast('⚠️ Salvo no celular, mas não sincronizou. Confira a internet.','warn',6000); });
+  fqToast(`📋 Treino copiado pra ${destinoU.name||destinoU.email}!`,'ok',4000);
 }
 function selEGW(w,el){editGW=w;document.querySelectorAll('#egw-tabs .wsb').forEach(b=>b.classList.remove('active'));el.classList.add('active');renderEGW(w,admGetAluno(editEmail));}
 function selERW(w,el){editRW=w;document.querySelectorAll('#erw-tabs .wsb').forEach(b=>b.classList.remove('active'));el.classList.add('active');renderERW(w,admGetAluno(editEmail));}
