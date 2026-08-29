@@ -843,7 +843,7 @@ textarea.fi{resize:vertical;min-height:80px;}
       <option value="es">🇪🇸 ES</option>
     </select>
   </div>
-  <div id="fq-version-badge" style="position:absolute;bottom:8px;right:12px;font-size:9px;color:#333;font-weight:700;z-index:5">v212</div>
+  <div id="fq-version-badge" style="position:absolute;bottom:8px;right:12px;font-size:9px;color:#333;font-weight:700;z-index:5">v213</div>
   <img src="https://images.unsplash.com/photo-1517836357463-d25dfeac3438?w=800&q=80" alt="Fitness" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center top;filter:brightness(.35);z-index:0"/>
   <div class="splash-glow"></div>
   <div class="splash-noise"></div>
@@ -2135,7 +2135,7 @@ textarea.fi{resize:vertical;min-height:80px;}
             <span style="color:var(--mu);font-size:18px">›</span>
           </div>
         </div>
-        <div style="text-align:center;padding:20px 0 4px;font-size:11px;color:var(--mu)">FitQuest <span id="fq-version-badge-perfil">v212</span></div>
+        <div style="text-align:center;padding:20px 0 4px;font-size:11px;color:var(--mu)">FitQuest <span id="fq-version-badge-perfil">v213</span></div>
       </div>
     </div>
 
@@ -12380,6 +12380,7 @@ function admStudentCard(u, compact=false){
     <!-- Actions — agrupadas por categoria, só a categoria ativa fica visível -->
     <div class="st-actions" data-cat-group="treino">
       <button class="st-btn edit" onclick="openEditSt('${u.email}')">✏️ Editar</button>
+      <button class="st-btn" onclick="admAtalhoProgressao('${u.email}')" style="background:rgba(46,204,113,.12);color:#2ecc71;border:1px solid rgba(46,204,113,.3)">📈 Progredir treino</button>
       <button class="st-btn" onclick="openEditRun('${u.email}')" style="background:rgba(46,204,113,.12);color:#2ecc71;border:1px solid rgba(46,204,113,.3)">🏃 Editar corrida</button>
       <button class="st-btn" onclick="openRunFeedback('${u.email}')" style="background:rgba(155,89,182,.12);color:#9b59b6;border:1px solid rgba(155,89,182,.3)">💬 Feedback corrida</button>
       <button class="st-btn" onclick="openRunPacks('${u.email}')" style="background:rgba(52,152,219,.12);color:#3498db;border:1px solid rgba(52,152,219,.3)">🦵 Força pra corrida</button>
@@ -12546,12 +12547,13 @@ async function delEx(id){if(!await fqConfirm(t('msg.23266802e4'),t('msg.bdc10d09
 // EDIT STUDENT
 let editEmail=null;let editGW='Semana 1';let editRW='Semana 1';
 function ensureAP(u){if(!u.aiPlan)u.aiPlan={gym:JSON.parse(JSON.stringify(DG)),run:JSON.parse(JSON.stringify(DR))};if(!u.aiPlan.gym)u.aiPlan.gym=JSON.parse(JSON.stringify(DG));if(!u.aiPlan.run)u.aiPlan.run=JSON.parse(JSON.stringify(DR));}
-function openEditSt(email){
-  editEmail=email;editGW='Semana 1';editRW='Semana 1';
+function openEditSt(email, semanaInicial){
+  editEmail=email;editGW=semanaInicial||'Semana 1';editRW='Semana 1';
   const u=admGetAluno(email);
   if(!u){ fqToast('Aluno não encontrado.','warn'); return; }
   document.getElementById('modal-st-name').textContent='✏️ '+(u.name||u.email);
   const GP=u.aiPlan?.gym||DG;const RP=u.aiPlan?.run||DR;
+  if(!GP[editGW]) editGW=Object.keys(GP)[0]||'Semana 1';
   document.getElementById('modal-st-content').innerHTML=`
     <div class="ed-sec"><div class="ed-stt">🏋️ Musculação</div>
       <div style="font-size:10.5px;color:var(--mu);margin-bottom:6px">📦 Adicionar pacote pronto como <b>dia novo</b> (pra substituir um dia já existente, use o seletor "Usar pronto..." dentro de cada dia, mais abaixo):</div>
@@ -12562,6 +12564,23 @@ function openEditSt(email){
     <div class="ed-sec"><div class="ed-stt">🏃 Corrida</div><div class="wsel" id="erw-tabs">${Object.keys(RP).map(w=>`<div class="wsb ${w===editRW?'active':''}" onclick="selERW('${w}',this)">${w}</div>`).join('')}</div><div id="erw-content"></div></div>`;
   abrirModal('modal-student');
   renderEGW(editGW,u);renderERW(editRW,u);
+}
+// ── Atalho pra alunos ANTIGOS (de antes da progressão automática existir) ──
+// Abre o editor já na ÚLTIMA semana que tem exercícios de verdade (em vez de
+// sempre cair na Semana 1), pra o admin não precisar navegar pelas abas até
+// achar onde o treino "de verdade" está. De lá, é só clicar em "📈 Progredir".
+function admAtalhoProgressao(email){
+  const u=admGetAluno(email);
+  if(!u || !u.aiPlan?.gym){ fqToast('Aluno não encontrado ou sem plano de treino ainda.','warn'); return; }
+  const semanas=Object.keys(u.aiPlan.gym).sort((a,b)=>(parseInt(a.replace(/\D/g,''))||0)-(parseInt(b.replace(/\D/g,''))||0));
+  let alvo=semanas[0]||'Semana 1';
+  for(const w of semanas){
+    const dias=u.aiPlan.gym[w]?.days||{};
+    const temExercicio=Object.values(dias).some(lista=>Array.isArray(lista)&&lista.length>0);
+    if(temExercicio) alvo=w;
+  }
+  openEditSt(email, alvo);
+  fqToast(`Aberto em "${alvo}" (última semana com exercícios). Revise e clique em "📈 Progredir" lá embaixo.`,'ok',5500);
 }
 function selEGW(w,el){editGW=w;document.querySelectorAll('#egw-tabs .wsb').forEach(b=>b.classList.remove('active'));el.classList.add('active');renderEGW(w,admGetAluno(editEmail));}
 function selERW(w,el){editRW=w;document.querySelectorAll('#erw-tabs .wsb').forEach(b=>b.classList.remove('active'));el.classList.add('active');renderERW(w,admGetAluno(editEmail));}
