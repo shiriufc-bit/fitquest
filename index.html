@@ -843,7 +843,7 @@ textarea.fi{resize:vertical;min-height:80px;}
       <option value="es">🇪🇸 ES</option>
     </select>
   </div>
-  <div id="fq-version-badge" style="position:absolute;bottom:8px;right:12px;font-size:9px;color:#333;font-weight:700;z-index:5">v217</div>
+  <div id="fq-version-badge" style="position:absolute;bottom:8px;right:12px;font-size:9px;color:#333;font-weight:700;z-index:5">v219</div>
   <img src="https://images.unsplash.com/photo-1517836357463-d25dfeac3438?w=800&q=80" alt="Fitness" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center top;filter:brightness(.35);z-index:0"/>
   <div class="splash-glow"></div>
   <div class="splash-noise"></div>
@@ -2135,7 +2135,7 @@ textarea.fi{resize:vertical;min-height:80px;}
             <span style="color:var(--mu);font-size:18px">›</span>
           </div>
         </div>
-        <div style="text-align:center;padding:20px 0 4px;font-size:11px;color:var(--mu)">FitQuest <span id="fq-version-badge-perfil">v217</span></div>
+        <div style="text-align:center;padding:20px 0 4px;font-size:11px;color:var(--mu)">FitQuest <span id="fq-version-badge-perfil">v219</span></div>
       </div>
     </div>
 
@@ -12375,7 +12375,16 @@ function renderListaBusca(termo){
       h += `<div style="font-size:10px;font-weight:800;color:var(--r);text-transform:uppercase;letter-spacing:.4px;padding:12px 2px 5px;position:sticky;top:0;background:var(--bg2,#0a0a0a)">${g} (${grupos[g].length})</div>`;
       grupos[g].forEach(e=>{
         const ehCustom = (u?.exerciciosCustom||[]).some(c=>c.id===e.id);
-        h += `<div onclick="selecionarExercicioBusca('${e.id}')" style="padding:10px 6px;border-bottom:1px solid var(--b);cursor:pointer;font-size:13px;color:#fff">${e.name}${ehCustom?' 🎬':''}</div>`;
+        // gif do banco padrão (não a versão personalizada de ninguém — aqui é
+        // só pra dar uma prévia visual de QUAL exercício é, antes de escolher)
+        const temGif = (typeof EXERCICIOS_COM_GIF!=='undefined' && EXERCICIOS_COM_GIF.has(e.id)) || (ehCustom && e.gifUrl);
+        const urlGif = ehCustom ? e.gifUrl : (temGif ? `exercicios/${e.id}.gif` : null);
+        h += `<div onclick="selecionarExercicioBusca('${e.id}')" style="display:flex;align-items:center;gap:10px;padding:8px 6px;border-bottom:1px solid var(--b);cursor:pointer;font-size:13px;color:#fff">
+          <div style="width:38px;height:38px;border-radius:7px;overflow:hidden;flex-shrink:0;background:#000;display:flex;align-items:center;justify-content:center">
+            ${urlGif ? `<img src="${urlGif}" loading="lazy" style="width:100%;height:100%;object-fit:cover" onerror="this.parentElement.innerHTML='<span style=&quot;font-size:16px&quot;>${e.emoji||'🏋️'}</span>'"/>` : `<span style="font-size:16px">${e.emoji||'🏋️'}</span>`}
+          </div>
+          <div style="flex:1;min-width:0">${e.name}${ehCustom?' 🎬':''}</div>
+        </div>`;
       });
     });
   }
@@ -12388,8 +12397,17 @@ function selecionarExercicioBusca(exId){
   if(!u){ fqToast('Aluno não encontrado.','warn'); return; }
   const users = DB.get('fq_users')||{};
   users[editEmail]=u; ensureAP(u);
-  if(!u.aiPlan.gym[w]?.days[day]?.[ei]){ fqToast('Não encontrei essa sessão pra editar.','warn'); return; }
-  u.aiPlan.gym[w].days[day][ei].id = exId;
+  if(!u.aiPlan.gym[w]?.days[day]){ fqToast('Não encontrei esse dia pra editar.','warn'); return; }
+
+  if(ei===null || ei===undefined){
+    // "+ Exercício em [dia]": adiciona uma sessão NOVA, já com o exercício escolhido
+    u.aiPlan.gym[w].days[day].push({id:exId, sets:3, reps:'12', load:'Moderada', rest:60});
+  } else {
+    // trocando o exercício de uma sessão que já existe
+    if(!u.aiPlan.gym[w].days[day][ei]){ fqToast('Não encontrei essa sessão pra editar.','warn'); return; }
+    u.aiPlan.gym[w].days[day][ei].id = exId;
+  }
+
   DB.set('fq_users',users);
   renderEGW(w,u);
   closeModal('modal-buscar-exercicio');
@@ -12815,7 +12833,7 @@ function renderEGW(w,u){
     });
     h+=`</div>`;
     if(prog.days[day].length>1) h+=`<div style="text-align:center;font-size:10px;color:var(--mu);margin:2px 0 10px">Segure num exercício pra arrastar e reordenar</div>`;
-    h+=`<button class="btn-addex" onclick="addSEx('${w}','${day}')">+ Exercício em ${day}</button>`;
+    h+=`<button class="btn-addex" onclick="abrirBuscaExercicio('${w}','${day}',null)">+ Exercício em ${day}</button>`;
   });
   h+=`<button class="btn-addex" onclick="novoDiaEGW('${w}')" style="border-color:rgba(52,152,219,.3);color:#3498db;margin-top:4px">+ Novo dia em branco</button>`;
   h+=`<button class="btn-addex" onclick="admAplicarProgressaoSemanas('${w}')" style="border-color:rgba(46,204,113,.35);color:#2ecc71;margin-top:8px">📈 Progredir estes exercícios pras próximas semanas</button>`;
