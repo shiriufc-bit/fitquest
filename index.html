@@ -198,7 +198,7 @@ textarea.fi{resize:vertical;min-height:80px;}
 #sc-app.active{display:flex;}
 
 /* NETFLIX NAV */
-.app-nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:16px 20px;display:flex;align-items:center;justify-content:space-between;transition:background .3s;background:linear-gradient(180deg,rgba(0,0,0,.8) 0%,transparent 100%);}
+.app-nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:16px 20px;padding-top:max(16px,env(safe-area-inset-top));display:flex;align-items:center;justify-content:space-between;transition:background .3s;background:linear-gradient(180deg,rgba(0,0,0,.8) 0%,transparent 100%);}
 .app-nav.solid{background:rgba(10,10,10,.97);backdrop-filter:blur(20px);border-bottom:1px solid var(--b);}
 .nav-logo{font-size:22px;font-weight:900;letter-spacing:-1px;}
 .nav-logo .r{color:var(--r);}
@@ -389,7 +389,7 @@ textarea.fi{resize:vertical;min-height:80px;}
 #sc-adm{display:none;flex-direction:column;background:var(--bg);}
 #sc-adm.active{display:flex;}
 /* ══ ADMIN PANEL REDESIGN ══ */
-.adm-hdr{background:rgba(8,8,8,.98);border-bottom:1px solid rgba(229,9,20,.2);padding:12px 16px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:10;backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);}
+.adm-hdr{background:rgba(8,8,8,.98);border-bottom:1px solid rgba(229,9,20,.2);padding:12px 16px;padding-top:max(12px,env(safe-area-inset-top));display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:10;backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);}
 .adm-logo{display:flex;align-items:center;gap:8px;font-size:14px;font-weight:900;letter-spacing:.5px;}
 .adm-logo .r{color:var(--r);}
 .adm-logo-badge{background:var(--r);border-radius:5px;padding:2px 7px;font-size:9px;font-weight:900;color:#fff;letter-spacing:1px;}
@@ -799,7 +799,7 @@ textarea.fi{resize:vertical;min-height:80px;}
 .eb-toc-titulo{font-size:13px;font-weight:700;flex:1}
 .eb-toc-check{color:#2ecc71;font-size:16px}
 
-.eb-cap-hdr{padding:16px 20px 12px;position:sticky;top:0;background:var(--bg);z-index:5;border-bottom:1px solid var(--b)}
+.eb-cap-hdr{padding:16px 20px 12px;padding-top:max(16px,env(safe-area-inset-top));position:sticky;top:0;background:var(--bg);z-index:5;border-bottom:1px solid var(--b)}
 .eb-cap-progress{height:3px;background:var(--s2);border-radius:2px;overflow:hidden;margin-bottom:10px}
 .eb-cap-progress-fill{height:100%;background:var(--eb-cor,#e50914);transition:width .3s ease}
 .eb-cap-eyebrow{font-size:10px;color:var(--eb-cor,#e50914);font-weight:800;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:4px}
@@ -843,7 +843,7 @@ textarea.fi{resize:vertical;min-height:80px;}
       <option value="es">🇪🇸 ES</option>
     </select>
   </div>
-  <div id="fq-version-badge" style="position:absolute;bottom:8px;right:12px;font-size:9px;color:#333;font-weight:700;z-index:5">v219</div>
+  <div id="fq-version-badge" style="position:absolute;bottom:8px;right:12px;font-size:9px;color:#333;font-weight:700;z-index:5">v220</div>
   <img src="https://images.unsplash.com/photo-1517836357463-d25dfeac3438?w=800&q=80" alt="Fitness" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center top;filter:brightness(.35);z-index:0"/>
   <div class="splash-glow"></div>
   <div class="splash-noise"></div>
@@ -2135,7 +2135,7 @@ textarea.fi{resize:vertical;min-height:80px;}
             <span style="color:var(--mu);font-size:18px">›</span>
           </div>
         </div>
-        <div style="text-align:center;padding:20px 0 4px;font-size:11px;color:var(--mu)">FitQuest <span id="fq-version-badge-perfil">v219</span></div>
+        <div style="text-align:center;padding:20px 0 4px;font-size:11px;color:var(--mu)">FitQuest <span id="fq-version-badge-perfil">v220</span></div>
       </div>
     </div>
 
