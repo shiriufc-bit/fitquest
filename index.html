@@ -843,7 +843,7 @@ textarea.fi{resize:vertical;min-height:80px;}
       <option value="es">🇪🇸 ES</option>
     </select>
   </div>
-  <div id="fq-version-badge" style="position:absolute;bottom:8px;right:12px;font-size:9px;color:#333;font-weight:700;z-index:5">v220</div>
+  <div id="fq-version-badge" style="position:absolute;bottom:8px;right:12px;font-size:9px;color:#333;font-weight:700;z-index:5">v221</div>
   <img src="https://images.unsplash.com/photo-1517836357463-d25dfeac3438?w=800&q=80" alt="Fitness" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center top;filter:brightness(.35);z-index:0"/>
   <div class="splash-glow"></div>
   <div class="splash-noise"></div>
@@ -2135,7 +2135,7 @@ textarea.fi{resize:vertical;min-height:80px;}
             <span style="color:var(--mu);font-size:18px">›</span>
           </div>
         </div>
-        <div style="text-align:center;padding:20px 0 4px;font-size:11px;color:var(--mu)">FitQuest <span id="fq-version-badge-perfil">v220</span></div>
+        <div style="text-align:center;padding:20px 0 4px;font-size:11px;color:var(--mu)">FitQuest <span id="fq-version-badge-perfil">v221</span></div>
       </div>
     </div>
 
@@ -9668,11 +9668,13 @@ function mostrarTelaExpirada(u){
   if(elc) elc.innerHTML = `
     <div style="text-align:center;padding:30px 24px">
       <div style="font-size:56px;margin-bottom:16px">🔓</div>
-      <div style="font-size:21px;font-weight:900;margin-bottom:8px">Seus ${TRIAL_DIAS} dias acabaram, ${nome}</div>
+      <div style="font-size:21px;font-weight:900;margin-bottom:8px">Seus ${TRIAL_DIAS} dias de teste acabaram, ${nome}</div>
       <div style="font-size:13px;color:var(--t2);line-height:1.7;margin-bottom:24px">
-        Continue com musculação e corrida personalizadas,<br/>
-        a Jornada das Missões, e-books e a comunidade completa.
+        Foi bom te ter por aqui! Pra continuar treinando com<br/>
+        musculação e corrida personalizadas, a Jornada das<br/>
+        Missões, e-books e a comunidade completa, é só assinar.
       </div>
+      ${renderCardPixFundador()}
       ${renderSeletorPlanos()}
       <div style="background:var(--s);border:1px solid var(--b);border-radius:14px;padding:18px 22px;margin-bottom:18px">
         <div style="text-align:left;font-size:12px;color:var(--t2);line-height:2">
@@ -9693,6 +9695,28 @@ function loadApp(email){
   // (definido no topo pra estar disponível em toda a função)
   const _safe=(fn,name)=>{try{fn();}catch(e){console.error('render '+name+':',e.message);}};
   const users=DB.get('fq_users')||{};const u=users[email];if(!u)return;
+
+  // Trial pode vencer com o aluno já DENTRO do app (sessão aberta há dias,
+  // comum em PWA que fica em segundo plano sem recarregar a página). Antes,
+  // só checávamos isso no momento do login — quem já estava logado nunca
+  // era barrado de verdade. Agora reforça em 2 momentos:
+  //  1) periodicamente, a cada minuto, enquanto o app estiver aberto
+  //  2) sempre que o app volta a ficar visível (usuário reabre o PWA)
+  // verificarAcesso() já ignora o admin sozinha (getU() retorna null pra
+  // ele), então é seguro chamar sem guarda extra.
+  if(!window._acessoMonitorAtivo){
+    window._acessoMonitorAtivo = true;
+    const _checarSeNaoExpirado = ()=>{
+      // se já está vendo a tela de assinatura, não precisa re-renderizar
+      // (evita interromper o aluno no meio de escolher o plano)
+      if(!document.getElementById('sc-expirado')?.classList.contains('active')) verificarAcesso();
+    };
+    setInterval(_checarSeNaoExpirado, 60000);
+    document.addEventListener('visibilitychange', ()=>{
+      if(document.visibilityState==='visible') _checarSeNaoExpirado();
+    });
+  }
+
   // Verificar se o streak quebrou (não treinou ontem nem hoje)
   if(u.ultimoTreinoStreak){
     const hoje=new Date();hoje.setHours(0,0,0,0);
