@@ -245,6 +245,16 @@ function liberarPacoteEbooks(u) {
 .reps-real-inp{background:rgba(255,255,255,.06);border:1px solid var(--border-strong);border-radius:6px;padding:6px 8px;color:var(--text-primary);font-size:13px;font-weight:700;width:52px;text-align:center;outline:none;}
 .proximo-ex-preview{display:flex;align-items:center;gap:10px;background:var(--bg-secondary);border:1px dashed var(--border-strong);border-radius:var(--radius-sm);padding:10px 12px;margin-top:10px;font-size:12px;color:var(--text-secondary);}
 
+/* ══ FITQUEST 2.0 — HOME: grade de acesso rápido + frequência semanal ══ */
+.fq-tile{display:flex;align-items:center;gap:10px;cursor:pointer;padding:16px 14px;min-height:64px;}
+.fq-tile-ico{width:36px;height:36px;border-radius:var(--radius-sm);background:rgba(229,9,20,.12);display:flex;align-items:center;justify-content:center;font-size:17px;flex-shrink:0;}
+.fq-tile-lbl{font-size:13px;font-weight:600;color:var(--text-primary);line-height:1.25;}
+.fq-dia{display:flex;flex-direction:column;align-items:center;gap:6px;flex:1;}
+.fq-dia-bolha{width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;border:2px solid var(--border-strong);color:transparent;transition:all var(--transition-fast);}
+.fq-dia-bolha.feito{background:var(--primary);border-color:var(--primary);color:#fff;}
+.fq-dia-bolha.hoje{border-color:var(--primary);}
+.fq-dia-lbl{font-size:10px;color:var(--text-muted);font-weight:600;}
+
 /* ══ TEMA KIDS & TEENS — Selva/Aventura ══
    Paleta própria, mais viva e brincalhona, só dentro da seção Kids.
    O resto do app continua com a identidade séria (vermelho). Como os
@@ -1003,7 +1013,7 @@ textarea.fi{resize:vertical;min-height:80px;}
       <option value="es">🇪🇸 ES</option>
     </select>
   </div>
-  <div id="fq-version-badge" style="position:absolute;bottom:8px;right:12px;font-size:9px;color:#333;font-weight:700;z-index:5">v229</div>
+  <div id="fq-version-badge" style="position:absolute;bottom:8px;right:12px;font-size:9px;color:#333;font-weight:700;z-index:5">v231</div>
   <img src="https://images.unsplash.com/photo-1517836357463-d25dfeac3438?w=800&q=80" alt="Fitness" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center top;filter:brightness(.35);z-index:0"/>
   <div class="splash-glow"></div>
   <div class="splash-noise"></div>
@@ -1470,21 +1480,28 @@ textarea.fi{resize:vertical;min-height:80px;}
   <div class="app-body">
     <!-- HOME -->
     <div class="tp active" id="tp-home">
-      <!-- PROFILE CARD -->
+      <!-- SAUDAÇÃO -->
       <div class="profile-card" style="margin:8px 0 0;" id="profile-card-home">
         <div class="profile-av" onclick="openAvatarModal()" id="home-profile-av">
           <span id="home-profile-emoji">💪</span>
           <div class="profile-av-badge">✏️</div>
         </div>
         <div style="flex:1">
-          <div style="font-size:11px;color:var(--t2);margin-bottom:2px" data-i18n="ui.ee353db4ef">Bem-vindo de volta</div>
+          <div style="font-size:11px;color:var(--t2);margin-bottom:2px" id="home-saudacao">Boa tarde,</div>
           <div style="font-size:19px;font-weight:800;letter-spacing:-.3px" id="home-name">Atleta</div>
         </div>
         <div style="text-align:right">
           <div style="font-size:9.5px;color:var(--mu)">Nível <span id="app-lv">1</span> · <span id="app-co">0</span> moedas</div>
         </div>
       </div>
-      <!-- HERO BANNER — TREINO DE HOJE -->
+
+      <!-- FREQUÊNCIA DE TREINOS (semana atual, dado real do workoutHistory) -->
+      <div class="fq2-card" style="margin:14px 20px 0">
+        <div class="fq2-secundario" style="margin-bottom:12px;font-weight:600">Frequência de Treinos</div>
+        <div style="display:flex;justify-content:space-between" id="home-freq-semana"></div>
+      </div>
+
+      <!-- TREINO DE HOJE -->
       <div class="hero-banner">
         <div class="hero-banner-glow"></div>
         <div class="hero-banner-content">
@@ -1500,16 +1517,36 @@ textarea.fi{resize:vertical;min-height:80px;}
           </div>
           <div class="hero-btns">
             <button class="btn-hero-play" id="hero-cta-btn" onclick="irParaTreinoDeHoje()">▶ Começar treino</button>
-            <button class="btn-hero-info" onclick="abrirModal('modal-sobre-app')" data-i18n="ui.83dc4a57d7">ℹ Mais info</button>
           </div>
+        </div>
+      </div>
+
+      <!-- GRADE DE ACESSO RÁPIDO (2 colunas) -->
+      <div style="margin:14px 20px 0;display:grid;grid-template-columns:1fr 1fr;gap:10px">
+        <div class="fq2-card fq2-card-hover fq-tile" onclick="switchTab('treinos',document.querySelectorAll('.nbtn')[1])">
+          <div class="fq-tile-ico">🏋️</div><div class="fq-tile-lbl">Treinos</div>
+        </div>
+        <div class="fq2-card fq2-card-hover fq-tile" onclick="switchTab('run',document.querySelectorAll('.nbtn')[1])">
+          <div class="fq-tile-ico">🏃</div><div class="fq-tile-lbl">Corrida</div>
+        </div>
+        <div class="fq2-card fq2-card-hover fq-tile" onclick="switchTab('evo',document.querySelectorAll('.nbtn')[4])">
+          <div class="fq-tile-ico">📊</div><div class="fq-tile-lbl">Avaliações</div>
+        </div>
+        <div class="fq2-card fq2-card-hover fq-tile" onclick="switchTab('prs',document.querySelectorAll('.nbtn')[4])">
+          <div class="fq-tile-ico">📈</div><div class="fq-tile-lbl">Meu Progresso</div>
+        </div>
+        <div class="fq2-card fq2-card-hover fq-tile" onclick="switchTab('store',document.querySelectorAll('.nbtn')[2])">
+          <div class="fq-tile-ico">📚</div><div class="fq-tile-lbl">E-Books</div>
+        </div>
+        <div class="fq2-card fq2-card-hover fq-tile" onclick="switchTab('perfil',document.querySelectorAll('.nbtn')[5])">
+          <div class="fq-tile-ico">⚙️</div><div class="fq-tile-lbl">Perfil</div>
         </div>
       </div>
 
       <!-- PRÓXIMO TREINO -->
       <div class="fq2-card" style="margin:14px 20px 0" id="home-proximo-card"></div>
 
-      <!-- Card pra gerar treino que ainda não existe (reposicionado da Fase 3B —
-           antes vivia junto do carrossel "Continue treinando", que foi removido) -->
+      <!-- Card pra gerar treino que ainda não existe -->
       <div id="home-plano-cards" style="margin:14px 20px 0"></div>
 
       <!-- RESUMO DA SEMANA -->
@@ -2189,7 +2226,7 @@ textarea.fi{resize:vertical;min-height:80px;}
             <span style="color:var(--mu);font-size:18px">›</span>
           </div>
         </div>
-        <div style="text-align:center;padding:20px 0 4px;font-size:11px;color:var(--mu)">FitQuest <span id="fq-version-badge-perfil">v229</span></div>
+        <div style="text-align:center;padding:20px 0 4px;font-size:11px;color:var(--mu)">FitQuest <span id="fq-version-badge-perfil">v231</span></div>
       </div>
     </div>
 
@@ -2374,6 +2411,18 @@ textarea.fi{resize:vertical;min-height:80px;}
   </div>
 </div>
 <!-- Copiar treino de UM aluno pra outro (admin) -->
+<!-- BUGFIX: "Correr com GPS" estava quebrado — toda a lógica (gpsIniciar,
+     gpsNovoPonto, gpsPausar, gpsFinalizar...) existia e o botão aparecia pro
+     aluno na tela de corrida, mas o modal NUNCA foi criado no HTML. Clicar
+     travava a tela com erro fatal. Bug pré-existente (confirmado na v221
+     publicada). Casca criada aqui; o conteúdo interno (distância, tempo,
+     pace, splits) continua sendo gerado pela lógica já existente. -->
+<div class="modal-ov" id="modal-gps" style="align-items:flex-start">
+  <div class="modal-bx" style="max-width:440px;width:100%;padding:0;border-radius:16px 16px 0 0;margin-top:auto;max-height:92vh;overflow-y:auto">
+    <div class="modal-t"><span id="gps-title">Corrida</span><button class="modal-cl" onclick="gpsCancelar()">✕</button></div>
+    <div style="padding:16px" id="gps-body"></div>
+  </div>
+</div>
 <!-- Conclusão do treino do dia (Fase 5) — some depois de completeWk() rodar,
      mostrando só métricas reais e conhecidas (nada inventado) -->
 <div class="modal-ov" id="modal-treino-concluido" style="align-items:center">
@@ -5183,7 +5232,15 @@ function abrirFichaExercicio(exId){
 }
 
 
-function getU(){const e=DB.get('fq_cur');if(!e||e==='__admin__')return null;return(DB.get('fq_users')||{})[e]||null;}
+// BUGFIX: contas antigas (ou criadas por caminhos que não passam pelo cadastro
+// padrão) podiam vir sem o objeto `stats`, e vários pontos do app o acessam
+// direto (u.stats.treinos, u.stats.distancia...), quebrando o app com erro
+// fatal. Garante que sempre exista, sem sobrescrever valores já salvos.
+function fqGarantirStats(u){
+  if(u && !u.stats) u.stats={treinos:0,distancia:0,semanas:0};
+  return u;
+}
+function getU(){const e=DB.get('fq_cur');if(!e||e==='__admin__')return null;return fqGarantirStats((DB.get('fq_users')||{})[e]||null);}
 function saveU(u){const users=DB.get('fq_users')||{};users[u.email]=u;DB.set('fq_users',users);syncU(u);}
 function getGP(u){const g=u.aiPlan?.gym;return (g&&Object.keys(g).length)?g:DG;}
 function getRP(u){const r=u.aiPlan?.run;return (r&&Object.keys(r).length)?r:DR;}
@@ -7799,7 +7856,7 @@ function skipTimer(){clearInterval(timerInt);document.getElementById('modal-time
 function addTime(s){timerSec+=s;document.getElementById('timer-display').textContent=timerSec;}
 
 // ══ BADGES ══
-const BADGES=[{id:'b1',icon:'🔥',name:'Streak 7 dias',c:u=>u.streak>=7},{id:'b2',icon:'🏃',name:'Primeira corrida',c:u=>u.stats.distancia>0},{id:'b3',icon:'⚡',name:'10 treinos',c:u=>u.stats.treinos>=10},{id:'b4',icon:'💎',name:'Semana 4 completa',c:u=>(u.gymWeek||1)>4},{id:'b5',icon:'🏋️',name:'50 treinos',c:u=>u.stats.treinos>=50},{id:'b6',icon:'🌟',name:'Streak 30 dias',c:u=>u.streak>=30},{id:'b7',icon:'🚀',name:'10km total',c:u=>u.stats.distancia>=10},{id:'b8',icon:'👑',name:'Programa completo',c:u=>(u.gymWeek||1)>=12}];
+const BADGES=[{id:'b1',icon:'🔥',name:'Streak 7 dias',c:u=>u.streak>=7},{id:'b2',icon:'🏃',name:'Primeira corrida',c:u=>(u.stats?.distancia||0)>0},{id:'b3',icon:'⚡',name:'10 treinos',c:u=>(u.stats?.treinos||0)>=10},{id:'b4',icon:'💎',name:'Semana 4 completa',c:u=>(u.gymWeek||1)>4},{id:'b5',icon:'🏋️',name:'50 treinos',c:u=>(u.stats?.treinos||0)>=50},{id:'b6',icon:'🌟',name:'Streak 30 dias',c:u=>u.streak>=30},{id:'b7',icon:'🚀',name:'10km total',c:u=>(u.stats?.distancia||0)>=10},{id:'b8',icon:'👑',name:'Programa completo',c:u=>(u.gymWeek||1)>=12}];
 // Ranking real — carregado do banco (só nomes próprios de alunos reais, nunca inventados)
 let RANKING_CACHE=[];
 async function carregarRanking(){
@@ -11138,6 +11195,7 @@ function atualizarStreak(u){
 
 function completeWk(w,d){
   const email=DB.get('fq_cur');const users=DB.get('fq_users')||{};const u=users[email];if(!u)return;
+  if(typeof fqGarantirStats==='function') fqGarantirStats(u); // conta antiga sem stats não quebra
   const dk=`${w}_${d}`;if(u.gymDone&&u.gymDone[dk])return;
   if(!u.gymDone)u.gymDone={};u.gymDone[dk]=true;
   u.stats.treinos=(u.stats.treinos||0)+1;u.xp=(u.xp||0)+80;u.coins=(u.coins||0)+15;
@@ -11147,7 +11205,7 @@ function completeWk(w,d){
   if(!u.workoutHistory)u.workoutHistory=[];
   u.workoutHistory.push({week:w,day:d,date:new Date().toLocaleDateString('pt-BR'),exercises:exs.map(e=>{const ex=getExById(e.id);return{name:ex?.name||e.id,load:u.loadHistory?.[`${w}_${d}_${e.id}`]||''};})});
   const allDays=Object.keys(P[w].days);const tw=Object.keys(P).length;
-  if(allDays.every(dd=>u.gymDone[`${w}_${dd}`])){const wn=parseInt(w.split(' ')[1]);if(wn===(u.gymWeek||1)&&(u.gymWeek||1)<tw){u.gymWeek=(u.gymWeek||1)+1;u.xp+=200;u.coins+=50;u.stats.semanas++;}}
+  if(allDays.every(dd=>u.gymDone[`${w}_${dd}`])){const wn=parseInt(w.split(' ')[1]);if(wn===(u.gymWeek||1)&&(u.gymWeek||1)<tw){u.gymWeek=(u.gymWeek||1)+1;u.xp+=200;u.coins+=50;u.stats.semanas=(u.stats.semanas||0)+1;}}
   if((u.xp||0)>=(u.level||1)*1000){u.level=(u.level||1)+1;u.xp=0;setTimeout(()=>fqToast(t('msg.e4f2eae161')+(u.level||1)+'!','ok',5000),200);try{dispararConfete(40);}catch(e){}}
   DB.set('fq_users',users);loadApp(email);switchTab('gym',document.querySelectorAll('.nbtn')[1]);
 }
@@ -11984,7 +12042,7 @@ function runConcluirSessao(w,i){
   const email=DB.get('fq_cur');const users=DB.get('fq_users')||{};const u=users[email];if(!u)return;
   const R=getRP(u);const dk=`run_${w}_${i}`;if(!u.runDone)u.runDone={};if(u.runDone[dk])return;
   u.runDone[dk]=true;const s=R[w].sessions[i];const km=parseFloat(s.dist);
-  if(!isNaN(km))u.stats.distancia=Math.round(((u.stats.distancia||0)+km)*10)/10;
+  if(!isNaN(km)){if(!u.stats)u.stats={treinos:0,distancia:0,semanas:0};u.stats.distancia=Math.round(((u.stats.distancia||0)+km)*10)/10;}
   u.xp=(u.xp||0)+60;u.coins=(u.coins||0)+10;
   atualizarStreak(u);
   try{registrarEventoComunidade('treino',{nome:u.name,nome_treino:'Corrida ('+(isNaN(km)?'':km+'km')+')',titulo:tituloAtual(u)?.emoji});}catch(e){}
@@ -12130,9 +12188,13 @@ function iniciarTreinoSelecionado(){
   switchTab(tab,document.querySelectorAll('.nbtn')[1]);
 }
 function switchTab(name,btn){
+  // BUGFIX: antes, um nome de aba inexistente causava erro fatal aqui e travava
+  // a navegação inteira (tela em branco). Agora avisa no console e sai sem quebrar.
+  const _tp=document.getElementById('tp-'+name);
+  if(!_tp){ console.warn('switchTab: aba inexistente ->', name); return; }
   document.querySelectorAll('.tp').forEach(p=>p.classList.remove('active'));
   document.querySelectorAll('.nbtn').forEach(b=>b.classList.remove('active'));
-  document.getElementById('tp-'+name).classList.add('active');
+  _tp.classList.add('active');
   if(btn)btn.classList.add('active');
   window.scrollTo(0,0);
   // Home é a "raiz" da navegação — só registra no histórico quando sai dela,
@@ -15142,6 +15204,36 @@ function renderTreinosTab(u){
   }
 }
 function renderHomeResumo(u){
+  // ── Saudação por horário do dia ──
+  const hora=new Date().getHours();
+  const saud = hora<12 ? 'Bom dia,' : (hora<18 ? 'Boa tarde,' : 'Boa noite,');
+  const elSaud=document.getElementById('home-saudacao'); if(elSaud) elSaud.textContent=saud;
+
+  // ── Frequência de treinos da semana (dado REAL do workoutHistory) ──
+  // Marca os dias em que houve treino concluído, de segunda a domingo da
+  // semana corrente. workoutHistory guarda data como 'dd/mm/aaaa' (pt-BR).
+  const elFreq=document.getElementById('home-freq-semana');
+  if(elFreq){
+    const hoje=new Date(); hoje.setHours(0,0,0,0);
+    const diaSemana=hoje.getDay();                      // 0=dom … 6=sáb
+    const offsetSeg=(diaSemana===0?-6:1-diaSemana);     // volta até a segunda
+    const seg=new Date(hoje); seg.setDate(hoje.getDate()+offsetSeg);
+    const datasTreinadas=new Set((u.workoutHistory||[]).map(h=>h.date));
+    const rotulos=['S','T','Q','Q','S','S','D'];
+    let html='';
+    for(let i=0;i<7;i++){
+      const dia=new Date(seg); dia.setDate(seg.getDate()+i);
+      const str=dia.toLocaleDateString('pt-BR');
+      const feito=datasTreinadas.has(str);
+      const ehHoje=dia.getTime()===hoje.getTime();
+      html+=`<div class="fq-dia">
+        <div class="fq-dia-bolha ${feito?'feito':''} ${ehHoje&&!feito?'hoje':''}">${feito?'✓':''}</div>
+        <div class="fq-dia-lbl" style="${ehHoje?'color:var(--primary)':''}">${rotulos[i]}</div>
+      </div>`;
+    }
+    elFreq.innerHTML=html;
+  }
+
   const P=getGP(u); const cw=`Semana ${u.gymWeek||1}`;
   const dias=Object.keys(P[cw]?.days||{});
   if(!dias.length) return; // sem plano ainda — não força nenhum dado falso na tela
@@ -16463,6 +16555,9 @@ function desafioDoMes(){
 
 // ─── CHECK-IN ───
 function fazerCheckin(){
+  // BUGFIX: elementos desta seção não existem mais no HTML — sai cedo em vez
+  // de estourar erro fatal e abortar a cadeia de render (bug pré-existente).
+  if(!document.getElementById('checkin-nome')) return;
   const nome=sanitizeStr(document.getElementById('checkin-nome').value,60);
   if(!nome){fqToast('Digite o nome do local','warn');return;}
   const email=DB.get('fq_cur');const users=DB.get('fq_users')||{};const u=users[email];if(!u)return;
@@ -16533,6 +16628,12 @@ const BADGES_LUGAR=[
 // ─── RENDER ───
 function renderComunidade(){
   const email=DB.get('fq_cur');const users=DB.get('fq_users')||{};const u=users[email];if(!u)return;
+  // BUGFIX: a tela da comunidade não existe mais no HTML (removida antes destas
+  // fases — confirmado na v221 publicada), mas esta função continuava sendo
+  // chamada no loadApp e estourava erro em TODO carregamento do app, abortando
+  // o resto da cadeia de render. Sai cedo se os elementos não estiverem na tela.
+  // A função fica intacta pra caso a tela volte a existir no futuro.
+  if(!document.getElementById('com-treinos-semana')) return;
 
   // Pulso da comunidade (agrega TODOS os usuários — sem expor nomes)
   const todos=Object.values(users);
@@ -16599,6 +16700,9 @@ function renderComunidade(){
 }
 
 function renderMapaPessoal(u){
+  // BUGFIX: elementos desta seção não existem mais no HTML — sai cedo em vez
+  // de estourar erro fatal e abortar a cadeia de render (bug pré-existente).
+  if(!document.getElementById('mapa-total')) return;
   const locais=u.locaisTreino||{};
   const nomes=Object.keys(locais).sort((a,b)=>locais[b]-locais[a]);
   document.getElementById('mapa-total').textContent=`${nomes.length} loca${nomes.length===1?'l':'is'}`;
@@ -16622,6 +16726,9 @@ function renderMapaPessoal(u){
 }
 
 function renderBadgesLugar(u){
+  // BUGFIX: elementos desta seção não existem mais no HTML — sai cedo em vez
+  // de estourar erro fatal e abortar a cadeia de render (bug pré-existente).
+  if(!document.getElementById('lugar-badges')) return;
   document.getElementById('lugar-badges').innerHTML=BADGES_LUGAR.map(b=>{
     const ok=b.cond(u);
     return `<span class="lugar-badge${ok?' on':''}" style="${ok?'':'opacity:.4'}">${b.emoji} ${b.nome}</span>`;
@@ -16727,6 +16834,9 @@ function xpTotalAcumulado(u){
   return Math.max(0,((u.level||1)-1)*1000+(u.xp||0));
 }
 function renderTrilha(u){
+  // BUGFIX: elementos desta seção não existem mais no HTML — sai cedo em vez
+  // de estourar erro fatal e abortar a cadeia de render (bug pré-existente).
+  if(!document.getElementById('trilha-titulo-atual')) return;
   const el=document.getElementById('trilha-track');
   if(!el)return;
   const total=xpTotalAcumulado(u);
