@@ -650,7 +650,7 @@ textarea.fi{resize:vertical;min-height:80px;}
 .btn-dl{background:rgba(231,76,60,.07);color:#e74c3c;border:1px solid rgba(231,76,60,.12)!important;}
 .modal-ov{display:none;position:fixed;inset:0;background:rgba(0,0,0,.9);z-index:100;align-items:flex-end;justify-content:center;backdrop-filter:blur(4px);}
 .modal-ov.open{display:flex;}
-.modal-bx{background:#181818;border:1px solid var(--b2);border-radius:16px 16px 0 0;padding:20px;width:100%;max-width:600px;max-height:88vh;overflow-y:auto;}
+.modal-bx{background:#181818;border:1px solid var(--b2);border-radius:16px 16px 0 0;padding:20px;width:100%;max-width:600px;max-height:88vh;overflow-y:auto;position:relative;}
 .modal-t{font-size:16px;font-weight:900;margin-bottom:16px;display:flex;justify-content:space-between;align-items:center;}
 .modal-cl{background:rgba(255,255,255,.08);border:1px solid var(--b);border-radius:6px;padding:5px 10px;color:var(--t2);font-size:12px;font-weight:700;cursor:pointer;}
 .ed-sec{margin-bottom:18px;}
@@ -1013,7 +1013,7 @@ textarea.fi{resize:vertical;min-height:80px;}
       <option value="es">🇪🇸 ES</option>
     </select>
   </div>
-  <div id="fq-version-badge" style="position:absolute;bottom:8px;right:12px;font-size:9px;color:#333;font-weight:700;z-index:5">v233</div>
+  <div id="fq-version-badge" style="position:absolute;bottom:8px;right:12px;font-size:9px;color:#333;font-weight:700;z-index:5">v234</div>
   <img src="https://images.unsplash.com/photo-1517836357463-d25dfeac3438?w=800&q=80" alt="Fitness" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center top;filter:brightness(.35);z-index:0"/>
   <div class="splash-glow"></div>
   <div class="splash-noise"></div>
@@ -2226,7 +2226,7 @@ textarea.fi{resize:vertical;min-height:80px;}
             <span style="color:var(--mu);font-size:18px">›</span>
           </div>
         </div>
-        <div style="text-align:center;padding:20px 0 4px;font-size:11px;color:var(--mu)">FitQuest <span id="fq-version-badge-perfil">v233</span></div>
+        <div style="text-align:center;padding:20px 0 4px;font-size:11px;color:var(--mu)">FitQuest <span id="fq-version-badge-perfil">v234</span></div>
       </div>
     </div>
 
@@ -2356,7 +2356,7 @@ textarea.fi{resize:vertical;min-height:80px;}
 <div class="modal-ov" id="modal-anam"><div class="modal-bx"><div class="modal-t"><span>📋 Anamnese</span><button class="modal-cl" onclick="closeModal('modal-anam')">✕</button></div><div id="modal-anam-content"></div></div></div>
 <div class="modal-ov" id="modal-ficha-ex" style="align-items:flex-start">
   <div class="modal-bx" style="max-width:480px;width:100%;max-height:92vh;overflow-y:auto;padding:0;border-radius:16px 16px 0 0;margin-top:auto">
-    <button class="modal-cl" onclick="closeModal('modal-ficha-ex')" style="position:absolute;top:14px;right:14px;z-index:5;background:rgba(0,0,0,.55);border-radius:50%;width:34px;height:34px;display:flex;align-items:center;justify-content:center">✕</button>
+    <button class="modal-cl" onclick="closeModal('modal-ficha-ex')" style="position:sticky;top:14px;float:right;margin-right:14px;z-index:5;background:rgba(0,0,0,.72);backdrop-filter:blur(6px);border:1px solid rgba(255,255,255,.18);border-radius:50%;width:34px;height:34px;display:flex;align-items:center;justify-content:center;color:#fff;font-size:14px;cursor:pointer;padding:0">✕</button>
     <div id="ficha-ex-content"></div>
   </div>
 </div>
@@ -12116,6 +12116,31 @@ function abrirModal(modalId){
   _pushNavState('modal:'+modalId);
 }
 
+// ── Saídas de emergência pra QUALQUER modal (correção global) ──
+// Garante que o aluno nunca fique preso numa tela, mesmo que o botão ✕ de
+// algum modal fique escondido, fora de alcance ou quebrado: tocar na área
+// escura ao redor fecha, e a tecla Esc fecha (teclado externo/desktop).
+document.addEventListener('click', function(e){
+  // só fecha se o clique foi no fundo escuro (.modal-ov), não no conteúdo
+  if(e.target && e.target.classList && e.target.classList.contains('modal-ov') && e.target.classList.contains('open')){
+    const id=e.target.id;
+    if(id){
+      // gvCancelar/ctCancelar etc. fazem limpeza própria (parar câmera, GPS...)
+      if(id==='modal-gravar-video' && typeof gvCancelar==='function'){ gvCancelar(); return; }
+      if(id==='modal-gps') return; // corrida em andamento: só sai pelos botões, evita perder o treino sem querer
+      closeModal(id);
+    }
+  }
+}, true);
+document.addEventListener('keydown', function(e){
+  if(e.key!=='Escape') return;
+  const aberto=document.querySelector('.modal-ov.open');
+  if(!aberto||!aberto.id) return;
+  if(aberto.id==='modal-gravar-video' && typeof gvCancelar==='function'){ gvCancelar(); return; }
+  if(aberto.id==='modal-gps') return;
+  closeModal(aberto.id);
+});
+
 window.addEventListener('popstate', function(){
   // Se este "voltar" foi disparado pelo próprio código só pra limpar a entrada
   // de histórico de um modal recém-fechado, não faz nada — senão o app navegaria
@@ -18292,7 +18317,7 @@ function renderHomeMissoesCard(){
 <!-- ══ MODAL: DETALHE DA ROTINA DE ALONGAMENTO/MOBILIDADE ══ -->
 <div class="modal-ov" id="modal-rotina" style="align-items:flex-start">
   <div class="modal-bx" style="max-width:480px;width:100%;max-height:92vh;overflow-y:auto;padding:0;border-radius:16px 16px 0 0;margin-top:auto">
-    <button class="modal-cl" onclick="closeModal('modal-rotina')" style="position:absolute;top:14px;right:14px;z-index:5;background:rgba(0,0,0,.55);border-radius:50%;width:34px;height:34px;display:flex;align-items:center;justify-content:center">✕</button>
+    <button class="modal-cl" onclick="closeModal('modal-rotina')" style="position:sticky;top:14px;float:right;margin-right:14px;z-index:5;background:rgba(0,0,0,.72);backdrop-filter:blur(6px);border:1px solid rgba(255,255,255,.18);border-radius:50%;width:34px;height:34px;display:flex;align-items:center;justify-content:center;color:#fff;font-size:14px;cursor:pointer;padding:0">✕</button>
     <div id="modal-rotina-content"></div>
   </div>
 </div>
@@ -18301,7 +18326,7 @@ function renderHomeMissoesCard(){
 <div class="modal-ov" id="modal-sobre-app" style="align-items:flex-end">
   <div class="modal-bx" style="max-width:520px;width:100%;max-height:88vh;overflow-y:auto;padding:0;border-radius:20px 20px 0 0;margin-top:auto">
     <div style="position:relative;padding:28px 22px 20px;background:linear-gradient(135deg,rgba(229,9,20,.18),transparent)">
-      <button class="modal-cl" onclick="closeModal('modal-sobre-app')" style="position:absolute;top:14px;right:14px">✕</button>
+      <button class="modal-cl" onclick="closeModal('modal-sobre-app')" style="position:sticky;top:0;float:right;z-index:5">✕</button>
       <div style="font-size:11px;font-weight:800;color:var(--r);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:6px">FitQuest</div>
       <div style="font-size:22px;font-weight:900;letter-spacing:-.4px;line-height:1.15">Tudo que você encontra<br>dentro do app</div>
       <div style="font-size:12.5px;color:var(--t2);margin-top:8px" data-i18n="ui.7697956d38">Sua assessoria fitness completa, com o acompanhamento de Rennan Dias — musculação e corrida, no seu ritmo.</div>
