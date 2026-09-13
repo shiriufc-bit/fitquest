@@ -4,7 +4,7 @@
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0,viewport-fit=cover"/>
 <title>FitQuest – Rennan Dias</title>
-<meta name="theme-color" content="#e50914"/>
+<meta name="theme-color" content="#0a0a0a"/>
 <meta name="apple-mobile-web-app-capable" content="yes"/>
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
 <meta name="apple-mobile-web-app-title" content="FitQuest"/>
@@ -1013,7 +1013,7 @@ textarea.fi{resize:vertical;min-height:80px;}
       <option value="es">🇪🇸 ES</option>
     </select>
   </div>
-  <div id="fq-version-badge" style="position:absolute;bottom:8px;right:12px;font-size:9px;color:#333;font-weight:700;z-index:5">v231</div>
+  <div id="fq-version-badge" style="position:absolute;bottom:8px;right:12px;font-size:9px;color:#333;font-weight:700;z-index:5">v233</div>
   <img src="https://images.unsplash.com/photo-1517836357463-d25dfeac3438?w=800&q=80" alt="Fitness" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center top;filter:brightness(.35);z-index:0"/>
   <div class="splash-glow"></div>
   <div class="splash-noise"></div>
@@ -2226,7 +2226,7 @@ textarea.fi{resize:vertical;min-height:80px;}
             <span style="color:var(--mu);font-size:18px">›</span>
           </div>
         </div>
-        <div style="text-align:center;padding:20px 0 4px;font-size:11px;color:var(--mu)">FitQuest <span id="fq-version-badge-perfil">v231</span></div>
+        <div style="text-align:center;padding:20px 0 4px;font-size:11px;color:var(--mu)">FitQuest <span id="fq-version-badge-perfil">v233</span></div>
       </div>
     </div>
 
@@ -2810,13 +2810,19 @@ textarea.fi{resize:vertical;min-height:80px;}
   </div>
 </div>
 
-<div id="pwa-banner" style="display:none;position:fixed;bottom:80px;left:12px;right:12px;background:linear-gradient(135deg,rgba(229,9,20,.97),rgba(180,7,16,.97));border-radius:10px;padding:14px 16px;z-index:200;box-shadow:0 8px 32px var(--rg);">
-  <div style="display:flex;align-items:center;gap:12px">
-    <div style="font-size:28px">📱</div>
-    <div style="flex:1"><div style="font-size:13px;font-weight:900;color:#fff">Instalar FitQuest</div><div style="font-size:11px;color:rgba(255,255,255,.7);margin-top:2px" data-i18n="ui.8e7cc9be73">Adicione à tela inicial!</div></div>
-    <button onclick="installPWA()" style="background:#fff;border:none;border-radius:6px;padding:8px 14px;color:var(--r);font-size:12px;font-weight:900;cursor:pointer">Instalar</button>
-    <button onclick="dismissBanner()" style="background:rgba(255,255,255,.15);border:none;border-radius:6px;padding:8px;color:#fff;font-size:14px;cursor:pointer">✕</button>
+<!-- Convite de instalação — Android (popup nativo) e iPhone (passo a passo,
+     já que a Apple não permite popup de instalação) -->
+<div id="pwa-banner" style="display:none;position:fixed;bottom:80px;left:12px;right:12px;background:var(--s);border:1px solid var(--b2);border-radius:14px;padding:16px;z-index:200;box-shadow:0 10px 40px rgba(0,0,0,.6);">
+  <div style="display:flex;align-items:flex-start;gap:12px">
+    <div style="width:42px;height:42px;border-radius:10px;background:rgba(229,9,20,.12);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0">📱</div>
+    <div style="flex:1;min-width:0">
+      <div style="font-size:14px;font-weight:800;color:#fff">Instale o FitQuest</div>
+      <div id="pwa-banner-sub" style="font-size:11.5px;color:var(--t2);margin-top:3px;line-height:1.5">Abre em tela cheia, sem barra do navegador — e funciona offline.</div>
+    </div>
+    <button onclick="dismissBanner()" aria-label="Fechar" style="background:transparent;border:none;color:var(--mu);font-size:16px;cursor:pointer;padding:2px 4px;line-height:1;flex-shrink:0">✕</button>
   </div>
+  <div id="pwa-banner-passos" style="display:none;margin-top:12px;background:var(--bg2);border-radius:10px;padding:12px 14px;font-size:12px;color:var(--t2);line-height:1.9"></div>
+  <button id="pwa-banner-btn" onclick="installPWA()" style="width:100%;margin-top:12px;background:var(--r);border:none;border-radius:10px;padding:13px;color:#fff;font-size:13.5px;font-weight:800;cursor:pointer">Instalar agora</button>
 </div>
 
 <script>
@@ -16188,9 +16194,61 @@ function showIntakeResult(plan, p, u){
 // ══ PWA ══
 if('serviceWorker' in navigator)window.addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}));
 let deferredPrompt=null;
-window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();deferredPrompt=e;setTimeout(()=>{if(!localStorage.getItem('pwa-dismissed'))document.getElementById('pwa-banner').style.display='block';},5000);});
+// ── Convite de instalação ──
+// Antes: só aparecia no Android (dependia do evento beforeinstallprompt, que o
+// iOS nunca dispara) — ou seja, usuário de iPhone NUNCA via convite nenhum. E
+// ao fechar uma vez, sumia pra sempre. Agora cobre os dois sistemas e volta a
+// aparecer depois de alguns dias, a menos que o app já esteja instalado.
+function fqAppInstalado(){
+  return window.matchMedia('(display-mode: standalone)').matches
+      || window.matchMedia('(display-mode: fullscreen)').matches
+      || window.navigator.standalone === true;
+}
+function fqEhIOS(){
+  return /iPad|iPhone|iPod/.test(navigator.userAgent)
+      || (navigator.platform==='MacIntel' && navigator.maxTouchPoints>1);
+}
+function fqMostrarBannerInstalar(){
+  if(fqAppInstalado()) return;                        // já instalado: nunca incomoda
+  const adiadoAte = parseInt(localStorage.getItem('pwa-adiado-ate')||'0',10);
+  if(Date.now() < adiadoAte) return;                  // fechou há pouco: respeita
+  const banner=document.getElementById('pwa-banner');
+  if(!banner) return;
+  const passos=document.getElementById('pwa-banner-passos');
+  const btn=document.getElementById('pwa-banner-btn');
+  const sub=document.getElementById('pwa-banner-sub');
+  if(fqEhIOS()){
+    // iOS não permite popup de instalação — mostra o caminho manual
+    if(sub) sub.textContent='Em 2 toques ele vira um app de verdade, em tela cheia:';
+    if(passos){
+      passos.style.display='block';
+      passos.innerHTML='1. Toque no botão <b style="color:#fff">Compartilhar</b> (a setinha ↑ na barra do Safari)<br>2. Escolha <b style="color:#fff">Adicionar à Tela de Início</b>';
+    }
+    if(btn) btn.style.display='none';
+  }else{
+    if(passos) passos.style.display='none';
+    if(btn) btn.style.display='block';
+  }
+  banner.style.display='block';
+}
+window.addEventListener('beforeinstallprompt',e=>{
+  e.preventDefault(); deferredPrompt=e;
+  setTimeout(fqMostrarBannerInstalar, 3000);
+});
+window.addEventListener('appinstalled',()=>{
+  deferredPrompt=null;
+  const b=document.getElementById('pwa-banner'); if(b) b.style.display='none';
+  localStorage.removeItem('pwa-adiado-ate');
+  try{ fqToast('🎉 FitQuest instalado! Abra pelo ícone na sua tela inicial.','ok',6000); }catch(e){}
+});
+// iOS nunca dispara beforeinstallprompt — então agenda por conta própria
+if(fqEhIOS()) setTimeout(fqMostrarBannerInstalar, 4000);
 function installPWA(){if(deferredPrompt){deferredPrompt.prompt();deferredPrompt.userChoice.then(()=>{deferredPrompt=null;dismissBanner();});}else{fqAlert('Instalar no iPhone',t('msg.15e1b9d7f2'),'📱');dismissBanner();}}
-function dismissBanner(){document.getElementById('pwa-banner').style.display='none';localStorage.setItem('pwa-dismissed','1');}
+function dismissBanner(){
+  const b=document.getElementById('pwa-banner'); if(b) b.style.display='none';
+  // volta a convidar daqui a 5 dias (antes sumia pra sempre no primeiro ✕)
+  localStorage.setItem('pwa-adiado-ate', String(Date.now() + 5*24*60*60*1000));
+}
 
 // ══ INIT ══
 (async function init(){
