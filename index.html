@@ -85,6 +85,166 @@ function liberarPacoteEbooks(u) {
   --b2:rgba(255,255,255,.15);
   --gr:linear-gradient(135deg,#e50914,#b00710);
 }
+
+/* ════════════════════════════════════════════════════════════════════
+   FITQUEST 2.0 — DESIGN SYSTEM (fundação visual, Fase 2)
+   ────────────────────────────────────────────────────────────────────
+   Tudo aqui é ADITIVO: nenhuma variável ou classe já existente acima foi
+   alterada, renomeada ou removida. As variáveis novas (--primary,
+   --surface etc.) APONTAM pras mesmas cores que o app já usa (--r, --s,
+   --t...) — é uma camada de nomes mais claros por cima do que já existe,
+   não uma paleta nova. Nada na tela muda ainda: essas classes (.fq2-*)
+   não são usadas em nenhuma tela hoje, são a base pras próximas fases.
+   ════════════════════════════════════════════════════════════════════ */
+
+/* FITQUEST 2.0 — DESIGN TOKENS */
+:root{
+  /* cor — aponta pro vermelho e pros tons de fundo já existentes no projeto */
+  --bg-primary:var(--bg);        /* #0a0a0a — igual ao --bg já usado em toda parte */
+  --bg-secondary:#121212;        /* tom intermediário novo, pra separar seções sem criar outro cinza */
+  --surface:var(--s);            /* #181818 — mesmo tom de card que o app já usa (--s) */
+  --surface-hover:var(--s2);     /* #222 — já usado como hover/estado ativo em vários lugares (--s2) */
+  --primary:var(--r);            /* #e50914 — o MESMO vermelho de sempre, só com nome semântico */
+  --primary-dark:#b00710;        /* já usado como ponta escura do gradiente --gr, agora com nome próprio */
+  --text-primary:var(--t);       /* #fff */
+  --text-secondary:var(--t2);    /* #b3b3b3 */
+  --text-muted:var(--mu);        /* #737373 */
+  --border:var(--b);             /* rgba(255,255,255,.1) */
+  --border-strong:var(--b2);     /* rgba(255,255,255,.15) */
+
+  /* raio de borda — 3 níveis, pra parar de espalhar valores soltos tipo 8px/12px/16px */
+  --radius-sm:8px;
+  --radius-md:14px;
+  --radius-lg:20px;
+
+  /* sombra — só uma, deliberadamente sutil (o briefing pede "extremamente sutil") */
+  --shadow:0 4px 24px rgba(0,0,0,.35);
+
+  /* espaçamento — escala única pra margens/paddings novos */
+  --space-xs:4px;
+  --space-sm:8px;
+  --space-md:16px;
+  --space-lg:24px;
+  --space-xl:32px;
+
+  /* tipografia — tamanhos e pesos centralizados */
+  --fs-h1:26px;
+  --fs-h2:18px;
+  --fs-body:14px;
+  --fs-sm:12px;
+  --fs-xs:10px;
+  --fw-bold:800;
+  --fw-semibold:600;
+  --fw-regular:400;
+
+  /* transições — 2 velocidades padrão, pra não ter valor solto tipo .2s/.3s/.4s misturado */
+  --transition-fast:.15s ease;
+  --transition-base:.25s ease;
+}
+
+/* FITQUEST 2.0 — TYPOGRAPHY
+   Hierarquia clara: título principal > título de seção > nome de exercício
+   > corpo > secundário. Classes utilitárias — usar onde fizer sentido nas
+   próximas fases, sem forçar em telas que já têm sua própria tipografia. */
+.fq2-h1{font-size:var(--fs-h1);font-weight:var(--fw-bold);color:var(--text-primary);letter-spacing:-.3px;line-height:1.15;}
+.fq2-h2{font-size:var(--fs-h2);font-weight:var(--fw-semibold);color:var(--text-primary);letter-spacing:-.1px;line-height:1.2;}
+.fq2-titulo-exercicio{font-size:var(--fs-body);font-weight:var(--fw-semibold);color:var(--text-primary);}
+.fq2-body{font-size:var(--fs-body);font-weight:var(--fw-regular);color:var(--text-primary);line-height:1.5;}
+.fq2-secundario{font-size:var(--fs-sm);font-weight:var(--fw-regular);color:var(--text-secondary);line-height:1.4;}
+.fq2-muted{font-size:var(--fs-xs);font-weight:var(--fw-regular);color:var(--text-muted);}
+
+/* FITQUEST 2.0 — CARDS
+   Padrão único de card: fundo escuro, borda discreta, raio moderado
+   (nunca "pill" nem cantos muito arredondados — o briefing pede pra evitar
+   aparência infantil), sombra quase imperceptível. */
+.fq2-card{
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:var(--radius-md);
+  box-shadow:var(--shadow);
+  padding:var(--space-md);
+}
+.fq2-card-hover{transition:background var(--transition-fast);}
+.fq2-card-hover:hover{background:var(--surface-hover);}
+
+/* FITQUEST 2.0 — BUTTONS
+   3 variantes: primary (ação principal, vermelho), secondary (ação neutra,
+   cinza escuro) e ghost (ação terciária, transparente). */
+.fq2-btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:6px;
+  font-size:var(--fs-body);font-weight:var(--fw-semibold);
+  border-radius:var(--radius-sm);padding:12px 20px;border:none;cursor:pointer;
+  transition:filter var(--transition-fast),background var(--transition-fast);
+}
+.fq2-btn:active{filter:brightness(.9);}
+.fq2-btn-primary{background:var(--primary);color:#fff;}
+.fq2-btn-secondary{background:var(--surface-hover);color:var(--text-primary);}
+.fq2-btn-ghost{background:transparent;border:1px solid var(--border-strong);color:var(--text-secondary);}
+
+/* FITQUEST 2.0 — GAMIFICAÇÃO (camada secundária)
+   XP/nível/streak continuam existindo e funcionando exatamente como hoje —
+   isso aqui é só o estilo visual DISCRETO que as próximas fases vão usar
+   pra mostrar essas informações sem elas dominarem a tela. Nada de "caixa
+   de videogame" — só um indicador pequeno e neutro. */
+.fq2-xp-badge{
+  display:inline-flex;align-items:center;gap:4px;
+  font-size:var(--fs-xs);font-weight:var(--fw-semibold);color:var(--text-secondary);
+  background:rgba(255,255,255,.05);border-radius:999px;padding:3px 10px;
+}
+.fq2-xp-badge.fq2-xp-ganho{color:var(--primary);}
+
+/* FITQUEST 2.0 — NAVIGATION (preparação — navegação atual continua ativa)
+   A navegação de 5 abas (Início/Treinos/Exercícios/Progresso/Perfil) ainda
+   não existe — isso aqui só prepara o estilo pra quando ela for construída,
+   sem tocar em `.app-nav`/`.nbtn` (a navegação de hoje). */
+.fq2-nav{
+  display:flex;background:var(--bg-secondary);border-top:1px solid var(--border);
+}
+.fq2-nav-item{
+  flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;
+  padding:10px 4px;color:var(--text-muted);font-size:var(--fs-xs);font-weight:var(--fw-semibold);
+  transition:color var(--transition-fast);
+}
+.fq2-nav-item.active{color:var(--primary);}
+
+/* FITQUEST 2.0 — MODALS
+   Os modais atuais (.modal-ov / .modal-bx) continuam exatamente como
+   estão nesta fase — nenhuma mudança de estrutura ou comportamento.
+   Quando as próximas fases redesenharem uma tela específica, os modais
+   dela passam a usar os tokens acima (--surface, --radius-lg, --shadow)
+   em vez de valores soltos, um de cada vez. */
+
+/* FITQUEST 2.0 — RESPONSIVE
+   Ajustes finos pra telas bem pequenas (iPhone SE e similares, ~375px).
+   Só reduz a escala de espaçamento/tipografia nova — não mexe em nenhuma
+   media query já existente no projeto. */
+@media (max-width:375px){
+  :root{
+    --fs-h1:23px;
+    --fs-h2:16px;
+    --space-lg:18px;
+    --space-xl:26px;
+  }
+}
+/* ══ FIM — FITQUEST 2.0 DESIGN SYSTEM ══ */
+
+/* ══════════════════════════════════════════════════════════════
+   FITQUEST 2.0 — FASE 5 — EXECUÇÃO DO TREINO
+   Reestiliza .ep-card com os tokens da Fase 2 (borda discreta que não
+   existia antes) e troca a tabela de séries por cards por série no
+   mobile — sem tocar em nenhum id/onclick usado por chkSet/saveCarga/
+   togEp/fqSetupDrag. As classes antigas (.sets-tbl, .set-row) ficam
+   sem uso mas foram mantidas — zero risco, nada depende delas fora daqui.
+   ══════════════════════════════════════════════════════════════ */
+.ep-card{border:1px solid var(--border);border-radius:var(--radius-md);box-shadow:var(--shadow);}
+.set-card{display:flex;align-items:center;gap:10px;background:var(--bg-secondary);border:1px solid var(--border);border-radius:var(--radius-sm);padding:10px 12px;margin-bottom:8px;transition:border-color var(--transition-fast),background var(--transition-fast);}
+.set-card.done{border-color:rgba(46,204,113,.35);background:rgba(46,204,113,.05);}
+.set-card-num{font-size:11px;font-weight:700;color:var(--text-muted);width:20px;flex-shrink:0}
+.set-card-field{display:flex;flex-direction:column;gap:2px}
+.set-card-field label{font-size:9px;color:var(--text-muted);text-transform:uppercase;letter-spacing:.4px}
+.reps-real-inp{background:rgba(255,255,255,.06);border:1px solid var(--border-strong);border-radius:6px;padding:6px 8px;color:var(--text-primary);font-size:13px;font-weight:700;width:52px;text-align:center;outline:none;}
+.proximo-ex-preview{display:flex;align-items:center;gap:10px;background:var(--bg-secondary);border:1px dashed var(--border-strong);border-radius:var(--radius-sm);padding:10px 12px;margin-top:10px;font-size:12px;color:var(--text-secondary);}
+
 /* ══ TEMA KIDS & TEENS — Selva/Aventura ══
    Paleta própria, mais viva e brincalhona, só dentro da seção Kids.
    O resto do app continua com a identidade séria (vermelho). Como os
@@ -214,21 +374,26 @@ textarea.fi{resize:vertical;min-height:80px;}
 /* CONTENT */
 .app-body{flex:1;padding-top:0;padding-bottom:90px;}
 .tp{display:none;}.tp.active{display:block;}
+/* Fase 3C: a Home é a única tela cujo primeiro elemento (profile-card) fica
+   colado no topo do conteúdo rolável — nas outras abas isso já não acontecia
+   (várias já tinham seu próprio espaçamento manual). Corrige só aqui, sem
+   mexer no padrão compartilhado .tp, pra não afetar as outras telas. */
+#tp-home{padding-top:calc(60px + env(safe-area-inset-top));}
 
 /* HERO BANNER */
-.hero-banner{position:relative;height:82vw;max-height:480px;overflow:hidden;background:#000;}
+.hero-banner{position:relative;background:var(--s);border:1px solid var(--b);border-radius:18px;margin:16px 20px 0;overflow:hidden;}
 .hero-banner-bg{position:absolute;inset:0;background:linear-gradient(135deg,#1a0000 0%,#0d0000 40%,#000 100%);}
-.hero-banner-glow{position:absolute;top:0;left:0;right:0;height:100%;background:radial-gradient(ellipse at 30% 50%,rgba(229,9,20,.3) 0%,transparent 70%);}
+.hero-banner-glow{position:absolute;top:-40%;left:-15%;width:75%;height:150%;background:radial-gradient(ellipse,rgba(229,9,20,.14) 0%,transparent 70%);pointer-events:none;}
 .hero-banner-athlete{position:absolute;right:0;top:0;bottom:0;width:65%;display:flex;align-items:center;justify-content:flex-end;}
 .hero-banner-emoji{font-size:200px;opacity:.15;transform:scaleX(-1);line-height:1;margin-right:-10px;}
-.hero-banner-overlay{position:absolute;bottom:0;left:0;right:0;height:70%;background:linear-gradient(transparent,var(--bg));}
-.hero-banner-content{position:absolute;bottom:24px;left:20px;right:100px;}
-.hero-tag{display:inline-block;background:var(--r);color:#fff;border-radius:3px;padding:2px 8px;font-size:9px;font-weight:900;letter-spacing:2px;margin-bottom:8px;}
-.hero-title{font-size:28px;font-weight:900;line-height:1.1;letter-spacing:-.5px;margin-bottom:6px;text-shadow:0 2px 20px rgba(0,0,0,.8);}
-.hero-sub{font-size:12px;color:rgba(255,255,255,.7);line-height:1.5;margin-bottom:16px;}
+.hero-banner-overlay{display:none;}
+.hero-banner-content{position:relative;padding:24px 22px;}
+.hero-tag{display:inline-block;background:rgba(229,9,20,.14);color:var(--r);border-radius:6px;padding:4px 10px;font-size:10px;font-weight:800;letter-spacing:1.2px;margin-bottom:12px;}
+.hero-title{font-size:25px;font-weight:800;line-height:1.15;letter-spacing:-.3px;margin-bottom:6px;color:#fff;}
+.hero-sub{font-size:12.5px;color:var(--t2);line-height:1.5;margin-bottom:20px;}
 .hero-btns{display:flex;gap:8px;}
-.btn-hero-play{padding:10px 20px;background:#fff;border:none;border-radius:4px;color:#000;font-size:13px;font-weight:900;cursor:pointer;display:flex;align-items:center;gap:6px;}
-.btn-hero-info{padding:10px 20px;background:rgba(255,255,255,.2);border:none;border-radius:4px;color:#fff;font-size:13px;font-weight:700;cursor:pointer;backdrop-filter:blur(10px);}
+.btn-hero-play{padding:13px 22px;background:var(--r);border:none;border-radius:11px;color:#fff;font-size:13.5px;font-weight:800;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;flex:1;}
+.btn-hero-info{padding:13px 18px;background:transparent;border:1px solid var(--b2);border-radius:11px;color:var(--t2);font-size:13px;font-weight:600;cursor:pointer;}
 
 /* SECTIONS */
 .section{padding:0 0 8px;}
@@ -301,12 +466,7 @@ textarea.fi{resize:vertical;min-height:80px;}
 .wk-hero{position:relative;height:65vw;max-height:380px;overflow:hidden;background:#000;}
 .treino-select-card{transition:transform .15s ease, box-shadow .15s ease;}
 .treino-select-card:active{transform:scale(.96);box-shadow:0 0 0 2px var(--r);}
-.treino-carousel{display:flex;gap:14px;overflow-x:auto;scroll-snap-type:x mandatory;padding:6px 20% 10px 18px;-webkit-overflow-scrolling:touch;scrollbar-width:none;}
-.treino-carousel::-webkit-scrollbar{display:none;}
-.treino-card-v2{flex:0 0 74%;scroll-snap-align:center;position:relative;border-radius:18px;overflow:hidden;cursor:pointer;min-height:320px;background:#111;border:2px solid var(--b);transition:border-color .2s ease, transform .2s ease, box-shadow .2s ease;transform:scale(.94);}
-.treino-card-v2.selected{border-color:var(--r);box-shadow:0 0 0 3px rgba(229,9,20,.22),0 10px 30px rgba(229,9,20,.35);transform:scale(1);}
-.treino-dot{width:7px;height:7px;border-radius:50%;background:var(--b2);transition:all .2s ease;}
-.treino-dot.active{width:20px;border-radius:4px;background:var(--r);}
+.treino-carousel{display:none;} /* legado desativado na Fase 4B — sem uso em nenhuma outra tela, confirmado */
 .wk-hero-bg{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:160px;opacity:.1;}
 .wk-hero-glow{position:absolute;inset:0;background:linear-gradient(135deg,rgba(229,9,20,.2),transparent);}
 .wk-hero-overlay{position:absolute;bottom:0;left:0;right:0;height:60%;background:linear-gradient(transparent,var(--bg));}
@@ -647,8 +807,8 @@ textarea.fi{resize:vertical;min-height:80px;}
 
 /* Profile in app header */
 .nav-av-img{width:32px;height:32px;border-radius:4px;object-fit:cover;}
-.profile-card{background:linear-gradient(135deg,rgba(229,9,20,.15),rgba(180,7,16,.05)),var(--s);border:1px solid rgba(229,9,20,.2);border-radius:16px;padding:16px;margin-bottom:16px;display:flex;align-items:center;gap:14px;}
-.profile-av{width:64px;height:64px;border-radius:50%;background:var(--s2);border:3px solid var(--r);display:flex;align-items:center;justify-content:center;font-size:32px;flex-shrink:0;overflow:hidden;cursor:pointer;position:relative;}
+.profile-card{background:transparent;border:none;border-radius:0;padding:16px 20px 6px;margin-bottom:0;display:flex;align-items:center;gap:14px;}
+.profile-av{width:52px;height:52px;border-radius:50%;background:var(--s2);border:2px solid var(--b2);display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0;overflow:hidden;cursor:pointer;position:relative;}
 .profile-av img{width:100%;height:100%;object-fit:cover;}
 .profile-av-badge{position:absolute;bottom:0;right:0;width:20px;height:20px;background:var(--r);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;border:2px solid var(--bg);}
 @keyframes fu{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:translateY(0);}}
@@ -843,7 +1003,7 @@ textarea.fi{resize:vertical;min-height:80px;}
       <option value="es">🇪🇸 ES</option>
     </select>
   </div>
-  <div id="fq-version-badge" style="position:absolute;bottom:8px;right:12px;font-size:9px;color:#333;font-weight:700;z-index:5">v221</div>
+  <div id="fq-version-badge" style="position:absolute;bottom:8px;right:12px;font-size:9px;color:#333;font-weight:700;z-index:5">v229</div>
   <img src="https://images.unsplash.com/photo-1517836357463-d25dfeac3438?w=800&q=80" alt="Fitness" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center top;filter:brightness(.35);z-index:0"/>
   <div class="splash-glow"></div>
   <div class="splash-noise"></div>
@@ -1311,217 +1471,111 @@ textarea.fi{resize:vertical;min-height:80px;}
     <!-- HOME -->
     <div class="tp active" id="tp-home">
       <!-- PROFILE CARD -->
-      <div class="profile-card" style="margin:8px 0 0;border-radius:0;border-left:none;border-right:none;border-top:none;" id="profile-card-home">
+      <div class="profile-card" style="margin:8px 0 0;" id="profile-card-home">
         <div class="profile-av" onclick="openAvatarModal()" id="home-profile-av">
           <span id="home-profile-emoji">💪</span>
           <div class="profile-av-badge">✏️</div>
         </div>
         <div style="flex:1">
-          <div style="font-size:11px;color:var(--t2);text-transform:uppercase;letter-spacing:1px;margin-bottom:2px" data-i18n="ui.ee353db4ef">Bem-vindo de volta</div>
-          <div style="font-size:18px;font-weight:900;letter-spacing:-.3px" id="home-name">Atleta</div>
-          <div style="display:flex;gap:8px;margin-top:4px">
-            <span style="font-size:10px;font-weight:700;background:rgba(229,9,20,.15);padding:3px 9px;border-radius:99px;color:var(--r)">⚡ Nível <span id="app-lv">1</span></span>
-            <span style="font-size:10px;font-weight:700;background:rgba(255,255,255,.07);padding:3px 9px;border-radius:99px">🔥 <span id="app-st">1</span> dias</span>
-          </div>
+          <div style="font-size:11px;color:var(--t2);margin-bottom:2px" data-i18n="ui.ee353db4ef">Bem-vindo de volta</div>
+          <div style="font-size:19px;font-weight:800;letter-spacing:-.3px" id="home-name">Atleta</div>
         </div>
         <div style="text-align:right">
-          <div style="font-size:18px;font-weight:900;color:#f39c12">🪙<span id="app-co">0</span></div>
-          <div style="font-size:9px;color:var(--mu)">moedas</div>
+          <div style="font-size:9.5px;color:var(--mu)">Nível <span id="app-lv">1</span> · <span id="app-co">0</span> moedas</div>
         </div>
       </div>
-      <!-- HERO BANNER -->
+      <!-- HERO BANNER — TREINO DE HOJE -->
       <div class="hero-banner">
-        <img src="https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=800&q=85" alt="Treino" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center top;filter:brightness(.55);z-index:0"/>
         <div class="hero-banner-glow"></div>
-        <div class="hero-banner-overlay"></div>
         <div class="hero-banner-content">
-          <div class="hero-tag">EM DESTAQUE</div>
-          <div class="hero-title" id="hero-title">Seu treino<br>de hoje</div>
-          <div class="hero-sub" id="hero-sub" data-i18n="ui.2a2777580c">Montado especialmente para o seu perfil por Rennan Dias</div>
+          <div class="hero-tag">TREINO DE HOJE</div>
+          <div id="hero-semana-tag" class="fq2-secundario" style="margin-bottom:3px">Semana 1</div>
+          <div class="hero-title" id="hero-title">Treino</div>
+          <div class="hero-sub" id="hero-sub">—</div>
+          <div id="hero-progresso-wrap" style="margin-bottom:16px">
+            <div style="margin-bottom:6px"><span id="hero-progresso-label" class="fq2-secundario">Ainda não começou</span></div>
+            <div style="height:6px;background:var(--surface-hover);border-radius:99px;overflow:hidden">
+              <div id="hero-progresso-bar" style="height:100%;background:var(--primary);border-radius:99px;width:0%;transition:width .3s ease"></div>
+            </div>
+          </div>
           <div class="hero-btns">
-            <button class="btn-hero-play" onclick="switchTab('treinos',document.querySelectorAll('.nbtn')[1])" data-i18n="ui.8c87ca3903">▶ Iniciar treino</button>
+            <button class="btn-hero-play" id="hero-cta-btn" onclick="irParaTreinoDeHoje()">▶ Começar treino</button>
             <button class="btn-hero-info" onclick="abrirModal('modal-sobre-app')" data-i18n="ui.83dc4a57d7">ℹ Mais info</button>
           </div>
         </div>
       </div>
 
+      <!-- PRÓXIMO TREINO -->
+      <div class="fq2-card" style="margin:14px 20px 0" id="home-proximo-card"></div>
+
+      <!-- Card pra gerar treino que ainda não existe (reposicionado da Fase 3B —
+           antes vivia junto do carrossel "Continue treinando", que foi removido) -->
+      <div id="home-plano-cards" style="margin:14px 20px 0"></div>
+
+      <!-- RESUMO DA SEMANA -->
+      <div style="margin:20px 20px 0">
+        <div class="fq2-h2" style="margin-bottom:10px">Resumo da semana</div>
+        <div style="display:flex;gap:8px" id="home-resumo-semana"></div>
+      </div>
+
+      <!-- HISTÓRICO RECENTE -->
+      <div style="margin:22px 20px 0">
+        <div class="fq2-h2" style="margin-bottom:10px">Histórico recente</div>
+        <div id="home-historico-lista"></div>
+      </div>
+
+      <!-- GAMIFICAÇÃO — camada secundária, discreta -->
+      <div style="margin:16px 20px 0;display:flex;gap:8px;flex-wrap:wrap" id="home-gamif-discreta"></div>
+
       <!-- BANNER DE TRIAL -->
       <div id="trial-banner" style="margin-top:16px"></div>
 
       <!-- CARD DE DESTAQUE: MISSÕES -->
-      <div id="home-missoes-card" style="margin:16px 20px 0"></div>
-
-      <!-- CONTINUAR ASSISTINDO = Continue Training -->
-      <div class="section" style="margin-top:16px">
-        <div class="section-hdr"><div class="section-title">Continue treinando</div></div>
-        <div class="carousel" id="continue-carousel">
-          <div class="cw-card" onclick="switchTab('gym',document.querySelectorAll('.nbtn')[1])">
-            <div class="cw-thumb" style="background:#000;padding:0;overflow:hidden">
-              <img src="https://images.unsplash.com/photo-1534367610401-9f5ed68180aa?w=600&q=80" alt="Musculação" style="width:100%;height:100%;object-fit:cover;filter:brightness(.7)"/>
-              <div class="cw-bar" id="cw-bar-gym" style="width:0%"></div>
-            </div>
-            <div class="cw-body">
-              <div class="cw-title" data-i18n="ui.908b73dc7d">Musculação</div>
-              <div class="cw-sub" id="cw-sub-gym" data-i18n="ui.7da693640b">Semana 1 · Treino A</div>
-              <div class="cw-btns">
-                <button class="btn-cw-play" onclick="switchTab('gym',document.querySelectorAll('.nbtn')[1])">▶ Continuar</button>
-                <button class="btn-cw-more">+</button>
-              </div>
-            </div>
-          </div>
-          <div class="cw-card" onclick="switchTab('run',document.querySelectorAll('.nbtn')[2])">
-            <div class="cw-thumb" style="background:#000;padding:0;overflow:hidden">
-              <img src="https://images.unsplash.com/photo-1476480862126-209bfaa8edc8?w=600&q=80" alt="Corrida" style="width:100%;height:100%;object-fit:cover;filter:brightness(.7)"/>
-              <div class="cw-bar" id="cw-bar-run" style="width:0%"></div>
-            </div>
-            <div class="cw-body">
-              <div class="cw-title">Corrida</div>
-              <div class="cw-sub" id="cw-sub-run" data-i18n="ui.194488dab1">Semana 1 · Base aeróbica</div>
-              <div class="cw-btns">
-                <button class="btn-cw-play" onclick="switchTab('run',document.querySelectorAll('.nbtn')[2])">▶ Continuar</button>
-                <button class="btn-cw-more">+</button>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Cards pra gerar treino que ainda nao existe (ficam junto do carrossel acima) -->
-      <div id="home-plano-cards" style="margin:4px 20px 0"></div>
-
-      <!-- PROGRAMAS EM DESTAQUE -->
-      <div class="section" style="position:relative;overflow:hidden;padding-top:4px;padding-bottom:4px">
-        <div style="position:absolute;inset:0;background-image:url('https://images.unsplash.com/photo-1574680178050-55c6a6a96e0a?w=800&q=60');background-size:cover;background-position:center;filter:brightness(.07);z-index:0"></div>
-        <div style="position:relative;z-index:1">
-        <div class="section-hdr">
-          <div class="section-title">🎬 Programas</div>
-          <div class="section-link" onclick="switchTab('store',document.querySelectorAll('.nbtn')[2])" data-i18n="ui.b711da45c8">Ver todos</div>
-        </div>
-        <div class="carousel" id="home-programs-carousel"></div>
-        </div>
-      </div>
-
-      <!-- MAIS POPULARES -->
-      <div class="section">
-        <div class="section-hdr">
-          <div class="section-title" data-i18n="ui.8b80d9e5e7">🔥 Mais Vendidos</div>
-          <div class="section-link" onclick="switchTab('store',document.querySelectorAll('.nbtn')[2])">Ver loja</div>
-        </div>
-        <div class="carousel" id="home-popular-carousel"></div>
-      </div>
-
-      <!-- MINHA EVOLUÇÃO -->
-      <div class="section" style="position:relative;overflow:hidden">
-        <div style="position:absolute;inset:0;background-image:url('https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=800&q=60');background-size:cover;background-position:center;filter:brightness(.08);z-index:0"></div>
-        <div style="position:relative;z-index:1">
-        <div class="section-hdr"><div class="section-title" data-i18n="ui.0213f1e2b0">Minha evolução</div><div class="section-link" onclick="switchTab('prs',document.querySelectorAll('.nbtn')[3])">Ver tudo</div></div>
-        <div class="stats-row" id="stats-row">
-          <div class="stat-box"><div class="stat-ico">🏋️</div><div class="stat-val" id="s-tr">0</div><div class="stat-lbl">Treinos</div></div>
-          <div class="stat-box"><div class="stat-ico">🏃</div><div class="stat-val" id="s-km">0</div><div class="stat-lbl">km rodados</div></div>
-          <div class="stat-box"><div class="stat-ico">⭐</div><div class="stat-val" id="s-pr">0</div><div class="stat-lbl">Recordes</div></div>
-          <div class="stat-box"><div class="stat-ico">🔥</div><div class="stat-val" id="s-st">0</div><div class="stat-lbl" data-i18n="ui.84f46355cd">Dias seguidos</div></div>
-        </div>
-        </div>
-      </div>
-
-      <!-- XP PROGRESS -->
-      <div class="section">
-        <div class="section-hdr"><div class="section-title">Nível <span id="app-lv-2">1</span></div><div class="section-link" onclick="switchTab('badges',document.querySelectorAll('.nbtn')[5])">Conquistas</div></div>
-        <div style="padding:0 20px;margin-bottom:8px">
-          <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--t2);margin-bottom:6px;font-weight:600">
-            <span id="app-xp">0 XP</span><span id="app-xpn">1000 XP</span>
-          </div>
-          <div style="background:rgba(255,255,255,.08);border-radius:99px;height:5px;overflow:hidden">
-            <div id="app-xpb" style="height:100%;border-radius:99px;background:var(--r);width:0%;transition:width 1s;box-shadow:0 0 8px var(--rg)"></div>
-          </div>
-          <div style="display:flex;justify-content:space-between;margin-top:8px">
-            <span style="font-size:11px;color:var(--t2)">🪙 <span id="app-co-2">0</span> moedas</span>
-            <span style="font-size:11px;color:var(--r);font-weight:700" id="app-nm-small">Atleta</span>
-          </div>
-        </div>
-      </div>
-
-      <!-- RANKING TOP 10 ESTILO NETFLIX -->
-      <div class="section" style="position:relative;overflow:hidden">
-        <div style="position:absolute;inset:0;background-image:url('https://images.unsplash.com/photo-1546519638-68e109498ffc?w=800&q=60');background-size:cover;background-position:center;filter:brightness(.07);z-index:0"></div>
-        <div style="position:relative;z-index:1">
-        <div class="section-hdr"><div class="section-title">Top Atletas</div><div class="section-link" onclick="switchTab('rank',document.querySelectorAll('.nbtn')[4])">Ver ranking</div></div>
-        <div class="carousel" id="ranking-carousel"></div>
-        </div>
-      </div>
-
-      <!-- MISSÕES -->
-      <div class="section">
-        <div class="section-hdr"><div class="section-title" data-i18n="ui.bd3dc5d9af">Missões ativas</div></div>
-        <div style="padding:0 20px"><div id="home-missions"></div></div>
-      </div>
-
-      <!-- HISTÓRICO -->
-      <div class="section">
-        <div class="section-hdr"><div class="section-title" data-i18n="ui.d41526faea">Histórico recente</div></div>
-        <div class="carousel" id="history-carousel"></div>
-      </div>
+      <div id="home-missoes-card" style="margin:16px 20px 24px"></div>
 
     </div>
 
     <!-- TREINOS — seleção de tipo (Musculação / Corrida) -->
     <div class="tp" id="tp-treinos">
-      <div style="padding:26px 0 40px;min-height:100%;display:flex;flex-direction:column">
-        <div style="text-align:center;margin-bottom:8px;padding:0 18px">
-          <div style="font-size:11px;font-weight:800;color:var(--r);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:6px">FitQuest</div>
-          <div style="font-size:22px;font-weight:900;letter-spacing:-.4px" data-i18n="ui.2f502ac45d">Qual treino hoje?</div>
-          <div style="font-size:12.5px;color:var(--t2);margin-top:4px">Escolha uma modalidade pra continuar</div>
+      <div style="padding-top:calc(60px + env(safe-area-inset-top))">
+        <div style="padding:0 20px;margin-bottom:16px">
+          <div class="fq2-h1" style="font-size:22px">Treinos</div>
+          <div class="fq2-secundario" style="margin-top:2px">Prescrito por Rennan Dias</div>
         </div>
 
-        <div style="position:relative;margin-top:22px;flex:1;display:flex;flex-direction:column;justify-content:center">
-          <button onclick="scrollTreinoCarousel(-1)" aria-label="Anterior" style="position:absolute;left:6px;top:50%;transform:translateY(-50%);z-index:5;width:38px;height:38px;border-radius:50%;background:rgba(0,0,0,.6);border:1px solid var(--b2);color:#fff;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(4px)">‹</button>
-          <button onclick="scrollTreinoCarousel(1)" aria-label="Próximo" style="position:absolute;right:6px;top:50%;transform:translateY(-50%);z-index:5;width:38px;height:38px;border-radius:50%;background:rgba(0,0,0,.6);border:1px solid var(--b2);color:#fff;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(4px)">›</button>
+        <div style="padding:0 20px 40px;display:flex;flex-direction:column;gap:12px">
 
-          <div id="treino-carousel" class="treino-carousel">
-            <div class="treino-card-v2 selected" data-idx="0" onclick="selecionarTreinoCard(0)">
-              <img src="https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=600&q=80" alt="Musculação" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;filter:brightness(.55)"/>
-              <div style="position:absolute;inset:0;background:linear-gradient(180deg,transparent 35%,rgba(0,0,0,.9) 100%)"></div>
-              <div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;padding:22px 14px;text-align:center">
-                                <div style="font-size:17px;font-weight:900;color:#fff;letter-spacing:-.2px" data-i18n="ui.908b73dc7d">Musculação</div>
-                <div style="font-size:11px;color:var(--t2);margin-top:4px" data-i18n="ui.bd25162a24">Seu programa de força</div>
-              </div>
-            </div>
+          <!-- MUSCULAÇÃO — card principal, com estado real (Fase 3) -->
+          <div class="fq2-card fq2-card-hover" style="cursor:pointer" onclick="switchTab('gym',document.querySelectorAll('.nbtn')[1])" id="treinos-card-gym"></div>
 
-            <div class="treino-card-v2" data-idx="1" onclick="selecionarTreinoCard(1)">
-              <img src="https://images.unsplash.com/photo-1476480862126-209bfaa8edc8?w=600&q=80" alt="Corrida" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;filter:brightness(.55)"/>
-              <div style="position:absolute;inset:0;background:linear-gradient(180deg,transparent 35%,rgba(0,0,0,.9) 100%)"></div>
-              <div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;padding:22px 14px;text-align:center">
-                                <div style="font-size:17px;font-weight:900;color:#fff;letter-spacing:-.2px">Corrida</div>
-                <div style="font-size:11px;color:var(--t2);margin-top:4px" data-i18n="ui.ae5fcfcbf0">Seu plano de corrida</div>
-              </div>
-            </div>
+          <!-- CORRIDA -->
+          <div class="fq2-card fq2-card-hover" style="cursor:pointer" onclick="switchTab('run',document.querySelectorAll('.nbtn')[1])" id="treinos-card-run"></div>
 
-            <div class="treino-card-v2" data-idx="2" onclick="selecionarTreinoCard(2)">
-              <img src="https://images.unsplash.com/photo-1552196527-bffef41ef674?w=600&q=80" alt="Alongamento e Mobilidade" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;filter:brightness(.55)"/>
-              <div style="position:absolute;inset:0;background:linear-gradient(180deg,transparent 35%,rgba(0,0,0,.9) 100%)"></div>
-              <span id="mob-lock-badge" style="display:none;position:absolute;top:12px;right:12px;z-index:2;font-size:10.5px;background:rgba(229,9,20,.92);padding:3px 9px;border-radius:99px;font-weight:800;color:#fff">🔒 Assinantes</span>
-              <div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;padding:22px 14px;text-align:center">
-                                <div style="font-size:17px;font-weight:900;color:#fff;letter-spacing:-.2px">Alongamento</div>
-                <div style="font-size:11px;color:var(--t2);margin-top:4px">Mobilidade e relaxamento</div>
-              </div>
+          <!-- ALONGAMENTO & MOBILIDADE -->
+          <div class="fq2-card fq2-card-hover" style="cursor:pointer;display:flex;align-items:center;gap:12px" onclick="switchTab('mobilidade',document.querySelectorAll('.nbtn')[1])">
+            <div style="width:42px;height:42px;border-radius:var(--radius-sm);background:var(--surface-hover);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0">🧘</div>
+            <div style="flex:1;min-width:0">
+              <div class="fq2-titulo-exercicio">Alongamento & Mobilidade</div>
+              <div class="fq2-muted" style="margin-top:2px">Rotinas por objetivo</div>
             </div>
-
-            <div class="treino-card-v2" data-idx="3" onclick="selecionarTreinoCard(3)">
-              <img src="https://images.unsplash.com/photo-1502086223501-7ea6ecd79368?w=600&q=80" alt="Kids & Teens" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;filter:brightness(.55)"/>
-              <div style="position:absolute;inset:0;background:linear-gradient(180deg,transparent 35%,rgba(0,0,0,.9) 100%)"></div>
-              <span id="kids-lock-badge" style="display:none;position:absolute;top:12px;right:12px;z-index:2;font-size:10.5px;background:rgba(229,9,20,.92);padding:3px 9px;border-radius:99px;font-weight:800;color:#fff">🔒 Assinantes</span>
-              <div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;padding:22px 14px;text-align:center">
-                                <div style="font-size:17px;font-weight:900;color:#fff;letter-spacing:-.2px">Kids & Teens</div>
-                <div style="font-size:11px;color:var(--t2);margin-top:4px">Crianças e adolescentes</div>
-              </div>
-            </div>
+            <span id="mob-lock-badge" style="display:none;flex-shrink:0;font-size:9px;letter-spacing:.4px;background:var(--surface-hover);border:1px solid var(--border-strong);color:var(--text-secondary);padding:3px 8px;border-radius:var(--radius-sm);font-weight:700;white-space:nowrap">PREMIUM</span>
+            <span class="fq2-muted" style="font-size:18px;flex-shrink:0">›</span>
           </div>
 
-          <div id="treino-dots" style="display:flex;justify-content:center;gap:7px;margin-top:14px"></div>
-        </div>
+          <!-- KIDS & TEENS -->
+          <div class="fq2-card fq2-card-hover" style="cursor:pointer;display:flex;align-items:center;gap:12px" onclick="switchTab('kids',document.querySelectorAll('.nbtn')[1])">
+            <div style="width:42px;height:42px;border-radius:var(--radius-sm);background:var(--surface-hover);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0">🧒</div>
+            <div style="flex:1;min-width:0">
+              <div class="fq2-titulo-exercicio">Kids & Teens</div>
+              <div class="fq2-muted" style="margin-top:2px">Treinos por faixa etária</div>
+            </div>
+            <span id="kids-lock-badge" style="display:none;flex-shrink:0;font-size:9px;letter-spacing:.4px;background:var(--surface-hover);border:1px solid var(--border-strong);color:var(--text-secondary);padding:3px 8px;border-radius:var(--radius-sm);font-weight:700;white-space:nowrap">PREMIUM</span>
+            <span class="fq2-muted" style="font-size:18px;flex-shrink:0">›</span>
+          </div>
 
-        <div style="padding:18px 18px 0">
-          <button id="treino-btn-iniciar" onclick="iniciarTreinoSelecionado()" style="width:100%;background:var(--r);color:#fff;border:none;border-radius:12px;padding:16px;font-size:15px;font-weight:900;letter-spacing:.3px;cursor:pointer;box-shadow:0 6px 20px var(--rg)">▶ INICIAR</button>
+          <!-- SEU PLANO — reduz o espaço vazio no fim da tela com dado real (Fase 4B) -->
+          <div id="treinos-seu-plano" style="margin-top:8px;padding-bottom:24px"></div>
+
         </div>
       </div>
     </div>
@@ -2135,7 +2189,7 @@ textarea.fi{resize:vertical;min-height:80px;}
             <span style="color:var(--mu);font-size:18px">›</span>
           </div>
         </div>
-        <div style="text-align:center;padding:20px 0 4px;font-size:11px;color:var(--mu)">FitQuest <span id="fq-version-badge-perfil">v221</span></div>
+        <div style="text-align:center;padding:20px 0 4px;font-size:11px;color:var(--mu)">FitQuest <span id="fq-version-badge-perfil">v229</span></div>
       </div>
     </div>
 
@@ -2320,6 +2374,22 @@ textarea.fi{resize:vertical;min-height:80px;}
   </div>
 </div>
 <!-- Copiar treino de UM aluno pra outro (admin) -->
+<!-- Conclusão do treino do dia (Fase 5) — some depois de completeWk() rodar,
+     mostrando só métricas reais e conhecidas (nada inventado) -->
+<div class="modal-ov" id="modal-treino-concluido" style="align-items:center">
+  <div class="modal-bx" style="max-width:380px;text-align:center;padding:32px 24px">
+    <div style="width:56px;height:56px;border-radius:50%;background:rgba(46,204,113,.12);border:2px solid rgba(46,204,113,.4);display:flex;align-items:center;justify-content:center;font-size:26px;color:#2ecc71;margin:0 auto 16px">✓</div>
+    <div class="fq2-h1" style="font-size:20px;margin-bottom:4px">Treino concluído</div>
+    <div class="fq2-secundario" id="tc-nome-dia" style="margin-bottom:20px">—</div>
+    <div style="display:flex;gap:8px;margin-bottom:22px">
+      <div class="fq2-card" style="flex:1;padding:12px"><div class="fq2-h2" id="tc-exercicios" style="font-size:18px">—</div><div class="fq2-muted">exercícios</div></div>
+      <div class="fq2-card" style="flex:1;padding:12px"><div class="fq2-h2" style="font-size:18px;color:var(--primary)">+80</div><div class="fq2-muted">XP</div></div>
+      <div class="fq2-card" style="flex:1;padding:12px"><div class="fq2-h2" id="tc-streak" style="font-size:18px">—</div><div class="fq2-muted">sequência</div></div>
+    </div>
+    <button class="fq2-btn fq2-btn-primary" style="width:100%;margin-bottom:8px" onclick="closeModal('modal-treino-concluido');switchTab('treinos',document.querySelectorAll('.nbtn')[1])">VOLTAR PARA TREINOS</button>
+    <button class="fq2-btn fq2-btn-ghost" style="width:100%" onclick="closeModal('modal-treino-concluido');switchTab('evo',document.querySelectorAll('.nbtn')[4])">VER EVOLUÇÃO</button>
+  </div>
+</div>
 <div class="modal-ov" id="modal-copiar-treino" style="align-items:flex-start">
   <div class="modal-bx" style="max-width:480px;width:100%;padding:0;border-radius:16px 16px 0 0;margin-top:auto;max-height:88vh;overflow-y:auto">
     <div class="modal-t"><span>📋 Copiar treino</span><button class="modal-cl" onclick="closeModal('modal-copiar-treino')">✕</button></div>
@@ -9303,10 +9373,14 @@ function exNomeId(id){
 function fqLangAtual(){
   const salvo = localStorage.getItem('fq_lang');
   if(salvo === 'pt' || salvo === 'en' || salvo === 'es') return salvo;
-  const nav = (navigator.language || navigator.userLanguage || 'pt').toLowerCase();
-  if(nav.startsWith('pt')) return 'pt';
-  if(nav.startsWith('es')) return 'es';
-  return 'en';
+  // Padrão sempre português — o público é 100% brasileiro. Antes, sem uma
+  // escolha salva, o app tentava adivinhar pelo idioma do navegador
+  // (navigator.language), o que falhava em ambientes de teste/emuladores
+  // e em celulares configurados em outro idioma por motivos alheios ao
+  // app, mostrando "More info" em vez de "Mais info" pra usuários
+  // brasileiros. O seletor de idioma continua funcionando normalmente
+  // pra quem QUISER trocar pra inglês/espanhol.
+  return 'pt';
 }
 
 // Tradutor. Se a chave não existir no idioma escolhido, cai no português
@@ -9746,15 +9820,14 @@ function loadApp(email){
   const xpnEl=document.getElementById('app-xpn');if(xpnEl)xpnEl.textContent=xpN.toLocaleString()+' XP';
   const xpbEl=document.getElementById('app-xpb');if(xpbEl)xpbEl.style.width=Math.min(((u.xp||0)/xpN)*100,100)+'%';
   const nmEl=document.getElementById('app-nm-small');if(nmEl)nmEl.textContent=u.name||'Atleta';
-  // Stats
-  document.getElementById('s-tr').textContent=u.stats?.treinos||0;
-  document.getElementById('s-km').textContent=u.stats?.distancia||0;
-  document.getElementById('s-pr').textContent=(u.prs||[]).length;
-  document.getElementById('s-st').textContent=u.streak||1;
-  // Hero
+  // Stats (Minha Evolução — removida da Home na Fase 3B, mas a função continua
+  // segura caso o elemento reapareça em outra tela no futuro)
+  const sTrEl=document.getElementById('s-tr');if(sTrEl)sTrEl.textContent=u.stats?.treinos||0;
+  const sKmEl=document.getElementById('s-km');if(sKmEl)sKmEl.textContent=u.stats?.distancia||0;
+  const sPrEl=document.getElementById('s-pr');if(sPrEl)sPrEl.textContent=(u.prs||[]).length;
+  const sStEl=document.getElementById('s-st');if(sStEl)sStEl.textContent=u.streak||1;
+  // Hero — título/sub/progresso populados por renderHomeResumo() mais abaixo (Fase 3)
   const GP=getGP(u);const cw=`Semana ${u.gymWeek||1}`;const prog=GP[cw]||GP[Object.keys(GP)[0]];
-  document.getElementById('hero-title').textContent=`${cw} · ${prog?.fase||'Treino'}`;
-  document.getElementById('hero-sub').textContent='Treino montado especialmente para o seu perfil por Rennan Dias';
   // Continue cards
   const wks=Object.keys(GP);const pct=Math.round(((u.gymWeek||1)/wks.length)*100);
   const cwBarGym=document.getElementById('cw-bar-gym');if(cwBarGym)cwBarGym.style.width=pct+'%';
@@ -9783,12 +9856,15 @@ function loadApp(email){
   _safe(()=>renderEvo(u),'evo');
   renderStore(u);
   _safe(()=>renderHomePrograms(u),'programas');
+  _safe(()=>renderHomeResumo(u),'homeResumo');
+  _safe(()=>renderTreinosTab(u),'treinosTab');
 }
 
 // ══ HISTORY ══
 function renderHistory(u){
   const hist=(u.workoutHistory||[]).slice(-6).reverse();
   const el=document.getElementById('history-carousel');
+  if(!el)return; // não existe mais na Home (Fase 3B) — função preservada pra uso futuro
   if(!hist.length){el.innerHTML='<div style="padding:0 20px;font-size:12px;color:var(--mu)">'+t('tpl.33e7d36338')+'</div>';return;}
   el.innerHTML=hist.map(h=>`<div class="cw-card" style="width:220px">
     <div class="cw-thumb" style="height:100px;background:#000;padding:0;overflow:hidden">
@@ -9809,7 +9885,9 @@ function renderMissions(ms){
   // Dias restantes da semana
   const hoje=new Date();const diasRestantes=7-(hoje.getDay()===0?7:hoje.getDay());
   const h=m=>{const pct=Math.min((m.progress/m.total)*100,100);const c=tc[m.type]||'var(--r)';return `<div style="background:var(--s);border:1px solid var(--b);border-radius:8px;padding:14px;margin-bottom:8px"><div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:${!m.done?'10':'0'}px"><div style="display:flex;gap:10px;align-items:center"><span style="font-size:16px">${ti[m.type]||'🎯'}</span><div><div style="font-size:13px;font-weight:700">${m.title}${m.semanal?' <span style=\"font-size:8px;background:rgba(52,152,219,.15);color:#3498db;border-radius:3px;padding:1px 5px;font-weight:900;vertical-align:middle\">SEMANAL</span>':''}</div><div style="font-size:10px;color:var(--t2);margin-top:2px">${m.done?'✅ Concluída!':m.progress+' / '+m.total}</div></div></div><div style="background:${c}20;border:1px solid ${c}40;border-radius:4px;padding:3px 9px;font-size:10px;font-weight:800;color:${c}">+${m.xp}XP</div></div>${!m.done?`<div style="background:rgba(255,255,255,.08);border-radius:99px;height:3px;overflow:hidden"><div style="width:${pct}%;height:100%;border-radius:99px;background:${c}"></div></div>`:''}</div>`;};
-  document.getElementById('home-missions').innerHTML=ms.filter(m=>!m.done).slice(0,2).map(h).join('')||'<div style="font-size:12px;color:var(--mu)">'+t('tpl.071e06bddc')+'</div>';
+  const elMissions=document.getElementById('home-missions');
+  if(!elMissions)return; // não existe mais na Home (Fase 3B) — função preservada pra uso futuro
+  elMissions.innerHTML=ms.filter(m=>!m.done).slice(0,2).map(h).join('')||'<div style="font-size:12px;color:var(--mu)">'+t('tpl.071e06bddc')+'</div>';
 }
 
 // ══ PERFIL ══
@@ -10222,7 +10300,9 @@ function montarListaRanking(u,email){
 }
 function renderRankingCarousel(u,email,users){
   const uniq=montarListaRanking(u,email).slice(0,10);
-  document.getElementById('ranking-carousel').innerHTML=uniq.map((r,i)=>`<div class="rk-card">
+  const elRank=document.getElementById('ranking-carousel');
+  if(!elRank)return; // não existe mais na Home (Fase 3B) — o Ranking tem aba própria (tp-rank)
+  elRank.innerHTML=uniq.map((r,i)=>`<div class="rk-card">
     <div class="rk-card-num">${i+1}</div>
     <div class="rk-card-info">
       <div class="rk-card-av" style="${r.isMe?'box-shadow:0 0 0 2px #fff':''};">${r.name?r.name[0].toUpperCase():'?'}</div>
@@ -10821,9 +10901,21 @@ function renderGymDay(w,d,u){
     <div style="font-size:10.5px;color:var(--mu);text-align:center;margin-top:6px;line-height:1.5">${turbo?(turboAplicados?t('turbo.desc.on'):t('turbo.desc.none')):t('turbo.desc.off')}</div>`;
   }
 
-  document.getElementById('gym-exercises').innerHTML=exs.map((ed,i)=>{
+  const {feitos:exFeitos,total:exTotal}=(typeof progressoDia==='function')?progressoDia(u,w,d):{feitos:0,total:exs.length};
+  const pctDia=exTotal>0?Math.round((exFeitos/exTotal)*100):0;
+  const cabecalhoProgresso=`
+    <div class="fq2-card" style="margin-bottom:14px">
+      <div class="fq2-secundario" style="margin-bottom:2px">${d}</div>
+      <div class="fq2-h2" style="margin-bottom:8px">${exFeitos} de ${exTotal} exercícios concluídos</div>
+      <div style="height:5px;background:var(--surface-hover);border-radius:99px;overflow:hidden">
+        <div style="height:100%;width:${pctDia}%;background:var(--primary);border-radius:99px;transition:width .3s"></div>
+      </div>
+    </div>`;
+
+  document.getElementById('gym-exercises').innerHTML=cabecalhoProgresso+exs.map((ed,i)=>{
     const ex=getExById(ed.id);if(!ex)return '';
     const lk=`${w}_${d}_${ex.id}`;const sl=(u.loadHistory&&u.loadHistory[lk])||ed.load||'';
+    const proximo=exs[i+1]?getExById(exs[i+1].id):null;
     return `<div class="ep-card" id="ep-${i}" data-idx="${i}">
       <div class="ep-header" onclick="togEp(${i})">
         <div class="ep-drag-handle" style="display:flex;align-items:center;justify-content:center;flex-shrink:0;width:18px;color:var(--mu);font-size:14px;letter-spacing:-1px;margin-right:2px" title="Segure e arraste pra reordenar">⠿</div>
@@ -10837,17 +10929,27 @@ function renderGymDay(w,d,u){
           ${renderExThumb(ex)}
         </div>
         <div class="ep-obs">${ed.tecnica?`<div style="background:rgba(229,9,20,.1);border:1px solid rgba(229,9,20,.3);border-radius:6px;padding:10px 12px;margin-bottom:8px;font-size:12px;color:#ff8a90;font-weight:600">🔥 ${ed.tecnicaObs}</div>`:''}💡 ${exObs(ex, ed.obs)}</div>
-        <table class="sets-tbl">
-          <tr><th>Série</th><th>Reps</th><th>Carga</th><th>✓</th></tr>
-          ${Array.from({length:ed.sets},(_,si)=>{const sk=`${w}_${d}_${i}_s${si}`;const sd=u.gymDone&&u.gymDone[sk];return `<tr class="set-row ${sd?'done':''}" id="sr-${i}-${si}"><td>Série ${si+1}</td><td>${ed.reps}</td><td><input class="carga-inp" id="ci-${i}-${si}" value="${sl}" placeholder="kg" onchange="saveCarga('${lk}',${i},${si})"/></td><td><div class="set-chk ${sd?'ck':''}" id="sc-${i}-${si}" onclick="chkSet('${w}','${d}',${i},${si},${ed.sets},${ed.rest||60},'${lk}')">${sd?'✓':''}</div></td></tr>`;}).join('')}
-        </table>
+        <div>
+          ${Array.from({length:ed.sets},(_,si)=>{
+            const sk=`${w}_${d}_${i}_s${si}`;const sd=u.gymDone&&u.gymDone[sk];
+            const rk=`${lk}_s${si}`;const repsRealizado=(u.repsHistory&&u.repsHistory[rk])||'';
+            return `<div class="set-card ${sd?'done':''}" id="sr-${i}-${si}">
+              <div class="set-card-num">S${si+1}</div>
+              <div class="set-card-field" style="flex:1"><label>Prescrito</label><div style="font-size:13px;font-weight:700">${ed.reps} reps</div></div>
+              <div class="set-card-field"><label>Realizado</label><input class="reps-real-inp" id="ri-${i}-${si}" value="${repsRealizado}" placeholder="${ed.reps}" inputmode="numeric" onchange="saveRepsRealizados('${lk}',${i},${si})"/></div>
+              <div class="set-card-field"><label>Carga</label><input class="carga-inp" id="ci-${i}-${si}" value="${sl}" placeholder="kg" onchange="saveCarga('${lk}',${i},${si})"/></div>
+              <div class="set-chk ${sd?'ck':''}" id="sc-${i}-${si}" onclick="chkSet('${w}','${d}',${i},${si},${ed.sets},${ed.rest||60},'${lk}')">${sd?'✓':''}</div>
+            </div>`;
+          }).join('')}
+        </div>
+        ${proximo?`<div class="proximo-ex-preview"><span style="opacity:.6">PRÓXIMO →</span><span style="font-weight:700;color:var(--text-primary)">${exNome(proximo)}</span><span style="opacity:.7">${exs[i+1].sets}×${exs[i+1].reps}</span></div>`:''}
       </div>
     </div>`;
   }).join('');
   initGifCanvases(document.getElementById('gym-exercises'));
   // liga o arrastar-pra-reordenar nos cards recém-desenhados
   fqSetupDrag('gym-exercises', '.ep-card', gymReordenarEx);
-  document.getElementById('gym-complete-btn').innerHTML=`<button class="btn-ep-done" onclick="completeWk('${w}','${d}')" ${dayDone?'disabled':''} style="${dayDone?'opacity:.5':''}">${dayDone?'✅ Treino concluído!':'▶ Concluir treino do dia'}</button>`;
+  document.getElementById('gym-complete-btn').innerHTML=`<button class="btn-ep-done" onclick="completeWkComResumo('${w}','${d}')" ${dayDone?'disabled':''} style="${dayDone?'opacity:.5':''}">${dayDone?'✅ Treino concluído!':'▶ Concluir treino do dia'}</button>`;
 }
 // ══ MODO TURBO — liga/desliga ══
 // Guarda só no localStorage (não sincroniza com Supabase, mesma decisão do hapticsOn:
@@ -10977,6 +11079,19 @@ function gymReordenarEx(de, para){
 
 function togEp(i){ if(fqAcabouDeArrastar()) return; document.getElementById(`ep-${i}`).classList.toggle('open'); }
 function saveCarga(lk,ei,si){const email=DB.get('fq_cur');const users=DB.get('fq_users')||{};const u=users[email];if(!u)return;const v=document.getElementById(`ci-${ei}-${si}`)?.value||'';if(!u.loadHistory)u.loadHistory={};u.loadHistory[lk]=v;DB.set('fq_users',users);}
+// ── Reps REALIZADAS por série (Fase 5) ──
+// Campo novo, aditivo — NÃO mexe na prescrição original (ed.reps, intacta)
+// nem no loadHistory existente. Guarda num campo próprio, de verdade por
+// série (diferente de loadHistory, que hoje é compartilhado por exercício —
+// achado da auditoria, não mudei esse comportamento existente).
+function saveRepsRealizados(lk,ei,si){
+  const email=DB.get('fq_cur');const users=DB.get('fq_users')||{};const u=users[email];if(!u)return;
+  const v=document.getElementById(`ri-${ei}-${si}`)?.value||'';
+  if(!u.repsHistory)u.repsHistory={};
+  const rk=`${lk}_s${si}`;
+  u.repsHistory[rk]=v;
+  DB.set('fq_users',users);
+}
 function chkSet(w,d,ei,si,total,rest,lk){
   const email=DB.get('fq_cur');const users=DB.get('fq_users')||{};const u=users[email];if(!u)return;
   const sk=`${w}_${d}_${ei}_s${si}`;if(!u.gymDone)u.gymDone={};if(u.gymDone[sk])return;
@@ -11035,6 +11150,23 @@ function completeWk(w,d){
   if(allDays.every(dd=>u.gymDone[`${w}_${dd}`])){const wn=parseInt(w.split(' ')[1]);if(wn===(u.gymWeek||1)&&(u.gymWeek||1)<tw){u.gymWeek=(u.gymWeek||1)+1;u.xp+=200;u.coins+=50;u.stats.semanas++;}}
   if((u.xp||0)>=(u.level||1)*1000){u.level=(u.level||1)+1;u.xp=0;setTimeout(()=>fqToast(t('msg.e4f2eae161')+(u.level||1)+'!','ok',5000),200);try{dispararConfete(40);}catch(e){}}
   DB.set('fq_users',users);loadApp(email);switchTab('gym',document.querySelectorAll('.nbtn')[1]);
+}
+// ── Wrapper de completeWk() que mostra um resumo real ao final (Fase 5) ──
+// NÃO duplica nem altera completeWk() — só chama ela (preserva 100% da
+// lógica de XP/streak/histórico existente) e, depois, lê os dados JÁ
+// ATUALIZADOS pra montar um resumo com métricas reais. Nada inventado:
+// sem "tempo de treino" (não é registrado) nem "carga total" (cargas
+// podem ser texto como "Moderada", não dá pra somar com segurança).
+function completeWkComResumo(w,d){
+  completeWk(w,d);
+  const u=getU();
+  if(!u) return;
+  const P=getGP(u);
+  const total=P[w]?.days?.[d]?.length || 0;
+  const elNome=document.getElementById('tc-nome-dia'); if(elNome) elNome.textContent=d;
+  const elEx=document.getElementById('tc-exercicios'); if(elEx) elEx.textContent=`${total}/${total}`;
+  const elStreak=document.getElementById('tc-streak'); if(elStreak) elStreak.textContent=`🔥 ${u.streak||1}d`;
+  if(typeof abrirModal==='function') abrirModal('modal-treino-concluido');
 }
 
 // ══ RUN ══
@@ -12026,7 +12158,7 @@ function switchTab(name,btn){
     if(badge){badge.style.display=pago?'none':'inline';}
     const badgeKids=document.getElementById('kids-lock-badge');
     if(badgeKids){badgeKids.style.display=pago?'none':'inline';}
-    if(typeof initTreinoCarousel==='function') initTreinoCarousel();
+    if(typeof renderTreinosTab==='function') renderTreinosTab(getU());
   }
 }
 
@@ -14878,6 +15010,220 @@ function posterCard(p, u){
   </div>`;
 }
 
+// ══════════════════════════════════════════════════════════════════════
+// FITQUEST 2.0 — FASE 3: HOME (treino de hoje, progresso, próximo,
+// resumo da semana, histórico recente, gamificação discreta)
+// Usa só dados que já existem — gymDone por série (`${w}_${d}_${ei}_s${si}`),
+// workoutHistory, stats, streak/xp/level/coins. Nada de dado inventado:
+// não existe registro de DURAÇÃO de sessão hoje, então "tempo" não aparece
+// no resumo da semana (só Treinos/Meta/Sequência, que são reais).
+// ══════════════════════════════════════════════════════════════════════
+function progressoDia(u, w, d){
+  const P=getGP(u); const dias=P[w]?.days?.[d]||[];
+  let feitos=0;
+  dias.forEach((ex,ei)=>{
+    const totalSets=ex.sets||1;
+    let todasFeitas=true;
+    for(let si=0; si<totalSets; si++){
+      if(!u.gymDone?.[`${w}_${d}_${ei}_s${si}`]){ todasFeitas=false; break; }
+    }
+    if(todasFeitas) feitos++;
+  });
+  return {feitos, total:dias.length};
+}
+// Primeiro dia da semana ainda não 100% concluído; se todos já foram, mostra o último
+function escolherTreinoDeHoje(u, w){
+  const P=getGP(u); const dias=Object.keys(P[w]?.days||{});
+  if(!dias.length) return null;
+  for(const d of dias){
+    const {feitos,total}=progressoDia(u,w,d);
+    if(feitos<total) return d;
+  }
+  return dias[dias.length-1];
+}
+function irParaTreinoDeHoje(){
+  const u=getU(); if(!u) return;
+  const cw=`Semana ${u.gymWeek||1}`;
+  const d=escolherTreinoDeHoje(u,cw);
+  switchTab('gym',document.querySelectorAll('.nbtn')[1]);
+  if(d){
+    setTimeout(()=>{
+      const btn=[...document.querySelectorAll('#gym-day-btns .wk-day-btn')].find(b=>b.textContent.includes(d));
+      if(btn) selGD(cw,d,btn); else if(typeof renderGymDay==='function') renderGymDay(cw,d,u);
+    },50);
+  }
+}
+// ══ FITQUEST 2.0 — FASE 4 — TREINOS ══
+// Popula os 2 cards com estado real (Musculação reaproveita escolherTreinoDeHoje/
+// progressoDia da Fase 3 — a MESMA lógica da Home, sem duplicar nada). Chamada
+// tanto no loadApp() quanto toda vez que a aba "Treinos" é aberta (switchTab).
+// Deriva o(s) grupo(s) muscular(es) reais do dia, olhando os exercícios já
+// cadastrados (EXERCISE_BANK / exercícios privados) — nunca inventado.
+// Retorna null se não houver dado suficiente pra mostrar algo confiável.
+function grupoMuscularDoDia(u, exercicios){
+  if(!exercicios || !exercicios.length) return null;
+  const grupos=[];
+  exercicios.forEach(ex=>{
+    const info=(typeof getExById==='function')?getExById(ex.id,u):null;
+    if(info && info.muscle){
+      const primeiro=info.muscle.split('/')[0].trim();
+      if(primeiro && !grupos.includes(primeiro)) grupos.push(primeiro);
+    }
+  });
+  return grupos.length ? grupos.join(' · ') : null;
+}
+function renderTreinosTab(u){
+  if(!u) u=getU();
+  if(!u) return;
+
+  const elGym=document.getElementById('treinos-card-gym');
+  if(elGym){
+    const P=getGP(u); const cw=`Semana ${u.gymWeek||1}`;
+    const dias=Object.keys(P[cw]?.days||{});
+    if(dias.length){
+      const diaHoje=escolherTreinoDeHoje(u,cw);
+      const exerciciosDoDia=P[cw]?.days?.[diaHoje]||[];
+      const {feitos,total}=progressoDia(u,cw,diaHoje);
+      const pct=total>0?Math.round((feitos/total)*100):0;
+      const concluido=total>0&&feitos===total;
+      const cta=feitos===0?'COMEÇAR TREINO':(concluido?'VER TREINO':'CONTINUAR TREINO');
+      const grupoMuscular=grupoMuscularDoDia(u,exerciciosDoDia);
+      elGym.innerHTML=`
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:2px">
+          <div class="fq2-secundario">MUSCULAÇÃO · ${cw}</div>
+          ${concluido?'<span style="color:var(--primary);font-size:16px;line-height:1">✓</span>':''}
+        </div>
+        <div class="fq2-h2" style="margin-bottom:${grupoMuscular?'2px':'8px'}">${diaHoje}</div>
+        ${grupoMuscular?`<div class="fq2-secundario" style="margin-bottom:8px">${grupoMuscular}</div>`:''}
+        <div class="fq2-secundario" style="margin-bottom:10px">${total} exercício${total===1?'':'s'}${feitos>0?' · '+feitos+' de '+total+' concluídos':''}</div>
+        <div style="height:5px;background:var(--surface-hover);border-radius:99px;overflow:hidden;margin-bottom:14px">
+          <div style="height:100%;width:${pct}%;background:var(--primary);border-radius:99px"></div>
+        </div>
+        <div class="fq2-btn fq2-btn-primary" style="width:100%;pointer-events:none">${cta} →</div>`;
+    } else {
+      elGym.innerHTML=`<div class="fq2-secundario" style="text-align:center;padding:6px 0">Seu treino de musculação aparece aqui assim que for gerado.</div>`;
+    }
+  }
+
+  const elRun=document.getElementById('treinos-card-run');
+  if(elRun){
+    const RP=(typeof getRP==='function')?getRP(u):{}; const rw=`Semana ${u.runWeek||1}`;
+    const rwks=Object.keys(RP);
+    if(rwks.length){
+      const rprog=RP[rw]||RP[rwks[0]];
+      elRun.innerHTML=`
+        <div class="fq2-secundario" style="margin-bottom:2px">CORRIDA · ${rw}</div>
+        <div class="fq2-h2" style="margin-bottom:14px">${rprog?.meta||'Plano de corrida'}</div>
+        <div class="fq2-btn fq2-btn-secondary" style="width:100%;pointer-events:none">VER TREINO DE CORRIDA →</div>`;
+    } else {
+      elRun.innerHTML=`<div class="fq2-secundario" style="text-align:center;padding:6px 0">Seu plano de corrida aparece aqui assim que for gerado.</div>`;
+    }
+  }
+
+  // SEU PLANO — reduz o espaço vazio no fim da tela, só com dado real (Fase 4B)
+  const elPlano=document.getElementById('treinos-seu-plano');
+  if(elPlano){
+    const P3=getGP(u); const totalSemanas=Object.keys(P3).length;
+    const cwNum=u.gymWeek||1;
+    const faseAtual=P3[`Semana ${cwNum}`]?.fase;
+    if(totalSemanas>0){
+      elPlano.innerHTML=`
+        <div class="fq2-secundario" style="text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px">Seu plano</div>
+        <div class="fq2-card" style="display:flex;align-items:center;gap:12px">
+          <div style="width:38px;height:38px;border-radius:var(--radius-sm);background:var(--surface-hover);display:flex;align-items:center;justify-content:center;font-size:17px;flex-shrink:0">📋</div>
+          <div style="flex:1;min-width:0">
+            <div class="fq2-titulo-exercicio">Semana ${cwNum} de ${totalSemanas}${faseAtual?' · '+faseAtual:''}</div>
+            <div class="fq2-muted" style="margin-top:2px">Musculação personalizada por Rennan Dias</div>
+          </div>
+        </div>`;
+    } else {
+      elPlano.innerHTML='';
+    }
+  }
+}
+function renderHomeResumo(u){
+  const P=getGP(u); const cw=`Semana ${u.gymWeek||1}`;
+  const dias=Object.keys(P[cw]?.days||{});
+  if(!dias.length) return; // sem plano ainda — não força nenhum dado falso na tela
+
+  const diaHoje=escolherTreinoDeHoje(u,cw);
+  const {feitos,total}=progressoDia(u,cw,diaHoje);
+
+  const titleEl=document.getElementById('hero-title'); if(titleEl) titleEl.textContent=diaHoje||'Treino';
+  const subEl=document.getElementById('hero-sub'); if(subEl) subEl.textContent=`${total} exercício${total===1?'':'s'}`;
+  const semTagEl=document.getElementById('hero-semana-tag'); if(semTagEl) semTagEl.textContent=`${cw}${P[cw]?.fase?' · '+P[cw].fase:''}`;
+
+  const labelEl=document.getElementById('hero-progresso-label');
+  const barEl=document.getElementById('hero-progresso-bar');
+  const ctaEl=document.getElementById('hero-cta-btn');
+  const pct=total>0?Math.round((feitos/total)*100):0;
+  if(barEl) barEl.style.width=pct+'%';
+  if(feitos===0){
+    if(labelEl) labelEl.textContent='Ainda não começou';
+    if(ctaEl) ctaEl.innerHTML='▶ Começar treino';
+  } else if(feitos<total){
+    if(labelEl) labelEl.textContent=`${feitos} de ${total} exercícios concluídos`;
+    if(ctaEl) ctaEl.innerHTML='▶ Continuar treino';
+  } else {
+    if(labelEl) labelEl.textContent=`Treino concluído — ${total} de ${total} exercícios`;
+    if(ctaEl) ctaEl.innerHTML='✓ Treino concluído';
+  }
+
+  // próximo treino — o dia seguinte na lista (não é carrossel, é uma seção só)
+  const idxHoje=dias.indexOf(diaHoje);
+  const proxDia=dias.length>1?dias[(idxHoje+1)%dias.length]:null;
+  const proxCard=document.getElementById('home-proximo-card');
+  if(proxCard){
+    if(proxDia && proxDia!==diaHoje){
+      const proxInfo=progressoDia(u,cw,proxDia);
+      proxCard.style.display='';
+      proxCard.innerHTML=`
+        <div class="fq2-secundario" style="margin-bottom:4px;letter-spacing:.5px">PRÓXIMO TREINO</div>
+        <div class="fq2-h2" style="margin-bottom:2px">${proxDia}</div>
+        <div class="fq2-secundario">${proxInfo.total} exercício${proxInfo.total===1?'':'s'}</div>`;
+    } else {
+      proxCard.style.display='none';
+    }
+  }
+
+  // resumo da semana — só métricas reais (sem "tempo", que não é registrado hoje)
+  const concluidosSemana = dias.filter(d=>{const p=progressoDia(u,cw,d); return p.total>0 && p.feitos===p.total;}).length;
+  const resumoEl=document.getElementById('home-resumo-semana');
+  if(resumoEl){
+    const itens=[
+      {label:'Treinos',valor:concluidosSemana},
+      {label:'Meta',valor:dias.length},
+      {label:'Sequência',valor:(u.streak||1)+'d'},
+    ];
+    resumoEl.innerHTML=itens.map(it=>`
+      <div class="fq2-card" style="flex:1;text-align:center;padding:14px 6px">
+        <div class="fq2-h1" style="font-size:20px">${it.valor}</div>
+        <div class="fq2-muted" style="margin-top:2px">${it.label}</div>
+      </div>`).join('');
+  }
+
+  // histórico recente — últimos 3, mais recente primeiro (dado real de workoutHistory)
+  const histEl=document.getElementById('home-historico-lista');
+  if(histEl){
+    const hist=(u.workoutHistory||[]).slice(-3).reverse();
+    histEl.innerHTML = hist.length ? hist.map(h=>`
+      <div class="fq2-card fq2-card-hover" style="display:flex;justify-content:space-between;align-items:center;padding:12px 14px;margin-bottom:8px">
+        <div>
+          <div class="fq2-titulo-exercicio">${h.day}</div>
+          <div class="fq2-muted">${h.date}</div>
+        </div>
+        <div class="fq2-xp-badge" style="color:var(--primary);background:rgba(229,9,20,.1)">✓ Concluído</div>
+      </div>`).join('') : `<div class="fq2-secundario" style="text-align:center;padding:16px 0">Seu histórico aparece aqui assim que você concluir um treino.</div>`;
+  }
+
+  // gamificação — camada secundária e discreta (mesmos dados de sempre, XP/streak não mudam)
+  const gamifEl=document.getElementById('home-gamif-discreta');
+  if(gamifEl){
+    gamifEl.innerHTML=`
+      <div class="fq2-xp-badge">🏆 Nível ${u.level||1} · ${(u.xp||0).toLocaleString()} XP</div>
+      <div class="fq2-xp-badge">🔥 Sequência ${u.streak||1}d</div>`;
+  }
+}
 function renderHomePrograms(u){try{
   // Featured: specialized programs
   const featured = CATALOG.filter(p=>['hypertrophy','elderly','pregnancy','disabled'].includes(p.id));
