@@ -255,6 +255,27 @@ function liberarPacoteEbooks(u) {
 .fq-dia-bolha.hoje{border-color:var(--primary);}
 .fq-dia-lbl{font-size:10px;color:var(--text-muted);font-weight:600;}
 
+/* ══ FITQUEST 2.0 — CARDS DE CATEGORIA (tela Treinos) ══
+   Card largo com número translúcido gigante ao fundo, faixa inferior
+   colorida e cor própria por modalidade. */
+.cat-card{position:relative;overflow:hidden;border-radius:var(--radius-md);padding:18px 18px 20px;min-height:132px;cursor:pointer;border:1px solid rgba(255,255,255,.07);display:flex;align-items:center;transition:transform var(--transition-fast),filter var(--transition-fast);max-width:100%;box-sizing:border-box;}
+.cat-card:active{transform:scale(.985);filter:brightness(1.1);}
+.cat-card::after{content:'';position:absolute;left:0;right:0;bottom:0;height:3px;background:var(--cat-cor);}
+.cat-numero{position:absolute;right:-6px;top:50%;transform:translateY(-50%);font-size:150px;font-weight:900;line-height:1;color:rgba(255,255,255,.07);pointer-events:none;user-select:none;letter-spacing:-8px;}
+.cat-conteudo{position:relative;z-index:1;flex:1;min-width:0;}
+.cat-kicker{font-size:9px;font-weight:700;letter-spacing:1.2px;color:rgba(255,255,255,.55);margin-bottom:5px;text-transform:uppercase;}
+.cat-titulo{font-size:26px;font-weight:900;color:#fff;letter-spacing:-.8px;line-height:1;margin-bottom:9px;}
+.cat-selo{display:inline-block;background:var(--cat-cor);color:#fff;font-size:10.5px;font-weight:800;letter-spacing:.6px;padding:4px 12px;border-radius:5px;margin-bottom:9px;}
+.cat-rodape{font-size:11px;color:rgba(255,255,255,.62);line-height:1.4;}
+.cat-premium{position:absolute;top:14px;right:14px;z-index:2;font-size:9px;letter-spacing:.5px;background:rgba(0,0,0,.5);border:1px solid rgba(255,255,255,.25);color:#fff;padding:3px 9px;border-radius:5px;font-weight:800;}
+.cat-progresso{height:4px;background:rgba(0,0,0,.35);border-radius:99px;overflow:hidden;margin:10px 0 4px;}
+.cat-progresso-fill{height:100%;background:#fff;border-radius:99px;transition:width .3s;}
+/* paleta por categoria — tons do exemplo enviado */
+.cat-musculacao{--cat-cor:#0d8ea8;background:linear-gradient(110deg,#0a2b33 0%,#0d3d49 55%,#11566a 100%);}
+.cat-corrida{--cat-cor:#7b3fc4;background:linear-gradient(110deg,#241033 0%,#3a1a54 55%,#4e2273 100%);}
+.cat-mobilidade{--cat-cor:#c62368;background:linear-gradient(110deg,#330f22 0%,#54163a 55%,#731f4e 100%);}
+.cat-kids{--cat-cor:#d4682a;background:linear-gradient(110deg,#331c0d 0%,#4f2a13 55%,#6b391a 100%);}
+
 /* ══ TEMA KIDS & TEENS — Selva/Aventura ══
    Paleta própria, mais viva e brincalhona, só dentro da seção Kids.
    O resto do app continua com a identidade séria (vermelho). Como os
@@ -1013,7 +1034,7 @@ textarea.fi{resize:vertical;min-height:80px;}
       <option value="es">🇪🇸 ES</option>
     </select>
   </div>
-  <div id="fq-version-badge" style="position:absolute;bottom:8px;right:12px;font-size:9px;color:#333;font-weight:700;z-index:5">v234</div>
+  <div id="fq-version-badge" style="position:absolute;bottom:8px;right:12px;font-size:9px;color:#333;font-weight:700;z-index:5">v235</div>
   <img src="https://images.unsplash.com/photo-1517836357463-d25dfeac3438?w=800&q=80" alt="Fitness" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center top;filter:brightness(.35);z-index:0"/>
   <div class="splash-glow"></div>
   <div class="splash-noise"></div>
@@ -1580,34 +1601,36 @@ textarea.fi{resize:vertical;min-height:80px;}
           <div class="fq2-secundario" style="margin-top:2px">Prescrito por Rennan Dias</div>
         </div>
 
-        <div style="padding:0 20px 40px;display:flex;flex-direction:column;gap:12px">
+        <div style="padding:0 20px 40px;display:flex;flex-direction:column;gap:14px">
 
-          <!-- MUSCULAÇÃO — card principal, com estado real (Fase 3) -->
-          <div class="fq2-card fq2-card-hover" style="cursor:pointer" onclick="switchTab('gym',document.querySelectorAll('.nbtn')[1])" id="treinos-card-gym"></div>
+          <!-- MUSCULAÇÃO — conteúdo injetado por renderTreinosTab (estado real) -->
+          <div class="cat-card cat-musculacao" onclick="switchTab('gym',document.querySelectorAll('.nbtn')[1])" id="treinos-card-gym"></div>
 
           <!-- CORRIDA -->
-          <div class="fq2-card fq2-card-hover" style="cursor:pointer" onclick="switchTab('run',document.querySelectorAll('.nbtn')[1])" id="treinos-card-run"></div>
+          <div class="cat-card cat-corrida" onclick="switchTab('run',document.querySelectorAll('.nbtn')[1])" id="treinos-card-run"></div>
 
           <!-- ALONGAMENTO & MOBILIDADE -->
-          <div class="fq2-card fq2-card-hover" style="cursor:pointer;display:flex;align-items:center;gap:12px" onclick="switchTab('mobilidade',document.querySelectorAll('.nbtn')[1])">
-            <div style="width:42px;height:42px;border-radius:var(--radius-sm);background:var(--surface-hover);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0">🧘</div>
-            <div style="flex:1;min-width:0">
-              <div class="fq2-titulo-exercicio">Alongamento & Mobilidade</div>
-              <div class="fq2-muted" style="margin-top:2px">Rotinas por objetivo</div>
+          <div class="cat-card cat-mobilidade" onclick="switchTab('mobilidade',document.querySelectorAll('.nbtn')[1])">
+            <div class="cat-numero">3</div>
+            <div class="cat-conteudo">
+              <div class="cat-kicker">ROTINAS GUIADAS</div>
+              <div class="cat-titulo">ALONGAMENTO</div>
+              <div class="cat-selo">MOBILIDADE</div>
+              <div class="cat-rodape">Por objetivo · sessões curtas</div>
             </div>
-            <span id="mob-lock-badge" style="display:none;flex-shrink:0;font-size:9px;letter-spacing:.4px;background:var(--surface-hover);border:1px solid var(--border-strong);color:var(--text-secondary);padding:3px 8px;border-radius:var(--radius-sm);font-weight:700;white-space:nowrap">PREMIUM</span>
-            <span class="fq2-muted" style="font-size:18px;flex-shrink:0">›</span>
+            <span id="mob-lock-badge" class="cat-premium" style="display:none">PREMIUM</span>
           </div>
 
           <!-- KIDS & TEENS -->
-          <div class="fq2-card fq2-card-hover" style="cursor:pointer;display:flex;align-items:center;gap:12px" onclick="switchTab('kids',document.querySelectorAll('.nbtn')[1])">
-            <div style="width:42px;height:42px;border-radius:var(--radius-sm);background:var(--surface-hover);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0">🧒</div>
-            <div style="flex:1;min-width:0">
-              <div class="fq2-titulo-exercicio">Kids & Teens</div>
-              <div class="fq2-muted" style="margin-top:2px">Treinos por faixa etária</div>
+          <div class="cat-card cat-kids" onclick="switchTab('kids',document.querySelectorAll('.nbtn')[1])">
+            <div class="cat-numero">4</div>
+            <div class="cat-conteudo">
+              <div class="cat-kicker">CRIANÇAS E ADOLESCENTES</div>
+              <div class="cat-titulo">KIDS &amp; TEENS</div>
+              <div class="cat-selo">POR IDADE</div>
+              <div class="cat-rodape">Treinos adaptados por faixa etária</div>
             </div>
-            <span id="kids-lock-badge" style="display:none;flex-shrink:0;font-size:9px;letter-spacing:.4px;background:var(--surface-hover);border:1px solid var(--border-strong);color:var(--text-secondary);padding:3px 8px;border-radius:var(--radius-sm);font-weight:700;white-space:nowrap">PREMIUM</span>
-            <span class="fq2-muted" style="font-size:18px;flex-shrink:0">›</span>
+            <span id="kids-lock-badge" class="cat-premium" style="display:none">PREMIUM</span>
           </div>
 
           <!-- SEU PLANO — reduz o espaço vazio no fim da tela com dado real (Fase 4B) -->
@@ -2226,7 +2249,7 @@ textarea.fi{resize:vertical;min-height:80px;}
             <span style="color:var(--mu);font-size:18px">›</span>
           </div>
         </div>
-        <div style="text-align:center;padding:20px 0 4px;font-size:11px;color:var(--mu)">FitQuest <span id="fq-version-badge-perfil">v234</span></div>
+        <div style="text-align:center;padding:20px 0 4px;font-size:11px;color:var(--mu)">FitQuest <span id="fq-version-badge-perfil">v235</span></div>
       </div>
     </div>
 
@@ -15179,22 +15202,25 @@ function renderTreinosTab(u){
       const {feitos,total}=progressoDia(u,cw,diaHoje);
       const pct=total>0?Math.round((feitos/total)*100):0;
       const concluido=total>0&&feitos===total;
-      const cta=feitos===0?'COMEÇAR TREINO':(concluido?'VER TREINO':'CONTINUAR TREINO');
       const grupoMuscular=grupoMuscularDoDia(u,exerciciosDoDia);
       elGym.innerHTML=`
-        <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:2px">
-          <div class="fq2-secundario">MUSCULAÇÃO · ${cw}</div>
-          ${concluido?'<span style="color:var(--primary);font-size:16px;line-height:1">✓</span>':''}
-        </div>
-        <div class="fq2-h2" style="margin-bottom:${grupoMuscular?'2px':'8px'}">${diaHoje}</div>
-        ${grupoMuscular?`<div class="fq2-secundario" style="margin-bottom:8px">${grupoMuscular}</div>`:''}
-        <div class="fq2-secundario" style="margin-bottom:10px">${total} exercício${total===1?'':'s'}${feitos>0?' · '+feitos+' de '+total+' concluídos':''}</div>
-        <div style="height:5px;background:var(--surface-hover);border-radius:99px;overflow:hidden;margin-bottom:14px">
-          <div style="height:100%;width:${pct}%;background:var(--primary);border-radius:99px"></div>
-        </div>
-        <div class="fq2-btn fq2-btn-primary" style="width:100%;pointer-events:none">${cta} →</div>`;
+        <div class="cat-numero">1</div>
+        <div class="cat-conteudo">
+          <div class="cat-kicker">${cw}${concluido?' · CONCLUÍDO ✓':''}</div>
+          <div class="cat-titulo">MUSCULAÇÃO</div>
+          <div class="cat-selo">${diaHoje}</div>
+          ${grupoMuscular?`<div class="cat-rodape" style="margin-bottom:2px">${grupoMuscular}</div>`:''}
+          ${feitos>0?`<div class="cat-progresso"><div class="cat-progresso-fill" style="width:${pct}%"></div></div>`:''}
+          <div class="cat-rodape">${total} exercício${total===1?'':'s'}${feitos>0?' · '+feitos+' de '+total+' concluídos':''}</div>
+        </div>`;
     } else {
-      elGym.innerHTML=`<div class="fq2-secundario" style="text-align:center;padding:6px 0">Seu treino de musculação aparece aqui assim que for gerado.</div>`;
+      elGym.innerHTML=`
+        <div class="cat-numero">1</div>
+        <div class="cat-conteudo">
+          <div class="cat-kicker">AGUARDANDO PLANO</div>
+          <div class="cat-titulo">MUSCULAÇÃO</div>
+          <div class="cat-rodape">Seu treino aparece aqui assim que for gerado.</div>
+        </div>`;
     }
   }
 
@@ -15204,12 +15230,23 @@ function renderTreinosTab(u){
     const rwks=Object.keys(RP);
     if(rwks.length){
       const rprog=RP[rw]||RP[rwks[0]];
+      const nSessoes=(rprog?.sessions||[]).length;
       elRun.innerHTML=`
-        <div class="fq2-secundario" style="margin-bottom:2px">CORRIDA · ${rw}</div>
-        <div class="fq2-h2" style="margin-bottom:14px">${rprog?.meta||'Plano de corrida'}</div>
-        <div class="fq2-btn fq2-btn-secondary" style="width:100%;pointer-events:none">VER TREINO DE CORRIDA →</div>`;
+        <div class="cat-numero">2</div>
+        <div class="cat-conteudo">
+          <div class="cat-kicker">${rw}</div>
+          <div class="cat-titulo">CORRIDA</div>
+          ${rprog?.meta?`<div class="cat-selo">${rprog.meta}</div>`:''}
+          <div class="cat-rodape">${nSessoes?nSessoes+(nSessoes===1?' sessão':' sessões')+' nesta semana':'Plano de corrida periodizado'}</div>
+        </div>`;
     } else {
-      elRun.innerHTML=`<div class="fq2-secundario" style="text-align:center;padding:6px 0">Seu plano de corrida aparece aqui assim que for gerado.</div>`;
+      elRun.innerHTML=`
+        <div class="cat-numero">2</div>
+        <div class="cat-conteudo">
+          <div class="cat-kicker">AGUARDANDO PLANO</div>
+          <div class="cat-titulo">CORRIDA</div>
+          <div class="cat-rodape">Seu plano aparece aqui assim que for gerado.</div>
+        </div>`;
     }
   }
 
