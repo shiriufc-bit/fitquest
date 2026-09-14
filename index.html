@@ -123,30 +123,113 @@ html[data-tema="claro"]{
 }
 html[data-tema="claro"] body{background:var(--bg);color:var(--t);}
 
-/* 1) Texto branco fixo (color:#fff) vira texto escuro — EXCETO onde o fundo
-      é realmente colorido/escuro (botão vermelho, card de categoria, selo...) */
+/* 1) Texto branco fixo (color:#fff) vira texto escuro — MAS só quando o
+      elemento NÃO está sobre uma superfície que continua escura no tema
+      claro (banner com foto, card de programa/loja, card de categoria,
+      botão vermelho…). Nesses, o branco é preservado. */
 html[data-tema="claro"] [style*="color:#fff"]:not(.btn-hero-play):not(.btn-ep-done):not(.btn-p):not(.fq2-btn-primary):not(.cat-titulo):not(.cat-selo):not(.cat-premium):not(.modal-cl){
   color:var(--t) !important;
 }
-/* dentro dos cards de categoria e de qualquer superfície escura, mantém branco */
-html[data-tema="claro"] .cat-card [style*="color:#fff"],
-html[data-tema="claro"] .cat-card .cat-titulo,
-html[data-tema="claro"] .cat-card .cat-kicker,
-html[data-tema="claro"] .cat-card .cat-rodape,
-html[data-tema="claro"] .hero-banner [style*="color:#fff"]{color:#fff !important;}
+/* Superfícies que PERMANECEM escuras no tema claro — dentro delas, todo
+   texto continua branco. Sem isto, títulos como "Hipertrofia Máxima"
+   ficavam cinza-escuro sobre fundo preto (ilegíveis). */
+html[data-tema="claro"] .cat-card *,
+html[data-tema="claro"] .hero-banner *,
+html[data-tema="claro"] .store-hero,html[data-tema="claro"] .store-hero *,
+html[data-tema="claro"] .movie-card,html[data-tema="claro"] .movie-card *,
+html[data-tema="claro"] .cw-card,html[data-tema="claro"] .cw-card *,
+html[data-tema="claro"] .rk-card,html[data-tema="claro"] .rk-card *{
+  color:#fff !important;
+}
+/* exceções dentro dessas superfícies: preço e selos têm cor própria */
+html[data-tema="claro"] .movie-card-price{color:var(--r) !important;}
+html[data-tema="claro"] .movie-card-sub{color:rgba(255,255,255,.75) !important;}
+/* botões de fundo BRANCO dentro dessas superfícies escuras mantêm texto preto */
+html[data-tema="claro"] .store-hero button[style*="background:#fff"],
+html[data-tema="claro"] .store-hero [style*="background:#fff"],
+html[data-tema="claro"] button[style*="background:#fff"][style*="color:#000"]{
+  background:#fff !important;color:#000 !important;
+}
+/* Cabeçalhos que usam FOTO escurecida como fundo (Coach, e-books, programas):
+   a foto continua escura no tema claro, então o texto sobre ela segue branco.
+   Detecta pelo irmão <img> com filtro brightness baixo. */
+/* (regras de fotos escurecidas consolidadas mais abaixo — ver "Rede de segurança") */
+/* Rede de segurança (vale nos DOIS temas): se a foto de fundo não carregar,
+   o container e a própria <img> mantêm fundo escuro, então o texto branco
+   por cima continua legível em vez de sumir no branco. Cobre qualquer
+   imagem com filtro de escurecimento, independente da ordem das
+   propriedades no atributo style. */
+div:has(> img[style*="brightness"]),
+.store-hero,.movie-modal-hero,.wk-hero{background-color:#141414;}
+img[style*="brightness"]{background-color:#141414;}
+/* o texto sobre essas superfícies escuras segue branco nos dois temas */
+html[data-tema="claro"] div:has(> img[style*="brightness"]) *,
+html[data-tema="claro"] .wk-hero *,
+html[data-tema="claro"] .store-hero *{color:#fff !important;}
+html[data-tema="claro"] div:has(> img[style*="brightness"]) [style*="color:rgba(255,255,255"]{color:rgba(255,255,255,.8) !important;}
+/* exceções: botões claros e selos coloridos dentro dessas áreas */
+html[data-tema="claro"] div:has(> img[style*="brightness"]) button[style*="background:#fff"]{color:#000 !important;}
+/* Kids & Teens: o cabeçalho usa fundo verde próprio (tema Selva), sem foto.
+   No tema claro o texto precisa continuar branco pra ter contraste sobre o verde. */
+html[data-tema="claro"] #tp-kids .wk-hero,
+html[data-tema="claro"] #tp-kids .wk-hero *{color:#fff !important;}
+html[data-tema="claro"] #tp-kids .wk-hero-sub{color:rgba(255,255,255,.85) !important;}
+html[data-tema="claro"] #tp-kids .wk-hero-tag{color:rgba(255,255,255,.9) !important;}
+/* Cabeçalhos onde o texto fica numa div IRMÃ da foto (Ranking, Recordes,
+   Conquistas): o degradê termina em var(--bg), que no tema claro vira
+   branco — deixando o texto branco invisível. Mantém o degradê escuro. */
+html[data-tema="claro"] div:has(> img[style*="brightness"]) > div[style*="linear-gradient(transparent,var(--bg))"]{
+  background:linear-gradient(transparent,#141414) !important;
+}
+html[data-tema="claro"] div:has(> img[style*="brightness"]) > div[style*="linear-gradient(transparent,var(--bg))"] *{
+  color:#fff !important;
+}
+html[data-tema="claro"] div:has(> img[style*="brightness"]) > div[style*="linear-gradient(transparent,var(--bg))"] [style*="color:var(--t2)"]{
+  color:rgba(255,255,255,.75) !important;
+}
+html[data-tema="claro"] div:has(> img[style*="brightness"]) > div[style*="linear-gradient(transparent,var(--bg))"] [style*="color:var(--r)"]{
+  color:#ff5a63 !important;
+}
 
 /* 2) Bordas/fundos brancos translúcidos viram escuros translúcidos */
 html[data-tema="claro"] [style*="rgba(255,255,255,"]:not(.cat-card):not(.cat-card *):not(.hero-banner):not(.hero-banner *){
   border-color:rgba(0,0,0,.12) !important;
 }
 
-/* 3) Superfícies escuras fixas (#181818, #111, #0a0a0a…) viram claras */
+/* 3) Superfícies escuras fixas (#181818, #111, #0a0a0a…) viram claras.
+      Cobre variações com e sem espaço depois dos dois-pontos. */
 html[data-tema="claro"] [style*="background:#181818"],
+html[data-tema="claro"] [style*="background: #181818"],
 html[data-tema="claro"] [style*="background:#111"],
+html[data-tema="claro"] [style*="background: #111"],
 html[data-tema="claro"] [style*="background:#0a0a0a"],
+html[data-tema="claro"] [style*="background: #0a0a0a"],
 html[data-tema="claro"] [style*="background:#1a1a1a"],
+html[data-tema="claro"] [style*="background: #1a1a1a"],
 html[data-tema="claro"] [style*="background:#0d0d0d"],
-html[data-tema="claro"] [style*="background:#222"]{background:var(--s) !important;}
+html[data-tema="claro"] [style*="background:#222"],
+html[data-tema="claro"] [style*="background:#000"]{background:var(--s) !important;}
+/* campos de formulário com fundo escuro fixo: texto precisa acompanhar.
+   `html[data-tema=...] input[...]` empata em especificidade com a regra
+   genérica acima, então usa :where() pra elevar sem depender da ordem. */
+html[data-tema="claro"] :is(input,textarea,select)[style*="background:#1a1a1a"],
+html[data-tema="claro"] :is(input,textarea,select)[style*="background:#111"],
+html[data-tema="claro"] :is(input,textarea,select)[style*="background:#181818"],
+html[data-tema="claro"] :is(input,textarea,select)[style*="background:#0a0a0a"],
+html[data-tema="claro"] :is(input,textarea,select)[style*="background:#222"]{
+  background:#fff !important;color:var(--t) !important;border-color:var(--b2) !important;
+}
+html[data-tema="claro"] input::placeholder,html[data-tema="claro"] textarea::placeholder{color:var(--mu) !important;}
+/* Cards de plano da Consultoria usam gradiente terminando em #111 (escuro
+   fixo) — no tema claro isso deixava texto preto sobre fundo escuro. */
+html[data-tema="claro"] .consult-plan{background:#fff !important;}
+html[data-tema="claro"] .consult-plan[style*="rgba(243,156,18"]{background:linear-gradient(135deg,rgba(243,156,18,.10),#fff) !important;}
+html[data-tema="claro"] .consult-plan[style*="rgba(46,204,113"]{background:linear-gradient(135deg,rgba(46,204,113,.10),#fff) !important;}
+html[data-tema="claro"] .consult-plan *{color:var(--t) !important;}
+html[data-tema="claro"] .consult-plan [style*="color:#f39c12"]{color:#b9770e !important;}
+html[data-tema="claro"] .consult-plan [style*="color:#2ecc71"]{color:#1e8a4d !important;}
+html[data-tema="claro"] .consult-plan [style*="color:var(--t2)"]{color:var(--t2) !important;}
+html[data-tema="claro"] .consult-plan [style*="color:#000"]{color:#000 !important;}
 html[data-tema="claro"] .modal-bx{background:#fff;border-color:var(--b2);}
 html[data-tema="claro"] .modal-ov{background:rgba(0,0,0,.45);}
 
@@ -162,14 +245,20 @@ html[data-tema="claro"] .screen{background:var(--bg);}
 html[data-tema="claro"] .gym-hero,
 html[data-tema="claro"] .run-hero,
 html[data-tema="claro"] .evo-hero{background:linear-gradient(135deg,rgba(229,9,20,.08),rgba(229,9,20,.02)),#fff;border-bottom:1px solid var(--b);}
-/* .wk-hero usa foto escurecida + overlay preto: no claro, esconde a foto e
-   deixa um cabeçalho branco limpo (mais legível que texto branco sobre foto) */
-html[data-tema="claro"] .wk-hero{background:#fff;border-bottom:1px solid var(--b);}
-html[data-tema="claro"] .wk-hero > img{display:none;}
+/* .wk-hero SEM foto (tela de musculação) fica branco e limpo no tema claro.
+   Quando TEM foto (Mobilidade, Kids), a regra da "Rede de segurança" mais
+   abaixo mantém fundo escuro e texto branco — por isso o :not() aqui. */
+html[data-tema="claro"] .wk-hero:not(:has(> img)){background:#fff;border-bottom:1px solid var(--b);}
+html[data-tema="claro"] .wk-hero:not(:has(> img)) .wk-hero-title{color:var(--t) !important;text-shadow:none !important;}
+html[data-tema="claro"] .wk-hero:not(:has(> img)) .wk-hero-sub{color:var(--t2) !important;}
+/* .wk-hero COM foto: mantém o visual escuro original (foto + texto branco),
+   igual ao tema escuro — é mais legível que forçar fundo claro aqui. */
+html[data-tema="claro"] .wk-hero:has(> img){background:#141414 !important;}
+html[data-tema="claro"] .wk-hero:has(> img) *{color:#fff !important;}
+html[data-tema="claro"] .wk-hero:has(> img) .wk-hero-sub{color:rgba(255,255,255,.82) !important;}
+html[data-tema="claro"] .wk-hero:not(:has(> img)) > img{display:none;}
 html[data-tema="claro"] .wk-hero-overlay{background:none;}
 html[data-tema="claro"] .wk-hero-glow{background:radial-gradient(ellipse at 30% 50%,rgba(229,9,20,.06) 0%,transparent 70%);}
-html[data-tema="claro"] .wk-hero-title{color:var(--t) !important;text-shadow:none !important;}
-html[data-tema="claro"] .wk-hero-sub{color:var(--t2) !important;}
 html[data-tema="claro"] .wk-progress-bar{background:var(--s2);}
 /* avisos/toasts e diálogos */
 html[data-tema="claro"] .fq-toast{background:#fff !important;color:var(--t) !important;border:1px solid var(--b2) !important;box-shadow:0 4px 20px rgba(0,0,0,.14) !important;}
@@ -1144,7 +1233,7 @@ textarea.fi{resize:vertical;min-height:80px;}
       <option value="es">🇪🇸 ES</option>
     </select>
   </div>
-  <div id="fq-version-badge" style="position:absolute;bottom:8px;right:12px;font-size:9px;color:#333;font-weight:700;z-index:5">v236</div>
+  <div id="fq-version-badge" style="position:absolute;bottom:8px;right:12px;font-size:9px;color:#333;font-weight:700;z-index:5">v237</div>
   <img src="https://images.unsplash.com/photo-1517836357463-d25dfeac3438?w=800&q=80" alt="Fitness" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center top;filter:brightness(.35);z-index:0"/>
   <div class="splash-glow"></div>
   <div class="splash-noise"></div>
@@ -2027,8 +2116,8 @@ textarea.fi{resize:vertical;min-height:80px;}
     <!-- CONSULTORIA -->
     <div class="tp" id="tp-consult">
       <!-- Hero -->
-      <div style="position:relative;height:240px;overflow:hidden">
-        <img src="https://images.unsplash.com/photo-1599058917212-d750089bc07e?w=800&q=80" alt="Consultoria" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;filter:brightness(.32)"/>
+      <div style="position:relative;height:240px;overflow:hidden;background:#1a1a1a">
+        <img src="https://images.unsplash.com/photo-1599058917212-d750089bc07e?w=800&q=80" alt="" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;filter:brightness(.32)"/>
         <div style="position:absolute;inset:0;background:linear-gradient(135deg,rgba(229,9,20,.4),transparent 60%)"></div>
         <div style="position:absolute;bottom:0;left:0;right:0;height:60%;background:linear-gradient(transparent,#0a0a0a)"></div>
         <div style="position:absolute;bottom:18px;left:16px;right:16px">
@@ -2367,7 +2456,7 @@ textarea.fi{resize:vertical;min-height:80px;}
             <span style="color:var(--mu);font-size:18px">›</span>
           </div>
         </div>
-        <div style="text-align:center;padding:20px 0 4px;font-size:11px;color:var(--mu)">FitQuest <span id="fq-version-badge-perfil">v236</span></div>
+        <div style="text-align:center;padding:20px 0 4px;font-size:11px;color:var(--mu)">FitQuest <span id="fq-version-badge-perfil">v237</span></div>
       </div>
     </div>
 
