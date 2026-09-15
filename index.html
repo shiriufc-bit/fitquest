@@ -144,6 +144,12 @@ html[data-tema="claro"] .rk-card,html[data-tema="claro"] .rk-card *{
 /* exceções dentro dessas superfícies: preço e selos têm cor própria */
 html[data-tema="claro"] .movie-card-price{color:var(--r) !important;}
 html[data-tema="claro"] .movie-card-sub{color:rgba(255,255,255,.75) !important;}
+/* o card da loja tem fundo escuro próprio (#111) e continua escuro no tema
+   claro — todo texto dentro dele, inclusive o sobreposto ao pôster, segue
+   branco. `:where()` eleva a especificidade sem depender da ordem. */
+html[data-tema="claro"] .movie-card :where([style*="color:#fff"]),
+html[data-tema="claro"] .movie-card-poster-bg :where(div){color:#fff !important;}
+html[data-tema="claro"] .movie-card{background:#111 !important;}
 /* botões de fundo BRANCO dentro dessas superfícies escuras mantêm texto preto */
 html[data-tema="claro"] .store-hero button[style*="background:#fff"],
 html[data-tema="claro"] .store-hero [style*="background:#fff"],
@@ -959,6 +965,10 @@ textarea.fi{resize:vertical;min-height:80px;}
 .movie-card:hover{transform:scale(1.04)}
 .movie-card-poster{width:150px;height:215px;object-fit:cover;display:block;filter:brightness(.8) saturate(1.1)}
 .movie-card-poster-bg{width:150px;height:215px;display:flex;align-items:center;justify-content:center;font-size:64px;position:relative}
+/* nome do produto sobreposto ao pôster — classe própria (em vez de estilo
+   embutido) pra não ser capturado pelas regras de conversão do tema claro */
+.movie-poster-nome{font-size:11.5px;font-weight:900;color:#fff;padding:0 10px;text-align:center;line-height:1.25;text-shadow:0 1px 6px rgba(0,0,0,.9);}
+html[data-tema="claro"] .movie-poster-nome{color:#fff;}
 .movie-card-locked{position:absolute;top:8px;right:8px;background:rgba(0,0,0,.75);border-radius:6px;padding:3px 7px;font-size:10px}
 .movie-card-badge{position:absolute;top:8px;left:8px;border-radius:4px;padding:2px 7px;font-size:9px;font-weight:900}
 .movie-card-info{padding:8px 10px 10px}
@@ -1233,7 +1243,7 @@ textarea.fi{resize:vertical;min-height:80px;}
       <option value="es">🇪🇸 ES</option>
     </select>
   </div>
-  <div id="fq-version-badge" style="position:absolute;bottom:8px;right:12px;font-size:9px;color:#333;font-weight:700;z-index:5">v237</div>
+  <div id="fq-version-badge" style="position:absolute;bottom:8px;right:12px;font-size:9px;color:#333;font-weight:700;z-index:5">v238</div>
   <img src="https://images.unsplash.com/photo-1517836357463-d25dfeac3438?w=800&q=80" alt="Fitness" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center top;filter:brightness(.35);z-index:0"/>
   <div class="splash-glow"></div>
   <div class="splash-noise"></div>
@@ -2456,7 +2466,7 @@ textarea.fi{resize:vertical;min-height:80px;}
             <span style="color:var(--mu);font-size:18px">›</span>
           </div>
         </div>
-        <div style="text-align:center;padding:20px 0 4px;font-size:11px;color:var(--mu)">FitQuest <span id="fq-version-badge-perfil">v237</span></div>
+        <div style="text-align:center;padding:20px 0 4px;font-size:11px;color:var(--mu)">FitQuest <span id="fq-version-badge-perfil">v238</span></div>
       </div>
     </div>
 
@@ -15627,10 +15637,10 @@ function movieCard(p, u){
   const badge = `<div class="movie-card-badge" style="background:${p.tagColor}">${p.tag}</div>`;
   return `<div class="movie-card" onclick="openMovie('${p.id}')">
     <div class="movie-card-poster-bg" style="background:linear-gradient(135deg,${p.color}33,#000)">
-      <img src="${p.img}" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;filter:brightness(.5)"/>
-      <div style="position:relative;z-index:1;text-align:center">
-        <div style="font-size:48px;margin-bottom:6px">${p.emoji}</div>
-        <div style="font-size:11px;font-weight:900;color:#fff;padding:0 8px;text-align:center;line-height:1.2">${p.title}</div>
+      <img src="${p.img}" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover"/>
+      <div style="position:absolute;inset:0;background:linear-gradient(transparent 45%,rgba(0,0,0,.85))"></div>
+      <div style="position:absolute;left:0;right:0;bottom:10px;z-index:1;text-align:center">
+        <div class="movie-poster-nome">${p.title}</div>
       </div>
       ${badge}${lock}
     </div>
