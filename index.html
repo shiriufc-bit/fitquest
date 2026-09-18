@@ -289,6 +289,7 @@ html[data-tema="claro"] .carga-inp,html[data-tema="claro"] .reps-real-inp{
 }
 html[data-tema="claro"] .set-card{background:#fafbfc;}
 html[data-tema="claro"] .ep-card,html[data-tema="claro"] .fq2-card{background:#fff;}
+html[data-tema="claro"] .ep-turbo{background:linear-gradient(90deg,rgba(46,204,113,.08),#fff 12%);}
 html[data-tema="claro"] .fq-dia-bolha{border-color:var(--b2);}
 
 /* ════════════════════════════════════════════════════════════════════
@@ -725,6 +726,9 @@ textarea.fi{resize:vertical;min-height:80px;}
 
 /* EPISODE CARD (Exercise) */
 .ep-card{background:var(--s);border-radius:8px;overflow:hidden;margin-bottom:10px;cursor:pointer;transition:background .2s;}
+/* Exercício com técnica do Modo Turbo aplicada — verde discreto, mesma
+   linguagem de "destaque positivo" já usada em série concluída no app. */
+.ep-turbo{border-left:3px solid #2ecc71;background:linear-gradient(90deg,rgba(46,204,113,.07),var(--s) 12%);}
 .ep-card:hover{background:var(--s2);}
 .ep-card.open{border:1px solid rgba(229,9,20,.3);}
 .ep-header{padding:14px 16px;display:flex;align-items:center;gap:12px;}
@@ -1243,7 +1247,7 @@ html[data-tema="claro"] .movie-poster-nome{color:#fff;}
       <option value="es">🇪🇸 ES</option>
     </select>
   </div>
-  <div id="fq-version-badge" style="position:absolute;bottom:8px;right:12px;font-size:9px;color:#333;font-weight:700;z-index:5">v238</div>
+  <div id="fq-version-badge" style="position:absolute;bottom:8px;right:12px;font-size:9px;color:#333;font-weight:700;z-index:5">v240</div>
   <img src="https://images.unsplash.com/photo-1517836357463-d25dfeac3438?w=800&q=80" alt="Fitness" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center top;filter:brightness(.35);z-index:0"/>
   <div class="splash-glow"></div>
   <div class="splash-noise"></div>
@@ -2466,7 +2470,7 @@ html[data-tema="claro"] .movie-poster-nome{color:#fff;}
             <span style="color:var(--mu);font-size:18px">›</span>
           </div>
         </div>
-        <div style="text-align:center;padding:20px 0 4px;font-size:11px;color:var(--mu)">FitQuest <span id="fq-version-badge-perfil">v238</span></div>
+        <div style="text-align:center;padding:20px 0 4px;font-size:11px;color:var(--mu)">FitQuest <span id="fq-version-badge-perfil">v240</span></div>
       </div>
     </div>
 
@@ -3936,8 +3940,511 @@ const TREINOS_PRONTOS = {
       {id:'e029', sets:3, reps:'20-30s', load:'Peso do corpo', rest:30},
       {id:'e028', sets:3, reps:'15', load:'Peso do corpo', rest:30},
     ]
+  },
+
+  // ══ 50 pacotes por grupo muscular — só aparecem no painel admin ══
+  peito_maquina: {
+    nome: '💪 Peito — Máquinas & Cabo',
+    dia: 'Peito (Máquinas)',
+    exercicios: [
+      {id:'e052', sets:4, reps:'10', load:'Pesada', rest:90},
+      {id:'e004', sets:3, reps:'12', load:'Moderada', rest:60},
+      {id:'e054', sets:3, reps:'12', load:'Moderada', rest:60},
+      {id:'e183', sets:3, reps:'15', load:'Leve/Moderada', rest:45}
+    ]
+  },
+  peito_livre: {
+    nome: '💪 Peito — Peso Livre',
+    dia: 'Peito (Livre)',
+    exercicios: [
+      {id:'e001', sets:4, reps:'8', load:'Pesada', rest:90},
+      {id:'e002', sets:3, reps:'10', load:'Moderada/Pesada', rest:75},
+      {id:'e003', sets:3, reps:'12', load:'Moderada', rest:60},
+      {id:'e051', sets:3, reps:'10', load:'Moderada', rest:75}
+    ]
+  },
+  peito_funcional: {
+    nome: '💪 Peito — Funcional',
+    dia: 'Peito (Funcional)',
+    exercicios: [
+      {id:'e055', sets:4, reps:'15', load:'Peso do corpo', rest:45},
+      {id:'e056', sets:3, reps:'15', load:'Peso do corpo', rest:45},
+      {id:'e185', sets:3, reps:'10', load:'Peso do corpo', rest:45},
+      {id:'e636', sets:3, reps:'20', load:'Peso do corpo', rest:30}
+    ]
+  },
+  peito_volume: {
+    nome: '💪 Peito — Volume Misto',
+    dia: 'Peito (Volume)',
+    exercicios: [
+      {id:'e001', sets:4, reps:'8', load:'Pesada', rest:90},
+      {id:'e002', sets:3, reps:'10', load:'Moderada/Pesada', rest:75},
+      {id:'e004', sets:3, reps:'12', load:'Moderada', rest:60},
+      {id:'e053', sets:3, reps:'15', load:'Leve/Moderada', rest:45}
+    ]
+  },
+  peito_avancado: {
+    nome: '💪 Peito — Foco Avançado',
+    dia: 'Peito (Avançado)',
+    exercicios: [
+      {id:'e413', sets:4, reps:'8', load:'Pesada', rest:90},
+      {id:'e412', sets:3, reps:'8', load:'Pesada', rest:90},
+      {id:'e181', sets:3, reps:'10', load:'Moderada/Pesada', rest:75},
+      {id:'e309', sets:3, reps:'8', load:'Peso do corpo', rest:45}
+    ]
+  },
+  costas_maquina: {
+    nome: '🎣 Costas — Máquinas & Cabo',
+    dia: 'Costas (Máquinas)',
+    exercicios: [
+      {id:'e061', sets:4, reps:'10', load:'Pesada', rest:90},
+      {id:'e006', sets:3, reps:'10', load:'Moderada/Pesada', rest:75},
+      {id:'e059', sets:3, reps:'12', load:'Moderada', rest:60},
+      {id:'e455', sets:3, reps:'12', load:'Moderada', rest:60}
+    ]
+  },
+  costas_livre: {
+    nome: '🎣 Costas — Peso Livre',
+    dia: 'Costas (Livre)',
+    exercicios: [
+      {id:'e005', sets:4, reps:'8', load:'Pesada', rest:90},
+      {id:'e007', sets:3, reps:'10', load:'Moderada/Pesada', rest:75},
+      {id:'e060', sets:3, reps:'10', load:'Moderada/Pesada', rest:75},
+      {id:'e042', sets:3, reps:'12', load:'Moderada', rest:60}
+    ]
+  },
+  costas_funcional: {
+    nome: '🎣 Costas — Funcional',
+    dia: 'Costas (Funcional)',
+    exercicios: [
+      {id:'e057', sets:4, reps:'8', load:'Peso do corpo', rest:90},
+      {id:'e306', sets:3, reps:'12', load:'Peso do corpo', rest:60},
+      {id:'e219', sets:3, reps:'12', load:'Peso do corpo', rest:60},
+      {id:'e305', sets:3, reps:'15', load:'Peso do corpo', rest:45}
+    ]
+  },
+  costas_volume: {
+    nome: '🎣 Costas — Volume Misto',
+    dia: 'Costas (Volume)',
+    exercicios: [
+      {id:'e005', sets:4, reps:'8', load:'Pesada', rest:90},
+      {id:'e006', sets:3, reps:'10', load:'Moderada/Pesada', rest:75},
+      {id:'e426', sets:3, reps:'12', load:'Moderada', rest:60},
+      {id:'e103', sets:3, reps:'15', load:'Moderada', rest:45}
+    ]
+  },
+  costas_avancado: {
+    nome: '🎣 Costas — Foco Avançado',
+    dia: 'Costas (Avançado)',
+    exercicios: [
+      {id:'e057', sets:4, reps:'6', load:'Peso do corpo', rest:120},
+      {id:'e060', sets:4, reps:'8', load:'Pesada', rest:90},
+      {id:'e102', sets:3, reps:'8', load:'Pesada', rest:75},
+      {id:'e218', sets:3, reps:'12', load:'Moderada', rest:60}
+    ]
+  },
+  ombro_maquina: {
+    nome: '🎯 Ombro — Máquinas & Cabo',
+    dia: 'Ombro (Máquinas)',
+    exercicios: [
+      {id:'e067', sets:3, reps:'15', load:'Leve/Moderada', rest:45},
+      {id:'e065', sets:3, reps:'15', load:'Leve/Moderada', rest:45},
+      {id:'e063', sets:3, reps:'15', load:'Leve', rest:45},
+      {id:'e498', sets:3, reps:'12', load:'Moderada', rest:60}
+    ]
+  },
+  ombro_livre: {
+    nome: '🎯 Ombro — Peso Livre',
+    dia: 'Ombro (Livre)',
+    exercicios: [
+      {id:'e009', sets:4, reps:'8', load:'Pesada', rest:90},
+      {id:'e010', sets:3, reps:'10', load:'Moderada/Pesada', rest:75},
+      {id:'e011', sets:3, reps:'15', load:'Leve', rest:45},
+      {id:'e012', sets:3, reps:'15', load:'Leve', rest:45}
+    ]
+  },
+  ombro_funcional: {
+    nome: '🎯 Ombro — Funcional',
+    dia: 'Ombro (Funcional)',
+    exercicios: [
+      {id:'e197', sets:3, reps:'10', load:'Peso do corpo', rest:60},
+      {id:'e637', sets:3, reps:'12', load:'Peso do corpo', rest:45},
+      {id:'e519', sets:3, reps:'15', load:'Peso do corpo', rest:30},
+      {id:'e173', sets:3, reps:'12 (cada lado)', load:'Leve/Moderada', rest:45}
+    ]
+  },
+  ombro_volume: {
+    nome: '🎯 Ombro — Volume Misto',
+    dia: 'Ombro (Volume)',
+    exercicios: [
+      {id:'e009', sets:4, reps:'8', load:'Pesada', rest:90},
+      {id:'e011', sets:3, reps:'15', load:'Leve', rest:45},
+      {id:'e064', sets:3, reps:'15', load:'Leve', rest:45},
+      {id:'e012', sets:3, reps:'15', load:'Leve', rest:45}
+    ]
+  },
+  ombro_avancado: {
+    nome: '🎯 Ombro — Foco Avançado',
+    dia: 'Ombro (Avançado)',
+    exercicios: [
+      {id:'e066', sets:4, reps:'10', load:'Moderada/Pesada', rest:75},
+      {id:'e068', sets:3, reps:'12', load:'Leve/Moderada', rest:45},
+      {id:'e397', sets:3, reps:'12', load:'Leve', rest:45},
+      {id:'e402', sets:3, reps:'8', load:'Moderada', rest:75}
+    ]
+  },
+  biceps_maquina: {
+    nome: '💪 Bíceps — Máquinas & Cabo',
+    dia: 'Bíceps (Máquinas)',
+    exercicios: [
+      {id:'e015', sets:3, reps:'12', load:'Moderada', rest:45},
+      {id:'e072', sets:3, reps:'12', load:'Moderada', rest:45},
+      {id:'e214', sets:3, reps:'15', load:'Leve/Moderada', rest:45}
+    ]
+  },
+  biceps_livre: {
+    nome: '💪 Bíceps — Peso Livre',
+    dia: 'Bíceps (Livre)',
+    exercicios: [
+      {id:'e013', sets:4, reps:'10', load:'Moderada/Pesada', rest:60},
+      {id:'e014', sets:3, reps:'12', load:'Moderada', rest:45},
+      {id:'e045', sets:3, reps:'12', load:'Moderada', rest:45}
+    ]
+  },
+  biceps_funcional: {
+    nome: '💪 Bíceps — Funcional',
+    dia: 'Bíceps (Funcional)',
+    exercicios: [
+      {id:'e070', sets:3, reps:'12 (cada braço)', load:'Leve/Moderada', rest:45},
+      {id:'e272', sets:3, reps:'15', load:'Leve', rest:45},
+      {id:'e244', sets:3, reps:'12', load:'Leve/Moderada', rest:45}
+    ]
+  },
+  biceps_volume: {
+    nome: '💪 Bíceps — Volume Misto',
+    dia: 'Bíceps (Volume)',
+    exercicios: [
+      {id:'e013', sets:4, reps:'10', load:'Moderada/Pesada', rest:60},
+      {id:'e045', sets:3, reps:'12', load:'Moderada', rest:45},
+      {id:'e072', sets:3, reps:'15', load:'Leve/Moderada', rest:45}
+    ]
+  },
+  biceps_avancado: {
+    nome: '💪 Bíceps — Foco Avançado',
+    dia: 'Bíceps (Avançado)',
+    exercicios: [
+      {id:'e071', sets:3, reps:'21', load:'Moderada', rest:60},
+      {id:'e210', sets:3, reps:'10', load:'Moderada', rest:45},
+      {id:'e252', sets:3, reps:'10', load:'Moderada', rest:45}
+    ]
+  },
+  triceps_maquina: {
+    nome: '💪 Tríceps — Máquinas & Cabo',
+    dia: 'Tríceps (Máquinas)',
+    exercicios: [
+      {id:'e016', sets:3, reps:'12', load:'Moderada', rest:45},
+      {id:'e074', sets:3, reps:'12', load:'Moderada', rest:45},
+      {id:'e212', sets:3, reps:'15', load:'Leve/Moderada', rest:45},
+      {id:'e076', sets:3, reps:'12 (cada braço)', load:'Leve/Moderada', rest:45}
+    ]
+  },
+  triceps_livre: {
+    nome: '💪 Tríceps — Peso Livre',
+    dia: 'Tríceps (Livre)',
+    exercicios: [
+      {id:'e017', sets:4, reps:'10', load:'Moderada/Pesada', rest:60},
+      {id:'e018', sets:3, reps:'12', load:'Moderada', rest:45},
+      {id:'e075', sets:3, reps:'12 (cada braço)', load:'Leve', rest:45}
+    ]
+  },
+  triceps_funcional: {
+    nome: '💪 Tríceps — Funcional',
+    dia: 'Tríceps (Funcional)',
+    exercicios: [
+      {id:'e050', sets:4, reps:'12', load:'Peso do corpo', rest:60},
+      {id:'e184', sets:3, reps:'12', load:'Peso do corpo', rest:45},
+      {id:'e304', sets:3, reps:'15', load:'Peso do corpo', rest:30}
+    ]
+  },
+  triceps_volume: {
+    nome: '💪 Tríceps — Volume Misto',
+    dia: 'Tríceps (Volume)',
+    exercicios: [
+      {id:'e077', sets:4, reps:'8', load:'Pesada', rest:75},
+      {id:'e016', sets:3, reps:'12', load:'Moderada', rest:45},
+      {id:'e075', sets:3, reps:'15 (cada braço)', load:'Leve', rest:45}
+    ]
+  },
+  triceps_avancado: {
+    nome: '💪 Tríceps — Foco Avançado',
+    dia: 'Tríceps (Avançado)',
+    exercicios: [
+      {id:'e415', sets:4, reps:'8', load:'Pesada', rest:90},
+      {id:'e074', sets:3, reps:'15', load:'Moderada', rest:45},
+      {id:'e420', sets:3, reps:'12', load:'Moderada', rest:45}
+    ]
+  },
+  quadriceps_maquina: {
+    nome: '🦵 Quadríceps — Máquinas & Cabo',
+    dia: 'Quadríceps (Máquinas)',
+    exercicios: [
+      {id:'e020', sets:4, reps:'10', load:'Pesada', rest:90},
+      {id:'e026', sets:3, reps:'10', load:'Moderada/Pesada', rest:75},
+      {id:'e023', sets:3, reps:'15', load:'Moderada', rest:45},
+      {id:'e081', sets:3, reps:'12 (cada perna)', load:'Moderada', rest:60}
+    ]
+  },
+  quadriceps_livre: {
+    nome: '🦵 Quadríceps — Peso Livre',
+    dia: 'Quadríceps (Livre)',
+    exercicios: [
+      {id:'e019', sets:4, reps:'8', load:'Pesada', rest:90},
+      {id:'e078', sets:3, reps:'8', load:'Moderada/Pesada', rest:90},
+      {id:'e079', sets:3, reps:'10 (cada perna)', load:'Moderada', rest:75},
+      {id:'e082', sets:3, reps:'12 (cada perna)', load:'Moderada', rest:60}
+    ]
+  },
+  quadriceps_funcional: {
+    nome: '🦵 Quadríceps — Funcional',
+    dia: 'Quadríceps (Funcional)',
+    exercicios: [
+      {id:'e037', sets:3, reps:'12 (cada perna)', load:'Peso do corpo', rest:45},
+      {id:'e048', sets:3, reps:'12', load:'Leve/Moderada', rest:60},
+      {id:'e327', sets:3, reps:'20', load:'Peso do corpo', rest:30},
+      {id:'e314', sets:3, reps:'12 (cada perna)', load:'Peso do corpo', rest:45}
+    ]
+  },
+  quadriceps_volume: {
+    nome: '🦵 Quadríceps — Volume Misto',
+    dia: 'Quadríceps (Volume)',
+    exercicios: [
+      {id:'e019', sets:4, reps:'8', load:'Pesada', rest:90},
+      {id:'e020', sets:3, reps:'12', load:'Moderada/Pesada', rest:75},
+      {id:'e023', sets:3, reps:'15', load:'Moderada', rest:45},
+      {id:'e082', sets:3, reps:'12 (cada perna)', load:'Moderada', rest:60}
+    ]
+  },
+  quadriceps_avancado: {
+    nome: '🦵 Quadríceps — Foco Avançado',
+    dia: 'Quadríceps (Avançado)',
+    exercicios: [
+      {id:'e180', sets:4, reps:'6', load:'Pesada', rest:120},
+      {id:'e026', sets:4, reps:'8', load:'Pesada', rest:90},
+      {id:'e079', sets:3, reps:'8 (cada perna)', load:'Moderada/Pesada', rest:75},
+      {id:'e237', sets:3, reps:'15 (cada perna)', load:'Leve/Moderada', rest:45}
+    ]
+  },
+  posterior_maquina: {
+    nome: '🦵 Posterior de Coxa — Máquinas & Cabo',
+    dia: 'Posterior de Coxa (Máquinas)',
+    exercicios: [
+      {id:'e024', sets:4, reps:'12', load:'Moderada', rest:60},
+      {id:'e083', sets:3, reps:'12', load:'Moderada', rest:60},
+      {id:'e203', sets:3, reps:'15', load:'Leve/Moderada', rest:45}
+    ]
+  },
+  posterior_livre: {
+    nome: '🦵 Posterior de Coxa — Peso Livre',
+    dia: 'Posterior de Coxa (Livre)',
+    exercicios: [
+      {id:'e021', sets:4, reps:'10', load:'Pesada', rest:90},
+      {id:'e198', sets:3, reps:'12', load:'Moderada', rest:75},
+      {id:'e084', sets:3, reps:'12 (cada perna)', load:'Moderada', rest:60}
+    ]
+  },
+  posterior_funcional: {
+    nome: '🦵 Posterior de Coxa — Funcional',
+    dia: 'Posterior de Coxa (Funcional)',
+    exercicios: [
+      {id:'e131', sets:3, reps:'8', load:'Peso do corpo', rest:75},
+      {id:'e631', sets:3, reps:'15', load:'Peso do corpo', rest:45},
+      {id:'e653', sets:3, reps:'12 (cada perna)', load:'Peso do corpo', rest:45}
+    ]
+  },
+  posterior_volume: {
+    nome: '🦵 Posterior de Coxa — Volume Misto',
+    dia: 'Posterior de Coxa (Volume)',
+    exercicios: [
+      {id:'e021', sets:4, reps:'10', load:'Pesada', rest:90},
+      {id:'e024', sets:3, reps:'12', load:'Moderada', rest:60},
+      {id:'e280', sets:3, reps:'12', load:'Moderada', rest:75},
+      {id:'e199', sets:3, reps:'15 (cada perna)', load:'Leve/Moderada', rest:45}
+    ]
+  },
+  posterior_avancado: {
+    nome: '🦵 Posterior de Coxa — Foco Avançado',
+    dia: 'Posterior de Coxa (Avançado)',
+    exercicios: [
+      {id:'e200', sets:4, reps:'8', load:'Moderada/Pesada', rest:90},
+      {id:'e021', sets:4, reps:'8', load:'Pesada', rest:90},
+      {id:'e131', sets:3, reps:'6', load:'Peso do corpo', rest:90}
+    ]
+  },
+  gluteo_maquina: {
+    nome: '🍑 Glúteo — Máquinas & Cabo',
+    dia: 'Glúteo (Máquinas)',
+    exercicios: [
+      {id:'e086', sets:4, reps:'12', load:'Moderada/Pesada', rest:75},
+      {id:'e238', sets:3, reps:'15', load:'Moderada', rest:45},
+      {id:'e087', sets:3, reps:'12 (cada perna)', load:'Leve/Moderada', rest:45},
+      {id:'e088', sets:3, reps:'15', load:'Leve/Moderada', rest:45}
+    ]
+  },
+  gluteo_livre: {
+    nome: '🍑 Glúteo — Peso Livre',
+    dia: 'Glúteo (Livre)',
+    exercicios: [
+      {id:'e027', sets:4, reps:'10', load:'Pesada', rest:90},
+      {id:'e022', sets:3, reps:'12 (cada perna)', load:'Moderada', rest:60},
+      {id:'e201', sets:3, reps:'12', load:'Moderada/Pesada', rest:75}
+    ]
+  },
+  gluteo_funcional: {
+    nome: '🍑 Glúteo — Funcional',
+    dia: 'Glúteo (Funcional)',
+    exercicios: [
+      {id:'e364', sets:4, reps:'15', load:'Peso do corpo', rest:45},
+      {id:'e164', sets:3, reps:'20', load:'Mini band', rest:30},
+      {id:'e384', sets:3, reps:'15 (cada lado)', load:'Peso do corpo', rest:30},
+      {id:'e163', sets:3, reps:'20', load:'Mini band', rest:30}
+    ]
+  },
+  gluteo_volume: {
+    nome: '🍑 Glúteo — Volume Misto',
+    dia: 'Glúteo (Volume)',
+    exercicios: [
+      {id:'e027', sets:4, reps:'10', load:'Pesada', rest:90},
+      {id:'e086', sets:3, reps:'12', load:'Moderada/Pesada', rest:75},
+      {id:'e238', sets:3, reps:'15', load:'Moderada', rest:45},
+      {id:'e087', sets:3, reps:'15 (cada perna)', load:'Leve', rest:45}
+    ]
+  },
+  gluteo_avancado: {
+    nome: '🍑 Glúteo — Foco Avançado',
+    dia: 'Glúteo (Avançado)',
+    exercicios: [
+      {id:'e031', sets:4, reps:'10 (cada lado)', load:'Moderada/Pesada', rest:75},
+      {id:'e101', sets:4, reps:'8', load:'Pesada', rest:90},
+      {id:'e130', sets:3, reps:'12 (cada lado)', load:'Peso do corpo', rest:45}
+    ]
+  },
+  panturrilha_maquina: {
+    nome: '🦶 Panturrilha — Máquinas & Cabo',
+    dia: 'Panturrilha (Máquinas)',
+    exercicios: [
+      {id:'e089', sets:4, reps:'15', load:'Moderada/Pesada', rest:45},
+      {id:'e206', sets:3, reps:'15', load:'Moderada', rest:45},
+      {id:'e205', sets:3, reps:'20', load:'Leve/Moderada', rest:30}
+    ]
+  },
+  panturrilha_livre: {
+    nome: '🦶 Panturrilha — Peso Livre',
+    dia: 'Panturrilha (Livre)',
+    exercicios: [
+      {id:'e025', sets:4, reps:'15', load:'Moderada', rest:45},
+      {id:'e090', sets:3, reps:'15 (cada perna)', load:'Leve/Moderada', rest:45}
+    ]
+  },
+  panturrilha_funcional: {
+    nome: '🦶 Panturrilha — Funcional',
+    dia: 'Panturrilha (Funcional)',
+    exercicios: [
+      {id:'e634', sets:4, reps:'20', load:'Peso do corpo', rest:30},
+      {id:'e641', sets:3, reps:'30', load:'Peso do corpo', rest:30},
+      {id:'e208', sets:3, reps:'12', load:'Peso do corpo', rest:30}
+    ]
+  },
+  panturrilha_volume: {
+    nome: '🦶 Panturrilha — Volume Misto',
+    dia: 'Panturrilha (Volume)',
+    exercicios: [
+      {id:'e025', sets:4, reps:'15', load:'Moderada', rest:45},
+      {id:'e089', sets:3, reps:'15', load:'Moderada', rest:45},
+      {id:'e090', sets:3, reps:'20 (cada perna)', load:'Leve', rest:30}
+    ]
+  },
+  panturrilha_avancado: {
+    nome: '🦶 Panturrilha — Foco Avançado',
+    dia: 'Panturrilha (Avançado)',
+    exercicios: [
+      {id:'e104', sets:4, reps:'12', load:'Pesada', rest:60},
+      {id:'e025', sets:4, reps:'20', load:'Moderada', rest:30},
+      {id:'e634', sets:3, reps:'25', load:'Peso do corpo', rest:30}
+    ]
+  },
+  abdomen_maquina: {
+    nome: '🔥 Abdômen — Máquinas & Cabo',
+    dia: 'Abdômen (Máquinas)',
+    exercicios: [
+      {id:'e092', sets:4, reps:'15', load:'Moderada', rest:45},
+      {id:'e093', sets:3, reps:'15', load:'Moderada', rest:45},
+      {id:'e222', sets:3, reps:'15', load:'Moderada', rest:45}
+    ]
+  },
+  abdomen_livre: {
+    nome: '🔥 Abdômen — Peso Livre',
+    dia: 'Abdômen (Livre)',
+    exercicios: [
+      {id:'e028', sets:3, reps:'20', load:'Peso do corpo', rest:30},
+      {id:'e094', sets:3, reps:'20', load:'Leve', rest:30},
+      {id:'e225', sets:3, reps:'12', load:'Peso do corpo', rest:45}
+    ]
+  },
+  abdomen_funcional: {
+    nome: '🔥 Abdômen — Funcional',
+    dia: 'Abdômen (Funcional)',
+    exercicios: [
+      {id:'e029', sets:3, reps:'40s', load:'Peso do corpo', rest:30},
+      {id:'e039', sets:3, reps:'30s (cada lado)', load:'Peso do corpo', rest:30},
+      {id:'e040', sets:3, reps:'12 (cada lado)', load:'Peso do corpo', rest:30},
+      {id:'e096', sets:3, reps:'30s', load:'Peso do corpo', rest:30}
+    ]
+  },
+  abdomen_volume: {
+    nome: '🔥 Abdômen — Volume Misto',
+    dia: 'Abdômen (Volume)',
+    exercicios: [
+      {id:'e028', sets:3, reps:'20', load:'Peso do corpo', rest:30},
+      {id:'e029', sets:3, reps:'45s', load:'Peso do corpo', rest:30},
+      {id:'e094', sets:3, reps:'20', load:'Leve', rest:30},
+      {id:'e303', sets:3, reps:'20', load:'Peso do corpo', rest:30}
+    ]
+  },
+  abdomen_avancado: {
+    nome: '🔥 Abdômen — Foco Avançado',
+    dia: 'Abdômen (Avançado)',
+    exercicios: [
+      {id:'e142', sets:3, reps:'20s', load:'Peso do corpo', rest:45},
+      {id:'e134', sets:3, reps:'12 (cada lado)', load:'Moderada', rest:45},
+      {id:'e225', sets:4, reps:'15', load:'Peso do corpo', rest:45},
+      {id:'e139', sets:3, reps:'20', load:'Peso do corpo', rest:30}
+    ]
   }
 };
+// Agrupamento dos pacotes por categoria — só organiza a interface (não afeta
+// a lógica de aplicação, que continua usando a chave em TREINOS_PRONTOS).
+const PACK_GRUPOS = [
+  ['📋 Combos prontos', ['emagrecimento','gluteos_pernas','peito_triceps','costas_biceps','geral','retorno_corrida']],
+  ['💪 Peito', ['peito_maquina','peito_livre','peito_funcional','peito_volume','peito_avancado']],
+  ['🎣 Costas', ['costas_maquina','costas_livre','costas_funcional','costas_volume','costas_avancado']],
+  ['🎯 Ombro', ['ombro_maquina','ombro_livre','ombro_funcional','ombro_volume','ombro_avancado']],
+  ['💪 Bíceps', ['biceps_maquina','biceps_livre','biceps_funcional','biceps_volume','biceps_avancado']],
+  ['💪 Tríceps', ['triceps_maquina','triceps_livre','triceps_funcional','triceps_volume','triceps_avancado']],
+  ['🦵 Quadríceps', ['quadriceps_maquina','quadriceps_livre','quadriceps_funcional','quadriceps_volume','quadriceps_avancado']],
+  ['🦵 Posterior de Coxa', ['posterior_maquina','posterior_livre','posterior_funcional','posterior_volume','posterior_avancado']],
+  ['🍑 Glúteo', ['gluteo_maquina','gluteo_livre','gluteo_funcional','gluteo_volume','gluteo_avancado']],
+  ['🦶 Panturrilha', ['panturrilha_maquina','panturrilha_livre','panturrilha_funcional','panturrilha_volume','panturrilha_avancado']],
+  ['🔥 Abdômen', ['abdomen_maquina','abdomen_livre','abdomen_funcional','abdomen_volume','abdomen_avancado']],
+];
+// Monta as <option> de um <select>, agrupadas em <optgroup> por categoria —
+// usado tanto no seletor "Usar pronto..." de cada dia quanto em qualquer
+// outro lugar que precise listar os 56 pacotes de forma organizada.
+function renderPackOptions(){
+  return PACK_GRUPOS.map(([label, chaves])=>{
+    const opts = chaves.filter(k=>TREINOS_PRONTOS[k]).map(k=>`<option value="${k}">${TREINOS_PRONTOS[k].nome}</option>`).join('');
+    return opts ? `<optgroup label="${label}">${opts}</optgroup>` : '';
+  }).join('');
+}
 
 const DG={
   // ══ MESOCICLO 1: ADAPTAÇÃO (Semanas 1-4) ══
@@ -11186,7 +11693,13 @@ function renderGymDay(w,d,u){
         if(/isometri|hold|wall sit|pausa|l-sit|prancha|plank/i.test(nm)) return;
         if(/mobilidade|alongamento|stretch/i.test(nm+' '+mus)) return;
         if(/AQUECIMENTO|MOBILIDADE|FINALIZADOR/.test(ed.obs||'')) return;
-        const tec = lista[(i + parseInt(w,10||1)) % lista.length];
+        // BUGFIX: `parseInt(w,10||1)` tentava converter o texto "Semana 1"
+        // direto pra número, o que sempre resulta em NaN (w é uma string tipo
+        // "Semana 1", não um número) — e trava a tela com erro fatal toda vez
+        // que o Turbo tenta aplicar uma técnica. Extrai o número de verdade
+        // primeiro, do mesmo jeito que o resto do app já faz em vários lugares.
+        const numSemana = parseInt(String(w).replace(/\D/g,''),10) || 1;
+        const tec = lista[(i + numSemana) % lista.length];
         ed.tecnica = tec.nome;
         ed.tecnicaObs = tec.obs;
         ed.turbo = true;
@@ -11219,19 +11732,19 @@ function renderGymDay(w,d,u){
     const ex=getExById(ed.id);if(!ex)return '';
     const lk=`${w}_${d}_${ex.id}`;const sl=(u.loadHistory&&u.loadHistory[lk])||ed.load||'';
     const proximo=exs[i+1]?getExById(exs[i+1].id):null;
-    return `<div class="ep-card" id="ep-${i}" data-idx="${i}">
+    return `<div class="ep-card ${ed.turbo?'ep-turbo':''}" id="ep-${i}" data-idx="${i}">
       <div class="ep-header" onclick="togEp(${i})">
         <div class="ep-drag-handle" style="display:flex;align-items:center;justify-content:center;flex-shrink:0;width:18px;color:var(--mu);font-size:14px;letter-spacing:-1px;margin-right:2px" title="Segure e arraste pra reordenar">⠿</div>
         <div class="ep-num ${dayDone?'done':''}">${i+1}</div>
         <div class="ep-info"><div class="ep-title">${exNome(ex)} <button onclick="event.stopPropagation();abrirFichaExercicio('${ex.id}')" style="background:rgba(255,255,255,.08);border:1px solid var(--b);color:var(--t2);border-radius:50%;width:20px;height:20px;font-size:11px;cursor:pointer;vertical-align:middle;margin-left:4px;padding:0;line-height:1" title="Ver ficha completa">ℹ️</button></div><div class="ep-sub">${ex.muscle} · ${ex.equipment}</div></div>
-        <div class="ep-chips"><span class="ep-chip">${ed.sets}×${ed.reps}</span><span class="ep-chip">⏱${ed.rest||60}s</span>${ed.tecnica?`<span class="ep-chip" style="background:rgba(229,9,20,.18);color:#ff5a63;border:1px solid rgba(229,9,20,.35)">${ed.turbo?'⚡':'🔥'} ${ed.tecnica}</span>`:''}</div>
+        <div class="ep-chips"><span class="ep-chip">${ed.sets}×${ed.reps}</span><span class="ep-chip">⏱${ed.rest||60}s</span>${ed.tecnica?`<span class="ep-chip" style="background:${ed.turbo?'rgba(46,204,113,.18)':'rgba(229,9,20,.18)'};color:${ed.turbo?'#2ecc71':'#ff5a63'};border:1px solid ${ed.turbo?'rgba(46,204,113,.4)':'rgba(229,9,20,.35)'}">${ed.turbo?'⚡':'🔥'} ${ed.tecnica}</span>`:''}</div>
         <span class="ep-chv">▾</span>
       </div>
       <div class="ep-body">
         <div class="ep-thumb" style="position:relative;overflow:hidden">
           ${renderExThumb(ex)}
         </div>
-        <div class="ep-obs">${ed.tecnica?`<div style="background:rgba(229,9,20,.1);border:1px solid rgba(229,9,20,.3);border-radius:6px;padding:10px 12px;margin-bottom:8px;font-size:12px;color:#ff8a90;font-weight:600">🔥 ${ed.tecnicaObs}</div>`:''}💡 ${exObs(ex, ed.obs)}</div>
+        <div class="ep-obs">${ed.tecnica?`<div style="background:${ed.turbo?'rgba(46,204,113,.1)':'rgba(229,9,20,.1)'};border:1px solid ${ed.turbo?'rgba(46,204,113,.3)':'rgba(229,9,20,.3)'};border-radius:6px;padding:10px 12px;margin-bottom:8px;font-size:12px;color:${ed.turbo?'#4ade80':'#ff8a90'};font-weight:600">${ed.turbo?'⚡':'🔥'} ${ed.tecnicaObs}</div>`:''}💡 ${exObs(ex, ed.obs)}</div>
         <div>
           ${Array.from({length:ed.sets},(_,si)=>{
             const sk=`${w}_${d}_${i}_s${si}`;const sd=u.gymDone&&u.gymDone[sk];
@@ -13134,8 +13647,12 @@ function openEditSt(email, semanaInicial){
   document.getElementById('modal-st-content').innerHTML=`
     <div class="ed-sec"><div class="ed-stt">🏋️ Musculação</div>
       <div style="font-size:10.5px;color:var(--mu);margin-bottom:6px">📦 Adicionar pacote pronto como <b>dia novo</b> (pra substituir um dia já existente, use o seletor "Usar pronto..." dentro de cada dia, mais abaixo):</div>
-      <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px">
-        ${Object.keys(TREINOS_PRONTOS).map(k=>`<button onclick="admAplicarPack('${k}')" style="background:var(--s2);border:1px solid var(--b);border-radius:8px;padding:7px 11px;color:#fff;font-size:11px;font-weight:700;cursor:pointer;white-space:nowrap">${TREINOS_PRONTOS[k].nome}</button>`).join('')}
+      <div style="display:flex;gap:6px;margin-bottom:10px">
+        <select id="pack-novo-dia-sel" style="flex:1;background:var(--s2);border:1px solid var(--b);border-radius:8px;padding:9px 10px;color:#fff;font-size:12px">
+          <option value="">Escolher um pacote pronto...</option>
+          ${renderPackOptions()}
+        </select>
+        <button onclick="const s=document.getElementById('pack-novo-dia-sel'); if(s.value){admAplicarPack(s.value); s.value='';} else { fqToast('Escolha um pacote na lista primeiro.','warn'); }" style="background:var(--r);border:none;border-radius:8px;padding:9px 16px;color:#fff;font-size:12px;font-weight:800;cursor:pointer;white-space:nowrap">+ Add</button>
       </div>
       <div class="wsel" id="egw-tabs">${Object.keys(GP).map(w=>`<div class="wsb ${w===editGW?'active':''}" onclick="selEGW('${w}',this)">${w}</div>`).join('')}</div><div id="egw-content"></div></div>
     <div class="ed-sec"><div class="ed-stt">🏃 Corrida</div><div class="wsel" id="erw-tabs">${Object.keys(RP).map(w=>`<div class="wsb ${w===editRW?'active':''}" onclick="selERW('${w}',this)">${w}</div>`).join('')}</div><div id="erw-content"></div></div>`;
@@ -13302,7 +13819,7 @@ function renderEGW(w,u){
       <div style="display:flex;gap:6px;flex-wrap:wrap">
         <select onchange="if(this.value){admAplicarPackNoDia('${w}','${day}',this.value);this.value='';}" style="font-size:9.5px;padding:4px 6px;border-radius:6px;background:var(--s2);color:#fff;border:1px solid var(--b);max-width:150px">
           <option value="">📦 Usar pronto...</option>
-          ${Object.keys(TREINOS_PRONTOS).map(k=>`<option value="${k}">${TREINOS_PRONTOS[k].nome}</option>`).join('')}
+          ${renderPackOptions()}
         </select>
         <button onclick="limparTreinoDia('${w}','${day}')" style="background:rgba(229,9,20,.08);border:1px solid rgba(229,9,20,.2);border-radius:6px;padding:4px 9px;color:var(--r);font-size:9.5px;font-weight:700;cursor:pointer">🗑️ Limpar</button>
       </div>
