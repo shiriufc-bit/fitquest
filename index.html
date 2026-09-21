@@ -1247,7 +1247,7 @@ html[data-tema="claro"] .movie-poster-nome{color:#fff;}
       <option value="es">🇪🇸 ES</option>
     </select>
   </div>
-  <div id="fq-version-badge" style="position:absolute;bottom:8px;right:12px;font-size:9px;color:#333;font-weight:700;z-index:5">v240</div>
+  <div id="fq-version-badge" style="position:absolute;bottom:8px;right:12px;font-size:9px;color:#333;font-weight:700;z-index:5">v241</div>
   <img src="https://images.unsplash.com/photo-1517836357463-d25dfeac3438?w=800&q=80" alt="Fitness" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center top;filter:brightness(.35);z-index:0"/>
   <div class="splash-glow"></div>
   <div class="splash-noise"></div>
@@ -2470,7 +2470,7 @@ html[data-tema="claro"] .movie-poster-nome{color:#fff;}
             <span style="color:var(--mu);font-size:18px">›</span>
           </div>
         </div>
-        <div style="text-align:center;padding:20px 0 4px;font-size:11px;color:var(--mu)">FitQuest <span id="fq-version-badge-perfil">v240</span></div>
+        <div style="text-align:center;padding:20px 0 4px;font-size:11px;color:var(--mu)">FitQuest <span id="fq-version-badge-perfil">v241</span></div>
       </div>
     </div>
 
@@ -13934,7 +13934,7 @@ function renderERW(w,u){
     <div class="exer-g"><div><div class="ml2">Dia</div><input class="mi" data-si="${si}" data-field="day" value="${s.day}"/></div><div><div class="ml2">Tipo</div><input class="mi" data-si="${si}" data-field="type" value="${s.type}"/></div><div><div class="ml2">Distância</div><input class="mi" data-si="${si}" data-field="dist" value="${s.dist}"/></div></div>
     <div class="exer-g"><div><div class="ml2">Pace</div><input class="mi" data-si="${si}" data-field="pace" value="${s.pace||''}"/></div><div><div class="ml2">Duração</div><input class="mi" data-si="${si}" data-field="dur" value="${s.dur||''}"/></div><div><div class="ml2">Dica</div><input class="mi" data-si="${si}" data-field="tip" value="${s.tip||''}"/></div></div></div>`;
   });
-  h+=`<button class="btn-addex" onclick="addSRun('${w}')" style="border-color:rgba(229,9,20,.2);color:var(--r)">+ Sessão</button><button class="btn-savewk" onclick="saveERW('${w}')" style="margin-top:8px">💾 Salvar corrida</button>`;
+  h+=`<button class="btn-addex" onclick="addSRun('${w}')" style="border-color:rgba(229,9,20,.2);color:var(--r)">+ Sessão</button><button class="btn-addex" onclick="admAplicarProgressaoCorrida('${w}')" style="border-color:rgba(46,204,113,.35);color:#2ecc71;margin-top:8px">📈 Progredir essas sessões pras próximas semanas</button><button class="btn-savewk" onclick="saveERW('${w}')" style="margin-top:8px">💾 Salvar corrida</button>`;
   document.getElementById('erw-content').innerHTML=h;
 }
 function saveEGW(w){const users=DB.get('fq_users')||{};const u=admGetAluno(editEmail);if(!u)return;users[editEmail]=u;ensureAP(u);const ef=document.getElementById('ef');if(ef)u.aiPlan.gym[w].fase=ef.value;document.querySelectorAll('#egw-content .mi[data-field],#egw-content select[data-field]').forEach(inp=>{const day=inp.dataset.day;const idx=parseInt(inp.dataset.idx);const field=inp.dataset.field;if(day&&!isNaN(idx)&&field&&u.aiPlan.gym[w].days[day]?.[idx]!==undefined)u.aiPlan.gym[w].days[day][idx][field]=['sets','rest'].includes(field)?parseInt(inp.value)||1:inp.value;});u.trainApproved=true;DB.set('fq_users',users);syncAlunoAdmin(u).catch(()=>{});fqToast(t('msg.c72391b3b3'),'ok');}
@@ -14025,6 +14025,94 @@ async function admAplicarProgressaoSemanas(w){
   fqToast(`📈 Progressão aplicada em ${proximasSemanas.length} semana(s) — já enviado pro aluno.`,'ok',5000);
 }
 function saveERW(w){const users=DB.get('fq_users')||{};const u=admGetAluno(editEmail);if(!u)return;users[editEmail]=u;ensureAP(u);const ef=document.getElementById('erf');if(ef)u.aiPlan.run[w].meta=ef.value;document.querySelectorAll('#erw-content .mi[data-field]').forEach(inp=>{const si=parseInt(inp.dataset.si);const field=inp.dataset.field;if(!isNaN(si)&&field&&u.aiPlan.run[w].sessions[si])u.aiPlan.run[w].sessions[si][field]=inp.value;});u.trainApproved=true;DB.set('fq_users',users);syncAlunoAdmin(u).catch(()=>{});fqToast(t('msg.c72391b3b3'),'ok');}
+
+// ══════════════════════════════════════════════════════════════════════
+// ══ PROGRESSÃO AUTOMÁTICA DA CORRIDA EDITADA ══
+// Mesmo mecanismo da musculação (progredirExercicio/admAplicarProgressaoSemanas),
+// adaptado pra corrida — com uma diferença importante: os campos de sessão
+// (dist/dur/pace) são texto livre, bem mais variáveis que séries/reps
+// ("5 km" convive com "3 KM ALTERNANDO 150M CORRIDA X 250M CAMINHADA").
+// Por segurança, só progride distância/duração quando o campo é um número
+// limpo (ex: "5 km", "~35 min") — sessão intervalada/run-walk/qualquer
+// texto mais complexo fica INTOCADA, igual ao dia é editado. PACE NUNCA é
+// alterado automaticamente: evolução de ritmo depende de teste real de
+// condicionamento, não de fórmula — fica sempre a critério seu.
+// Regra de progressão (cautelosa, como pedido):
+//   • dentro do bloco de 4 semanas: +2% por semana sobre a base do ciclo
+//   • 4ª semana do bloco = DELOAD (recuperação): -20% em relação à base do ciclo
+//   • cada ciclo novo começa com +5% sobre o ciclo anterior (ganho real ao
+//     longo do tempo) — ritmo de crescimento bem abaixo da "regra dos 10%"
+//     clássica do treinamento de corrida, de propósito.
+// ══════════════════════════════════════════════════════════════════════
+function progredirSessaoCorrida(base, offset){
+  if(offset <= 0) return {...base};
+  const ciclo = Math.ceil(offset/4);
+  const posNoCiclo = offset - (ciclo-1)*4;
+  const ehDeload = posNoCiclo === 4;
+
+  // só mexe se o campo for EXATAMENTE "N km" — qualquer outro texto (intervalado,
+  // run/walk, observação) é complexo demais pra alterar com segurança e fica igual
+  const m = String(base.dist||'').trim().match(/^(\d+(?:[.,]\d+)?)\s*km$/i);
+  if(!m) return {...base};
+
+  const distBase = parseFloat(m[1].replace(',','.'));
+  const distBaseCiclo = distBase * (1 + 0.05*(ciclo-1));
+  const distFinal = Math.round((ehDeload ? distBaseCiclo*0.8 : distBaseCiclo*(1+0.02*(posNoCiclo-1))) * 10)/10;
+  const distTexto = `${distFinal}`.replace('.',',') + ' km';
+
+  let durTexto = base.dur;
+  const md = String(base.dur||'').trim().match(/^~?(\d+)\s*min$/i);
+  if(md){
+    const durFinal = Math.round(parseInt(md[1]) * (distFinal/distBase));
+    durTexto = base.dur.replace(md[1], String(durFinal));
+  }
+  return {...base, dist:distTexto, dur:durTexto}; // pace e tip nunca mudam
+}
+
+async function admAplicarProgressaoCorrida(w){
+  const u = admGetAluno(editEmail); if(!u){ fqToast('Aluno não encontrado.','warn'); return; }
+  ensureAP(u);
+  if(!u.aiPlan.run?.[w]?.sessions?.length){ fqToast('Essa semana não tem sessões de corrida pra usar como base.','warn'); return; }
+
+  // captura o que está no formulário agora (mesmo sem ter clicado "Salvar corrida")
+  const efEl = document.getElementById('erf');
+  if(efEl) u.aiPlan.run[w].meta = efEl.value;
+  document.querySelectorAll('#erw-content .mi[data-field]').forEach(inp=>{
+    const si=parseInt(inp.dataset.si), field=inp.dataset.field;
+    if(!isNaN(si) && field && u.aiPlan.run[w].sessions[si]) u.aiPlan.run[w].sessions[si][field]=inp.value;
+  });
+
+  const sessoesBase = u.aiPlan.run[w].sessions;
+  const numeroBase = parseInt(String(w).replace(/\D/g,''))||1;
+  const proximasSemanas = Object.keys(u.aiPlan.run)
+    .filter(k => (parseInt(String(k).replace(/\D/g,''))||0) > numeroBase)
+    .sort((a,b)=>(parseInt(a.replace(/\D/g,''))||0)-(parseInt(b.replace(/\D/g,''))||0));
+
+  if(!proximasSemanas.length){ fqToast('Não há semanas de corrida depois dessa pra progredir.','warn'); return; }
+
+  const ok = await fqConfirm(
+    `Progredir corrida pra ${proximasSemanas.length} semana(s)?`,
+    `Isso vai SUBSTITUIR as sessões de ${proximasSemanas.join(', ')} pelas mesmas sessões de ${w}, com distância aumentando bem devagar (só quando o campo for um número limpo tipo "5 km") e recuperação a cada 4ª semana. Pace nunca muda sozinho. Não dá pra desfazer.`,
+    'Aplicar progressão', '📈'
+  );
+  if(!ok) return;
+
+  const users = DB.get('fq_users')||{};
+  users[editEmail] = u;
+  proximasSemanas.forEach(wAlvo=>{
+    const numeroAlvo = parseInt(String(wAlvo).replace(/\D/g,''))||0;
+    const offset = numeroAlvo - numeroBase;
+    const novasSessoes = sessoesBase.map(s=>progredirSessaoCorrida(s, offset));
+    if(!u.aiPlan.run[wAlvo]) u.aiPlan.run[wAlvo] = {meta:'', sessions:[]};
+    u.aiPlan.run[wAlvo].meta = (u.aiPlan.run[w].meta||'') + ` (progressão de ${w})`;
+    u.aiPlan.run[wAlvo].sessions = novasSessoes;
+  });
+  u.trainApproved = true;
+  DB.set('fq_users', users);
+  renderERW(w, u);
+  await syncAlunoAdmin(u).catch(()=>{ fqToast('⚠️ Salvo no celular, mas não sincronizou. Confira a internet e tente de novo.','warn',6000); });
+  fqToast(`📈 Progressão de corrida aplicada em ${proximasSemanas.length} semana(s) — já enviado pro aluno.`,'ok',5000);
+}
 function addSEx(w,d){const users=DB.get('fq_users')||{};const u=admGetAluno(editEmail);if(!u)return;users[editEmail]=u;ensureAP(u);u.aiPlan.gym[w].days[d].push({id:EXERCISE_BANK[0]?.id||'e001',sets:3,reps:'12',load:'Moderada',rest:60});DB.set('fq_users',users);renderEGW(w,u);}
 function remSEx(w,d,i){const users=DB.get('fq_users')||{};const u=admGetAluno(editEmail);if(!u)return;users[editEmail]=u;u.aiPlan.gym[w].days[d].splice(i,1);DB.set('fq_users',users);renderEGW(w,u);}
 // ── Aplica um pacote de treino pronto (TREINOS_PRONTOS) na semana em edição ──
