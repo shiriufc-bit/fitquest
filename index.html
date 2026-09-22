@@ -1247,7 +1247,7 @@ html[data-tema="claro"] .movie-poster-nome{color:#fff;}
       <option value="es">🇪🇸 ES</option>
     </select>
   </div>
-  <div id="fq-version-badge" style="position:absolute;bottom:8px;right:12px;font-size:9px;color:#333;font-weight:700;z-index:5">v241</div>
+  <div id="fq-version-badge" style="position:absolute;bottom:8px;right:12px;font-size:9px;color:#333;font-weight:700;z-index:5">v242</div>
   <img src="https://images.unsplash.com/photo-1517836357463-d25dfeac3438?w=800&q=80" alt="Fitness" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center top;filter:brightness(.35);z-index:0"/>
   <div class="splash-glow"></div>
   <div class="splash-noise"></div>
@@ -2470,7 +2470,7 @@ html[data-tema="claro"] .movie-poster-nome{color:#fff;}
             <span style="color:var(--mu);font-size:18px">›</span>
           </div>
         </div>
-        <div style="text-align:center;padding:20px 0 4px;font-size:11px;color:var(--mu)">FitQuest <span id="fq-version-badge-perfil">v241</span></div>
+        <div style="text-align:center;padding:20px 0 4px;font-size:11px;color:var(--mu)">FitQuest <span id="fq-version-badge-perfil">v242</span></div>
       </div>
     </div>
 
@@ -14275,6 +14275,7 @@ function renderRunEdW(w){
   });
 
   h+=`<button class="btn-addex" onclick="runEdAddSes('${w}')" style="border-color:rgba(229,9,20,.2);color:var(--r)">+ Sessão</button>
+    <button class="btn-addex" onclick="runEdAplicarProgressao('${w}')" style="border-color:rgba(46,204,113,.35);color:#2ecc71;margin-top:8px">📈 Progredir essas sessões pras próximas semanas</button>
     <button class="btn-savewk" onclick="salvarRunEd('${w}')" style="margin-top:8px">💾 Salvar plano de corrida</button>
     <button onclick="runEdRemSemana('${w}')" style="width:100%;margin-top:8px;background:rgba(229,9,20,.06);border:1px solid rgba(229,9,20,.2);color:var(--r);border-radius:8px;padding:10px;font-size:11px;font-weight:700;cursor:pointer">🗑️ Excluir ${w}</button>`;
 
@@ -14326,6 +14327,53 @@ async function runEdRemSemana(w){
   runEdRenderTabs(u);
   renderRunEdW(runEdW);
   fqToast(w+' excluída. Toque em salvar pra confirmar.','info',5000);
+}
+
+// ══════════════════════════════════════════════════════════════════════
+// ══ PROGRESSÃO AUTOMÁTICA DA CORRIDA — editor real (openEditRun) ══
+// Reaproveita a MESMA função progredirSessaoCorrida usada no outro editor
+// de corrida (renderERW) — só a "fiação" muda aqui, pra usar as funções
+// próprias deste editor (runEdCapturar/runEdGetU/runEdPersistLocal).
+// ══════════════════════════════════════════════════════════════════════
+async function runEdAplicarProgressao(w){
+  runEdCapturar(w); // captura o que está no formulário agora, antes de usar como base
+  const u = runEdGetU(); if(!u){ fqToast('Aluno não encontrado.','warn'); return; }
+  if(!u.aiPlan?.run?.[w]?.sessions?.length){ fqToast('Essa semana não tem sessões de corrida pra usar como base.','warn'); return; }
+
+  const sessoesBase = u.aiPlan.run[w].sessions;
+  const numeroBase = parseInt(String(w).replace(/\D/g,''))||1;
+  const proximasSemanas = runEdSemanas(u).filter(k=>(parseInt(k.replace(/\D/g,''))||0) > numeroBase);
+
+  if(!proximasSemanas.length){ fqToast('Não há semanas de corrida depois dessa pra progredir.','warn'); return; }
+
+  const ok = await fqConfirm(
+    `Progredir corrida pra ${proximasSemanas.length} semana(s)?`,
+    `Isso vai SUBSTITUIR as sessões de ${proximasSemanas.join(', ')} pelas mesmas sessões de ${w}, com distância aumentando bem devagar (só quando o campo for um número limpo tipo "5 km") e recuperação a cada 4ª semana. Pace nunca muda sozinho. Não dá pra desfazer.`,
+    'Aplicar progressão', '📈'
+  );
+  if(!ok) return;
+
+  proximasSemanas.forEach(wAlvo=>{
+    const numeroAlvo = parseInt(String(wAlvo).replace(/\D/g,''))||0;
+    const offset = numeroAlvo - numeroBase;
+    const novasSessoes = sessoesBase.map(s=>{
+      const prog = progredirSessaoCorrida(s, offset);
+      // mantém distKm coerente com o novo texto de distância — usado no
+      // cálculo de volume semanal, igual o runEdCapturar já faz nas edições manuais
+      const m = String(prog.dist||'').match(/([\d.,]+)\s*km/i);
+      prog.distKm = m ? (parseFloat(m[1].replace(',','.'))||0) : (s.distKm||0);
+      return prog;
+    });
+    if(!u.aiPlan.run[wAlvo]) u.aiPlan.run[wAlvo] = {meta:'', sessions:[]};
+    u.aiPlan.run[wAlvo].meta = (u.aiPlan.run[w].meta||'') + ` (progressão de ${w})`;
+    u.aiPlan.run[wAlvo].sessions = novasSessoes;
+  });
+  u.trainApproved = true;
+  runEdPersistLocal(u);
+  runEdRenderTabs(u);
+  renderRunEdW(w);
+  await syncAlunoAdmin(u).catch(()=>{ fqToast('⚠️ Salvo no celular, mas não sincronizou. Confira a internet e tente de novo.','warn',6000); });
+  fqToast(`📈 Progressão de corrida aplicada em ${proximasSemanas.length} semana(s) — já enviado pro aluno.`,'ok',5000);
 }
 
 async function salvarRunEd(w){
