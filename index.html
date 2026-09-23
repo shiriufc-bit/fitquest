@@ -1247,7 +1247,7 @@ html[data-tema="claro"] .movie-poster-nome{color:#fff;}
       <option value="es">🇪🇸 ES</option>
     </select>
   </div>
-  <div id="fq-version-badge" style="position:absolute;bottom:8px;right:12px;font-size:9px;color:#333;font-weight:700;z-index:5">v245</div>
+  <div id="fq-version-badge" style="position:absolute;bottom:8px;right:12px;font-size:9px;color:#333;font-weight:700;z-index:5">v246</div>
   <img src="https://images.unsplash.com/photo-1517836357463-d25dfeac3438?w=800&q=80" alt="Fitness" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center top;filter:brightness(.35);z-index:0"/>
   <div class="splash-glow"></div>
   <div class="splash-noise"></div>
@@ -2470,7 +2470,7 @@ html[data-tema="claro"] .movie-poster-nome{color:#fff;}
             <span style="color:var(--mu);font-size:18px">›</span>
           </div>
         </div>
-        <div style="text-align:center;padding:20px 0 4px;font-size:11px;color:var(--mu)">FitQuest <span id="fq-version-badge-perfil">v245</span></div>
+        <div style="text-align:center;padding:20px 0 4px;font-size:11px;color:var(--mu)">FitQuest <span id="fq-version-badge-perfil">v246</span></div>
       </div>
     </div>
 
@@ -14357,15 +14357,35 @@ async function runEdAplicarProgressao(w){
   if(!u.aiPlan?.run?.[w]?.sessions?.length){ fqToast('Essa semana não tem sessões de corrida pra usar como base.','warn'); return; }
 
   const sessoesBase = u.aiPlan.run[w].sessions;
+  const tiposBase = new Set(sessoesBase.map(s=>s.type));
   const numeroBase = parseInt(String(w).replace(/\D/g,''))||1;
   const proximasSemanas = runEdSemanas(u).filter(k=>(parseInt(k.replace(/\D/g,''))||0) > numeroBase);
 
   if(!proximasSemanas.length){ fqToast('Não há semanas de corrida depois dessa pra progredir.','warn'); return; }
 
+  // ── Alerta de variedade real que seria perdida ──
+  // As semanas seguintes podem já ter sido geradas pelo motor de corrida com
+  // periodização científica própria (intervalado, fartlek, ritmo de prova,
+  // taper...) — bem diferente de "repetir o mesmo treino toda semana". Aplicar
+  // a progressão por cima disso SUBSTITUI essa variedade real por cópias da
+  // semana base (só crescendo um pouco), o que é regressivo pra um plano que
+  // já estava certo. Detecta isso (tipo de sessão diferente da base já
+  // presente nas semanas seguintes) e avisa antes de deixar confirmar.
+  const tiposQuePerderia = new Set();
+  proximasSemanas.forEach(wAlvo=>{
+    (u.aiPlan.run[wAlvo]?.sessions||[]).forEach(s=>{ if(s.type && !tiposBase.has(s.type)) tiposQuePerderia.add(s.type); });
+  });
+
+  let mensagem = `Isso vai SUBSTITUIR as sessões de ${proximasSemanas.join(', ')} pelas mesmas sessões de ${w}, com distância aumentando bem devagar (só quando o campo for um número limpo tipo "5 km") e recuperação a cada 4ª semana. Pace nunca muda sozinho.`;
+  if(tiposQuePerderia.size){
+    mensagem += `\n\n⚠️ Essas semanas JÁ TÊM treinos diferentes (${[...tiposQuePerderia].join(', ')}) — provavelmente gerados pela anamnese, com periodização própria (variedade real, não repetição). Progredir agora vai trocar isso por cópias da ${w} crescendo aos poucos. Só continue se for mesmo o que você quer — por exemplo, se editou a ${w} na mão e quer propagar essa mudança específica pra frente.`;
+  }
+  mensagem += '\n\nNão dá pra desfazer.';
+
   const ok = await fqConfirm(
     `Progredir corrida pra ${proximasSemanas.length} semana(s)?`,
-    `Isso vai SUBSTITUIR as sessões de ${proximasSemanas.join(', ')} pelas mesmas sessões de ${w}, com distância aumentando bem devagar (só quando o campo for um número limpo tipo "5 km") e recuperação a cada 4ª semana. Pace nunca muda sozinho. Não dá pra desfazer.`,
-    'Aplicar progressão', '📈'
+    mensagem,
+    'Aplicar progressão', tiposQuePerderia.size ? '⚠️' : '📈'
   );
   if(!ok) return;
 
