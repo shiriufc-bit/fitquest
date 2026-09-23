@@ -1247,7 +1247,7 @@ html[data-tema="claro"] .movie-poster-nome{color:#fff;}
       <option value="es">🇪🇸 ES</option>
     </select>
   </div>
-  <div id="fq-version-badge" style="position:absolute;bottom:8px;right:12px;font-size:9px;color:#333;font-weight:700;z-index:5">v246</div>
+  <div id="fq-version-badge" style="position:absolute;bottom:8px;right:12px;font-size:9px;color:#333;font-weight:700;z-index:5">v247</div>
   <img src="https://images.unsplash.com/photo-1517836357463-d25dfeac3438?w=800&q=80" alt="Fitness" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center top;filter:brightness(.35);z-index:0"/>
   <div class="splash-glow"></div>
   <div class="splash-noise"></div>
@@ -2470,7 +2470,7 @@ html[data-tema="claro"] .movie-poster-nome{color:#fff;}
             <span style="color:var(--mu);font-size:18px">›</span>
           </div>
         </div>
-        <div style="text-align:center;padding:20px 0 4px;font-size:11px;color:var(--mu)">FitQuest <span id="fq-version-badge-perfil">v246</span></div>
+        <div style="text-align:center;padding:20px 0 4px;font-size:11px;color:var(--mu)">FitQuest <span id="fq-version-badge-perfil">v247</span></div>
       </div>
     </div>
 
@@ -14072,17 +14072,35 @@ function progredirNumeroLider(texto, fator, ehDeload){
   const novoTxt = ehKm ? `${novoNum}`.replace('.',',') : String(Math.max(1,novoNum));
   return til + novoTxt + resto.slice(m[1].length);
 }
-function progredirSessaoCorrida(base, offset){
-  if(offset <= 0) return {...base};
+// ── Progride a SEMANA inteira, não sessão por sessão isolada ──
+// Antes, todas as sessões da semana cresciam no MESMO ritmo — o que, pra
+// quem monta treino de verdade, parece "o mesmo treino toda semana, só
+// maior". Igual periodização real de corrida: o treino mais longo da
+// semana (a "âncora" — normalmente o longão de fim de semana) é o
+// principal motor de ganho de resistência e evolui mais rápido; os
+// demais (intervalado, fartlek, tiros) evoluem mais devagar, pra não
+// empilhar fadiga em cima do que já é o treino mais desgastante.
+// Cria variação real ENTRE os treinos da mesma semana, não só entre semanas.
+function progredirSemanaCorrida(sessoesBase, offset){
+  if(offset <= 0) return sessoesBase.map(s=>({...s}));
   const ciclo = Math.ceil(offset/4);
   const posNoCiclo = offset - (ciclo-1)*4;
   const ehDeload = posNoCiclo === 4;
-  const fatorCiclo = 1 + 0.05*(ciclo-1);
-  const fator = fatorCiclo * (ehDeload ? 0.8 : (1+0.02*posNoCiclo));
 
-  const distTexto = progredirNumeroLider(base.dist, fator, ehDeload);
-  const durTexto = progredirNumeroLider(base.dur, fator, ehDeload);
-  return {...base, dist:distTexto, dur:durTexto}; // pace e tip nunca mudam
+  let idxAncora = 0, maiorDist = -1;
+  sessoesBase.forEach((s,i)=>{ if((s.distKm||0) > maiorDist){ maiorDist = s.distKm||0; idxAncora = i; } });
+
+  return sessoesBase.map((s,i)=>{
+    const ehAncora = i === idxAncora;
+    const crescSemana = ehAncora ? 0.03 : 0.015;
+    const crescCiclo = ehAncora ? 0.08 : 0.04;
+    const fatorCiclo = 1 + crescCiclo*(ciclo-1);
+    const fator = fatorCiclo * (ehDeload ? (ehAncora?0.75:0.85) : (1+crescSemana*posNoCiclo));
+
+    const distTexto = progredirNumeroLider(s.dist, fator, ehDeload);
+    const durTexto = progredirNumeroLider(s.dur, fator, ehDeload);
+    return {...s, dist:distTexto, dur:durTexto}; // pace e tip nunca mudam
+  });
 }
 
 async function admAplicarProgressaoCorrida(w){
@@ -14118,7 +14136,7 @@ async function admAplicarProgressaoCorrida(w){
   proximasSemanas.forEach(wAlvo=>{
     const numeroAlvo = parseInt(String(wAlvo).replace(/\D/g,''))||0;
     const offset = numeroAlvo - numeroBase;
-    const novasSessoes = sessoesBase.map(s=>progredirSessaoCorrida(s, offset));
+    const novasSessoes = progredirSemanaCorrida(sessoesBase, offset);
     if(!u.aiPlan.run[wAlvo]) u.aiPlan.run[wAlvo] = {meta:'', sessions:[]};
     u.aiPlan.run[wAlvo].meta = (u.aiPlan.run[w].meta||'') + ` (progressão de ${w})`;
     u.aiPlan.run[wAlvo].sessions = novasSessoes;
@@ -14347,7 +14365,7 @@ async function runEdRemSemana(w){
 
 // ══════════════════════════════════════════════════════════════════════
 // ══ PROGRESSÃO AUTOMÁTICA DA CORRIDA — editor real (openEditRun) ══
-// Reaproveita a MESMA função progredirSessaoCorrida usada no outro editor
+// Reaproveita a MESMA função progredirSemanaCorrida usada no outro editor
 // de corrida (renderERW) — só a "fiação" muda aqui, pra usar as funções
 // próprias deste editor (runEdCapturar/runEdGetU/runEdPersistLocal).
 // ══════════════════════════════════════════════════════════════════════
@@ -14392,12 +14410,11 @@ async function runEdAplicarProgressao(w){
   proximasSemanas.forEach(wAlvo=>{
     const numeroAlvo = parseInt(String(wAlvo).replace(/\D/g,''))||0;
     const offset = numeroAlvo - numeroBase;
-    const novasSessoes = sessoesBase.map(s=>{
-      const prog = progredirSessaoCorrida(s, offset);
+    const novasSessoes = progredirSemanaCorrida(sessoesBase, offset).map(prog=>{
       // mantém distKm coerente com o novo texto de distância — usado no
       // cálculo de volume semanal, igual o runEdCapturar já faz nas edições manuais
       const m = String(prog.dist||'').match(/([\d.,]+)\s*km/i);
-      prog.distKm = m ? (parseFloat(m[1].replace(',','.'))||0) : (s.distKm||0);
+      prog.distKm = m ? (parseFloat(m[1].replace(',','.'))||0) : (prog.distKm||0);
       return prog;
     });
     if(!u.aiPlan.run[wAlvo]) u.aiPlan.run[wAlvo] = {meta:'', sessions:[]};
