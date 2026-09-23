@@ -1247,7 +1247,7 @@ html[data-tema="claro"] .movie-poster-nome{color:#fff;}
       <option value="es">🇪🇸 ES</option>
     </select>
   </div>
-  <div id="fq-version-badge" style="position:absolute;bottom:8px;right:12px;font-size:9px;color:#333;font-weight:700;z-index:5">v242</div>
+  <div id="fq-version-badge" style="position:absolute;bottom:8px;right:12px;font-size:9px;color:#333;font-weight:700;z-index:5">v245</div>
   <img src="https://images.unsplash.com/photo-1517836357463-d25dfeac3438?w=800&q=80" alt="Fitness" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center top;filter:brightness(.35);z-index:0"/>
   <div class="splash-glow"></div>
   <div class="splash-noise"></div>
@@ -2470,7 +2470,7 @@ html[data-tema="claro"] .movie-poster-nome{color:#fff;}
             <span style="color:var(--mu);font-size:18px">›</span>
           </div>
         </div>
-        <div style="text-align:center;padding:20px 0 4px;font-size:11px;color:var(--mu)">FitQuest <span id="fq-version-badge-perfil">v242</span></div>
+        <div style="text-align:center;padding:20px 0 4px;font-size:11px;color:var(--mu)">FitQuest <span id="fq-version-badge-perfil">v245</span></div>
       </div>
     </div>
 
@@ -14030,42 +14030,58 @@ function saveERW(w){const users=DB.get('fq_users')||{};const u=admGetAluno(editE
 // ══ PROGRESSÃO AUTOMÁTICA DA CORRIDA EDITADA ══
 // Mesmo mecanismo da musculação (progredirExercicio/admAplicarProgressaoSemanas),
 // adaptado pra corrida — com uma diferença importante: os campos de sessão
-// (dist/dur/pace) são texto livre, bem mais variáveis que séries/reps
-// ("5 km" convive com "3 KM ALTERNANDO 150M CORRIDA X 250M CAMINHADA").
-// Por segurança, só progride distância/duração quando o campo é um número
-// limpo (ex: "5 km", "~35 min") — sessão intervalada/run-walk/qualquer
-// texto mais complexo fica INTOCADA, igual ao dia é editado. PACE NUNCA é
-// alterado automaticamente: evolução de ritmo depende de teste real de
-// condicionamento, não de fórmula — fica sempre a critério seu.
+// são texto livre e bem variados no app de verdade: "5 km" (rodagem simples),
+// "20 MIN ALTERNANDO 1' CORRIDA X 2' CAMINHADA" (run/walk por tempo),
+// "3 KM ALTERNANDO 150M CORRIDA X 250M CAMINHADA" (run/walk por distância),
+// "8 X (400M CORRENDO X 200M CAMINHANDO)" (intervalado). Em vez de exigir o
+// campo INTEIRO limpo (o que deixava run/walk — o mais comum pra iniciante —
+// sempre intocado, parecendo que a progressão "não fazia nada"), agora
+// reconhece e progride só o NÚMERO NO INÍCIO de cada campo (a distância, os
+// minutos totais, ou a quantidade de repetições do intervalado), preservando
+// 100% do resto do texto — a estrutura do treino (o "ALTERNANDO X CORRIDA X Y
+// CAMINHADA", o formato do intervalado) nunca é alterada. Campo que não
+// começa com número nenhum (raro, mas pode acontecer) fica intocado, igual
+// antes. PACE NUNCA é alterado automaticamente: evolução de ritmo depende de
+// teste real de condicionamento, não de fórmula — fica sempre a critério seu.
 // Regra de progressão (cautelosa, como pedido):
 //   • dentro do bloco de 4 semanas: +2% por semana sobre a base do ciclo
 //   • 4ª semana do bloco = DELOAD (recuperação): -20% em relação à base do ciclo
 //   • cada ciclo novo começa com +5% sobre o ciclo anterior (ganho real ao
 //     longo do tempo) — ritmo de crescimento bem abaixo da "regra dos 10%"
 //     clássica do treinamento de corrida, de propósito.
+//   • minutos/repetições (números inteiros) sempre sobem pelo menos +1 por
+//     semana progredida — senão um valor pequeno (ex: "8 X") nunca chega a
+//     arredondar pra cima e parece que não fez nada, mesmo funcionando.
 // ══════════════════════════════════════════════════════════════════════
+function progredirNumeroLider(texto, fator, ehDeload){
+  const t = String(texto||'');
+  // aceita um "~" opcional no início (comum no campo de duração, ex: "~35 min")
+  const til = t.match(/^~/) ? '~' : '';
+  const resto = til ? t.slice(1) : t;
+  const m = resto.match(/^(\d+(?:[.,]\d+)?)(\s*)(km\b|min\b|[xX]\b)?/i);
+  if(!m || !m[1]) return texto; // não começa com número — formato complexo demais, não mexe
+  const baseNum = parseFloat(m[1].replace(',','.'));
+  const ehKm = (m[3]||'').toLowerCase()==='km';
+  let novoNum;
+  if(ehKm){
+    novoNum = Math.round(baseNum*fator*10)/10;
+  } else {
+    const porPercentual = Math.round(baseNum*fator);
+    novoNum = ehDeload ? porPercentual : Math.max(baseNum+1, porPercentual);
+  }
+  const novoTxt = ehKm ? `${novoNum}`.replace('.',',') : String(Math.max(1,novoNum));
+  return til + novoTxt + resto.slice(m[1].length);
+}
 function progredirSessaoCorrida(base, offset){
   if(offset <= 0) return {...base};
   const ciclo = Math.ceil(offset/4);
   const posNoCiclo = offset - (ciclo-1)*4;
   const ehDeload = posNoCiclo === 4;
+  const fatorCiclo = 1 + 0.05*(ciclo-1);
+  const fator = fatorCiclo * (ehDeload ? 0.8 : (1+0.02*posNoCiclo));
 
-  // só mexe se o campo for EXATAMENTE "N km" — qualquer outro texto (intervalado,
-  // run/walk, observação) é complexo demais pra alterar com segurança e fica igual
-  const m = String(base.dist||'').trim().match(/^(\d+(?:[.,]\d+)?)\s*km$/i);
-  if(!m) return {...base};
-
-  const distBase = parseFloat(m[1].replace(',','.'));
-  const distBaseCiclo = distBase * (1 + 0.05*(ciclo-1));
-  const distFinal = Math.round((ehDeload ? distBaseCiclo*0.8 : distBaseCiclo*(1+0.02*(posNoCiclo-1))) * 10)/10;
-  const distTexto = `${distFinal}`.replace('.',',') + ' km';
-
-  let durTexto = base.dur;
-  const md = String(base.dur||'').trim().match(/^~?(\d+)\s*min$/i);
-  if(md){
-    const durFinal = Math.round(parseInt(md[1]) * (distFinal/distBase));
-    durTexto = base.dur.replace(md[1], String(durFinal));
-  }
+  const distTexto = progredirNumeroLider(base.dist, fator, ehDeload);
+  const durTexto = progredirNumeroLider(base.dur, fator, ehDeload);
   return {...base, dist:distTexto, dur:durTexto}; // pace e tip nunca mudam
 }
 
@@ -17124,7 +17140,34 @@ function showIntakeResult(plan, p, u){
 }
 
 // ══ PWA ══
-if('serviceWorker' in navigator)window.addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}));
+if('serviceWorker' in navigator){
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('sw.js').then(reg => {
+      // BUGFIX: antes, o app registrava o Service Worker uma vez e nunca mais
+      // checava se existia versão nova — dependia do navegador decidir sozinho
+      // quando checar (podia levar dias), então o app ficava rodando código
+      // antigo mesmo depois de eu publicar uma correção. Agora força checar
+      // agora, e de novo toda vez que o app volta a ficar visível (reabrir
+      // depois de ficar em segundo plano é o caso mais comum).
+      reg.update().catch(()=>{});
+      document.addEventListener('visibilitychange', ()=>{
+        if(document.visibilityState==='visible') reg.update().catch(()=>{});
+      });
+    }).catch(()=>{});
+
+    // sw.js já usa skipWaiting()+clients.claim() (assume o controle sozinho,
+    // sem esperar todas as abas fecharem) — mas a página que já estava aberta
+    // continua com o HTML/JS antigo carregados na memória até recarregar.
+    // Recarrega UMA vez assim que o novo Service Worker assume, pra garantir
+    // que o código rodando é mesmo o novo.
+    let jaRecarregou = false;
+    navigator.serviceWorker.addEventListener('controllerchange', () => {
+      if(jaRecarregou) return;
+      jaRecarregou = true;
+      window.location.reload();
+    });
+  });
+}
 let deferredPrompt=null;
 // ── Convite de instalação ──
 // Antes: só aparecia no Android (dependia do evento beforeinstallprompt, que o
