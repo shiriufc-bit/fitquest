@@ -1247,7 +1247,7 @@ html[data-tema="claro"] .movie-poster-nome{color:#fff;}
       <option value="es">🇪🇸 ES</option>
     </select>
   </div>
-  <div id="fq-version-badge" style="position:absolute;bottom:8px;right:12px;font-size:9px;color:#333;font-weight:700;z-index:5">v249</div>
+  <div id="fq-version-badge" style="position:absolute;bottom:8px;right:12px;font-size:9px;color:#333;font-weight:700;z-index:5">v250</div>
   <img src="https://images.unsplash.com/photo-1517836357463-d25dfeac3438?w=800&q=80" alt="Fitness" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center top;filter:brightness(.35);z-index:0"/>
   <div class="splash-glow"></div>
   <div class="splash-noise"></div>
@@ -2001,6 +2001,12 @@ html[data-tema="claro"] .movie-poster-nome{color:#fff;}
           </div>
         </div>
         <div style="padding:0 20px;margin-bottom:20px;margin-top:12px">
+          <div class="fq2-h2" style="margin-bottom:2px">📈 Sua Evolução</div>
+          <div class="fq2-secundario" style="margin-bottom:14px">Baseado no seu histórico real de treinos</div>
+          <div id="evo-freq-chart" class="fq2-card" style="margin-bottom:12px"></div>
+          <div id="evo-carga-chart" class="fq2-card"></div>
+        </div>
+        <div style="padding:0 20px;margin-bottom:20px;margin-top:12px">
         </div>
         <div style="padding:0 20px" id="prs-list"></div>
         <div style="padding:12px 20px">
@@ -2470,7 +2476,7 @@ html[data-tema="claro"] .movie-poster-nome{color:#fff;}
             <span style="color:var(--mu);font-size:18px">›</span>
           </div>
         </div>
-        <div style="text-align:center;padding:20px 0 4px;font-size:11px;color:var(--mu)">FitQuest <span id="fq-version-badge-perfil">v249</span></div>
+        <div style="text-align:center;padding:20px 0 4px;font-size:11px;color:var(--mu)">FitQuest <span id="fq-version-badge-perfil">v250</span></div>
       </div>
     </div>
 
@@ -10856,6 +10862,7 @@ function loadApp(email){
   _safe(()=>renderRun(u),'run');
   _safe(()=>renderRankingFull(u,email,users),'rankFull');
   _safe(()=>renderPRs(u.prs||[]),'prs');
+  _safe(()=>renderEvolucaoTreino(u),'evolucaoTreino');
   _safe(()=>renderComunidade(),'comunidade');
   _safe(()=>renderBannerTrial(u),'trialBanner');
   _safe(()=>renderHomePlanoCards(),'planoCards');
@@ -13029,6 +13036,107 @@ function runConcluirSessao(w,i){
 }
 
 // ══ PRs ══
+// ══════════════════════════════════════════════════════════════════════
+// ══ MINHA EVOLUÇÃO — gráficos reais, dado real, nada inventado ══
+// Frequência: conta treinos concluídos por semana (workoutHistory), últimas
+// 8 semanas. Carga: acha o exercício com mais semanas de carga NUMÉRICA
+// registrada — loadHistory agora é por série (correção anterior), então usa
+// a MAIOR carga de cada semana (normalmente o set de trabalho principal) e
+// traça a evolução real. Cargas qualitativas ("Moderada"/"Pesada") não
+// entram no gráfico — só número vira ponto, porque não dá pra plotar texto.
+// ══════════════════════════════════════════════════════════════════════
+function renderEvolucaoTreino(u){
+  const elFreq = document.getElementById('evo-freq-chart');
+  if(elFreq){
+    const hoje = new Date(); hoje.setHours(0,0,0,0);
+    const semanas = [];
+    for(let i=7; i>=0; i--){
+      const fimSemana = new Date(hoje); fimSemana.setDate(hoje.getDate() - i*7);
+      const inicioSemana = new Date(fimSemana); inicioSemana.setDate(fimSemana.getDate()-6);
+      semanas.push({inicio:inicioSemana, fim:fimSemana, count:0});
+    }
+    (u.workoutHistory||[]).forEach(h=>{
+      const m = String(h.date||'').match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
+      if(!m) return;
+      const d = new Date(+m[3], +m[2]-1, +m[1]);
+      semanas.forEach(s=>{ if(d>=s.inicio && d<=s.fim) s.count++; });
+    });
+    const maxCount = Math.max(1, ...semanas.map(s=>s.count));
+    const totalTreinos = semanas.reduce((soma,s)=>soma+s.count,0);
+    if(totalTreinos===0){
+      elFreq.innerHTML = `<div class="fq2-secundario" style="text-align:center;padding:8px 0">Sua frequência semanal aparece aqui assim que você concluir alguns treinos.</div>`;
+    } else {
+      const barras = semanas.map((s,i)=>{
+        const alturaPct = Math.max(6, Math.round((s.count/maxCount)*100));
+        const ehUltima = i===semanas.length-1;
+        return `<div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px">
+          <div style="font-size:10px;font-weight:800;color:${s.count>0?'var(--primary)':'var(--text-muted)'}">${s.count}</div>
+          <div style="width:100%;max-width:22px;height:60px;display:flex;align-items:flex-end">
+            <div style="width:100%;height:${alturaPct}%;background:${ehUltima?'var(--primary)':'var(--surface-hover)'};border-radius:4px 4px 0 0;transition:height .4s"></div>
+          </div>
+        </div>`;
+      }).join('');
+      elFreq.innerHTML = `
+        <div class="fq2-secundario" style="margin-bottom:12px">Treinos por semana · últimas 8 semanas</div>
+        <div style="display:flex;gap:4px;align-items:flex-end">${barras}</div>`;
+    }
+  }
+
+  const elCarga = document.getElementById('evo-carga-chart');
+  if(elCarga){
+    const porExercicio = {};
+    Object.keys(u.loadHistory||{}).forEach(chave=>{
+      // aceita os dois formatos: "Semana N_Dia_exId" (antigo, pré-correção) e
+      // "Semana N_Dia_exId_sM" (novo, por série)
+      const m = chave.match(/^(Semana \d+)_(.+?)_(e\d+)(?:_s\d+)?$/);
+      if(!m) return;
+      const [,semana,,exId] = m;
+      const valor = parseFloat(String(u.loadHistory[chave]||'').replace(',','.'));
+      if(isNaN(valor)) return;
+      if(!porExercicio[exId]) porExercicio[exId] = {};
+      const atual = porExercicio[exId][semana];
+      if(atual===undefined || valor>atual) porExercicio[exId][semana]=valor;
+    });
+
+    let melhorExId=null, melhorQtd=0;
+    Object.keys(porExercicio).forEach(exId=>{
+      const qtd=Object.keys(porExercicio[exId]).length;
+      if(qtd>melhorQtd){ melhorQtd=qtd; melhorExId=exId; }
+    });
+
+    if(!melhorExId || melhorQtd<2){
+      elCarga.innerHTML = `<div class="fq2-secundario" style="text-align:center;padding:8px 0">Sua progressão de carga aparece aqui assim que você registrar peso em número (kg) em pelo menos 2 semanas do mesmo exercício.</div>`;
+    } else {
+      const ex = (typeof getExById==='function') ? getExById(melhorExId) : null;
+      const nomeEx = ex ? exNome(ex) : melhorExId;
+      const pontos = Object.entries(porExercicio[melhorExId])
+        .sort((a,b)=>(parseInt(a[0].replace(/\D/g,''))||0)-(parseInt(b[0].replace(/\D/g,''))||0));
+      const valores = pontos.map(p=>p[1]);
+      const minV = Math.min(...valores), maxV = Math.max(...valores);
+      const faixa = Math.max(1, maxV-minV);
+      const W=280, H=70, pad=8;
+      const passoX = pontos.length>1 ? (W-pad*2)/(pontos.length-1) : 0;
+      const coordY = v => H-pad - ((v-minV)/faixa)*(H-pad*2);
+      const pathPontos = valores.map((v,i)=>`${pad+i*passoX},${coordY(v)}`).join(' ');
+      const primeiro = valores[0], ultimo = valores[valores.length-1];
+      const evolucaoPct = primeiro>0 ? Math.round(((ultimo-primeiro)/primeiro)*100) : 0;
+      elCarga.innerHTML = `
+        <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:2px">
+          <div class="fq2-secundario">Progressão de carga</div>
+          ${evolucaoPct!==0?`<div style="font-size:12px;font-weight:800;color:${evolucaoPct>0?'#2ecc71':'var(--text-secondary)'}">${evolucaoPct>0?'+':''}${evolucaoPct}%</div>`:''}
+        </div>
+        <div class="fq2-titulo-exercicio" style="margin-bottom:10px">${nomeEx}</div>
+        <svg viewBox="0 0 ${W} ${H}" style="width:100%;height:70px;display:block">
+          <polyline points="${pathPontos}" fill="none" stroke="var(--primary)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+          ${valores.map((v,i)=>`<circle cx="${pad+i*passoX}" cy="${coordY(v)}" r="3" fill="var(--primary)"/>`).join('')}
+        </svg>
+        <div style="display:flex;justify-content:space-between;margin-top:4px">
+          <span class="fq2-muted">${pontos[0][0]} · ${primeiro}kg</span>
+          <span class="fq2-muted">${pontos[pontos.length-1][0]} · ${ultimo}kg</span>
+        </div>`;
+    }
+  }
+}
 function renderPRs(prs){
   document.getElementById('pr-count').textContent=prs.length;
   document.getElementById('prs-list').innerHTML=!prs.length?'<div style="color:var(--mu);font-size:12px;padding:8px 0">Nenhum PR ainda. Quebre o primeiro recorde! 🎬</div>':prs.map(pr=>`<div class="prc"><div class="prw">⭐</div><div style="flex:1"><div style="font-size:13px;font-weight:700">${pr.exercise}</div><div style="font-size:10px;color:var(--mu);margin-top:2px">${pr.date}</div></div><div style="background:rgba(243,156,18,.08);border:1px solid rgba(243,156,18,.15);border-radius:6px;padding:5px 10px;font-size:15px;font-weight:900;color:#f39c12">${pr.value}</div></div>`).join('');
