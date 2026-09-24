@@ -1247,7 +1247,7 @@ html[data-tema="claro"] .movie-poster-nome{color:#fff;}
       <option value="es">🇪🇸 ES</option>
     </select>
   </div>
-  <div id="fq-version-badge" style="position:absolute;bottom:8px;right:12px;font-size:9px;color:#333;font-weight:700;z-index:5">v248</div>
+  <div id="fq-version-badge" style="position:absolute;bottom:8px;right:12px;font-size:9px;color:#333;font-weight:700;z-index:5">v249</div>
   <img src="https://images.unsplash.com/photo-1517836357463-d25dfeac3438?w=800&q=80" alt="Fitness" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center top;filter:brightness(.35);z-index:0"/>
   <div class="splash-glow"></div>
   <div class="splash-noise"></div>
@@ -1731,7 +1731,7 @@ html[data-tema="claro"] .movie-poster-nome{color:#fff;}
 
       <!-- FREQUÊNCIA DE TREINOS (semana atual, dado real do workoutHistory) -->
       <div class="fq2-card" style="margin:14px 20px 0">
-        <div class="fq2-secundario" style="margin-bottom:12px;font-weight:600">Frequência de Treinos</div>
+        <div class="fq2-secundario" style="margin-bottom:12px;font-weight:600" data-i18n="ui.6f33416710">Frequência de Treinos</div>
         <div style="display:flex;justify-content:space-between" id="home-freq-semana"></div>
       </div>
 
@@ -1739,18 +1739,18 @@ html[data-tema="claro"] .movie-poster-nome{color:#fff;}
       <div class="hero-banner">
         <div class="hero-banner-glow"></div>
         <div class="hero-banner-content">
-          <div class="hero-tag">TREINO DE HOJE</div>
+          <div class="hero-tag" data-i18n="ui.b7c48521eb">TREINO DE HOJE</div>
           <div id="hero-semana-tag" class="fq2-secundario" style="margin-bottom:3px">Semana 1</div>
           <div class="hero-title" id="hero-title">Treino</div>
           <div class="hero-sub" id="hero-sub">—</div>
           <div id="hero-progresso-wrap" style="margin-bottom:16px">
-            <div style="margin-bottom:6px"><span id="hero-progresso-label" class="fq2-secundario">Ainda não começou</span></div>
+            <div style="margin-bottom:6px"><span id="hero-progresso-label" class="fq2-secundario" data-i18n="ui.6dbae8fb1b">Ainda não começou</span></div>
             <div style="height:6px;background:var(--surface-hover);border-radius:99px;overflow:hidden">
               <div id="hero-progresso-bar" style="height:100%;background:var(--primary);border-radius:99px;width:0%;transition:width .3s ease"></div>
             </div>
           </div>
           <div class="hero-btns">
-            <button class="btn-hero-play" id="hero-cta-btn" onclick="irParaTreinoDeHoje()">▶ Começar treino</button>
+            <button class="btn-hero-play" id="hero-cta-btn" onclick="irParaTreinoDeHoje()" data-i18n="ui.5ddcc9d495">▶ Começar treino</button>
           </div>
         </div>
       </div>
@@ -1758,22 +1758,22 @@ html[data-tema="claro"] .movie-poster-nome{color:#fff;}
       <!-- GRADE DE ACESSO RÁPIDO (2 colunas) -->
       <div style="margin:14px 20px 0;display:grid;grid-template-columns:1fr 1fr;gap:10px">
         <div class="fq2-card fq2-card-hover fq-tile" onclick="switchTab('treinos',document.querySelectorAll('.nbtn')[1])">
-          <div class="fq-tile-ico">🏋️</div><div class="fq-tile-lbl">Treinos</div>
+          <div class="fq-tile-ico">🏋️</div><div class="fq-tile-lbl" data-i18n="ui.c403c524f8">Treinos</div>
         </div>
         <div class="fq2-card fq2-card-hover fq-tile" onclick="switchTab('run',document.querySelectorAll('.nbtn')[1])">
-          <div class="fq-tile-ico">🏃</div><div class="fq-tile-lbl">Corrida</div>
+          <div class="fq-tile-ico">🏃</div><div class="fq-tile-lbl" data-i18n="ui.dd0b530d3b">Corrida</div>
         </div>
         <div class="fq2-card fq2-card-hover fq-tile" onclick="switchTab('evo',document.querySelectorAll('.nbtn')[4])">
-          <div class="fq-tile-ico">📊</div><div class="fq-tile-lbl">Avaliações</div>
+          <div class="fq-tile-ico">📊</div><div class="fq-tile-lbl" data-i18n="ui.f91aa391b2">Avaliações</div>
         </div>
         <div class="fq2-card fq2-card-hover fq-tile" onclick="switchTab('prs',document.querySelectorAll('.nbtn')[4])">
-          <div class="fq-tile-ico">📈</div><div class="fq-tile-lbl">Meu Progresso</div>
+          <div class="fq-tile-ico">📈</div><div class="fq-tile-lbl" data-i18n="ui.5590649ad2">Meu Progresso</div>
         </div>
         <div class="fq2-card fq2-card-hover fq-tile" onclick="switchTab('store',document.querySelectorAll('.nbtn')[2])">
-          <div class="fq-tile-ico">📚</div><div class="fq-tile-lbl">E-Books</div>
+          <div class="fq-tile-ico">📚</div><div class="fq-tile-lbl" data-i18n="ui.f0d6575725">E-Books</div>
         </div>
         <div class="fq2-card fq2-card-hover fq-tile" onclick="switchTab('perfil',document.querySelectorAll('.nbtn')[5])">
-          <div class="fq-tile-ico">⚙️</div><div class="fq-tile-lbl">Perfil</div>
+          <div class="fq-tile-ico">⚙️</div><div class="fq-tile-lbl" data-i18n="ui.326ffa2886">Perfil</div>
         </div>
       </div>
 
@@ -1785,13 +1785,13 @@ html[data-tema="claro"] .movie-poster-nome{color:#fff;}
 
       <!-- RESUMO DA SEMANA -->
       <div style="margin:20px 20px 0">
-        <div class="fq2-h2" style="margin-bottom:10px">Resumo da semana</div>
+        <div class="fq2-h2" style="margin-bottom:10px" data-i18n="ui.12cfaeab64">Resumo da semana</div>
         <div style="display:flex;gap:8px" id="home-resumo-semana"></div>
       </div>
 
       <!-- HISTÓRICO RECENTE -->
       <div style="margin:22px 20px 0">
-        <div class="fq2-h2" style="margin-bottom:10px">Histórico recente</div>
+        <div class="fq2-h2" style="margin-bottom:10px" data-i18n="ui.d41526faea">Histórico recente</div>
         <div id="home-historico-lista"></div>
       </div>
 
@@ -1810,8 +1810,8 @@ html[data-tema="claro"] .movie-poster-nome{color:#fff;}
     <div class="tp" id="tp-treinos">
       <div style="padding-top:calc(60px + env(safe-area-inset-top))">
         <div style="padding:0 20px;margin-bottom:16px">
-          <div class="fq2-h1" style="font-size:22px">Treinos</div>
-          <div class="fq2-secundario" style="margin-top:2px">Prescrito por Rennan Dias</div>
+          <div class="fq2-h1" style="font-size:22px" data-i18n="ui.c403c524f8">Treinos</div>
+          <div class="fq2-secundario" style="margin-top:2px" data-i18n="ui.5a49c913b8">Prescrito por Rennan Dias</div>
         </div>
 
         <div style="padding:0 20px 40px;display:flex;flex-direction:column;gap:14px">
@@ -1826,24 +1826,24 @@ html[data-tema="claro"] .movie-poster-nome{color:#fff;}
           <div class="cat-card cat-mobilidade" onclick="switchTab('mobilidade',document.querySelectorAll('.nbtn')[1])">
             <div class="cat-numero">3</div>
             <div class="cat-conteudo">
-              <div class="cat-kicker">ROTINAS GUIADAS</div>
-              <div class="cat-titulo">ALONGAMENTO</div>
-              <div class="cat-selo">MOBILIDADE</div>
-              <div class="cat-rodape">Por objetivo · sessões curtas</div>
+              <div class="cat-kicker" data-i18n="ui.413018af8d">ROTINAS GUIADAS</div>
+              <div class="cat-titulo" data-i18n="ui.ee8501e225">ALONGAMENTO</div>
+              <div class="cat-selo" data-i18n="ui.bf296f368e">MOBILIDADE</div>
+              <div class="cat-rodape" data-i18n="ui.dc952ffbae">Por objetivo · sessões curtas</div>
             </div>
-            <span id="mob-lock-badge" class="cat-premium" style="display:none">PREMIUM</span>
+            <span id="mob-lock-badge" class="cat-premium" style="display:none" data-i18n="ui.7c7c704d16">PREMIUM</span>
           </div>
 
           <!-- KIDS & TEENS -->
           <div class="cat-card cat-kids" onclick="switchTab('kids',document.querySelectorAll('.nbtn')[1])">
             <div class="cat-numero">4</div>
             <div class="cat-conteudo">
-              <div class="cat-kicker">CRIANÇAS E ADOLESCENTES</div>
+              <div class="cat-kicker" data-i18n="ui.58e38e1650">CRIANÇAS E ADOLESCENTES</div>
               <div class="cat-titulo">KIDS &amp; TEENS</div>
-              <div class="cat-selo">POR IDADE</div>
-              <div class="cat-rodape">Treinos adaptados por faixa etária</div>
+              <div class="cat-selo" data-i18n="ui.923ac70fb5">POR IDADE</div>
+              <div class="cat-rodape" data-i18n="ui.9e1d0593fd">Treinos adaptados por faixa etária</div>
             </div>
-            <span id="kids-lock-badge" class="cat-premium" style="display:none">PREMIUM</span>
+            <span id="kids-lock-badge" class="cat-premium" style="display:none" data-i18n="ui.7c7c704d16">PREMIUM</span>
           </div>
 
           <!-- SEU PLANO — reduz o espaço vazio no fim da tela com dado real (Fase 4B) -->
@@ -2470,7 +2470,7 @@ html[data-tema="claro"] .movie-poster-nome{color:#fff;}
             <span style="color:var(--mu);font-size:18px">›</span>
           </div>
         </div>
-        <div style="text-align:center;padding:20px 0 4px;font-size:11px;color:var(--mu)">FitQuest <span id="fq-version-badge-perfil">v248</span></div>
+        <div style="text-align:center;padding:20px 0 4px;font-size:11px;color:var(--mu)">FitQuest <span id="fq-version-badge-perfil">v249</span></div>
       </div>
     </div>
 
@@ -2676,15 +2676,15 @@ html[data-tema="claro"] .movie-poster-nome{color:#fff;}
 <div class="modal-ov" id="modal-treino-concluido" style="align-items:center">
   <div class="modal-bx" style="max-width:380px;text-align:center;padding:32px 24px">
     <div style="width:56px;height:56px;border-radius:50%;background:rgba(46,204,113,.12);border:2px solid rgba(46,204,113,.4);display:flex;align-items:center;justify-content:center;font-size:26px;color:#2ecc71;margin:0 auto 16px">✓</div>
-    <div class="fq2-h1" style="font-size:20px;margin-bottom:4px">Treino concluído</div>
+    <div class="fq2-h1" style="font-size:20px;margin-bottom:4px" data-i18n="ui.debe128fd0">Treino concluído</div>
     <div class="fq2-secundario" id="tc-nome-dia" style="margin-bottom:20px">—</div>
     <div style="display:flex;gap:8px;margin-bottom:22px">
-      <div class="fq2-card" style="flex:1;padding:12px"><div class="fq2-h2" id="tc-exercicios" style="font-size:18px">—</div><div class="fq2-muted">exercícios</div></div>
+      <div class="fq2-card" style="flex:1;padding:12px"><div class="fq2-h2" id="tc-exercicios" style="font-size:18px">—</div><div class="fq2-muted" data-i18n="ui.b2225fa840">exercícios</div></div>
       <div class="fq2-card" style="flex:1;padding:12px"><div class="fq2-h2" style="font-size:18px;color:var(--primary)">+80</div><div class="fq2-muted">XP</div></div>
-      <div class="fq2-card" style="flex:1;padding:12px"><div class="fq2-h2" id="tc-streak" style="font-size:18px">—</div><div class="fq2-muted">sequência</div></div>
+      <div class="fq2-card" style="flex:1;padding:12px"><div class="fq2-h2" id="tc-streak" style="font-size:18px">—</div><div class="fq2-muted" data-i18n="ui.7c3b65fd21">sequência</div></div>
     </div>
-    <button class="fq2-btn fq2-btn-primary" style="width:100%;margin-bottom:8px" onclick="closeModal('modal-treino-concluido');switchTab('treinos',document.querySelectorAll('.nbtn')[1])">VOLTAR PARA TREINOS</button>
-    <button class="fq2-btn fq2-btn-ghost" style="width:100%" onclick="closeModal('modal-treino-concluido');switchTab('evo',document.querySelectorAll('.nbtn')[4])">VER EVOLUÇÃO</button>
+    <button class="fq2-btn fq2-btn-primary" style="width:100%;margin-bottom:8px" onclick="closeModal('modal-treino-concluido');switchTab('treinos',document.querySelectorAll('.nbtn')[1])" data-i18n="ui.e8aa58308e">VOLTAR PARA TREINOS</button>
+    <button class="fq2-btn fq2-btn-ghost" style="width:100%" onclick="closeModal('modal-treino-concluido');switchTab('evo',document.querySelectorAll('.nbtn')[4])" data-i18n="ui.aad0e77129">VER EVOLUÇÃO</button>
   </div>
 </div>
 <div class="modal-ov" id="modal-copiar-treino" style="align-items:flex-start">
@@ -9145,6 +9145,71 @@ const FQ_I18N = {
     'ui.d8f6d02e3e': 'Escolha o nível e onde você treina. Pode trocar quando quiser — seu progresso em cada trilha fica salvo.',
     'ui.45f43c78d2': 'Missão',
     'ui.3eb5015e81': 'O aluno recebe e-mail de confirmação. Avise a ele qual senha você definiu — ele pode trocá-la depois.',
+
+    // ── Fase de internacionalização — Home/Treinos/Execução (rodada de melhorias) ──
+    'ui.4a608175cb': 'Bom dia,',
+    'ui.jornadas001': 'Jornadas FitQuest',
+    'ui.missoes002': 'Missões no seu nível · escolha sua trilha',
+    'ui.db4d4d79e6': 'Boa tarde,',
+    'ui.edca508b53': 'Boa noite,',
+    'ui.6f33416710': 'Frequência de Treinos',
+    'ui.4e18c5e19f': 'S,T,Q,Q,S,S,D',
+    'ui.b7c48521eb': 'TREINO DE HOJE',
+    'ui.3ee81b31bf': 'Treino',
+    'ui.f64872b029': 'exercício',
+    'ui.b2225fa840': 'exercícios',
+    'ui.6dbae8fb1b': 'Ainda não começou',
+    'ui.5ddcc9d495': '▶ Começar treino',
+    'ui.4f2cb5c08c': '▶ Continuar treino',
+    'ui.93e15e8f84': '{feitos} de {total} exercícios concluídos',
+    'ui.a6f96c6369': 'Treino concluído — {total} de {total} exercícios',
+    'ui.12399a39b3': '✓ Treino concluído',
+    'ui.81cfce86ca': 'PRÓXIMO TREINO',
+    'ui.c403c524f8': 'Treinos',
+    'ui.dd0b530d3b': 'Corrida',
+    'ui.f91aa391b2': 'Avaliações',
+    'ui.5590649ad2': 'Meu Progresso',
+    'ui.f0d6575725': 'E-Books',
+    'ui.326ffa2886': 'Perfil',
+    'ui.12cfaeab64': 'Resumo da semana',
+    'ui.b6755d218d': 'Meta',
+    'ui.cacb8691dd': 'Sequência',
+    'ui.d41526faea': 'Histórico recente',
+    'ui.a71d14d66e': '✓ Concluído',
+    'ui.4f3e017e8e': 'Seu histórico aparece aqui assim que você concluir um treino.',
+    'ui.5a49c913b8': 'Prescrito por Rennan Dias',
+    'ui.413018af8d': 'ROTINAS GUIADAS',
+    'ui.ee8501e225': 'ALONGAMENTO',
+    'ui.bf296f368e': 'MOBILIDADE',
+    'ui.dc952ffbae': 'Por objetivo · sessões curtas',
+    'ui.58e38e1650': 'CRIANÇAS E ADOLESCENTES',
+    'ui.923ac70fb5': 'POR IDADE',
+    'ui.9e1d0593fd': 'Treinos adaptados por faixa etária',
+    'ui.7c7c704d16': 'PREMIUM',
+    'ui.3ea4562672': 'CONCLUÍDO ✓',
+    'ui.5f9719969f': 'MUSCULAÇÃO',
+    'ui.11d455dabe': 'AGUARDANDO PLANO',
+    'ui.7876bae8a9': 'Seu treino de musculação aparece aqui assim que for gerado.',
+    'ui.9ef68d083e': 'CORRIDA',
+    'ui.5b7105d0e4': 'sessão',
+    'ui.5c7339e994': 'sessões',
+    'ui.ddea850744': 'nesta semana',
+    'ui.34114ddfad': 'Plano de corrida periodizado',
+    'ui.98184fa918': 'Seu plano de corrida aparece aqui assim que for gerado.',
+    'ui.db84843050': 'COMEÇAR TREINO',
+    'ui.bead967e6a': 'CONTINUAR TREINO',
+    'ui.1c51c99ece': 'VER TREINO',
+    'ui.620bce425f': 'VER TREINO DE CORRIDA',
+    'ui.57d223dae2': 'Seu plano',
+    'ui.ee8b61eeda': 'Musculação personalizada por Rennan Dias',
+    'ui.6aa61498cf': 'Prescrito',
+    'ui.4b4bbc77e9': 'Realizado',
+    'ui.717b4e2391': 'Carga',
+    'ui.f9dbeb6d7d': 'PRÓXIMO →',
+    'ui.debe128fd0': 'Treino concluído',
+    'ui.7c3b65fd21': 'sequência',
+    'ui.e8aa58308e': 'VOLTAR PARA TREINOS',
+    'ui.aad0e77129': 'VER EVOLUÇÃO',
   },
 
   en: {
@@ -9649,6 +9714,71 @@ const FQ_I18N = {
     'ui.d8f6d02e3e': 'Pick the level and where you train. You can switch anytime — your progress on each track stays saved.',
     'ui.45f43c78d2': 'Mission',
     'ui.3eb5015e81': 'The student receives a confirmation email. Tell them which password you set — they can change it later.',
+
+    // ── Fase de internacionalização — Home/Treinos/Execução (rodada de melhorias) ──
+    'ui.4a608175cb': 'Good morning,',
+    'ui.jornadas001': 'FitQuest Journeys',
+    'ui.missoes002': 'Missions at your level · pick your path',
+    'ui.db4d4d79e6': 'Good afternoon,',
+    'ui.edca508b53': 'Good evening,',
+    'ui.6f33416710': 'Workout Frequency',
+    'ui.4e18c5e19f': 'M,T,W,T,F,S,S',
+    'ui.b7c48521eb': 'TODAY\'S WORKOUT',
+    'ui.3ee81b31bf': 'Workout',
+    'ui.f64872b029': 'exercise',
+    'ui.b2225fa840': 'exercises',
+    'ui.6dbae8fb1b': 'Not started yet',
+    'ui.5ddcc9d495': '▶ Start workout',
+    'ui.4f2cb5c08c': '▶ Continue workout',
+    'ui.93e15e8f84': '{feitos} of {total} exercises done',
+    'ui.a6f96c6369': 'Workout complete — {total} of {total} exercises',
+    'ui.12399a39b3': '✓ Workout complete',
+    'ui.81cfce86ca': 'NEXT WORKOUT',
+    'ui.c403c524f8': 'Workouts',
+    'ui.dd0b530d3b': 'Running',
+    'ui.f91aa391b2': 'Assessments',
+    'ui.5590649ad2': 'My Progress',
+    'ui.f0d6575725': 'E-Books',
+    'ui.326ffa2886': 'Profile',
+    'ui.12cfaeab64': 'Week summary',
+    'ui.b6755d218d': 'Goal',
+    'ui.cacb8691dd': 'Streak',
+    'ui.d41526faea': 'Recent history',
+    'ui.a71d14d66e': '✓ Done',
+    'ui.4f3e017e8e': 'Your history shows up here as soon as you complete a workout.',
+    'ui.5a49c913b8': 'Prescribed by Rennan Dias',
+    'ui.413018af8d': 'GUIDED ROUTINES',
+    'ui.ee8501e225': 'STRETCHING',
+    'ui.bf296f368e': 'MOBILITY',
+    'ui.dc952ffbae': 'By goal · short sessions',
+    'ui.58e38e1650': 'KIDS AND TEENS',
+    'ui.923ac70fb5': 'BY AGE',
+    'ui.9e1d0593fd': 'Workouts adapted by age group',
+    'ui.7c7c704d16': 'PREMIUM',
+    'ui.3ea4562672': 'DONE ✓',
+    'ui.5f9719969f': 'STRENGTH TRAINING',
+    'ui.11d455dabe': 'WAITING FOR PLAN',
+    'ui.7876bae8a9': 'Your strength workout shows up here once it’s generated.',
+    'ui.9ef68d083e': 'RUNNING',
+    'ui.5b7105d0e4': 'session',
+    'ui.5c7339e994': 'sessions',
+    'ui.ddea850744': 'this week',
+    'ui.34114ddfad': 'Periodized running plan',
+    'ui.98184fa918': 'Your running plan shows up here once it’s generated.',
+    'ui.db84843050': 'START WORKOUT',
+    'ui.bead967e6a': 'CONTINUE WORKOUT',
+    'ui.1c51c99ece': 'VIEW WORKOUT',
+    'ui.620bce425f': 'VIEW RUNNING WORKOUT',
+    'ui.57d223dae2': 'Your plan',
+    'ui.ee8b61eeda': 'Strength training personalized by Rennan Dias',
+    'ui.6aa61498cf': 'Prescribed',
+    'ui.4b4bbc77e9': 'Done',
+    'ui.717b4e2391': 'Load',
+    'ui.f9dbeb6d7d': 'NEXT →',
+    'ui.debe128fd0': 'Workout complete',
+    'ui.7c3b65fd21': 'streak',
+    'ui.e8aa58308e': 'BACK TO WORKOUTS',
+    'ui.aad0e77129': 'VIEW PROGRESS',
   },
   es: {
     'splash.tagline': 'Rennan Dias Asesoría',
@@ -10140,6 +10270,71 @@ const FQ_I18N = {
     'ui.d8f6d02e3e': 'Elige el nivel y dónde entrenas. Puedes cambiar cuando quieras — tu progreso en cada ruta queda guardado.',
     'ui.45f43c78d2': 'Misión',
     'ui.3eb5015e81': 'El alumno recibe un correo de confirmación. Avísale qué contraseña definiste — puede cambiarla después.',
+
+    // ── Fase de internacionalização — Home/Treinos/Execução (rodada de melhorias) ──
+    'ui.4a608175cb': 'Buenos días,',
+    'ui.jornadas001': 'Jornadas FitQuest',
+    'ui.missoes002': 'Misiones en tu nivel · elige tu camino',
+    'ui.db4d4d79e6': 'Buenas tardes,',
+    'ui.edca508b53': 'Buenas noches,',
+    'ui.6f33416710': 'Frecuencia de Entrenamiento',
+    'ui.4e18c5e19f': 'L,M,X,J,V,S,D',
+    'ui.b7c48521eb': 'ENTRENAMIENTO DE HOY',
+    'ui.3ee81b31bf': 'Entrenamiento',
+    'ui.f64872b029': 'ejercicio',
+    'ui.b2225fa840': 'ejercicios',
+    'ui.6dbae8fb1b': 'Aún no empezó',
+    'ui.5ddcc9d495': '▶ Empezar entrenamiento',
+    'ui.4f2cb5c08c': '▶ Continuar entrenamiento',
+    'ui.93e15e8f84': '{feitos} de {total} ejercicios completados',
+    'ui.a6f96c6369': 'Entrenamiento completo — {total} de {total} ejercicios',
+    'ui.12399a39b3': '✓ Entrenamiento completo',
+    'ui.81cfce86ca': 'PRÓXIMO ENTRENAMIENTO',
+    'ui.c403c524f8': 'Entrenamientos',
+    'ui.dd0b530d3b': 'Correr',
+    'ui.f91aa391b2': 'Evaluaciones',
+    'ui.5590649ad2': 'Mi Progreso',
+    'ui.f0d6575725': 'E-Books',
+    'ui.326ffa2886': 'Perfil',
+    'ui.12cfaeab64': 'Resumen de la semana',
+    'ui.b6755d218d': 'Meta',
+    'ui.cacb8691dd': 'Racha',
+    'ui.d41526faea': 'Historial reciente',
+    'ui.a71d14d66e': '✓ Completado',
+    'ui.4f3e017e8e': 'Tu historial aparece aquí en cuanto completes un entrenamiento.',
+    'ui.5a49c913b8': 'Prescrito por Rennan Dias',
+    'ui.413018af8d': 'RUTINAS GUIADAS',
+    'ui.ee8501e225': 'ESTIRAMIENTO',
+    'ui.bf296f368e': 'MOVILIDAD',
+    'ui.dc952ffbae': 'Por objetivo · sesiones cortas',
+    'ui.58e38e1650': 'NIÑOS Y ADOLESCENTES',
+    'ui.923ac70fb5': 'POR EDAD',
+    'ui.9e1d0593fd': 'Entrenamientos adaptados por edad',
+    'ui.7c7c704d16': 'PREMIUM',
+    'ui.3ea4562672': 'COMPLETADO ✓',
+    'ui.5f9719969f': 'MUSCULACIÓN',
+    'ui.11d455dabe': 'ESPERANDO PLAN',
+    'ui.7876bae8a9': 'Tu entrenamiento de fuerza aparece aquí en cuanto se genere.',
+    'ui.9ef68d083e': 'CORRER',
+    'ui.5b7105d0e4': 'sesión',
+    'ui.5c7339e994': 'sesiones',
+    'ui.ddea850744': 'esta semana',
+    'ui.34114ddfad': 'Plan de carrera periodizado',
+    'ui.98184fa918': 'Tu plan de carrera aparece aquí en cuanto se genere.',
+    'ui.db84843050': 'EMPEZAR ENTRENAMIENTO',
+    'ui.bead967e6a': 'CONTINUAR ENTRENAMIENTO',
+    'ui.1c51c99ece': 'VER ENTRENAMIENTO',
+    'ui.620bce425f': 'VER ENTRENAMIENTO DE CARRERA',
+    'ui.57d223dae2': 'Tu plan',
+    'ui.ee8b61eeda': 'Musculación personalizada por Rennan Dias',
+    'ui.6aa61498cf': 'Prescrito',
+    'ui.4b4bbc77e9': 'Realizado',
+    'ui.717b4e2391': 'Carga',
+    'ui.f9dbeb6d7d': 'SIGUIENTE →',
+    'ui.debe128fd0': 'Entrenamiento completo',
+    'ui.7c3b65fd21': 'racha',
+    'ui.e8aa58308e': 'VOLVER A ENTRENAMIENTOS',
+    'ui.aad0e77129': 'VER EVOLUCIÓN',
   }
 };
 
@@ -11762,14 +11957,14 @@ function renderGymDay(w,d,u){
             const slSet=(u.loadHistory&&u.loadHistory[ckLoad])||sl;
             return `<div class="set-card ${sd?'done':''}" id="sr-${i}-${si}">
               <div class="set-card-num">S${si+1}</div>
-              <div class="set-card-field" style="flex:1"><label>Prescrito</label><div style="font-size:13px;font-weight:700">${ed.reps} reps</div></div>
-              <div class="set-card-field"><label>Realizado</label><input class="reps-real-inp" id="ri-${i}-${si}" value="${repsRealizado}" placeholder="${ed.reps}" inputmode="numeric" onchange="saveRepsRealizados('${lk}',${i},${si})"/></div>
-              <div class="set-card-field"><label>Carga</label><input class="carga-inp" id="ci-${i}-${si}" value="${slSet}" placeholder="kg" onchange="saveCarga('${lk}',${i},${si})"/></div>
+              <div class="set-card-field" style="flex:1"><label>${t('ui.6aa61498cf')}</label><div style="font-size:13px;font-weight:700">${ed.reps} reps</div></div>
+              <div class="set-card-field"><label>${t('ui.4b4bbc77e9')}</label><input class="reps-real-inp" id="ri-${i}-${si}" value="${repsRealizado}" placeholder="${ed.reps}" inputmode="numeric" onchange="saveRepsRealizados('${lk}',${i},${si})"/></div>
+              <div class="set-card-field"><label>${t('ui.717b4e2391')}</label><input class="carga-inp" id="ci-${i}-${si}" value="${slSet}" placeholder="kg" onchange="saveCarga('${lk}',${i},${si})"/></div>
               <div class="set-chk ${sd?'ck':''}" id="sc-${i}-${si}" onclick="chkSet('${w}','${d}',${i},${si},${ed.sets},${ed.rest||60},'${lk}')">${sd?'✓':''}</div>
             </div>`;
           }).join('')}
         </div>
-        ${proximo?`<div class="proximo-ex-preview"><span style="opacity:.6">PRÓXIMO →</span><span style="font-weight:700;color:var(--text-primary)">${exNome(proximo)}</span><span style="opacity:.7">${exs[i+1].sets}×${exs[i+1].reps}</span></div>`:''}
+        ${proximo?`<div class="proximo-ex-preview"><span style="opacity:.6">${t('ui.f9dbeb6d7d')}</span><span style="font-weight:700;color:var(--text-primary)">${exNome(proximo)}</span><span style="opacity:.7">${exs[i+1].sets}×${exs[i+1].reps}</span></div>`:''}
       </div>
     </div>`;
   }).join('');
@@ -16177,20 +16372,20 @@ function renderTreinosTab(u){
       elGym.innerHTML=`
         <div class="cat-numero">1</div>
         <div class="cat-conteudo">
-          <div class="cat-kicker">${cw}${concluido?' · CONCLUÍDO ✓':''}</div>
-          <div class="cat-titulo">MUSCULAÇÃO</div>
+          <div class="cat-kicker">${cw}${concluido?' · '+t('ui.3ea4562672'):''}</div>
+          <div class="cat-titulo">${t('ui.5f9719969f')}</div>
           <div class="cat-selo">${diaHoje}</div>
           ${grupoMuscular?`<div class="cat-rodape" style="margin-bottom:2px">${grupoMuscular}</div>`:''}
           ${feitos>0?`<div class="cat-progresso"><div class="cat-progresso-fill" style="width:${pct}%"></div></div>`:''}
-          <div class="cat-rodape">${total} exercício${total===1?'':'s'}${feitos>0?' · '+feitos+' de '+total+' concluídos':''}</div>
+          <div class="cat-rodape">${total} ${total===1?t('ui.f64872b029'):t('ui.b2225fa840')}${feitos>0?' · '+t('ui.93e15e8f84',{feitos,total}):''}</div>
         </div>`;
     } else {
       elGym.innerHTML=`
         <div class="cat-numero">1</div>
         <div class="cat-conteudo">
-          <div class="cat-kicker">AGUARDANDO PLANO</div>
-          <div class="cat-titulo">MUSCULAÇÃO</div>
-          <div class="cat-rodape">Seu treino aparece aqui assim que for gerado.</div>
+          <div class="cat-kicker">${t('ui.11d455dabe')}</div>
+          <div class="cat-titulo">${t('ui.5f9719969f')}</div>
+          <div class="cat-rodape">${t('ui.7876bae8a9')}</div>
         </div>`;
     }
   }
@@ -16206,17 +16401,17 @@ function renderTreinosTab(u){
         <div class="cat-numero">2</div>
         <div class="cat-conteudo">
           <div class="cat-kicker">${rw}</div>
-          <div class="cat-titulo">CORRIDA</div>
+          <div class="cat-titulo">${t('ui.9ef68d083e')}</div>
           ${rprog?.meta?`<div class="cat-selo">${rprog.meta}</div>`:''}
-          <div class="cat-rodape">${nSessoes?nSessoes+(nSessoes===1?' sessão':' sessões')+' nesta semana':'Plano de corrida periodizado'}</div>
+          <div class="cat-rodape">${nSessoes?nSessoes+' '+(nSessoes===1?t('ui.5b7105d0e4'):t('ui.5c7339e994'))+' '+t('ui.ddea850744'):t('ui.34114ddfad')}</div>
         </div>`;
     } else {
       elRun.innerHTML=`
         <div class="cat-numero">2</div>
         <div class="cat-conteudo">
-          <div class="cat-kicker">AGUARDANDO PLANO</div>
-          <div class="cat-titulo">CORRIDA</div>
-          <div class="cat-rodape">Seu plano aparece aqui assim que for gerado.</div>
+          <div class="cat-kicker">${t('ui.11d455dabe')}</div>
+          <div class="cat-titulo">${t('ui.9ef68d083e')}</div>
+          <div class="cat-rodape">${t('ui.98184fa918')}</div>
         </div>`;
     }
   }
@@ -16229,12 +16424,12 @@ function renderTreinosTab(u){
     const faseAtual=P3[`Semana ${cwNum}`]?.fase;
     if(totalSemanas>0){
       elPlano.innerHTML=`
-        <div class="fq2-secundario" style="text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px">Seu plano</div>
+        <div class="fq2-secundario" style="text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px">${t('ui.57d223dae2')}</div>
         <div class="fq2-card" style="display:flex;align-items:center;gap:12px">
           <div style="width:38px;height:38px;border-radius:var(--radius-sm);background:var(--surface-hover);display:flex;align-items:center;justify-content:center;font-size:17px;flex-shrink:0">📋</div>
           <div style="flex:1;min-width:0">
             <div class="fq2-titulo-exercicio">Semana ${cwNum} de ${totalSemanas}${faseAtual?' · '+faseAtual:''}</div>
-            <div class="fq2-muted" style="margin-top:2px">Musculação personalizada por Rennan Dias</div>
+            <div class="fq2-muted" style="margin-top:2px">${t('ui.ee8b61eeda')}</div>
           </div>
         </div>`;
     } else {
@@ -16245,7 +16440,7 @@ function renderTreinosTab(u){
 function renderHomeResumo(u){
   // ── Saudação por horário do dia ──
   const hora=new Date().getHours();
-  const saud = hora<12 ? 'Bom dia,' : (hora<18 ? 'Boa tarde,' : 'Boa noite,');
+  const saud = hora<12 ? t('ui.4a608175cb') : (hora<18 ? t('ui.db4d4d79e6') : t('ui.edca508b53'));
   const elSaud=document.getElementById('home-saudacao'); if(elSaud) elSaud.textContent=saud;
 
   // ── Frequência de treinos da semana (dado REAL do workoutHistory) ──
@@ -16258,7 +16453,7 @@ function renderHomeResumo(u){
     const offsetSeg=(diaSemana===0?-6:1-diaSemana);     // volta até a segunda
     const seg=new Date(hoje); seg.setDate(hoje.getDate()+offsetSeg);
     const datasTreinadas=new Set((u.workoutHistory||[]).map(h=>h.date));
-    const rotulos=['S','T','Q','Q','S','S','D'];
+    const rotulos=t('ui.4e18c5e19f').split(',');
     let html='';
     for(let i=0;i<7;i++){
       const dia=new Date(seg); dia.setDate(seg.getDate()+i);
@@ -16280,8 +16475,8 @@ function renderHomeResumo(u){
   const diaHoje=escolherTreinoDeHoje(u,cw);
   const {feitos,total}=progressoDia(u,cw,diaHoje);
 
-  const titleEl=document.getElementById('hero-title'); if(titleEl) titleEl.textContent=diaHoje||'Treino';
-  const subEl=document.getElementById('hero-sub'); if(subEl) subEl.textContent=`${total} exercício${total===1?'':'s'}`;
+  const titleEl=document.getElementById('hero-title'); if(titleEl) titleEl.textContent=diaHoje||t('ui.3ee81b31bf');
+  const subEl=document.getElementById('hero-sub'); if(subEl) subEl.textContent=`${total} ${total===1?t('ui.f64872b029'):t('ui.b2225fa840')}`;
   const semTagEl=document.getElementById('hero-semana-tag'); if(semTagEl) semTagEl.textContent=`${cw}${P[cw]?.fase?' · '+P[cw].fase:''}`;
 
   const labelEl=document.getElementById('hero-progresso-label');
@@ -16290,14 +16485,14 @@ function renderHomeResumo(u){
   const pct=total>0?Math.round((feitos/total)*100):0;
   if(barEl) barEl.style.width=pct+'%';
   if(feitos===0){
-    if(labelEl) labelEl.textContent='Ainda não começou';
-    if(ctaEl) ctaEl.innerHTML='▶ Começar treino';
+    if(labelEl) labelEl.textContent=t('ui.6dbae8fb1b');
+    if(ctaEl) ctaEl.innerHTML=t('ui.5ddcc9d495');
   } else if(feitos<total){
-    if(labelEl) labelEl.textContent=`${feitos} de ${total} exercícios concluídos`;
-    if(ctaEl) ctaEl.innerHTML='▶ Continuar treino';
+    if(labelEl) labelEl.textContent=t('ui.93e15e8f84',{feitos,total});
+    if(ctaEl) ctaEl.innerHTML=t('ui.4f2cb5c08c');
   } else {
-    if(labelEl) labelEl.textContent=`Treino concluído — ${total} de ${total} exercícios`;
-    if(ctaEl) ctaEl.innerHTML='✓ Treino concluído';
+    if(labelEl) labelEl.textContent=t('ui.a6f96c6369',{total});
+    if(ctaEl) ctaEl.innerHTML=t('ui.12399a39b3');
   }
 
   // próximo treino — o dia seguinte na lista (não é carrossel, é uma seção só)
@@ -16309,9 +16504,9 @@ function renderHomeResumo(u){
       const proxInfo=progressoDia(u,cw,proxDia);
       proxCard.style.display='';
       proxCard.innerHTML=`
-        <div class="fq2-secundario" style="margin-bottom:4px;letter-spacing:.5px">PRÓXIMO TREINO</div>
+        <div class="fq2-secundario" style="margin-bottom:4px;letter-spacing:.5px">${t('ui.81cfce86ca')}</div>
         <div class="fq2-h2" style="margin-bottom:2px">${proxDia}</div>
-        <div class="fq2-secundario">${proxInfo.total} exercício${proxInfo.total===1?'':'s'}</div>`;
+        <div class="fq2-secundario">${proxInfo.total} ${proxInfo.total===1?t('ui.f64872b029'):t('ui.b2225fa840')}</div>`;
     } else {
       proxCard.style.display='none';
     }
@@ -16322,9 +16517,9 @@ function renderHomeResumo(u){
   const resumoEl=document.getElementById('home-resumo-semana');
   if(resumoEl){
     const itens=[
-      {label:'Treinos',valor:concluidosSemana},
-      {label:'Meta',valor:dias.length},
-      {label:'Sequência',valor:(u.streak||1)+'d'},
+      {label:t('ui.c403c524f8'),valor:concluidosSemana},
+      {label:t('ui.b6755d218d'),valor:dias.length},
+      {label:t('ui.cacb8691dd'),valor:(u.streak||1)+'d'},
     ];
     resumoEl.innerHTML=itens.map(it=>`
       <div class="fq2-card" style="flex:1;text-align:center;padding:14px 6px">
@@ -16343,8 +16538,8 @@ function renderHomeResumo(u){
           <div class="fq2-titulo-exercicio">${h.day}</div>
           <div class="fq2-muted">${h.date}</div>
         </div>
-        <div class="fq2-xp-badge" style="color:var(--primary);background:rgba(229,9,20,.1)">✓ Concluído</div>
-      </div>`).join('') : `<div class="fq2-secundario" style="text-align:center;padding:16px 0">Seu histórico aparece aqui assim que você concluir um treino.</div>`;
+        <div class="fq2-xp-badge" style="color:var(--primary);background:rgba(229,9,20,.1)">${t('ui.a71d14d66e')}</div>
+      </div>`).join('') : `<div class="fq2-secundario" style="text-align:center;padding:16px 0">${t('ui.4f3e017e8e')}</div>`;
   }
 
   // gamificação — camada secundária e discreta (mesmos dados de sempre, XP/streak não mudam)
@@ -19328,8 +19523,8 @@ function renderHomeMissoesCard(){
     el.innerHTML = `<div onclick="switchTab('missoes',null)" style="background:linear-gradient(135deg,rgba(46,204,113,.12),rgba(229,9,20,.12));border:1px solid rgba(229,9,20,.25);border-radius:12px;padding:16px;cursor:pointer;display:flex;align-items:center;gap:14px">
       <div style="font-size:34px">🎮</div>
       <div style="flex:1;min-width:0">
-        <div style="font-size:14px;font-weight:900;margin-bottom:3px">Jornadas FitQuest</div>
-        <div style="font-size:11px;color:var(--t2);line-height:1.4">Missões no seu nível · escolha sua trilha</div>
+        <div style="font-size:14px;font-weight:900;margin-bottom:3px">${t('ui.jornadas001')}</div>
+        <div style="font-size:11px;color:var(--t2);line-height:1.4">${t('ui.missoes002')}</div>
       </div>
       <div style="font-size:18px;color:var(--r)">›</div>
     </div>`;
