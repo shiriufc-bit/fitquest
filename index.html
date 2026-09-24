@@ -1247,7 +1247,7 @@ html[data-tema="claro"] .movie-poster-nome{color:#fff;}
       <option value="es">🇪🇸 ES</option>
     </select>
   </div>
-  <div id="fq-version-badge" style="position:absolute;bottom:8px;right:12px;font-size:9px;color:#333;font-weight:700;z-index:5">v247</div>
+  <div id="fq-version-badge" style="position:absolute;bottom:8px;right:12px;font-size:9px;color:#333;font-weight:700;z-index:5">v248</div>
   <img src="https://images.unsplash.com/photo-1517836357463-d25dfeac3438?w=800&q=80" alt="Fitness" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center top;filter:brightness(.35);z-index:0"/>
   <div class="splash-glow"></div>
   <div class="splash-noise"></div>
@@ -2470,7 +2470,7 @@ html[data-tema="claro"] .movie-poster-nome{color:#fff;}
             <span style="color:var(--mu);font-size:18px">›</span>
           </div>
         </div>
-        <div style="text-align:center;padding:20px 0 4px;font-size:11px;color:var(--mu)">FitQuest <span id="fq-version-badge-perfil">v247</span></div>
+        <div style="text-align:center;padding:20px 0 4px;font-size:11px;color:var(--mu)">FitQuest <span id="fq-version-badge-perfil">v248</span></div>
       </div>
     </div>
 
@@ -2538,6 +2538,10 @@ html[data-tema="claro"] .movie-poster-nome{color:#fff;}
       <!-- Recent students -->
       <div class="adm-sec-title">🕐 Cadastros Recentes <span id="adm-recent-count"></span></div>
       <div id="adm-recent-list"></div>
+
+      <!-- Alunos inativos — quem sumiu sem você precisar procurar -->
+      <div class="adm-sec-title" style="color:#f39c12">⚠️ Alunos Sem Treinar <span id="adm-inativos-count"></span></div>
+      <div id="adm-inativos-list" style="padding:0 12px 4px"></div>
     </div>
 
     <!-- TAB: ALUNOS -->
@@ -11749,11 +11753,18 @@ function renderGymDay(w,d,u){
           ${Array.from({length:ed.sets},(_,si)=>{
             const sk=`${w}_${d}_${i}_s${si}`;const sd=u.gymDone&&u.gymDone[sk];
             const rk=`${lk}_s${si}`;const repsRealizado=(u.repsHistory&&u.repsHistory[rk])||'';
+            // BUGFIX: carga agora é por SÉRIE de verdade (chave própria por si),
+            // não mais compartilhada entre as 3 séries do exercício. Se ainda
+            // não existe valor salvo nessa série específica, cai pro valor
+            // antigo (compartilhado) ou pra carga prescrita — ninguém perde
+            // histórico já salvo antes dessa correção.
+            const ckLoad=`${lk}_s${si}`;
+            const slSet=(u.loadHistory&&u.loadHistory[ckLoad])||sl;
             return `<div class="set-card ${sd?'done':''}" id="sr-${i}-${si}">
               <div class="set-card-num">S${si+1}</div>
               <div class="set-card-field" style="flex:1"><label>Prescrito</label><div style="font-size:13px;font-weight:700">${ed.reps} reps</div></div>
               <div class="set-card-field"><label>Realizado</label><input class="reps-real-inp" id="ri-${i}-${si}" value="${repsRealizado}" placeholder="${ed.reps}" inputmode="numeric" onchange="saveRepsRealizados('${lk}',${i},${si})"/></div>
-              <div class="set-card-field"><label>Carga</label><input class="carga-inp" id="ci-${i}-${si}" value="${sl}" placeholder="kg" onchange="saveCarga('${lk}',${i},${si})"/></div>
+              <div class="set-card-field"><label>Carga</label><input class="carga-inp" id="ci-${i}-${si}" value="${slSet}" placeholder="kg" onchange="saveCarga('${lk}',${i},${si})"/></div>
               <div class="set-chk ${sd?'ck':''}" id="sc-${i}-${si}" onclick="chkSet('${w}','${d}',${i},${si},${ed.sets},${ed.rest||60},'${lk}')">${sd?'✓':''}</div>
             </div>`;
           }).join('')}
@@ -11894,7 +11905,7 @@ function gymReordenarEx(de, para){
 }
 
 function togEp(i){ if(fqAcabouDeArrastar()) return; document.getElementById(`ep-${i}`).classList.toggle('open'); }
-function saveCarga(lk,ei,si){const email=DB.get('fq_cur');const users=DB.get('fq_users')||{};const u=users[email];if(!u)return;const v=document.getElementById(`ci-${ei}-${si}`)?.value||'';if(!u.loadHistory)u.loadHistory={};u.loadHistory[lk]=v;DB.set('fq_users',users);}
+function saveCarga(lk,ei,si){const email=DB.get('fq_cur');const users=DB.get('fq_users')||{};const u=users[email];if(!u)return;const v=document.getElementById(`ci-${ei}-${si}`)?.value||'';if(!u.loadHistory)u.loadHistory={};u.loadHistory[`${lk}_s${si}`]=v;DB.set('fq_users',users);}
 // ── Reps REALIZADAS por série (Fase 5) ──
 // Campo novo, aditivo — NÃO mexe na prescrição original (ed.reps, intacta)
 // nem no loadHistory existente. Guarda num campo próprio, de verdade por
@@ -11912,7 +11923,7 @@ function chkSet(w,d,ei,si,total,rest,lk){
   const email=DB.get('fq_cur');const users=DB.get('fq_users')||{};const u=users[email];if(!u)return;
   const sk=`${w}_${d}_${ei}_s${si}`;if(!u.gymDone)u.gymDone={};if(u.gymDone[sk])return;
   u.gymDone[sk]=true;const v=document.getElementById(`ci-${ei}-${si}`)?.value||'';
-  if(!u.loadHistory)u.loadHistory={};if(v)u.loadHistory[lk]=v;DB.set('fq_users',users);
+  if(!u.loadHistory)u.loadHistory={};if(v)u.loadHistory[`${lk}_s${si}`]=v;DB.set('fq_users',users);
   const chk=document.getElementById(`sc-${ei}-${si}`);if(chk){chk.classList.add('ck');chk.textContent='✓';}
   const row=document.getElementById(`sr-${ei}-${si}`);if(row)row.classList.add('done');
   if(si<total-1)startTimer(rest);
@@ -11962,7 +11973,7 @@ function completeWk(w,d){
   try{registrarEventoComunidade('treino',{nome:u.name,nome_treino:d,titulo:tituloAtual(u)?.emoji});}catch(e){}
   const P=getGP(u);const exs=P[w].days[d];
   if(!u.workoutHistory)u.workoutHistory=[];
-  u.workoutHistory.push({week:w,day:d,date:new Date().toLocaleDateString('pt-BR'),exercises:exs.map(e=>{const ex=getExById(e.id);return{name:ex?.name||e.id,load:u.loadHistory?.[`${w}_${d}_${e.id}`]||''};})});
+  u.workoutHistory.push({week:w,day:d,date:new Date().toLocaleDateString('pt-BR'),exercises:exs.map(e=>{const ex=getExById(e.id);return{name:ex?.name||e.id,load:u.loadHistory?.[`${w}_${d}_${e.id}_s0`]||u.loadHistory?.[`${w}_${d}_${e.id}`]||''};})});
   const allDays=Object.keys(P[w].days);const tw=Object.keys(P).length;
   if(allDays.every(dd=>u.gymDone[`${w}_${dd}`])){const wn=parseInt(w.split(' ')[1]);if(wn===(u.gymWeek||1)&&(u.gymWeek||1)<tw){u.gymWeek=(u.gymWeek||1)+1;u.xp+=200;u.coins+=50;u.stats.semanas=(u.stats.semanas||0)+1;}}
   if((u.xp||0)>=(u.level||1)*1000){u.level=(u.level||1)+1;u.xp=0;setTimeout(()=>fqToast(t('msg.e4f2eae161')+(u.level||1)+'!','ok',5000),200);try{dispararConfete(40);}catch(e){}}
@@ -13156,6 +13167,43 @@ async function loadAdmin(){
   const rcCount=document.getElementById('adm-recent-count');
   if(rcCount) rcCount.textContent=`(${recent.length})`;
   if(rcEl) rcEl.innerHTML=recent.length?recent.map(u=>admStudentCard(u,true)).join(''):`<div class="adm-empty"><div class="adm-empty-icon">👥</div><div>Nenhum aluno ainda</div></div>`;
+
+  // ── Alunos sem treinar há 5+ dias ──
+  // Detecta pela data mais recente em workoutHistory (formato 'dd/mm/aaaa',
+  // igual o resto do app já usa). Aluno aprovado que nunca teve nenhum
+  // treino registrado conta como "inativo desde sempre" — provavelmente
+  // nunca chegou a começar. Só considera quem está ativo (trainApproved),
+  // pra não misturar com pendente de aprovação.
+  function admParseDataBR(s){
+    const m=String(s||'').match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
+    if(!m) return null;
+    return new Date(+m[3], +m[2]-1, +m[1]);
+  }
+  const hoje=new Date(); hoje.setHours(0,0,0,0);
+  const inativos=active.map(u=>{
+    const datas=(u.workoutHistory||[]).map(h=>admParseDataBR(h.date)).filter(Boolean);
+    const ultima=datas.length?new Date(Math.max(...datas)):null;
+    const dias=ultima?Math.round((hoje-ultima)/86400000):null; // null = nunca treinou
+    return {u, dias};
+  }).filter(x=>x.dias===null || x.dias>=5)
+    .sort((a,b)=>(b.dias??9999)-(a.dias??9999));
+
+  const invEl=document.getElementById('adm-inativos-list');
+  const invCount=document.getElementById('adm-inativos-count');
+  if(invCount) invCount.textContent=inativos.length?`(${inativos.length})`:'';
+  if(invEl){
+    if(!inativos.length){
+      invEl.innerHTML=`<div class="adm-empty"><div class="adm-empty-icon">✅</div><div>Todo mundo treinando em dia!</div></div>`;
+    } else {
+      invEl.innerHTML=inativos.slice(0,15).map(({u,dias})=>{
+        const rotulo = dias===null ? 'Nunca treinou' : `${dias} dias sem treinar`;
+        return `<div style="margin-bottom:8px">
+          <div style="font-size:10px;font-weight:800;color:#f39c12;margin-bottom:2px;padding-left:2px">⚠️ ${rotulo}</div>
+          ${admStudentCard(u,true)}
+        </div>`;
+      }).join('');
+    }
+  }
 
   // ── Coleta de dados: conversão no teste grátis ──
   renderConversao(all);
