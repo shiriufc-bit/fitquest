@@ -1247,7 +1247,7 @@ html[data-tema="claro"] .movie-poster-nome{color:#fff;}
       <option value="es">🇪🇸 ES</option>
     </select>
   </div>
-  <div id="fq-version-badge" style="position:absolute;bottom:8px;right:12px;font-size:9px;color:#333;font-weight:700;z-index:5">v250</div>
+  <div id="fq-version-badge" style="position:absolute;bottom:8px;right:12px;font-size:9px;color:#333;font-weight:700;z-index:5">v251</div>
   <img src="https://images.unsplash.com/photo-1517836357463-d25dfeac3438?w=800&q=80" alt="Fitness" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center top;filter:brightness(.35);z-index:0"/>
   <div class="splash-glow"></div>
   <div class="splash-noise"></div>
@@ -2476,7 +2476,7 @@ html[data-tema="claro"] .movie-poster-nome{color:#fff;}
             <span style="color:var(--mu);font-size:18px">›</span>
           </div>
         </div>
-        <div style="text-align:center;padding:20px 0 4px;font-size:11px;color:var(--mu)">FitQuest <span id="fq-version-badge-perfil">v250</span></div>
+        <div style="text-align:center;padding:20px 0 4px;font-size:11px;color:var(--mu)">FitQuest <span id="fq-version-badge-perfil">v251</span></div>
       </div>
     </div>
 
@@ -2519,6 +2519,9 @@ html[data-tema="claro"] .movie-poster-nome{color:#fff;}
       <!-- Revenue -->
       <div class="adm-sec-title">💰 Receita Estimada</div>
       <div class="revenue-card" id="adm-revenue"></div>
+      <!-- Assinaturas recorrentes — receita mensal real, renovações próximas -->
+      <div class="adm-sec-title">🔁 Assinaturas</div>
+      <div id="adm-assinaturas" style="padding:0 12px"></div>
       <!-- Coleta de dados: conversão no período de teste -->
       <div class="adm-sec-title" data-i18n="ui.f4d5094e79">📊 Conversão do Teste Grátis</div>
       <div id="adm-conversao" style="padding:0 12px"></div>
@@ -13510,6 +13513,7 @@ async function loadAdmin(){
 
   // ── Coleta de dados: conversão no teste grátis ──
   renderConversao(all);
+  renderAssinaturas(all);
 
   // ── Full students list ──
   admRenderStudents(all,'all');
@@ -13589,6 +13593,67 @@ function admAlertaSaude(an){
 // ══ COLETA DE DADOS — em que dia do teste os alunos decidem assinar ══
 // Serve pra decidir com dado real (e não com opinião) se o período de
 // teste atual está no tamanho certo.
+// ══ Assinaturas recorrentes — receita mensal real (MRR) + renovações
+// próximas ══ Usa os preços reais do PLANOS_NORMAL (mensal/anual) — a
+// mesma tabela que o app usa pra cobrar de verdade. Não confundir com a
+// "Receita Estimada" acima, que é só e-books/programas avulsos.
+function renderAssinaturas(lista){
+  const el = document.getElementById('adm-assinaturas');
+  if(!el) return;
+  const alunos = (lista||[]).filter(u=>!u.isAdmin);
+  const ativos = alunos.filter(u=>u.assinaturaStatus==='ativa');
+
+  const PRECO_MENSAL_EQUIV = { mensal: 19.90, anual: 14.90 };
+
+  let mrr = 0;
+  ativos.forEach(u=>{
+    const plano = String(u.plano||u.planoConversao||'mensal').toLowerCase();
+    mrr += PRECO_MENSAL_EQUIV[plano] !== undefined ? PRECO_MENSAL_EQUIV[plano] : PRECO_MENSAL_EQUIV.mensal;
+  });
+
+  const hoje = new Date(); hoje.setHours(0,0,0,0);
+  const em7dias = new Date(hoje); em7dias.setDate(hoje.getDate()+7);
+  const vencendo = ativos
+    .filter(u=>u.assinaturaAte)
+    .map(u=>({u, data: new Date(u.assinaturaAte)}))
+    .filter(x=>x.data >= hoje && x.data <= em7dias)
+    .sort((a,b)=>a.data-b.data);
+
+  if(!ativos.length){
+    el.innerHTML = `<div class="adm-empty"><div class="adm-empty-icon">🔁</div><div>Nenhuma assinatura ativa ainda</div></div>`;
+    return;
+  }
+
+  let html = `
+    <div style="display:flex;gap:8px;margin-bottom:10px">
+      <div style="flex:1;background:var(--s);border:1px solid var(--b);border-radius:10px;padding:12px;text-align:center">
+        <div style="font-size:20px;font-weight:900;color:#2ecc71">R$ ${mrr.toFixed(2).replace('.',',')}</div>
+        <div style="font-size:10px;color:var(--mu);margin-top:2px">Receita mensal recorrente</div>
+      </div>
+      <div style="flex:1;background:var(--s);border:1px solid var(--b);border-radius:10px;padding:12px;text-align:center">
+        <div style="font-size:20px;font-weight:900;color:#fff">${ativos.length}</div>
+        <div style="font-size:10px;color:var(--mu);margin-top:2px">Assinaturas ativas</div>
+      </div>
+    </div>`;
+
+  if(vencendo.length){
+    html += `<div style="font-size:10px;font-weight:800;color:#f39c12;margin:10px 0 6px;padding-left:2px">⚠️ VENCENDO NOS PRÓXIMOS 7 DIAS (${vencendo.length})</div>`;
+    html += vencendo.map(({u,data})=>{
+      const dias = Math.round((data-hoje)/86400000);
+      return `<div style="display:flex;justify-content:space-between;align-items:center;background:var(--s);border:1px solid rgba(243,156,18,.3);border-radius:8px;padding:10px 12px;margin-bottom:6px">
+        <div>
+          <div style="font-size:12px;font-weight:700">${u.name||u.email}</div>
+          <div style="font-size:10px;color:var(--mu)">${data.toLocaleDateString('pt-BR')}</div>
+        </div>
+        <div style="font-size:11px;font-weight:800;color:#f39c12">${dias===0?'Hoje':dias===1?'Amanhã':dias+' dias'}</div>
+      </div>`;
+    }).join('');
+  } else {
+    html += `<div style="font-size:11px;color:var(--mu);text-align:center;padding:8px 0">Nenhuma renovação nos próximos 7 dias.</div>`;
+  }
+
+  el.innerHTML = html;
+}
 function renderConversao(lista){
   const el = document.getElementById('adm-conversao');
   if(!el) return;
