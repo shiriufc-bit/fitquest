@@ -1,6 +1,6 @@
 // ══ FitQuest Service Worker v101 ══
 // Gerado em: 09/08/2026 
-const CACHE_NAME = 'fitquest-v251';
+const CACHE_NAME = 'fitquest-v253';
 
 const ASSETS = [
   '/fitquest/',
@@ -30,6 +30,42 @@ self.addEventListener('activate', e => {
     )
   );
   self.clients.claim();
+});
+
+// ══ PUSH — recebe o aviso do servidor e mostra a notificação no aparelho ══
+// O servidor (Supabase Edge Function) manda um payload em JSON: {title, body,
+// url}. Se o envio vier sem corpo (alguns testes manuais fazem isso), usa um
+// texto padrão em vez de quebrar.
+self.addEventListener('push', e => {
+  let dados = { title: 'FitQuest', body: 'Você tem uma novidade no app!', url: '/fitquest/' };
+  try{
+    if(e.data) dados = { ...dados, ...e.data.json() };
+  }catch(err){
+    if(e.data) dados.body = e.data.text();
+  }
+  e.waitUntil(
+    self.registration.showNotification(dados.title, {
+      body: dados.body,
+      icon: '/fitquest/icon-192.png',
+      badge: '/fitquest/icon-192.png',
+      data: { url: dados.url || '/fitquest/' },
+      vibrate: [100, 50, 100],
+    })
+  );
+});
+
+// Toque na notificação: foca uma aba já aberta do app, ou abre uma nova.
+self.addEventListener('notificationclick', e => {
+  e.notification.close();
+  const alvo = (e.notification.data && e.notification.data.url) || '/fitquest/';
+  e.waitUntil(
+    self.clients.matchAll({ type: 'window', includeUncontrolled: true }).then(lista => {
+      for(const cliente of lista){
+        if(cliente.url.includes('/fitquest/') && 'focus' in cliente) return cliente.focus();
+      }
+      if(self.clients.openWindow) return self.clients.openWindow(alvo);
+    })
+  );
 });
 
 self.addEventListener('fetch', e => {

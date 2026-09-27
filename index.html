@@ -1247,7 +1247,7 @@ html[data-tema="claro"] .movie-poster-nome{color:#fff;}
       <option value="es">🇪🇸 ES</option>
     </select>
   </div>
-  <div id="fq-version-badge" style="position:absolute;bottom:8px;right:12px;font-size:9px;color:#333;font-weight:700;z-index:5">v251</div>
+  <div id="fq-version-badge" style="position:absolute;bottom:8px;right:12px;font-size:9px;color:#333;font-weight:700;z-index:5">v253</div>
   <img src="https://images.unsplash.com/photo-1517836357463-d25dfeac3438?w=800&q=80" alt="Fitness" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center top;filter:brightness(.35);z-index:0"/>
   <div class="splash-glow"></div>
   <div class="splash-noise"></div>
@@ -2459,6 +2459,14 @@ html[data-tema="claro"] .movie-poster-nome{color:#fff;}
             </div>
             <span style="color:var(--mu);font-size:18px">›</span>
           </div>
+          <div onclick="fqAlternarPush()" style="padding:14px 16px;display:flex;align-items:center;gap:12px;cursor:pointer;border-bottom:1px solid var(--b)">
+            <span style="font-size:20px" id="push-icone">🔕</span>
+            <div style="flex:1">
+              <div style="font-size:13px;font-weight:700">Notificações</div>
+              <div style="font-size:10px;color:var(--mu)" id="push-descricao">Desativadas</div>
+            </div>
+            <span style="color:var(--mu);font-size:18px">›</span>
+          </div>
           <div onclick="doExcluirConta()" style="padding:14px 16px;border-bottom:1px solid var(--b);display:flex;align-items:center;gap:12px;cursor:pointer">
             <span style="font-size:20px">🗑️</span>
             <div style="flex:1">
@@ -2476,7 +2484,7 @@ html[data-tema="claro"] .movie-poster-nome{color:#fff;}
             <span style="color:var(--mu);font-size:18px">›</span>
           </div>
         </div>
-        <div style="text-align:center;padding:20px 0 4px;font-size:11px;color:var(--mu)">FitQuest <span id="fq-version-badge-perfil">v251</span></div>
+        <div style="text-align:center;padding:20px 0 4px;font-size:11px;color:var(--mu)">FitQuest <span id="fq-version-badge-perfil">v253</span></div>
       </div>
     </div>
 
@@ -2551,6 +2559,10 @@ html[data-tema="claro"] .movie-poster-nome{color:#fff;}
       <!-- Alunos inativos — quem sumiu sem você precisar procurar -->
       <div class="adm-sec-title" style="color:#f39c12">⚠️ Alunos Sem Treinar <span id="adm-inativos-count"></span></div>
       <div id="adm-inativos-list" style="padding:0 12px 4px"></div>
+
+      <!-- Vídeos de correção pendentes -->
+      <div class="adm-sec-title" style="color:#3498db">📹 Vídeos pra Correção <span id="adm-correcoes-count"></span></div>
+      <div id="adm-correcoes-list" style="padding:0 12px 4px"></div>
     </div>
 
     <!-- TAB: ALUNOS -->
@@ -2650,6 +2662,37 @@ html[data-tema="claro"] .movie-poster-nome{color:#fff;}
         <div style="display:flex;gap:8px;margin-top:12px">
           <button class="btn-addex" onclick="gvRegravar()" style="flex:1">🔁 Gravar de novo</button>
           <button class="btn-savewk" onclick="gvSalvarResultado()" style="flex:1;margin-top:0">✅ Usar este</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- Gravação de vídeo REAL (não GIF) pra correção do Rennan — vídeo mais
+     longo e com qualidade melhor que o de referência pessoal acima, porque
+     aqui o objetivo é o Rennan conseguir avaliar a execução de verdade. -->
+<div class="modal-ov" id="modal-video-correcao" style="align-items:flex-start">
+  <div class="modal-bx" style="max-width:420px;width:100%;padding:0;border-radius:16px 16px 0 0;margin-top:auto;max-height:92vh;overflow-y:auto">
+    <div class="modal-t"><span>📹 Enviar vídeo pra correção</span><button class="modal-cl" onclick="vcCancelar()">✕</button></div>
+    <div style="padding:16px">
+      <div id="vc-exercicio-nome" style="font-size:13px;font-weight:700;color:var(--mu);margin-bottom:10px"></div>
+      <div id="vc-camera-wrap" style="display:none;text-align:center">
+        <div style="position:relative;width:100%;aspect-ratio:9/16;max-height:50vh;background:#000;border-radius:12px;overflow:hidden;margin:0 auto">
+          <video id="vc-video" autoplay muted playsinline style="width:100%;height:100%;object-fit:cover"></video>
+          <div id="vc-timer" style="display:none;position:absolute;top:10px;right:10px;background:rgba(229,9,20,.9);color:#fff;font-size:12px;font-weight:800;padding:4px 10px;border-radius:20px">● 0:00</div>
+        </div>
+        <div style="font-size:11px;color:var(--mu);margin-top:10px">Grave até 20 segundos mostrando o movimento completo. Capriche no ângulo — quanto melhor o Rennan enxergar, melhor a correção.</div>
+        <button class="btn-addex" id="vc-btn-gravar" onclick="vcComecarGravacao()" style="width:100%;margin-top:10px">⏺ Começar a gravar</button>
+        <button class="btn-addex" id="vc-btn-parar" onclick="vcPararGravacao()" style="width:100%;margin-top:10px;display:none;border-color:rgba(229,9,20,.5);color:var(--r)">⏹ Parar agora</button>
+      </div>
+      <div id="vc-processando" style="display:none;text-align:center;padding:30px 0">
+        <div style="font-size:32px">⏳</div>
+        <div style="font-size:12.5px;color:var(--mu);margin-top:8px" id="vc-processando-texto">Preparando...</div>
+      </div>
+      <div id="vc-resultado-wrap" style="display:none;text-align:center">
+        <video id="vc-resultado-video" controls playsinline style="width:100%;aspect-ratio:9/16;max-height:50vh;object-fit:cover;border-radius:12px;background:#000"></video>
+        <div style="display:flex;gap:8px;margin-top:12px">
+          <button class="btn-addex" onclick="vcRegravar()" style="flex:1">🔁 Gravar de novo</button>
+          <button class="btn-savewk" onclick="vcEnviarParaCorrecao()" style="flex:1;margin-top:0">📤 Enviar pro Rennan</button>
         </div>
       </div>
     </div>
@@ -3090,6 +3133,11 @@ const FQ_VERSION='v123';console.log('%cFitQuest '+FQ_VERSION,'color:#e50914;font
 // Deixe '' para usar o plano local (fallback). Ex: 'https://fitquest-ai.SEU-USUARIO.workers.dev'
 const AI_PROXY_URL='';
 const SUPABASE_URL='https://ctbmnvlsvdlrohkcalcm.supabase.co';
+// Chave pública do Web Push (VAPID) — usada só pra pedir a inscrição no
+// navegador do aluno. A chave PRIVADA (que assina o envio) NUNCA fica aqui
+// no código do app — ela mora só no servidor (Supabase Edge Function),
+// como segredo. Ver instruções de publicação enviadas separadamente.
+const FQ_VAPID_PUBLIC_KEY='BAufV-Apetfu-wJKiYmdBWs4GYf1Fh4cgUDArW3oE2uQtiAYg4lSLmgB868wBpDHDyerA-pAPmNIr6P4de9KelY';
 const SUPABASE_KEY='sb_publishable_0jwz3vKIkAakkn8tgNrKKQ_EELiP41g'; // publishable key (segura para frontend — protegida via RLS no Supabase)
 const FN_URL=SUPABASE_URL+'/functions/v1';
 let sb=null;
@@ -5838,6 +5886,23 @@ function concluirRotina(routineId){
 // ex.dica é um campo editável pelo admin — começa vazio, Rennan
 // preenche aos poucos. Não inventamos 218 dicas de treinador.
 // ══════════════════════════════════════════════════════════════
+// Mostra o status da correção de vídeo mais recente enviada PRA ESSE
+// exercício específico — pendente (aguardando o Rennan) ou já respondida
+// (mostra o texto do feedback). Sem histórico nenhum, não mostra nada.
+function fichaUltimaCorrecao(u, exId){
+  const lista = (u?.correcoesVideo||[]).filter(c=>c.exId===exId);
+  if(!lista.length) return '';
+  const ultima = lista[lista.length-1];
+  if(ultima.status==='respondido'){
+    return `<div style="margin-top:8px;background:rgba(46,204,113,.08);border:1px solid rgba(46,204,113,.25);border-radius:8px;padding:10px 12px">
+      <div style="font-size:10px;font-weight:800;color:#2ecc71;text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px">✅ Rennan respondeu</div>
+      <div style="font-size:12px;color:#fff;line-height:1.5">${ultima.feedbackTexto}</div>
+    </div>`;
+  }
+  return `<div style="margin-top:8px;background:rgba(243,156,18,.08);border:1px solid rgba(243,156,18,.25);border-radius:8px;padding:10px 12px;font-size:11.5px;color:#e8b566">
+    ⏳ Vídeo enviado, aguardando o Rennan revisar.
+  </div>`;
+}
 function fichaHistoricoExercicio(u, exId, exNomeAtual){
   if(!u) return {pontos:[], maiorCarga:null, ultimaSemana:null, pr:null, vezes:0};
   const pontos=[];
@@ -5915,6 +5980,10 @@ function abrirFichaExercicio(exId){
       ` : `
         <button onclick="gvAbrirParaExercicio('${ex.id}')" style="flex:1;background:var(--s2);border:1px solid var(--b);border-radius:8px;padding:8px 10px;color:#fff;font-size:11px;font-weight:700;cursor:pointer">🎥 Gravar meu vídeo deste exercício</button>
       `}
+    </div>
+    <div style="padding:10px 20px 0">
+      <button onclick="vcAbrirParaExercicio('${ex.id}','${nomeExibido.replace(/'/g,"\\'")}')" style="width:100%;background:rgba(229,9,20,.1);border:1px solid rgba(229,9,20,.3);border-radius:8px;padding:10px;color:#ff8a90;font-size:12px;font-weight:800;cursor:pointer">📹 Enviar meu vídeo pra correção do Rennan</button>
+      ${fichaUltimaCorrecao(u, ex.id)}
     </div>
     <div style="padding:18px 20px 6px">
       <h2 style="margin:0 0 3px;font-size:20px;font-weight:900;line-height:1.25">${nomeExibido}${nomeEN?` <span style="font-size:13px;color:var(--mu);font-weight:500">(${nomeEN})</span>`:''}</h2>
@@ -6060,10 +6129,10 @@ function renovarMissoesSemanais(u){
   return true;
 }
 function rowToUser(data){
-  return{id:data.id,name:data.nome,email:data.email,plano:data.plano,trialInicio:data.trial_inicio,runInicio:data.run_inicio,runAjusteLesao:!!data.run_ajuste_lesao,assinaturaStatus:data.assinatura_status||'trial',assinaturaAte:data.assinatura_ate,diaConversao:data.dia_conversao,dataConversao:data.data_conversao,planoConversao:data.plano_conversao,precoTravado:data.preco_travado,promoFundador:!!data.promo_fundador,pixFundador:!!data.pix_fundador,promoVaga:data.promo_vaga,solicitouTrocaTreino:!!data.solicitou_troca,solicitouTrocaData:data.solicitou_troca_data,solicitouTrocaTipo:data.solicitou_troca_tipo,trainApproved:data.treino_liberado,isAdmin:!!data.is_admin,aiPlan:data.ai_plan,anamnese:data.anamnese,anamneseDone:!!data.anamnese_geral,anamneseGeral:data.anamnese_geral||null,anamneseMusculacao:data.anamnese_musculacao||null,anamneseCorrida:data.anamnese_corrida||null,anamneseMuscDone:!!data.anamnese_musculacao,anamneseCorridaDone:!!data.anamnese_corrida,gymWeek:data.gym_week||1,runWeek:data.run_week||1,gymDone:data.gym_done||{},runDone:data.run_done||{},runFeedback:data.run_feedback||{},runAtividades:data.run_atividades||[],runTriagem:data.run_triagem||null,runStrength:data.run_strength||[],runStrengthDone:data.run_strength_done||{},runTestes:data.run_testes||[],runTestPace:data.run_test_pace||null,loadHistory:data.load_history||{},workoutHistory:data.workout_history||[],xp:data.xp||0,kidsXp:data.kids_xp||0,level:data.level||1,streak:data.streak||1,coins:data.coins||0,badges:data.badges||[],prs:data.prs||[],stats:data.stats||{treinos:0,distancia:0,semanas:0},purchases:data.purchases||[],pacoteEbooks:!!data.pacote_ebooks,programIntakes:data.program_intakes||{},avatar:data.avatar||null,avaliacoes:data.evals||[],gifsPersonalizados:data.gifs_personalizados||{},exerciciosCustom:data.exercicios_custom||[],missions:MISSOES_PADRAO.map(m=>({...m})),createdAt:data.criado_em,lastLogin:data.ultimo_acesso};
+  return{id:data.id,name:data.nome,email:data.email,plano:data.plano,trialInicio:data.trial_inicio,runInicio:data.run_inicio,runAjusteLesao:!!data.run_ajuste_lesao,assinaturaStatus:data.assinatura_status||'trial',assinaturaAte:data.assinatura_ate,diaConversao:data.dia_conversao,dataConversao:data.data_conversao,planoConversao:data.plano_conversao,precoTravado:data.preco_travado,promoFundador:!!data.promo_fundador,pixFundador:!!data.pix_fundador,promoVaga:data.promo_vaga,solicitouTrocaTreino:!!data.solicitou_troca,solicitouTrocaData:data.solicitou_troca_data,solicitouTrocaTipo:data.solicitou_troca_tipo,trainApproved:data.treino_liberado,pushSubscription:data.push_subscription||null,correcoesVideo:data.correcoes_video||[],isAdmin:!!data.is_admin,aiPlan:data.ai_plan,anamnese:data.anamnese,anamneseDone:!!data.anamnese_geral,anamneseGeral:data.anamnese_geral||null,anamneseMusculacao:data.anamnese_musculacao||null,anamneseCorrida:data.anamnese_corrida||null,anamneseMuscDone:!!data.anamnese_musculacao,anamneseCorridaDone:!!data.anamnese_corrida,gymWeek:data.gym_week||1,runWeek:data.run_week||1,gymDone:data.gym_done||{},runDone:data.run_done||{},runFeedback:data.run_feedback||{},runAtividades:data.run_atividades||[],runTriagem:data.run_triagem||null,runStrength:data.run_strength||[],runStrengthDone:data.run_strength_done||{},runTestes:data.run_testes||[],runTestPace:data.run_test_pace||null,loadHistory:data.load_history||{},workoutHistory:data.workout_history||[],xp:data.xp||0,kidsXp:data.kids_xp||0,level:data.level||1,streak:data.streak||1,coins:data.coins||0,badges:data.badges||[],prs:data.prs||[],stats:data.stats||{treinos:0,distancia:0,semanas:0},purchases:data.purchases||[],pacoteEbooks:!!data.pacote_ebooks,programIntakes:data.program_intakes||{},avatar:data.avatar||null,avaliacoes:data.evals||[],gifsPersonalizados:data.gifs_personalizados||{},exerciciosCustom:data.exercicios_custom||[],missions:MISSOES_PADRAO.map(m=>({...m})),createdAt:data.criado_em,lastLogin:data.ultimo_acesso};
 }
 function userToRow(u){
-  return{id:u.id,nome:u.name,email:u.email,plano:u.plano||'free',trial_inicio:u.trialInicio||undefined,run_inicio:u.runInicio||null,run_ajuste_lesao:u.runAjusteLesao||false,treino_liberado:u.trainApproved||false,ai_plan:u.aiPlan||null,anamnese:u.anamnese||null,anamnese_geral:u.anamneseGeral||null,anamnese_musculacao:u.anamneseMusculacao||null,anamnese_corrida:u.anamneseCorrida||null,gym_week:u.gymWeek||1,run_week:u.runWeek||1,gym_done:u.gymDone||{},run_done:u.runDone||{},run_feedback:u.runFeedback||{},run_atividades:u.runAtividades||[],run_triagem:u.runTriagem||null,run_strength:u.runStrength||[],run_strength_done:u.runStrengthDone||{},run_testes:u.runTestes||[],run_test_pace:u.runTestPace||null,load_history:u.loadHistory||{},workout_history:u.workoutHistory||[],xp:u.xp||0,kids_xp:u.kidsXp||0,level:u.level||1,streak:u.streak||1,coins:u.coins||0,badges:u.badges||[],prs:u.prs||[],stats:u.stats||{treinos:0,distancia:0,semanas:0},avatar:u.avatar||null,evals:u.avaliacoes||[],program_intakes:u.programIntakes||{},gifs_personalizados:u.gifsPersonalizados||{},exercicios_custom:u.exerciciosCustom||[],ultimo_acesso:new Date().toISOString(),updated_at:new Date().toISOString()};
+  return{id:u.id,nome:u.name,email:u.email,plano:u.plano||'free',trial_inicio:u.trialInicio||undefined,run_inicio:u.runInicio||null,run_ajuste_lesao:u.runAjusteLesao||false,treino_liberado:u.trainApproved||false,push_subscription:u.pushSubscription||null,correcoes_video:u.correcoesVideo||[],ai_plan:u.aiPlan||null,anamnese:u.anamnese||null,anamnese_geral:u.anamneseGeral||null,anamnese_musculacao:u.anamneseMusculacao||null,anamnese_corrida:u.anamneseCorrida||null,gym_week:u.gymWeek||1,run_week:u.runWeek||1,gym_done:u.gymDone||{},run_done:u.runDone||{},run_feedback:u.runFeedback||{},run_atividades:u.runAtividades||[],run_triagem:u.runTriagem||null,run_strength:u.runStrength||[],run_strength_done:u.runStrengthDone||{},run_testes:u.runTestes||[],run_test_pace:u.runTestPace||null,load_history:u.loadHistory||{},workout_history:u.workoutHistory||[],xp:u.xp||0,kids_xp:u.kidsXp||0,level:u.level||1,streak:u.streak||1,coins:u.coins||0,badges:u.badges||[],prs:u.prs||[],stats:u.stats||{treinos:0,distancia:0,semanas:0},avatar:u.avatar||null,evals:u.avaliacoes||[],program_intakes:u.programIntakes||{},gifs_personalizados:u.gifsPersonalizados||{},exercicios_custom:u.exerciciosCustom||[],ultimo_acesso:new Date().toISOString(),updated_at:new Date().toISOString()};
   // Obs.: purchases/pacote_ebooks/is_admin/plano NÃO são enviados pelo aluno — são protegidos no banco e só mudam via webhook de pagamento ou admin.
 }
 async function syncU(u){
@@ -11221,6 +11290,136 @@ async function gvSalvarResultado(){
     fqToast('Erro inesperado ao salvar: '+e.message,'warn',5000);
   }
 }
+
+// ══════════════════════════════════════════════════════════════════════
+// ══ VÍDEO DE CORREÇÃO — o aluno grava e envia pro Rennan revisar ══
+// Diferente do "gravar meu vídeo" acima (que vira GIF de 8s, só pra
+// referência visual pessoal), aqui é um VÍDEO DE VERDADE (MediaRecorder,
+// até 20s, com áudio), guardado no Storage num bucket separado e privado
+// (link assinado, não público) — porque é execução real do aluno, mais
+// sensível que um GIF de demonstração genérico.
+// ══════════════════════════════════════════════════════════════════════
+let vcStream=null, vcMediaRecorder=null, vcChunks=[], vcBlobPronto=null;
+let vcExIdAlvo=null, vcExNomeAlvo=null, vcTimerInterval=null, vcSegundos=0;
+const VC_DURACAO_MAX=20;
+
+function vcAbrirParaExercicio(exId, exNome){
+  vcExIdAlvo=exId; vcExNomeAlvo=exNome;
+  const nomeEl=document.getElementById('vc-exercicio-nome'); if(nomeEl) nomeEl.textContent=exNome;
+  vcSetEstado('vc-camera-wrap');
+  abrirModal('modal-video-correcao');
+  vcIniciarCamera();
+}
+function vcSetEstado(idVisivel){
+  ['vc-camera-wrap','vc-processando','vc-resultado-wrap'].forEach(id=>{
+    const el=document.getElementById(id); if(el) el.style.display=(id===idVisivel)?'block':'none';
+  });
+}
+async function vcIniciarCamera(){
+  try{
+    vcStream=await navigator.mediaDevices.getUserMedia({video:{facingMode:'user'}, audio:true});
+    const v=document.getElementById('vc-video'); if(v) v.srcObject=vcStream;
+  }catch(e){
+    fqToast('Não consegui acessar a câmera (ou o microfone). Verifique a permissão do navegador.','warn',5500);
+    closeModal('modal-video-correcao');
+  }
+}
+function vcPararCamera(){
+  if(vcStream){ vcStream.getTracks().forEach(tr=>tr.stop()); vcStream=null; }
+  if(vcTimerInterval){ clearInterval(vcTimerInterval); vcTimerInterval=null; }
+}
+function vcCancelar(){ vcPararCamera(); vcBlobPronto=null; closeModal('modal-video-correcao'); }
+
+function vcComecarGravacao(){
+  if(!vcStream) return;
+  vcChunks=[];
+  let mimeType='video/webm;codecs=vp8,opus';
+  if(typeof MediaRecorder==='undefined'){
+    fqToast('Seu navegador não sabe gravar vídeo. Tenta em outro aparelho/navegador.','warn',5500);
+    return;
+  }
+  if(!MediaRecorder.isTypeSupported(mimeType)) mimeType='video/webm';
+  if(!MediaRecorder.isTypeSupported(mimeType)) mimeType='';
+  try{
+    vcMediaRecorder = mimeType ? new MediaRecorder(vcStream,{mimeType}) : new MediaRecorder(vcStream);
+  }catch(e){
+    fqToast('Não consegui iniciar a gravação. Tenta em outro aparelho/navegador.','warn',5500);
+    return;
+  }
+  vcMediaRecorder.ondataavailable=(e)=>{ if(e.data && e.data.size>0) vcChunks.push(e.data); };
+  vcMediaRecorder.onstop=()=>{
+    const blob=new Blob(vcChunks, {type: vcMediaRecorder.mimeType||'video/webm'});
+    vcBlobPronto=blob;
+    const video=document.getElementById('vc-resultado-video');
+    if(video) video.src=URL.createObjectURL(blob);
+    vcSetEstado('vc-resultado-wrap');
+    vcPararCamera();
+  };
+  vcMediaRecorder.start();
+
+  const btnG=document.getElementById('vc-btn-gravar'); if(btnG) btnG.style.display='none';
+  const btnP=document.getElementById('vc-btn-parar'); if(btnP) btnP.style.display='block';
+  const timerEl=document.getElementById('vc-timer');
+  if(timerEl){ timerEl.style.display='flex'; timerEl.textContent='● 0:00'; }
+  vcSegundos=0;
+  vcTimerInterval=setInterval(()=>{
+    vcSegundos++;
+    const m=Math.floor(vcSegundos/60), s=vcSegundos%60;
+    if(timerEl) timerEl.textContent=`● ${m}:${String(s).padStart(2,'0')}`;
+    if(vcSegundos>=VC_DURACAO_MAX) vcPararGravacao();
+  },1000);
+}
+function vcPararGravacao(){
+  if(vcTimerInterval){ clearInterval(vcTimerInterval); vcTimerInterval=null; }
+  if(vcMediaRecorder && vcMediaRecorder.state!=='inactive') vcMediaRecorder.stop();
+  vcSetEstado('vc-processando');
+  const txt=document.getElementById('vc-processando-texto'); if(txt) txt.textContent='Finalizando gravação...';
+}
+function vcRegravar(){
+  vcBlobPronto=null;
+  vcSetEstado('vc-camera-wrap');
+  const btnG=document.getElementById('vc-btn-gravar'); if(btnG) btnG.style.display='block';
+  const btnP=document.getElementById('vc-btn-parar'); if(btnP) btnP.style.display='none';
+  const timerEl=document.getElementById('vc-timer'); if(timerEl) timerEl.style.display='none';
+  if(!vcStream) vcIniciarCamera();
+}
+async function vcEnviarParaCorrecao(){
+  if(!vcBlobPronto){ fqToast('Nada gravado ainda.','warn'); return; }
+  const u=getU(); if(!u){ fqToast('Faça login de novo.','warn'); return; }
+  if(!sb){ fqToast('Sem conexão com o servidor agora — tente de novo com internet.','warn'); return; }
+  vcSetEstado('vc-processando');
+  const txt=document.getElementById('vc-processando-texto'); if(txt) txt.textContent='Enviando pro Rennan...';
+
+  const timestamp=Date.now();
+  const caminho=`${u.email}/${vcExIdAlvo}_${timestamp}.webm`;
+  try{
+    const{error:erroUpload}=await sb.storage.from('correcoes-video').upload(caminho, vcBlobPronto, {contentType:vcBlobPronto.type||'video/webm', upsert:true});
+    if(erroUpload){ fqToast('Erro ao enviar: '+erroUpload.message,'warn',6000); vcSetEstado('vc-resultado-wrap'); return; }
+
+    const{data:assinada}=await sb.storage.from('correcoes-video').createSignedUrl(caminho, 60*60*24*180); // 180 dias
+    const url=assinada?.signedUrl||null;
+
+    const email=DB.get('fq_cur');
+    const users=DB.get('fq_users')||{};
+    if(!u.correcoesVideo) u.correcoesVideo=[];
+    u.correcoesVideo.push({
+      id:`corr_${timestamp}`, exId:vcExIdAlvo, exNome:vcExNomeAlvo,
+      caminho, videoUrl:url, data:new Date().toLocaleDateString('pt-BR'),
+      status:'pendente', feedbackTexto:null, feedbackData:null,
+    });
+    users[email]=u; DB.set('fq_users',users);
+    await syncU(u).catch(()=>{ fqToast('⚠️ Vídeo enviado, mas não sincronizou ainda. Abra o app com internet mais tarde.','warn',6000); });
+
+    fqToast('🎉 Vídeo enviado! O Rennan vai revisar e te responder por aqui.','ok',5000);
+    vcBlobPronto=null;
+    closeModal('modal-video-correcao');
+    if(typeof abrirFichaExercicio==='function') abrirFichaExercicio(vcExIdAlvo);
+  }catch(e){
+    console.error('Erro ao enviar vídeo de correção:',e);
+    fqToast('Algo deu errado ao enviar. Tenta de novo.','warn',5000);
+    vcSetEstado('vc-resultado-wrap');
+  }
+}
 function gvRemoverPersonalizado(exId){
   const u=getU(); if(!u) return;
   if(!confirm('Voltar a usar o gif original deste exercício?')) return;
@@ -13514,6 +13713,7 @@ async function loadAdmin(){
   // ── Coleta de dados: conversão no teste grátis ──
   renderConversao(all);
   renderAssinaturas(all);
+  renderCorrecoesPendentes(all);
 
   // ── Full students list ──
   admRenderStudents(all,'all');
@@ -13653,6 +13853,51 @@ function renderAssinaturas(lista){
   }
 
   el.innerHTML = html;
+}
+// ── Vídeos de correção pendentes — todos os alunos, mais antigo primeiro ──
+function renderCorrecoesPendentes(lista){
+  const el = document.getElementById('adm-correcoes-list');
+  const countEl = document.getElementById('adm-correcoes-count');
+  if(!el) return;
+  const pendentes = [];
+  (lista||[]).forEach(u=>{
+    (u.correcoesVideo||[]).forEach(c=>{
+      if(c.status==='pendente') pendentes.push({...c, alunoNome:u.name||u.email, alunoEmail:u.email});
+    });
+  });
+  pendentes.sort((a,b)=>(a.id||'').localeCompare(b.id||'')); // mais antigo primeiro (id tem timestamp)
+
+  if(countEl) countEl.textContent = pendentes.length ? `(${pendentes.length})` : '';
+  if(!pendentes.length){
+    el.innerHTML = `<div class="adm-empty"><div class="adm-empty-icon">✅</div><div>Nenhum vídeo esperando correção</div></div>`;
+    return;
+  }
+  el.innerHTML = pendentes.map(c=>`
+    <div style="background:var(--s);border:1px solid rgba(52,152,219,.3);border-radius:10px;padding:12px;margin-bottom:10px">
+      <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px">
+        <div style="font-size:12px;font-weight:800">${c.alunoNome}</div>
+        <div style="font-size:10px;color:var(--mu)">${c.data}</div>
+      </div>
+      <div style="font-size:11px;color:#3498db;font-weight:700;margin-bottom:8px">${c.exNome}</div>
+      ${c.videoUrl ? `<video src="${c.videoUrl}" controls playsinline style="width:100%;max-height:280px;border-radius:8px;background:#000;margin-bottom:8px"></video>` : `<div style="font-size:11px;color:var(--mu);margin-bottom:8px">⚠️ Link do vídeo não disponível</div>`}
+      <textarea id="corr-resp-${c.id}" placeholder="Escreva a correção pro aluno..." style="width:100%;min-height:60px;background:var(--s2);border:1px solid var(--b);border-radius:8px;padding:8px 10px;color:#fff;font-size:12px;resize:vertical;margin-bottom:8px"></textarea>
+      <button onclick="admResponderCorrecao('${c.alunoEmail}','${c.id}')" style="width:100%;background:#3498db;border:none;border-radius:8px;padding:10px;color:#fff;font-size:12px;font-weight:800;cursor:pointer">✅ Enviar correção</button>
+    </div>`).join('');
+}
+async function admResponderCorrecao(email, corrId){
+  const textarea = document.getElementById(`corr-resp-${corrId}`);
+  const texto = (textarea?.value||'').trim();
+  if(!texto){ fqToast('Escreva a correção antes de enviar.','warn'); return; }
+  const u = admGetAluno(email);
+  if(!u){ fqToast('Aluno não encontrado.','warn'); return; }
+  const item = (u.correcoesVideo||[]).find(c=>c.id===corrId);
+  if(!item){ fqToast('Vídeo não encontrado.','warn'); return; }
+  item.status='respondido';
+  item.feedbackTexto=texto;
+  item.feedbackData=new Date().toLocaleDateString('pt-BR');
+  await syncAlunoAdmin(u).catch(()=>{ fqToast('⚠️ Salvo aqui, mas não sincronizou. Confira a internet.','warn',6000); });
+  fqToast('✅ Correção enviada pro aluno.','ok',3000);
+  renderCorrecoesPendentes(window.ADM_CACHE||[]);
 }
 function renderConversao(lista){
   const el = document.getElementById('adm-conversao');
@@ -17652,6 +17897,96 @@ function fqAplicarTema(tema){
   if(ico) ico.textContent = claro ? '☀️' : '🌙';
   if(desc) desc.textContent = claro ? 'Claro' : 'Escuro';
 }
+// ══════════════════════════════════════════════════════════════════════
+// ══ PUSH NOTIFICATIONS — avisar o aluno mesmo com o app fechado ══
+// O navegador só entrega o aviso se o ALUNO autorizar (pop-up de permissão
+// do próprio sistema) e o app estiver inscrito. A decisão de QUANDO enviar
+// (ex: "não treinou hoje até as 18h") não acontece aqui — mora numa função
+// do servidor (Supabase Edge Function), porque o celular do aluno pode estar
+// com o app fechado, e só um servidor consegue "acordar" nessa hora.
+// ══════════════════════════════════════════════════════════════════════
+function fqPushSuportado(){
+  return 'serviceWorker' in navigator && 'PushManager' in window && 'Notification' in window;
+}
+function fqUrlBase64ParaUint8Array(base64){
+  const padding='='.repeat((4-base64.length%4)%4);
+  const base64Seguro=(base64+padding).replace(/-/g,'+').replace(/_/g,'/');
+  const bruto=atob(base64Seguro);
+  const saida=new Uint8Array(bruto.length);
+  for(let i=0;i<bruto.length;i++) saida[i]=bruto.charCodeAt(i);
+  return saida;
+}
+async function fqStatusPush(){
+  if(!fqPushSuportado()) return 'indisponivel';
+  if(Notification.permission==='denied') return 'negado';
+  try{
+    const reg=await navigator.serviceWorker.ready;
+    const sub=await reg.pushManager.getSubscription();
+    return sub ? 'ativo' : 'inativo';
+  }catch(e){ return 'inativo'; }
+}
+async function fqAtivarPush(){
+  if(!fqPushSuportado()){
+    fqToast('Seu navegador não suporta notificações push.','warn',5000);
+    return;
+  }
+  try{
+    const permissao = await Notification.requestPermission();
+    if(permissao!=='granted'){
+      fqToast('Sem a permissão do navegador, não dá pra avisar você. Pode ativar depois nas configurações do navegador.','warn',6000);
+      fqAtualizarBotaoPush();
+      return;
+    }
+    const reg=await navigator.serviceWorker.ready;
+    let sub=await reg.pushManager.getSubscription();
+    if(!sub){
+      sub=await reg.pushManager.subscribe({
+        userVisibleOnly:true,
+        applicationServerKey: fqUrlBase64ParaUint8Array(FQ_VAPID_PUBLIC_KEY)
+      });
+    }
+    const u=getU(); if(!u){ fqAtualizarBotaoPush(); return; }
+    u.pushSubscription=sub.toJSON();
+    const email=DB.get('fq_cur'); const users=DB.get('fq_users')||{}; users[email]=u; DB.set('fq_users',users);
+    if(typeof syncU==='function') await syncU(u).catch(()=>{});
+    fqToast('🔔 Notificações ativadas! Vamos te lembrar quando fizer sentido.','ok',5000);
+  }catch(e){
+    console.error('Erro ao ativar push:',e);
+    fqToast('Não deu pra ativar agora. Tenta de novo em alguns instantes.','warn',5000);
+  }
+  fqAtualizarBotaoPush();
+}
+async function fqDesativarPush(){
+  try{
+    const reg=await navigator.serviceWorker.ready;
+    const sub=await reg.pushManager.getSubscription();
+    if(sub) await sub.unsubscribe();
+    const u=getU();
+    if(u){
+      u.pushSubscription=null;
+      const email=DB.get('fq_cur'); const users=DB.get('fq_users')||{}; users[email]=u; DB.set('fq_users',users);
+      if(typeof syncU==='function') await syncU(u).catch(()=>{});
+    }
+    fqToast('🔕 Notificações desativadas.','ok',3000);
+  }catch(e){ console.error('Erro ao desativar push:',e); }
+  fqAtualizarBotaoPush();
+}
+async function fqAlternarPush(){
+  const status=await fqStatusPush();
+  if(status==='ativo') await fqDesativarPush();
+  else await fqAtivarPush();
+}
+async function fqAtualizarBotaoPush(){
+  const ico=document.getElementById('push-icone'); const desc=document.getElementById('push-descricao');
+  if(!ico||!desc) return;
+  const status=await fqStatusPush();
+  if(status==='indisponivel'){ ico.textContent='🔕'; desc.textContent='Não disponível neste navegador'; }
+  else if(status==='negado'){ ico.textContent='🔕'; desc.textContent='Bloqueado nas configurações do navegador'; }
+  else if(status==='ativo'){ ico.textContent='🔔'; desc.textContent='Ativadas'; }
+  else { ico.textContent='🔕'; desc.textContent='Desativadas'; }
+}
+document.addEventListener('DOMContentLoaded', ()=>{ if(fqPushSuportado()) fqAtualizarBotaoPush(); });
+
 function fqAlternarTema(){
   const novo = fqTemaAtual()==='claro' ? 'escuro' : 'claro';
   fqAplicarTema(novo);
