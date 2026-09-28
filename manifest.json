@@ -5,15 +5,32 @@
   "start_url": "/fitquest/",
   "scope": "/fitquest/",
   "display": "fullscreen",
-  "display_override": ["fullscreen", "standalone"],
+  "display_override": [
+    "fullscreen",
+    "standalone"
+  ],
   "orientation": "portrait-primary",
-  "theme_color": "#0a0a0a",
-  "background_color": "#0a0a0a",
-  "categories": ["fitness", "health", "sports"],
+  "theme_color": "#080808",
+  "background_color": "#080808",
+  "categories": [
+    "fitness",
+    "health",
+    "sports"
+  ],
   "lang": "pt-BR",
   "icons": [
-    { "src": "icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any maskable" },
-    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
   ],
   "shortcuts": [
     {
@@ -21,7 +38,12 @@
       "short_name": "Treino",
       "description": "Acessar treino de hoje",
       "url": "/fitquest/",
-      "icons": [{ "src": "icon-192.png", "sizes": "192x192" }]
+      "icons": [
+        {
+          "src": "icon-192.png",
+          "sizes": "192x192"
+        }
+      ]
     }
   ]
 }
