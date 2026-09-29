@@ -1314,7 +1314,7 @@ button:focus-visible,[role=button]:focus-visible{outline:2px solid #fff;outline-
 .bnav .nbtn:not(.adm-nbtn):active .nico{transform:scale(.9);}
 .bnav .nbtn[data-tab=store],.bnav .nbtn[data-tab=consult]{display:none;}
 .bnav .nbtn[data-tab=home]{order:1}.bnav .nbtn[data-tab=treinos]{order:2}.bnav .nbtn[data-tab=evo]{order:3}
-.bnav .nbtn[data-tab=rank]{order:4}.bnav .nbtn[data-tab=perfil]{order:5}
+.bnav .nbtn[data-tab=perfil]{order:4}
 
 /* categorias da tela Treinos — grafite, sem cores fora da identidade */
 .cat-card{background:linear-gradient(135deg,#1C1C1C,var(--s));border-color:var(--b);}
@@ -1389,7 +1389,7 @@ html[data-tema="claro"] .hero-banner{background:#fff;}
       <option value="es">🇪🇸 ES</option>
     </select>
   </div>
-  <div id="fq-version-badge" style="position:absolute;bottom:8px;right:12px;font-size:9px;color:#333;font-weight:700;z-index:5">v255</div>
+  <div id="fq-version-badge" style="position:absolute;bottom:8px;right:12px;font-size:9px;color:#333;font-weight:700;z-index:5">v256</div>
   <img src="https://images.unsplash.com/photo-1517836357463-d25dfeac3438?w=800&q=80" alt="Fitness" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center top;filter:brightness(.35);z-index:0"/>
   <div class="splash-glow"></div>
   <div class="splash-noise"></div>
@@ -1914,9 +1914,6 @@ html[data-tema="claro"] .hero-banner{background:#fff;}
       <div class="fq2-card fq2-card-hover" style="margin:0 20px;cursor:pointer" id="home-evo-card" onclick="switchTab('prs',document.querySelectorAll('.nbtn')[4])"></div>
 
       <!-- RANKING / GAMIFICAÇÃO -->
-      <div class="fq-sec"><h3 data-i18n="fx.ranking">Ranking</h3><a onclick="switchTab('rank',document.querySelectorAll('.nbtn')[4])" data-i18n="fx.ver_tudo">Ver tudo</a></div>
-      <div style="margin:0 20px" id="home-rank-card"></div>
-
       <!-- ATALHOS -->
       <div class="fq-sec"><h3 data-i18n="fx.atalhos">Atalhos</h3></div>
       <div style="margin:0 20px;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px">
@@ -2117,25 +2114,6 @@ html[data-tema="claro"] .hero-banner{background:#fff;}
     </div>
 
     <!-- RANKING -->
-    <div class="tp" id="tp-rank">
-      <div style="padding-top:70px">
-        <!-- Ranking hero image -->
-        <div style="height:160px;position:relative;overflow:hidden;margin-bottom:0">
-          <img src="https://images.unsplash.com/photo-1567698187872-6f7cf312b548?w=800&q=80" alt="Ranking" style="width:100%;height:100%;object-fit:cover;filter:brightness(.35)"/>
-          <div style="position:absolute;inset:0;background:linear-gradient(transparent,var(--bg));display:flex;align-items:flex-end;padding:16px 20px">
-            <div>
-              <div style="font-size:28px;font-weight:900;margin-bottom:2px">📊 Ranking</div>
-              <div style="font-size:12px;color:var(--t2)">Sua posição: <span style="color:var(--r);font-weight:800">#<span id="my-rank">–</span></span></div>
-            </div>
-          </div>
-        </div>
-        <!-- Pódio Top 3 -->
-        <div id="ranking-podium" style="display:flex;align-items:flex-end;justify-content:center;gap:10px;padding:8px 20px 22px"></div>
-        <div id="ranking-full"></div>
-      </div>
-    </div>
-
-    <!-- PRs -->
     <div class="tp" id="tp-prs">
       <div style="padding-top:70px">
         <div style="height:180px;position:relative;overflow:hidden">
@@ -2631,7 +2609,7 @@ html[data-tema="claro"] .hero-banner{background:#fff;}
             <span style="color:var(--mu);font-size:18px">›</span>
           </div>
         </div>
-        <div style="text-align:center;padding:20px 0 4px;font-size:11px;color:var(--mu)">FitQuest <span id="fq-version-badge-perfil">v255</span></div>
+        <div style="text-align:center;padding:20px 0 4px;font-size:11px;color:var(--mu)">FitQuest <span id="fq-version-badge-perfil">v256</span></div>
       </div>
     </div>
 
@@ -2643,7 +2621,6 @@ html[data-tema="claro"] .hero-banner{background:#fff;}
     <button class="nbtn" data-tab="consult" onclick="switchTab('consult',this)"><span class="nico"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1L3.2 9.5l6.1-.9z"/></svg></span><span class="nlbl" data-i18n="nav.coach">Coach</span><div class="ndot"></div></button>
     <button class="nbtn" data-tab="evo" onclick="switchTab('evo',this)"><span class="nico"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20V11M10 20V4M16 20v-6M22 20H2"/></svg></span><span class="nlbl" data-i18n="nav.evolucao">Evolução</span><div class="ndot"></div></button>
     <button class="nbtn" data-tab="perfil" onclick="switchTab('perfil',this)"><span class="nico" id="nav-perfil-ico"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21c1-4 4-6 8-6s7 2 8 6"/></svg></span><span class="nlbl" data-i18n="nav.profile">Perfil</span><div class="ndot"></div></button>
-    <button class="nbtn" data-tab="rank" onclick="switchTab('rank',this)"><span class="nico"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 21h8M12 17v4M7 4h10v5a5 5 0 0 1-10 0zM7 6H4v1a3 3 0 0 0 3 3M17 6h3v1a3 3 0 0 1-3 3"/></svg></span><span class="nlbl" data-i18n="nav.ranking">Ranking</span><div class="ndot"></div></button>
   </div></button>
   </div>
 </div>
@@ -11125,14 +11102,12 @@ function loadApp(email){
   const cwSubRun=document.getElementById('cw-sub-run');if(cwSubRun)cwSubRun.textContent=`${rw} · ${rprog?.meta||''}`;
   // Render
   _safe(()=>renderMissions(u.missions||[]),'missions');
-  _safe(()=>renderRankingCarousel(u,email,users),'rankCar');
   carregarContagemPromo().then(()=>{ try{ if(typeof renderBannerTrial==='function') renderBannerTrial(u); }catch(e){} });
   carregarContagemPixFundador();
-  carregarRanking().then(()=>{try{renderRankingCarousel(u,email,users);renderRankingFull(u,email,users);}catch(e){} try{renderHomePainel(u);}catch(e){}});
+  try{ renderHomePainel(u); }catch(e){}
   _safe(()=>renderHistory(u),'history');
   _safe(()=>renderGym(u),'gym');
   _safe(()=>renderRun(u),'run');
-  _safe(()=>renderRankingFull(u,email,users),'rankFull');
   _safe(()=>renderPRs(u.prs||[]),'prs');
   _safe(()=>renderEvolucaoTreino(u),'evolucaoTreino');
   _safe(()=>renderComunidade(),'comunidade');
@@ -17223,20 +17198,6 @@ function renderHomePainel(u){
       : `<div class="fq2-secundario" style="margin-bottom:12px">${t('fx.freq8')}</div>
          <div class="fq-mini-bars">${semanas.map((s,i)=>`<span class="${i===7?'on':''}" style="height:${Math.max(8,Math.round(s.n/max*100))}%"></span>`).join('')}</div>`;
   }
-
-  // Ranking / conquistas
-  const rk=document.getElementById('home-rank-card');
-  if(rk){
-    let pos=1;
-    try{ const lista=montarListaRanking(u,DB.get('fq_cur')); pos=Math.max(1,lista.findIndex(r=>r.isMe)+1); }catch(e){}
-    const conq=(u.badges||[]).length;
-    const totB=(typeof BADGES!=='undefined')?BADGES.length:0;
-    rk.innerHTML=`<div class="fq2-card fq2-card-hover fq-rank" onclick="switchTab('rank',document.querySelectorAll('.nbtn')[4])" role="button" tabindex="0">
-      <div class="fq-rank-pos">#${pos}</div>
-      <div style="flex:1;min-width:0"><div class="fq2-titulo-exercicio">${t('fx.posicao')}</div>
-        <div class="fq2-muted" style="margin-top:2px">${xp.toLocaleString()} XP · ${conq}${totB?'/'+totB:''} ${t('fx.conquistas')}</div></div>
-      <span class="fq-r-mu">${fqIco('chev',18)}</span></div>`;
-  }
 }
 function renderHomePrograms(u){try{
   // Featured: specialized programs
@@ -18156,12 +18117,12 @@ const FQ_ICO_P = {"home": "<path d=\"M3 11l9-8 9 8v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1
 function fqIco(n,s){
   return `<svg width="${s||20}" height="${s||20}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${FQ_ICO_P[n]||''}</svg>`;
 }
-// Navegação inferior: 5 abas visíveis (Início, Treinos, Evolução, Ranking, Perfil).
+// Navegação inferior: 4 abas visíveis (Início, Treinos, Evolução, Perfil).
 // Loja e Coach continuam existindo — acessadas pelos atalhos da Home. Sub-telas
 // (musculação, corrida, recordes...) acendem a aba "mãe".
 function fqNavAtiva(name){
   const mapa={home:'home',treinos:'treinos',gym:'treinos',run:'treinos',mobilidade:'treinos',kids:'treinos',
-              evo:'evo',prs:'evo',badges:'evo',rank:'rank',perfil:'perfil',store:'home',consult:'home',missoes:'home'};
+              evo:'evo',prs:'evo',badges:'evo',perfil:'perfil',store:'home',consult:'home',missoes:'home'};
   const alvo=mapa[name]||'home';
   document.querySelectorAll('.bnav .nbtn[data-tab]').forEach(b=>b.classList.toggle('active',b.dataset.tab===alvo));
 }
