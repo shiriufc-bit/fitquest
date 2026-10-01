@@ -1312,9 +1312,8 @@ button:focus-visible,[role=button]:focus-visible{outline:2px solid #fff;outline-
 .bnav .nbtn:not(.adm-nbtn).active .nlbl{color:#fff;}
 .bnav .nbtn:not(.adm-nbtn) .ndot{width:16px;height:3px;border-radius:2px;background:var(--r);}
 .bnav .nbtn:not(.adm-nbtn):active .nico{transform:scale(.9);}
-.bnav .nbtn[data-tab=store],.bnav .nbtn[data-tab=consult]{display:none;}
-.bnav .nbtn[data-tab=home]{order:1}.bnav .nbtn[data-tab=treinos]{order:2}.bnav .nbtn[data-tab=evo]{order:3}
-.bnav .nbtn[data-tab=perfil]{order:4}
+.bnav .nbtn[data-tab=home]{order:1}.bnav .nbtn[data-tab=treinos]{order:2}.bnav .nbtn[data-tab=store]{order:3}
+.bnav .nbtn[data-tab=consult]{order:4}.bnav .nbtn[data-tab=evo]{order:5}.bnav .nbtn[data-tab=perfil]{order:6}
 
 /* categorias da tela Treinos — grafite, sem cores fora da identidade */
 .cat-card{background:linear-gradient(135deg,#1C1C1C,var(--s));border-color:var(--b);}
@@ -1389,7 +1388,7 @@ html[data-tema="claro"] .hero-banner{background:#fff;}
       <option value="es">🇪🇸 ES</option>
     </select>
   </div>
-  <div id="fq-version-badge" style="position:absolute;bottom:8px;right:12px;font-size:9px;color:#333;font-weight:700;z-index:5">v256</div>
+  <div id="fq-version-badge" style="position:absolute;bottom:8px;right:12px;font-size:9px;color:#333;font-weight:700;z-index:5">v257</div>
   <img src="https://images.unsplash.com/photo-1517836357463-d25dfeac3438?w=800&q=80" alt="Fitness" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center top;filter:brightness(.35);z-index:0"/>
   <div class="splash-glow"></div>
   <div class="splash-noise"></div>
@@ -1928,12 +1927,6 @@ html[data-tema="claro"] .hero-banner{background:#fff;}
         </div>
         <div class="fq2-card fq2-card-hover fq-tile" onclick="switchTab('prs',document.querySelectorAll('.nbtn')[4])" role="button" tabindex="0">
           <div class="fq-tile-ico"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20V11M10 20V4M16 20v-6M22 20H2"/></svg></div><div class="fq-tile-lbl" data-i18n="ui.5590649ad2">Meu Progresso</div>
-        </div>
-        <div class="fq2-card fq2-card-hover fq-tile" onclick="switchTab('store',document.querySelectorAll('.nbtn')[2])" role="button" tabindex="0">
-          <div class="fq-tile-ico"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 4h11a3 3 0 0 1 3 3v13H8a3 3 0 0 1-3-3zM5 17a3 3 0 0 1 3-3h11"/></svg></div><div class="fq-tile-lbl" data-i18n="ui.f0d6575725">E-Books</div>
-        </div>
-        <div class="fq2-card fq2-card-hover fq-tile" onclick="switchTab('consult',document.querySelectorAll('.nbtn')[3])" role="button" tabindex="0">
-          <div class="fq-tile-ico"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1L3.2 9.5l6.1-.9z"/></svg></div><div class="fq-tile-lbl" data-i18n="nav.coach">Coach</div>
         </div>
       </div>
 
@@ -2609,7 +2602,7 @@ html[data-tema="claro"] .hero-banner{background:#fff;}
             <span style="color:var(--mu);font-size:18px">›</span>
           </div>
         </div>
-        <div style="text-align:center;padding:20px 0 4px;font-size:11px;color:var(--mu)">FitQuest <span id="fq-version-badge-perfil">v256</span></div>
+        <div style="text-align:center;padding:20px 0 4px;font-size:11px;color:var(--mu)">FitQuest <span id="fq-version-badge-perfil">v257</span></div>
       </div>
     </div>
 
@@ -18122,7 +18115,7 @@ function fqIco(n,s){
 // (musculação, corrida, recordes...) acendem a aba "mãe".
 function fqNavAtiva(name){
   const mapa={home:'home',treinos:'treinos',gym:'treinos',run:'treinos',mobilidade:'treinos',kids:'treinos',
-              evo:'evo',prs:'evo',badges:'evo',perfil:'perfil',store:'home',consult:'home',missoes:'home'};
+              evo:'evo',prs:'evo',badges:'evo',perfil:'perfil',store:'store',consult:'consult',missoes:'home'};
   const alvo=mapa[name]||'home';
   document.querySelectorAll('.bnav .nbtn[data-tab]').forEach(b=>b.classList.toggle('active',b.dataset.tab===alvo));
 }
