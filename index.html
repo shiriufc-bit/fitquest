@@ -1388,7 +1388,7 @@ html[data-tema="claro"] .hero-banner{background:#fff;}
       <option value="es">🇪🇸 ES</option>
     </select>
   </div>
-  <div id="fq-version-badge" style="position:absolute;bottom:8px;right:12px;font-size:9px;color:#333;font-weight:700;z-index:5">v257</div>
+  <div id="fq-version-badge" style="position:absolute;bottom:8px;right:12px;font-size:9px;color:#333;font-weight:700;z-index:5">v258</div>
   <img src="https://images.unsplash.com/photo-1517836357463-d25dfeac3438?w=800&q=80" alt="Fitness" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center top;filter:brightness(.35);z-index:0"/>
   <div class="splash-glow"></div>
   <div class="splash-noise"></div>
@@ -2602,7 +2602,7 @@ html[data-tema="claro"] .hero-banner{background:#fff;}
             <span style="color:var(--mu);font-size:18px">›</span>
           </div>
         </div>
-        <div style="text-align:center;padding:20px 0 4px;font-size:11px;color:var(--mu)">FitQuest <span id="fq-version-badge-perfil">v257</span></div>
+        <div style="text-align:center;padding:20px 0 4px;font-size:11px;color:var(--mu)">FitQuest <span id="fq-version-badge-perfil">v258</span></div>
       </div>
     </div>
 
@@ -12234,6 +12234,11 @@ async function alunoRenomearDia(w, day){
 }
 function selGD(w,d,el){const u=getU();if(!u)return;curGymDay=d;document.querySelectorAll('#gym-day-btns .wk-day-btn').forEach(t=>t.classList.remove('active'));el.classList.add('active');renderGymDay(w,d,u);}
 function renderGymDay(w,d,u){
+  // Rede de segurança: sem aprovação e sem plano real, não desenha exercício
+  // nenhum aqui — evita mostrar o molde padrão (DG) como se fosse o treino
+  // de verdade do aluno, não importa por qual caminho a função foi chamada.
+  const temPlanoReal=!!(u.aiPlan?.gym && Object.keys(u.aiPlan.gym).length);
+  if(!u.trainApproved || !temPlanoReal){ const el=document.getElementById('gym-exercises'); if(el) el.innerHTML=''; return; }
   const P=getGP(u);const exs=P[w].days[d];const dk=`${w}_${d}`;const dayDone=u.gymDone&&u.gymDone[dk];
   // ── MODO TURBO ──
   // Aplicado na exibição (não no plano salvo), então ligar/desligar é instantâneo
@@ -16923,9 +16928,16 @@ function escolherTreinoDeHoje(u, w){
 }
 function irParaTreinoDeHoje(){
   const u=getU(); if(!u) return;
+  switchTab('gym',document.querySelectorAll('.nbtn')[1]);
+  // BUGFIX: aluno sem plano real (não aprovado ainda, ou sem dias de verdade
+  // em u.aiPlan.gym) não deve continuar — senão o fallback abaixo acaba
+  // chamando renderGymDay com o dia do molde padrão (DG), mostrando um
+  // treino falso como se fosse o treino de verdade do aluno. A tela "EM
+  // BREVE" que o switchTab acima já mostrou é a resposta certa aqui.
+  const temPlanoReal = !!(u.aiPlan?.gym && Object.keys(u.aiPlan.gym).length);
+  if(!u.trainApproved || !temPlanoReal) return;
   const cw=`Semana ${u.gymWeek||1}`;
   const d=escolherTreinoDeHoje(u,cw);
-  switchTab('gym',document.querySelectorAll('.nbtn')[1]);
   if(d){
     setTimeout(()=>{
       const btn=[...document.querySelectorAll('#gym-day-btns .wk-day-btn')].find(b=>b.textContent.includes(d));
@@ -17066,6 +17078,12 @@ function renderHomeResumo(u){
     elFreq.innerHTML=html;
   }
 
+  // BUGFIX: getGP(u) substitui por um molde padrão (DG) quando o plano real
+  // está vazio — ótimo pra funções internas não quebrarem, péssimo aqui, que
+  // precisa saber se o plano é DE VERDADE antes de mostrar algo acionável
+  // ("Iniciar treino") pro aluno. Por isso checa u.aiPlan.gym cru primeiro.
+  const temPlanoRealHome=!!(u.aiPlan?.gym && Object.keys(u.aiPlan.gym).length);
+  if(!u.trainApproved || !temPlanoRealHome) return;
   const P=getGP(u); const cw=`Semana ${u.gymWeek||1}`;
   const dias=Object.keys(P[cw]?.days||{});
   if(!dias.length) return; // sem plano ainda — não força nenhum dado falso na tela
