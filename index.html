@@ -1388,7 +1388,7 @@ html[data-tema="claro"] .hero-banner{background:#fff;}
       <option value="es">🇪🇸 ES</option>
     </select>
   </div>
-  <div id="fq-version-badge" style="position:absolute;bottom:8px;right:12px;font-size:9px;color:#333;font-weight:700;z-index:5">v258</div>
+  <div id="fq-version-badge" style="position:absolute;bottom:8px;right:12px;font-size:9px;color:#333;font-weight:700;z-index:5">v260</div>
   <img src="https://images.unsplash.com/photo-1517836357463-d25dfeac3438?w=800&q=80" alt="Fitness" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center top;filter:brightness(.35);z-index:0"/>
   <div class="splash-glow"></div>
   <div class="splash-noise"></div>
@@ -2429,9 +2429,65 @@ html[data-tema="claro"] .hero-banner{background:#fff;}
           </div>
 
           <!-- Botão nova avaliação -->
-          <button class="btn-p" onclick="openEvalModal()" style="margin-bottom:80px">
+          <button class="btn-p" onclick="openEvalModal()">
             + Nova avaliação
           </button>
+
+          <!-- ══ AVALIAÇÃO POSTURAL ══ -->
+          <div class="evo-hero" style="margin-top:28px">
+            <div style="font-size:10px;color:var(--r);font-weight:800;text-transform:uppercase;letter-spacing:2px;margin-bottom:6px">🧍 AVALIAÇÃO POSTURAL</div>
+            <div style="font-size:22px;font-weight:900;margin-bottom:4px">Sua postura ao longo do tempo</div>
+            <div style="font-size:12px;color:var(--t2)">3 fotos · frente, lado e costas</div>
+          </div>
+          <div style="padding:16px 0 0">
+            <div style="margin-bottom:14px">
+              <div style="font-size:10px;font-weight:800;color:var(--mu);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:10px">Histórico postural</div>
+              <div id="postural-history-list">
+                <div style="font-size:12px;color:var(--mu);text-align:center;padding:20px 0">Nenhuma avaliação postural ainda</div>
+              </div>
+            </div>
+            <button class="btn-p" onclick="apAbrirModal()" style="margin-bottom:80px">
+              + Nova avaliação postural
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal — envio de avaliação postural (3 fotos) -->
+    <div class="modal-ov" id="modal-postural" style="align-items:flex-start">
+      <div class="modal-bx" style="max-width:420px;width:100%;padding:0;border-radius:16px 16px 0 0;margin-top:auto;max-height:92vh;overflow-y:auto">
+        <div class="modal-t"><span>🧍 Avaliação Postural</span><button class="modal-cl" onclick="closeModal('modal-postural')">✕</button></div>
+        <div style="padding:16px">
+          <div style="font-size:12px;color:var(--t2);margin-bottom:16px;line-height:1.5">Tire 3 fotos com roupa justa, boa iluminação, e a câmera na altura do quadril. Isso ajuda o Rennan a avaliar sua postura com precisão.</div>
+          <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:16px">
+            <div style="text-align:center">
+              <label for="ap-input-frente" style="display:block;aspect-ratio:3/4;border-radius:10px;border:2px dashed var(--b2);background:var(--s2);display:flex;align-items:center;justify-content:center;cursor:pointer;overflow:hidden;position:relative">
+                <img id="ap-preview-frente" style="display:none;width:100%;height:100%;object-fit:cover;position:absolute;inset:0"/>
+                <span id="ap-placeholder-frente" style="font-size:24px">📷</span>
+              </label>
+              <input type="file" accept="image/*" capture="user" id="ap-input-frente" style="display:none" onchange="apSelecionarFoto('frente',this)"/>
+              <div style="font-size:10px;color:var(--t2);margin-top:6px;font-weight:700">Frente</div>
+            </div>
+            <div style="text-align:center">
+              <label for="ap-input-lado" style="display:block;aspect-ratio:3/4;border-radius:10px;border:2px dashed var(--b2);background:var(--s2);display:flex;align-items:center;justify-content:center;cursor:pointer;overflow:hidden;position:relative">
+                <img id="ap-preview-lado" style="display:none;width:100%;height:100%;object-fit:cover;position:absolute;inset:0"/>
+                <span id="ap-placeholder-lado" style="font-size:24px">📷</span>
+              </label>
+              <input type="file" accept="image/*" capture="user" id="ap-input-lado" style="display:none" onchange="apSelecionarFoto('lado',this)"/>
+              <div style="font-size:10px;color:var(--t2);margin-top:6px;font-weight:700">Lado</div>
+            </div>
+            <div style="text-align:center">
+              <label for="ap-input-costas" style="display:block;aspect-ratio:3/4;border-radius:10px;border:2px dashed var(--b2);background:var(--s2);display:flex;align-items:center;justify-content:center;cursor:pointer;overflow:hidden;position:relative">
+                <img id="ap-preview-costas" style="display:none;width:100%;height:100%;object-fit:cover;position:absolute;inset:0"/>
+                <span id="ap-placeholder-costas" style="font-size:24px">📷</span>
+              </label>
+              <input type="file" accept="image/*" capture="user" id="ap-input-costas" style="display:none" onchange="apSelecionarFoto('costas',this)"/>
+              <div style="font-size:10px;color:var(--t2);margin-top:6px;font-weight:700">Costas</div>
+            </div>
+          </div>
+          <div id="ap-status" style="display:none;text-align:center;padding:12px 0;font-size:12.5px;color:var(--t2)"></div>
+          <button class="btn-savewk" id="ap-btn-enviar" onclick="apEnviar()" disabled style="opacity:.4">📤 Enviar pro Rennan</button>
         </div>
       </div>
     </div>
@@ -2602,7 +2658,7 @@ html[data-tema="claro"] .hero-banner{background:#fff;}
             <span style="color:var(--mu);font-size:18px">›</span>
           </div>
         </div>
-        <div style="text-align:center;padding:20px 0 4px;font-size:11px;color:var(--mu)">FitQuest <span id="fq-version-badge-perfil">v258</span></div>
+        <div style="text-align:center;padding:20px 0 4px;font-size:11px;color:var(--mu)">FitQuest <span id="fq-version-badge-perfil">v260</span></div>
       </div>
     </div>
 
@@ -2682,6 +2738,10 @@ html[data-tema="claro"] .hero-banner{background:#fff;}
       <!-- Vídeos de correção pendentes -->
       <div class="adm-sec-title" style="color:#fff">📹 Vídeos pra Correção <span id="adm-correcoes-count"></span></div>
       <div id="adm-correcoes-list" style="padding:0 12px 4px"></div>
+
+      <!-- Avaliações posturais pendentes -->
+      <div class="adm-sec-title" style="color:#fff">🧍 Avaliações Posturais <span id="adm-postural-count"></span></div>
+      <div id="adm-postural-list" style="padding:0 12px 4px"></div>
     </div>
 
     <!-- TAB: ALUNOS -->
@@ -6248,10 +6308,10 @@ function renovarMissoesSemanais(u){
   return true;
 }
 function rowToUser(data){
-  return{id:data.id,name:data.nome,email:data.email,plano:data.plano,trialInicio:data.trial_inicio,runInicio:data.run_inicio,runAjusteLesao:!!data.run_ajuste_lesao,assinaturaStatus:data.assinatura_status||'trial',assinaturaAte:data.assinatura_ate,diaConversao:data.dia_conversao,dataConversao:data.data_conversao,planoConversao:data.plano_conversao,precoTravado:data.preco_travado,promoFundador:!!data.promo_fundador,pixFundador:!!data.pix_fundador,promoVaga:data.promo_vaga,solicitouTrocaTreino:!!data.solicitou_troca,solicitouTrocaData:data.solicitou_troca_data,solicitouTrocaTipo:data.solicitou_troca_tipo,trainApproved:data.treino_liberado,pushSubscription:data.push_subscription||null,correcoesVideo:data.correcoes_video||[],isAdmin:!!data.is_admin,aiPlan:data.ai_plan,anamnese:data.anamnese,anamneseDone:!!data.anamnese_geral,anamneseGeral:data.anamnese_geral||null,anamneseMusculacao:data.anamnese_musculacao||null,anamneseCorrida:data.anamnese_corrida||null,anamneseMuscDone:!!data.anamnese_musculacao,anamneseCorridaDone:!!data.anamnese_corrida,gymWeek:data.gym_week||1,runWeek:data.run_week||1,gymDone:data.gym_done||{},runDone:data.run_done||{},runFeedback:data.run_feedback||{},runAtividades:data.run_atividades||[],runTriagem:data.run_triagem||null,runStrength:data.run_strength||[],runStrengthDone:data.run_strength_done||{},runTestes:data.run_testes||[],runTestPace:data.run_test_pace||null,loadHistory:data.load_history||{},workoutHistory:data.workout_history||[],xp:data.xp||0,kidsXp:data.kids_xp||0,level:data.level||1,streak:data.streak||1,coins:data.coins||0,badges:data.badges||[],prs:data.prs||[],stats:data.stats||{treinos:0,distancia:0,semanas:0},purchases:data.purchases||[],pacoteEbooks:!!data.pacote_ebooks,programIntakes:data.program_intakes||{},avatar:data.avatar||null,avaliacoes:data.evals||[],gifsPersonalizados:data.gifs_personalizados||{},exerciciosCustom:data.exercicios_custom||[],missions:MISSOES_PADRAO.map(m=>({...m})),createdAt:data.criado_em,lastLogin:data.ultimo_acesso};
+  return{id:data.id,name:data.nome,email:data.email,plano:data.plano,trialInicio:data.trial_inicio,runInicio:data.run_inicio,runAjusteLesao:!!data.run_ajuste_lesao,assinaturaStatus:data.assinatura_status||'trial',assinaturaAte:data.assinatura_ate,diaConversao:data.dia_conversao,dataConversao:data.data_conversao,planoConversao:data.plano_conversao,precoTravado:data.preco_travado,promoFundador:!!data.promo_fundador,pixFundador:!!data.pix_fundador,promoVaga:data.promo_vaga,solicitouTrocaTreino:!!data.solicitou_troca,solicitouTrocaData:data.solicitou_troca_data,solicitouTrocaTipo:data.solicitou_troca_tipo,trainApproved:data.treino_liberado,pushSubscription:data.push_subscription||null,correcoesVideo:data.correcoes_video||[],isAdmin:!!data.is_admin,aiPlan:data.ai_plan,anamnese:data.anamnese,anamneseDone:!!data.anamnese_geral,anamneseGeral:data.anamnese_geral||null,anamneseMusculacao:data.anamnese_musculacao||null,anamneseCorrida:data.anamnese_corrida||null,anamneseMuscDone:!!data.anamnese_musculacao,anamneseCorridaDone:!!data.anamnese_corrida,gymWeek:data.gym_week||1,runWeek:data.run_week||1,gymDone:data.gym_done||{},runDone:data.run_done||{},runFeedback:data.run_feedback||{},runAtividades:data.run_atividades||[],runTriagem:data.run_triagem||null,runStrength:data.run_strength||[],runStrengthDone:data.run_strength_done||{},runTestes:data.run_testes||[],runTestPace:data.run_test_pace||null,loadHistory:data.load_history||{},workoutHistory:data.workout_history||[],xp:data.xp||0,kidsXp:data.kids_xp||0,level:data.level||1,streak:data.streak||1,coins:data.coins||0,badges:data.badges||[],prs:data.prs||[],stats:data.stats||{treinos:0,distancia:0,semanas:0},purchases:data.purchases||[],pacoteEbooks:!!data.pacote_ebooks,programIntakes:data.program_intakes||{},avatar:data.avatar||null,avaliacoes:data.evals||[],avaliacoesPostural:data.avaliacoes_postural||[],gifsPersonalizados:data.gifs_personalizados||{},exerciciosCustom:data.exercicios_custom||[],missions:MISSOES_PADRAO.map(m=>({...m})),createdAt:data.criado_em,lastLogin:data.ultimo_acesso};
 }
 function userToRow(u){
-  return{id:u.id,nome:u.name,email:u.email,plano:u.plano||'free',trial_inicio:u.trialInicio||undefined,run_inicio:u.runInicio||null,run_ajuste_lesao:u.runAjusteLesao||false,treino_liberado:u.trainApproved||false,...(u.pushSubscription?{push_subscription:u.pushSubscription}:(u.pushDesativado?{push_subscription:null}:{})),...((u.correcoesVideo&&u.correcoesVideo.length)?{correcoes_video:u.correcoesVideo}:{}),ai_plan:u.aiPlan||null,anamnese:u.anamnese||null,anamnese_geral:u.anamneseGeral||null,anamnese_musculacao:u.anamneseMusculacao||null,anamnese_corrida:u.anamneseCorrida||null,gym_week:u.gymWeek||1,run_week:u.runWeek||1,gym_done:u.gymDone||{},run_done:u.runDone||{},run_feedback:u.runFeedback||{},run_atividades:u.runAtividades||[],run_triagem:u.runTriagem||null,run_strength:u.runStrength||[],run_strength_done:u.runStrengthDone||{},run_testes:u.runTestes||[],run_test_pace:u.runTestPace||null,load_history:u.loadHistory||{},workout_history:u.workoutHistory||[],xp:u.xp||0,kids_xp:u.kidsXp||0,level:u.level||1,streak:u.streak||1,coins:u.coins||0,badges:u.badges||[],prs:u.prs||[],stats:u.stats||{treinos:0,distancia:0,semanas:0},avatar:u.avatar||null,evals:u.avaliacoes||[],program_intakes:u.programIntakes||{},gifs_personalizados:u.gifsPersonalizados||{},exercicios_custom:u.exerciciosCustom||[],ultimo_acesso:new Date().toISOString(),updated_at:new Date().toISOString()};
+  return{id:u.id,nome:u.name,email:u.email,plano:u.plano||'free',trial_inicio:u.trialInicio||undefined,run_inicio:u.runInicio||null,run_ajuste_lesao:u.runAjusteLesao||false,treino_liberado:u.trainApproved||false,...(u.pushSubscription?{push_subscription:u.pushSubscription}:(u.pushDesativado?{push_subscription:null}:{})),...((u.correcoesVideo&&u.correcoesVideo.length)?{correcoes_video:u.correcoesVideo}:{}),ai_plan:u.aiPlan||null,anamnese:u.anamnese||null,anamnese_geral:u.anamneseGeral||null,anamnese_musculacao:u.anamneseMusculacao||null,anamnese_corrida:u.anamneseCorrida||null,gym_week:u.gymWeek||1,run_week:u.runWeek||1,gym_done:u.gymDone||{},run_done:u.runDone||{},run_feedback:u.runFeedback||{},run_atividades:u.runAtividades||[],run_triagem:u.runTriagem||null,run_strength:u.runStrength||[],run_strength_done:u.runStrengthDone||{},run_testes:u.runTestes||[],run_test_pace:u.runTestPace||null,load_history:u.loadHistory||{},workout_history:u.workoutHistory||[],xp:u.xp||0,kids_xp:u.kidsXp||0,level:u.level||1,streak:u.streak||1,coins:u.coins||0,badges:u.badges||[],prs:u.prs||[],stats:u.stats||{treinos:0,distancia:0,semanas:0},avatar:u.avatar||null,evals:u.avaliacoes||[],avaliacoes_postural:u.avaliacoesPostural||[],program_intakes:u.programIntakes||{},gifs_personalizados:u.gifsPersonalizados||{},exercicios_custom:u.exerciciosCustom||[],ultimo_acesso:new Date().toISOString(),updated_at:new Date().toISOString()};
   // Obs.: purchases/pacote_ebooks/is_admin/plano NÃO são enviados pelo aluno — são protegidos no banco e só mudam via webhook de pagamento ou admin.
 }
 async function syncU(u){
@@ -11047,6 +11107,11 @@ function loadApp(email){
       if(document.visibilityState==='visible') _checarSeNaoExpirado();
     });
   }
+  // BUGFIX: numa abertura "fria" do app (ícone na tela, não retomando de
+  // segundo plano), nem o intervalo (60s) nem o visibilitychange disparam de
+  // imediato — o aluno com acesso vencido via app, rotina, treino normal por
+  // até 1 minuto antes de ser barrado. Verifica também aqui, na hora.
+  if(!verificarAcesso()) return;
 
   // Verificar se o streak quebrou (não treinou ontem nem hoje)
   if(u.ultimoTreinoStreak){
@@ -11103,6 +11168,7 @@ function loadApp(email){
   _safe(()=>renderRun(u),'run');
   _safe(()=>renderPRs(u.prs||[]),'prs');
   _safe(()=>renderEvolucaoTreino(u),'evolucaoTreino');
+  _safe(()=>renderAvaliacaoPostural(u),'avaliacaoPostural');
   _safe(()=>renderComunidade(),'comunidade');
   _safe(()=>renderBannerTrial(u),'trialBanner');
   _safe(()=>renderHomePlanoCards(),'planoCards');
@@ -11587,6 +11653,132 @@ async function vcEnviarParaCorrecao(){
     fqToast('Algo deu errado ao enviar. Tenta de novo.','warn',5000);
     vcSetEstado('vc-resultado-wrap');
   }
+}
+
+// ══════════════════════════════════════════════════════════════════════
+// ══ AVALIAÇÃO POSTURAL — aluno envia 3 fotos, Rennan analisa e responde ══
+// Mesmo padrão de fluxo do vídeo de correção (pendente → respondido), mas
+// com fotos em vez de vídeo. Usa <input type=file capture> em vez de
+// getUserMedia — mais simples e confiável pra foto estática (abre a câmera
+// nativa do celular direto, sem precisar construir UI de câmera do zero).
+// Cada foto é redimensionada no navegador antes de enviar (max 1000px,
+// JPEG 80%) — foto de celular pode vir com vários MB, e isso evitaria
+// consumir o armazenamento do Supabase à toa.
+// ══════════════════════════════════════════════════════════════════════
+const apFotos = {frente:null, lado:null, costas:null};
+
+function apAbrirModal(){
+  apFotos.frente=null; apFotos.lado=null; apFotos.costas=null;
+  ['frente','lado','costas'].forEach(k=>{
+    const img=document.getElementById(`ap-preview-${k}`); if(img){ img.style.display='none'; img.src=''; }
+    const ph=document.getElementById(`ap-placeholder-${k}`); if(ph) ph.style.display='block';
+    const inp=document.getElementById(`ap-input-${k}`); if(inp) inp.value='';
+  });
+  apAtualizarBotao();
+  const st=document.getElementById('ap-status'); if(st){ st.style.display='none'; st.textContent=''; }
+  abrirModal('modal-postural');
+}
+function apRedimensionarImagem(arquivo){
+  return new Promise((resolve,reject)=>{
+    const leitor=new FileReader();
+    leitor.onload=(e)=>{
+      const img=new Image();
+      img.onload=()=>{
+        const MAX=1000;
+        let {width:w,height:h}=img;
+        if(w>MAX || h>MAX){ const esc=MAX/Math.max(w,h); w=Math.round(w*esc); h=Math.round(h*esc); }
+        const canvas=document.createElement('canvas'); canvas.width=w; canvas.height=h;
+        canvas.getContext('2d').drawImage(img,0,0,w,h);
+        canvas.toBlob(blob=>resolve({blob, dataUrl:canvas.toDataURL('image/jpeg',.8)}), 'image/jpeg', .8);
+      };
+      img.onerror=reject;
+      img.src=e.target.result;
+    };
+    leitor.onerror=reject;
+    leitor.readAsDataURL(arquivo);
+  });
+}
+async function apSelecionarFoto(posicao, inputEl){
+  const arquivo=inputEl.files?.[0]; if(!arquivo) return;
+  try{
+    const {blob,dataUrl}=await apRedimensionarImagem(arquivo);
+    apFotos[posicao]=blob;
+    const img=document.getElementById(`ap-preview-${posicao}`);
+    if(img){ img.src=dataUrl; img.style.display='block'; }
+    const ph=document.getElementById(`ap-placeholder-${posicao}`); if(ph) ph.style.display='none';
+    apAtualizarBotao();
+  }catch(e){
+    fqToast('Não consegui processar essa foto. Tenta outra.','warn',4000);
+  }
+}
+function apAtualizarBotao(){
+  const btn=document.getElementById('ap-btn-enviar'); if(!btn) return;
+  const completo = apFotos.frente && apFotos.lado && apFotos.costas;
+  btn.disabled=!completo;
+  btn.style.opacity=completo?'1':'.4';
+}
+async function apEnviar(){
+  const u=getU(); if(!u){ fqToast('Faça login de novo.','warn'); return; }
+  if(!sb){ fqToast('Sem conexão com o servidor agora — tente de novo com internet.','warn'); return; }
+  if(!(apFotos.frente && apFotos.lado && apFotos.costas)){ fqToast('Envie as 3 fotos antes de continuar.','warn'); return; }
+
+  const btn=document.getElementById('ap-btn-enviar'); if(btn){ btn.disabled=true; btn.style.opacity='.4'; }
+  const st=document.getElementById('ap-status'); if(st){ st.style.display='block'; st.textContent='Enviando fotos...'; }
+
+  const timestamp=Date.now();
+  try{
+    const urls={};
+    for(const pos of ['frente','lado','costas']){
+      const caminho=`${u.email}/${timestamp}_${pos}.jpg`;
+      const{error:erroUpload}=await sb.storage.from('avaliacoes-postura').upload(caminho, apFotos[pos], {contentType:'image/jpeg', upsert:true});
+      if(erroUpload) throw new Error(erroUpload.message);
+      const{data:assinada}=await sb.storage.from('avaliacoes-postura').createSignedUrl(caminho, 60*60*24*365); // 1 ano — pra acompanhar evolução de longo prazo
+      urls[pos]=assinada?.signedUrl||null;
+    }
+
+    const email=DB.get('fq_cur');
+    const users=DB.get('fq_users')||{};
+    if(!u.avaliacoesPostural) u.avaliacoesPostural=[];
+    u.avaliacoesPostural.push({
+      id:`post_${timestamp}`,
+      data:new Date().toLocaleDateString('pt-BR'),
+      fotoFrente:urls.frente, fotoLado:urls.lado, fotoCostas:urls.costas,
+      status:'pendente', observacoes:null, dataObservacoes:null,
+    });
+    users[email]=u; DB.set('fq_users',users);
+    await syncU(u).catch(()=>{ fqToast('⚠️ Enviado, mas não sincronizou ainda. Abra o app com internet mais tarde.','warn',6000); });
+
+    fqToast('🎉 Fotos enviadas! O Rennan vai analisar e te responder por aqui.','ok',5000);
+    closeModal('modal-postural');
+    renderAvaliacaoPostural(u);
+  }catch(e){
+    console.error('Erro ao enviar avaliação postural:',e);
+    fqToast('Algo deu errado ao enviar. Tenta de novo.','warn',5000);
+    if(st){ st.style.display='none'; }
+    apAtualizarBotao();
+  }
+}
+// Histórico postural do próprio aluno — mais recente primeiro
+function renderAvaliacaoPostural(u){
+  const el=document.getElementById('postural-history-list'); if(!el) return;
+  const lista=[...(u?.avaliacoesPostural||[])].reverse();
+  if(!lista.length){
+    el.innerHTML=`<div style="font-size:12px;color:var(--mu);text-align:center;padding:20px 0">Nenhuma avaliação postural ainda</div>`;
+    return;
+  }
+  el.innerHTML=lista.map(av=>`
+    <div style="background:var(--s);border:1px solid var(--b);border-radius:12px;padding:12px;margin-bottom:10px">
+      <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px">
+        <div style="font-size:12px;font-weight:800">${av.data}</div>
+        ${av.status==='respondido'
+          ? `<span style="font-size:10px;font-weight:800;color:#2ecc71">✅ Analisado</span>`
+          : `<span style="font-size:10px;font-weight:800;color:#e8b566">⏳ Aguardando análise</span>`}
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:${av.observacoes?'10px':'0'}">
+        ${['fotoFrente','fotoLado','fotoCostas'].map(k=>av[k]?`<img src="${av[k]}" style="width:100%;aspect-ratio:3/4;object-fit:cover;border-radius:8px"/>`:'').join('')}
+      </div>
+      ${av.observacoes?`<div style="background:rgba(46,204,113,.08);border:1px solid rgba(46,204,113,.25);border-radius:8px;padding:10px 12px;font-size:12px;color:#fff;line-height:1.5">${av.observacoes}</div>`:''}
+    </div>`).join('');
 }
 function gvRemoverPersonalizado(exId){
   const u=getU(); if(!u) return;
@@ -13899,6 +14091,7 @@ async function loadAdmin(){
   renderConversao(all);
   renderAssinaturas(all);
   renderCorrecoesPendentes(all);
+  renderPosturaisPendentes(all);
 
   // ── Full students list ──
   admRenderStudents(all,'all');
@@ -14083,6 +14276,52 @@ async function admResponderCorrecao(email, corrId){
   await syncAlunoAdmin(u).catch(()=>{ fqToast('⚠️ Salvo aqui, mas não sincronizou. Confira a internet.','warn',6000); });
   fqToast('✅ Correção enviada pro aluno.','ok',3000);
   renderCorrecoesPendentes(window.ADM_CACHE||[]);
+}
+// ── Avaliações posturais pendentes — mesmo padrão das correções de vídeo ──
+function renderPosturaisPendentes(lista){
+  const el = document.getElementById('adm-postural-list');
+  const countEl = document.getElementById('adm-postural-count');
+  if(!el) return;
+  const pendentes = [];
+  (lista||[]).forEach(u=>{
+    (u.avaliacoesPostural||[]).forEach(av=>{
+      if(av.status==='pendente') pendentes.push({...av, alunoNome:u.name||u.email, alunoEmail:u.email});
+    });
+  });
+  pendentes.sort((a,b)=>(a.id||'').localeCompare(b.id||''));
+
+  if(countEl) countEl.textContent = pendentes.length ? `(${pendentes.length})` : '';
+  if(!pendentes.length){
+    el.innerHTML = `<div class="adm-empty"><div class="adm-empty-icon">✅</div><div>Nenhuma avaliação postural esperando análise</div></div>`;
+    return;
+  }
+  el.innerHTML = pendentes.map(av=>`
+    <div style="background:var(--s);border:1px solid rgba(155,89,182,.3);border-radius:10px;padding:12px;margin-bottom:10px">
+      <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px">
+        <div style="font-size:12px;font-weight:800">${av.alunoNome}</div>
+        <div style="font-size:10px;color:var(--mu)">${av.data}</div>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:8px">
+        ${['fotoFrente','fotoLado','fotoCostas'].map(k=>av[k]?`<img src="${av[k]}" style="width:100%;aspect-ratio:3/4;object-fit:cover;border-radius:8px;cursor:pointer" onclick="window.open('${av[k]}','_blank')"/>`:`<div style="aspect-ratio:3/4;background:var(--s2);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:10px;color:var(--mu)">sem foto</div>`).join('')}
+      </div>
+      <textarea id="post-resp-${av.id}" placeholder="Escreva sua análise postural (ex: assimetria de ombro, anteversão pélvica...)" style="width:100%;min-height:60px;background:var(--s2);border:1px solid var(--b);border-radius:8px;padding:8px 10px;color:#fff;font-size:12px;resize:vertical;margin-bottom:8px"></textarea>
+      <button onclick="admResponderPostural('${av.alunoEmail}','${av.id}')" style="width:100%;background:#9b59b6;border:none;border-radius:8px;padding:10px;color:#fff;font-size:12px;font-weight:800;cursor:pointer">✅ Enviar análise</button>
+    </div>`).join('');
+}
+async function admResponderPostural(email, avId){
+  const textarea = document.getElementById(`post-resp-${avId}`);
+  const texto = (textarea?.value||'').trim();
+  if(!texto){ fqToast('Escreva a análise antes de enviar.','warn'); return; }
+  const u = admGetAluno(email);
+  if(!u){ fqToast('Aluno não encontrado.','warn'); return; }
+  const item = (u.avaliacoesPostural||[]).find(av=>av.id===avId);
+  if(!item){ fqToast('Avaliação não encontrada.','warn'); return; }
+  item.status='respondido';
+  item.observacoes=texto;
+  item.dataObservacoes=new Date().toLocaleDateString('pt-BR');
+  await syncAlunoAdmin(u).catch(()=>{ fqToast('⚠️ Salvo aqui, mas não sincronizou. Confira a internet.','warn',6000); });
+  fqToast('✅ Análise enviada pro aluno.','ok',3000);
+  renderPosturaisPendentes(window.ADM_CACHE||[]);
 }
 function renderConversao(lista){
   const el = document.getElementById('adm-conversao');
