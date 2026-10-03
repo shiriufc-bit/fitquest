@@ -1388,7 +1388,7 @@ html[data-tema="claro"] .hero-banner{background:#fff;}
       <option value="es">🇪🇸 ES</option>
     </select>
   </div>
-  <div id="fq-version-badge" style="position:absolute;bottom:8px;right:12px;font-size:9px;color:#333;font-weight:700;z-index:5">v262</div>
+  <div id="fq-version-badge" style="position:absolute;bottom:8px;right:12px;font-size:9px;color:#333;font-weight:700;z-index:5">v263</div>
   <img src="https://images.unsplash.com/photo-1517836357463-d25dfeac3438?w=800&q=80" alt="Fitness" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center top;filter:brightness(.35);z-index:0"/>
   <div class="splash-glow"></div>
   <div class="splash-noise"></div>
@@ -2658,7 +2658,7 @@ html[data-tema="claro"] .hero-banner{background:#fff;}
             <span style="color:var(--mu);font-size:18px">›</span>
           </div>
         </div>
-        <div style="text-align:center;padding:20px 0 4px;font-size:11px;color:var(--mu)">FitQuest <span id="fq-version-badge-perfil">v262</span></div>
+        <div style="text-align:center;padding:20px 0 4px;font-size:11px;color:var(--mu)">FitQuest <span id="fq-version-badge-perfil">v263</span></div>
       </div>
     </div>
 
@@ -3345,9 +3345,23 @@ const FQ_VAPID_PUBLIC_KEY='BAufV-Apetfu-wJKiYmdBWs4GYf1Fh4cgUDArW3oE2uQtiAYg4lSL
 const SUPABASE_KEY='sb_publishable_0jwz3vKIkAakkn8tgNrKKQ_EELiP41g'; // publishable key (segura para frontend — protegida via RLS no Supabase)
 const FN_URL=SUPABASE_URL+'/functions/v1';
 let sb=null;
+// GIFs extras: quando você (admin) grava a demonstração de um exercício que
+// ainda não tem gif oficial no repositório, ela fica salva numa tabela
+// pública do Supabase — assim TODOS os alunos passam a ver essa gravação
+// como a demonstração oficial, não só você. Carregada uma vez, em cache.
+let GIFS_EXTRAS_CACHE = {};
+async function fqCarregarGifsExtras(){
+  if(!sb) return;
+  try{
+    const{data,error}=await sb.from('gifs_extras').select('exercicio_id,url');
+    if(error){ console.warn('gifs_extras indisponível ainda (provavelmente falta criar a tabela):', error.message); return; }
+    (data||[]).forEach(row=>{ if(row.exercicio_id && row.url) GIFS_EXTRAS_CACHE[row.exercicio_id]=row.url; });
+  }catch(e){ console.warn('Erro ao carregar gifs_extras:', e); }
+}
 try{
   if(typeof supabase!=='undefined' && supabase.createClient){
     sb=supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
+    fqCarregarGifsExtras(); // não precisa esperar — carrega em paralelo, fica pronto quando o primeiro exercício abrir
     console.log('Supabase connected');
   }
 }catch(e){console.warn('Supabase init failed, running offline:',e.message);}
@@ -11312,6 +11326,7 @@ const EXERCICIOS_COM_GIF = new Set(['e001','e002','e003','e004','e005','e006','e
 function temGifDemo(exId){
   const u = (typeof getU==='function') ? getU() : null;
   if(u?.gifsPersonalizados?.[exId]) return true;
+  if(GIFS_EXTRAS_CACHE[exId]) return true;
   return EXERCICIOS_COM_GIF.has(exId);
 }
 // Tenta o gif em várias pastas do repo, na ordem abaixo, antes de cair no ícone de reserva.
@@ -11342,7 +11357,9 @@ function gifFallback(imgEl,exId,containerSelector){
 // que saiba desenhar canvas, o que é universal.
 function gifCanvasHTML(exId, style, containerSelector){
   const u = (typeof getU==='function') ? getU() : null;
-  const urlPersonal = u?.gifsPersonalizados?.[exId] || null;
+  // Prioridade: gif pessoal do aluno (se gravou um) > demonstração extra
+  // (admin preencheu a lacuna) > caminho padrão do repositório.
+  const urlPersonal = u?.gifsPersonalizados?.[exId] || GIFS_EXTRAS_CACHE[exId] || null;
   return `<canvas class="gif-cv" data-gif="${urlPersonal||(GIF_SEARCH_PATHS[0]+exId+'.gif')}" data-personalizado="${urlPersonal?'1':'0'}" data-exid="${exId}" data-fallback="${containerSelector}" data-attempt="0" style="${style}"></canvas>`;
 }
 function gifCanvasTentar(cv, exId, containerSelector, tentativa){
@@ -11407,12 +11424,19 @@ function renderExThumb(ex){
   }
   return renderExThumbFallback(ex.id);
 }
+// BUGFIX/UX: antes mostrava uma foto genérica escurecida + nome do
+// exercício em cima — parecia imagem quebrada e expunha visualmente quais
+// exercícios ainda não têm demonstração. Agora é um convite claro e
+// intencional pra gravar — toda a área é clicável e abre a câmera direto.
 function renderExThumbFallback(exId){
   const ex=getExById(exId);if(!ex)return '';
-  return `<img src="${getExImg(ex.muscle)}" alt="${ex.name}" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;filter:brightness(.4)"/>
-    <div style="position:relative;z-index:1;display:flex;flex-direction:column;align-items:center;gap:6px">
-      <div style="font-size:13px;font-weight:800;text-shadow:0 2px 8px rgba(0,0,0,.8)">${ex.name}</div>
-      <div style="font-size:10px;color:var(--r);font-weight:700;background:rgba(225,6,0,.15);padding:3px 10px;border-radius:4px;border:1px solid rgba(225,6,0,.3)">${ex.muscle}</div>
+  const souAdmin = (typeof getU==='function') ? (getU()?.isAdmin) : false;
+  const textoConvite = souAdmin ? 'Gravar demonstração oficial' : 'Toque pra gravar sua execução';
+  return `<div onclick="gvAbrirParaExercicio('${exId}')" role="button" tabindex="0" style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;cursor:pointer;background:var(--s)">
+      <div style="width:52px;height:52px;border-radius:50%;background:rgba(225,6,0,.12);display:flex;align-items:center;justify-content:center">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--r)" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M23 7l-7 5 7 5V7z"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg>
+      </div>
+      <div style="font-size:12px;font-weight:700;color:var(--t2);text-align:center;padding:0 24px;line-height:1.4">${textoConvite}</div>
     </div>`;
 }
 
@@ -11541,7 +11565,20 @@ async function gvSalvarResultado(){
     }
     users[u.email]=u; DB.set('fq_users',users);
     await syncU(u).catch(()=>{});
-    fqToast(gvModoNovoExercicio?'🎉 Exercício criado!':'🎉 Seu vídeo foi salvo!','ok',3000);
+
+    // Se for VOCÊ (admin) gravando um exercício real que ainda não tem gif
+    // oficial, essa gravação vira a demonstração de TODOS os alunos — não só
+    // sua referência pessoal. Preenche a lacuna de verdade, pra sempre.
+    let viroiOficial=false;
+    if(u.isAdmin && !gvModoNovoExercicio && !EXERCICIOS_COM_GIF.has(exIdFinal)){
+      try{
+        const{error:erroExtra}=await sb.from('gifs_extras').upsert({exercicio_id:exIdFinal, url, atualizado_em:new Date().toISOString()});
+        if(!erroExtra){ GIFS_EXTRAS_CACHE[exIdFinal]=url; viroiOficial=true; }
+        else console.warn('Não deu pra salvar como demonstração oficial (tabela gifs_extras existe?):', erroExtra.message);
+      }catch(e){ console.warn('Erro ao salvar gif extra:', e); }
+    }
+
+    fqToast(gvModoNovoExercicio?'🎉 Exercício criado!':(viroiOficial?'🎉 Virou a demonstração oficial pra todos os alunos!':'🎉 Seu vídeo foi salvo!'),'ok',3500);
     closeModal('modal-gravar-video');
     if(!gvModoNovoExercicio && typeof abrirFichaExercicio==='function') abrirFichaExercicio(gvExIdAlvo);
     if(gvModoNovoExercicio && typeof renderMeusExercicios==='function') renderMeusExercicios();
