@@ -1388,7 +1388,7 @@ html[data-tema="claro"] .hero-banner{background:#fff;}
       <option value="es">🇪🇸 ES</option>
     </select>
   </div>
-  <div id="fq-version-badge" style="position:absolute;bottom:8px;right:12px;font-size:9px;color:#333;font-weight:700;z-index:5">v263</div>
+  <div id="fq-version-badge" style="position:absolute;bottom:8px;right:12px;font-size:9px;color:#333;font-weight:700;z-index:5">v264</div>
   <img src="https://images.unsplash.com/photo-1517836357463-d25dfeac3438?w=800&q=80" alt="Fitness" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center top;filter:brightness(.35);z-index:0"/>
   <div class="splash-glow"></div>
   <div class="splash-noise"></div>
@@ -2658,7 +2658,7 @@ html[data-tema="claro"] .hero-banner{background:#fff;}
             <span style="color:var(--mu);font-size:18px">›</span>
           </div>
         </div>
-        <div style="text-align:center;padding:20px 0 4px;font-size:11px;color:var(--mu)">FitQuest <span id="fq-version-badge-perfil">v263</span></div>
+        <div style="text-align:center;padding:20px 0 4px;font-size:11px;color:var(--mu)">FitQuest <span id="fq-version-badge-perfil">v264</span></div>
       </div>
     </div>
 
@@ -6487,7 +6487,10 @@ async function doLogin(){
       if(email===ADMIN_EMAIL)u.isAdmin=true;
       const{error:erroSalvar}=await sb.from('alunos').upsert(userToRow(u),{onConflict:'id'});
       if(erroSalvar){
-        console.error('Erro ao recriar perfil no Supabase:',erroSalvar.message,erroSalvar);
+        console.error('Erro ao recriar perfil em alunos (proteção no login):',{
+          code:erroSalvar.code, message:erroSalvar.message,
+          details:erroSalvar.details, hint:erroSalvar.hint,
+        });
         fqToast('⚠️ Não foi possível salvar seus dados no servidor agora.','warn',6000);
       }
       const fresh=await loadUDB(data.user.id);if(fresh)u=fresh;
@@ -6603,18 +6606,40 @@ async function doRegister(){
       const m=/already|registered/i.test(error.message)?'E-mail já cadastrado. Use "Entrar".':'Não foi possível criar a conta: '+error.message;
       showErr(m);return;
     }
-    if(!data.session){
-      showErr('Conta criada! Enviamos um link de confirmação para o seu e-mail. Confirme e depois faça login.');
-      switchAuth('login');return;
+    // BUGFIX (causa raiz do "cliente cadastrou e não aparece"): antes, quando
+    // o Supabase exige confirmação de e-mail, data.session vem nulo — e o
+    // código retornava AQUI, antes de criar o perfil em public.alunos. A
+    // conta existia no Auth, mas nunca aparecia no painel nem na tabela.
+    // Agora o perfil é criado e salvo SEMPRE que temos data.user, 
+    // independente de já existir sessão ou não — exatamente como pede o
+    // diagrama: signUp → data.user → perfil local → upsert em alunos →
+    // (se precisa confirmar e-mail: avisa) → (se já tem sessão: continua).
+    if(!data.user){
+      console.error('Erro ao criar conta: signUp não retornou erro nem usuário.', {data});
+      showErr('Não foi possível criar sua conta agora. Tente novamente em alguns instantes.');
+      return;
     }
     const u=novoPerfilLocal(data.user.id,name,email);
     if(email===ADMIN_EMAIL)u.isAdmin=true;
     const{error:erroSalvar}=await sb.from('alunos').upsert(userToRow(u),{onConflict:'id'});
     if(erroSalvar){
-      console.error('Erro ao salvar novo aluno no Supabase:',erroSalvar.message,erroSalvar);
-      showErr('⚠️ Sua conta foi criada, mas não foi possível salvar seus dados no servidor agora ('+erroSalvar.message+'). Tente sair e entrar de novo em alguns instantes.');
+      console.error('Erro ao criar perfil em alunos:',{
+        code:erroSalvar.code, message:erroSalvar.message,
+        details:erroSalvar.details, hint:erroSalvar.hint,
+      });
+      showErr('⚠️ Sua conta foi criada, mas não conseguimos salvar seu perfil agora ('+erroSalvar.message+'). Tente fazer login em alguns instantes — a proteção no login tenta recriar o perfil automaticamente.');
+      // Segue o fluxo mesmo com erro aqui — a pessoa já tem conta no Auth,
+      // e a proteção no login (abaixo) tenta recriar o perfil depois.
     }
-    const users=DB.get('fq_users')||{};users[email]=u;DB.set('fq_users',users);DB.set('fq_cur',email);
+    const users=DB.get('fq_users')||{};users[email]=u;DB.set('fq_users',users);
+    if(!data.session){
+      // Perfil JÁ foi criado em alunos acima — ela já aparece no painel admin
+      // mesmo sem ter confirmado o e-mail ainda. Só falta ela confirmar pra
+      // conseguir entrar.
+      showErr('Conta criada! Enviamos um link de confirmação para o seu e-mail. Confirme e depois faça login.');
+      switchAuth('login');return;
+    }
+    DB.set('fq_cur',email);
     enviarEmailBoasVindas(name, email); // e-mail de boas-vindas (não bloqueia)
     // NOTA: o aviso pra você (admin) de novo cadastro NÃO é mais disparado daqui.
     // Isso agora acontece pelo servidor (função notificar-novo-aluno + Database
