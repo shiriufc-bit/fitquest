@@ -1388,7 +1388,7 @@ html[data-tema="claro"] .hero-banner{background:#fff;}
       <option value="es">🇪🇸 ES</option>
     </select>
   </div>
-  <div id="fq-version-badge" style="position:absolute;bottom:8px;right:12px;font-size:9px;color:#333;font-weight:700;z-index:5">v267</div>
+  <div id="fq-version-badge" style="position:absolute;bottom:8px;right:12px;font-size:9px;color:#333;font-weight:700;z-index:5">v268</div>
   <img src="https://images.unsplash.com/photo-1517836357463-d25dfeac3438?w=800&q=80" alt="Fitness" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center top;filter:brightness(.35);z-index:0"/>
   <div class="splash-glow"></div>
   <div class="splash-noise"></div>
@@ -2658,7 +2658,7 @@ html[data-tema="claro"] .hero-banner{background:#fff;}
             <span style="color:var(--mu);font-size:18px">›</span>
           </div>
         </div>
-        <div style="text-align:center;padding:20px 0 4px;font-size:11px;color:var(--mu)">FitQuest <span id="fq-version-badge-perfil">v267</span></div>
+        <div style="text-align:center;padding:20px 0 4px;font-size:11px;color:var(--mu)">FitQuest <span id="fq-version-badge-perfil">v268</span></div>
       </div>
     </div>
 
@@ -2742,6 +2742,10 @@ html[data-tema="claro"] .hero-banner{background:#fff;}
       <!-- Avaliações posturais pendentes -->
       <div class="adm-sec-title" style="color:#fff">🧍 Avaliações Posturais <span id="adm-postural-count"></span></div>
       <div id="adm-postural-list" style="padding:0 12px 4px"></div>
+
+      <!-- Pasta de vídeos gravados por aluno — GIFs pessoais + vídeos de correção, de todos os alunos -->
+      <div class="adm-sec-title" style="color:#fff">🎬 Vídeos dos Alunos <span id="adm-videos-count"></span></div>
+      <div id="adm-videos-list" style="padding:0 12px 4px"></div>
     </div>
 
     <!-- TAB: ALUNOS -->
@@ -2845,6 +2849,14 @@ html[data-tema="claro"] .hero-banner{background:#fff;}
         </div>
       </div>
     </div>
+  </div>
+</div>
+<!-- Pasta de vídeos de um aluno — GIFs pessoais + vídeos de correção -->
+<div class="modal-ov" id="modal-videos-aluno" style="align-items:flex-start">
+  <div class="modal-bx" style="max-width:420px;width:100%;padding:0;border-radius:16px 16px 0 0;margin-top:auto;max-height:92vh;overflow-y:auto">
+    <div class="modal-t"><span>🎬 <span id="videos-aluno-nome">—</span></span><button class="modal-cl" onclick="closeModal('modal-videos-aluno')">✕</button></div>
+    <input type="hidden" id="videos-aluno-email"/>
+    <div style="padding:16px" id="videos-aluno-corpo"></div>
   </div>
 </div>
 <!-- Pacote completo do cliente — PDF com plano + composição corporal + estratégia -->
@@ -14242,6 +14254,7 @@ async function loadAdmin(){
   renderAssinaturas(all);
   renderCorrecoesPendentes(all);
   renderPosturaisPendentes(all);
+  renderVideosAlunos(all);
 
   // ── Full students list ──
   admRenderStudents(all,'all');
@@ -14472,6 +14485,98 @@ async function admResponderPostural(email, avId){
   await syncAlunoAdmin(u).catch(()=>{ fqToast('⚠️ Salvo aqui, mas não sincronizou. Confira a internet.','warn',6000); });
   fqToast('✅ Análise enviada pro aluno.','ok',3000);
   renderPosturaisPendentes(window.ADM_CACHE||[]);
+}
+
+// ══════════════════════════════════════════════════════════════════════
+// ══ PASTA DE VÍDEOS POR ALUNO (painel admin) ══
+// Junta num só lugar os 2 tipos de vídeo que um aluno pode gravar:
+// GIF pessoal do exercício (gifsPersonalizados — sem áudio, já no formato
+// usado como demonstração) e vídeo de correção (correcoesVideo — com áudio,
+// pensado pra feedback individual). Só o primeiro tipo pode virar
+// demonstração OFICIAL (mesmo mecanismo de gifs_extras da v263); o de
+// correção fica só pra consulta, porque é outro formato de arquivo.
+// ══════════════════════════════════════════════════════════════════════
+function renderVideosAlunos(lista){
+  const el = document.getElementById('adm-videos-list');
+  const countEl = document.getElementById('adm-videos-count');
+  if(!el) return;
+  const comVideo = (lista||[]).filter(u=>
+    Object.keys(u.gifsPersonalizados||{}).length || (u.correcoesVideo||[]).length
+  );
+  if(countEl) countEl.textContent = comVideo.length ? `(${comVideo.length})` : '';
+  if(!comVideo.length){
+    el.innerHTML = `<div class="adm-empty"><div class="adm-empty-icon">🎬</div><div>Nenhum aluno gravou vídeo ainda</div></div>`;
+    return;
+  }
+  el.innerHTML = comVideo.map(u=>{
+    const nGif = Object.keys(u.gifsPersonalizados||{}).length;
+    const nCorr = (u.correcoesVideo||[]).length;
+    const partes = [];
+    if(nGif) partes.push(`${nGif} ${nGif>1?'gifs pessoais':'gif pessoal'}`);
+    if(nCorr) partes.push(`${nCorr} vídeo${nCorr>1?'s':''} de correção`);
+    return `<div onclick="admAbrirVideosAluno('${u.email}')" style="display:flex;align-items:center;gap:12px;background:var(--s);border:1px solid var(--b);border-radius:10px;padding:12px;margin-bottom:8px;cursor:pointer">
+      <div style="width:36px;height:36px;border-radius:50%;background:var(--s2);display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:800;flex-shrink:0">${(u.name||'?')[0].toUpperCase()}</div>
+      <div style="flex:1;min-width:0"><div style="font-size:13px;font-weight:700">${u.name||u.email}</div>
+        <div style="font-size:11px;color:var(--mu);margin-top:2px">${partes.join(' · ')}</div></div>
+      <span style="color:var(--mu)">›</span>
+    </div>`;
+  }).join('');
+}
+function admAbrirVideosAluno(email){
+  const u = admGetAluno(email);
+  if(!u){ fqToast('Aluno não encontrado.','warn'); return; }
+  const titEl=document.getElementById('videos-aluno-nome'); if(titEl) titEl.textContent=u.name||email;
+  const emailHidden=document.getElementById('videos-aluno-email'); if(emailHidden) emailHidden.value=email;
+
+  const gifs = Object.entries(u.gifsPersonalizados||{});
+  const gifsHtml = gifs.length ? gifs.map(([exId,url])=>{
+    const ex = (typeof getExById==='function') ? getExById(exId) : null;
+    const nome = ex?.name || exId;
+    const jaEhOficial = EXERCICIOS_COM_GIF.has(exId) || GIFS_EXTRAS_CACHE[exId]===url;
+    return `<div style="background:var(--s2);border:1px solid var(--b);border-radius:10px;padding:10px;margin-bottom:8px">
+      <div style="display:flex;gap:10px;align-items:center">
+        <img src="${url}" style="width:64px;height:64px;object-fit:cover;border-radius:8px;background:#000;flex-shrink:0"/>
+        <div style="flex:1;min-width:0">
+          <div style="font-size:12.5px;font-weight:700">${nome}</div>
+          <div style="font-size:10.5px;color:var(--mu);margin-top:2px">GIF pessoal · sem áudio</div>
+        </div>
+      </div>
+      <button onclick="admUsarGifComoOficial('${email}','${exId}')" ${jaEhOficial?'disabled':''} style="width:100%;margin-top:8px;background:${jaEhOficial?'rgba(46,204,113,.12)':'var(--r)'};color:${jaEhOficial?'#2ecc71':'#fff'};border:none;border-radius:8px;padding:8px;font-size:11.5px;font-weight:800;cursor:${jaEhOficial?'default':'pointer'}">${jaEhOficial?'✅ Já é a demonstração oficial':'📌 Usar como demonstração oficial'}</button>
+    </div>`;
+  }).join('') : `<div style="font-size:12px;color:var(--mu);text-align:center;padding:12px 0">Nenhum GIF pessoal gravado.</div>`;
+
+  const corr = u.correcoesVideo||[];
+  const corrHtml = corr.length ? corr.slice().reverse().map(c=>`
+    <div style="background:var(--s2);border:1px solid var(--b);border-radius:10px;padding:10px;margin-bottom:8px">
+      <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:6px">
+        <div style="font-size:12.5px;font-weight:700">${c.exNome||c.exId}</div>
+        <div style="font-size:10px;color:var(--mu)">${c.data||''}</div>
+      </div>
+      <video src="${c.videoUrl}" controls style="width:100%;max-height:220px;border-radius:8px;background:#000"></video>
+      <div style="font-size:10.5px;margin-top:6px;color:${c.status==='respondido'?'#2ecc71':'#e8b566'}">${c.status==='respondido'?'✅ Você já respondeu':'⏳ Aguardando sua análise'}</div>
+      ${c.feedbackTexto?`<div style="font-size:11.5px;color:var(--t2);margin-top:4px;line-height:1.4">${c.feedbackTexto}</div>`:''}
+    </div>`).join('') : `<div style="font-size:12px;color:var(--mu);text-align:center;padding:12px 0">Nenhum vídeo de correção enviado.</div>`;
+
+  const corpo = document.getElementById('videos-aluno-corpo');
+  if(corpo) corpo.innerHTML = `
+    <div style="font-size:11px;font-weight:800;color:var(--mu);text-transform:uppercase;letter-spacing:1px;margin:4px 0 8px">GIFs pessoais (podem virar demonstração oficial)</div>
+    ${gifsHtml}
+    <div style="font-size:11px;font-weight:800;color:var(--mu);text-transform:uppercase;letter-spacing:1px;margin:16px 0 8px">Vídeos de correção (só consulta — formato diferente)</div>
+    ${corrHtml}`;
+  abrirModal('modal-videos-aluno');
+}
+async function admUsarGifComoOficial(email, exId){
+  const u = admGetAluno(email);
+  if(!u){ fqToast('Aluno não encontrado.','warn'); return; }
+  const url = u.gifsPersonalizados?.[exId];
+  if(!url){ fqToast('Vídeo não encontrado.','warn'); return; }
+  try{
+    const{error}=await sb.from('gifs_extras').upsert({exercicio_id:exId, url, atualizado_em:new Date().toISOString()});
+    if(error){ console.warn('Não deu pra salvar como oficial (tabela gifs_extras existe?):', error.message); fqToast('Não consegui salvar — confira se a tabela gifs_extras existe (GUIA_GIFS_OFICIAIS.md).','warn',7000); return; }
+    GIFS_EXTRAS_CACHE[exId]=url;
+    fqToast('🎉 Virou a demonstração oficial pra todos os alunos!','ok',3500);
+    admAbrirVideosAluno(email); // re-renderiza o modal com o botão já marcado
+  }catch(e){ console.error('Erro ao promover gif:',e); fqToast('Algo deu errado.','warn',5000); }
 }
 
 // ══════════════════════════════════════════════════════════════════════
