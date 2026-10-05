@@ -1388,7 +1388,7 @@ html[data-tema="claro"] .hero-banner{background:#fff;}
       <option value="es">🇪🇸 ES</option>
     </select>
   </div>
-  <div id="fq-version-badge" style="position:absolute;bottom:8px;right:12px;font-size:9px;color:#333;font-weight:700;z-index:5">v264</div>
+  <div id="fq-version-badge" style="position:absolute;bottom:8px;right:12px;font-size:9px;color:#333;font-weight:700;z-index:5">v267</div>
   <img src="https://images.unsplash.com/photo-1517836357463-d25dfeac3438?w=800&q=80" alt="Fitness" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center top;filter:brightness(.35);z-index:0"/>
   <div class="splash-glow"></div>
   <div class="splash-noise"></div>
@@ -2466,7 +2466,7 @@ html[data-tema="claro"] .hero-banner{background:#fff;}
                 <img id="ap-preview-frente" style="display:none;width:100%;height:100%;object-fit:cover;position:absolute;inset:0"/>
                 <span id="ap-placeholder-frente" style="font-size:24px">📷</span>
               </label>
-              <input type="file" accept="image/*" capture="user" id="ap-input-frente" style="display:none" onchange="apSelecionarFoto('frente',this)"/>
+              <input type="file" accept="image/*" capture="environment" id="ap-input-frente" style="display:none" onchange="apSelecionarFoto('frente',this)"/>
               <div style="font-size:10px;color:var(--t2);margin-top:6px;font-weight:700">Frente</div>
             </div>
             <div style="text-align:center">
@@ -2474,7 +2474,7 @@ html[data-tema="claro"] .hero-banner{background:#fff;}
                 <img id="ap-preview-lado" style="display:none;width:100%;height:100%;object-fit:cover;position:absolute;inset:0"/>
                 <span id="ap-placeholder-lado" style="font-size:24px">📷</span>
               </label>
-              <input type="file" accept="image/*" capture="user" id="ap-input-lado" style="display:none" onchange="apSelecionarFoto('lado',this)"/>
+              <input type="file" accept="image/*" capture="environment" id="ap-input-lado" style="display:none" onchange="apSelecionarFoto('lado',this)"/>
               <div style="font-size:10px;color:var(--t2);margin-top:6px;font-weight:700">Lado</div>
             </div>
             <div style="text-align:center">
@@ -2482,7 +2482,7 @@ html[data-tema="claro"] .hero-banner{background:#fff;}
                 <img id="ap-preview-costas" style="display:none;width:100%;height:100%;object-fit:cover;position:absolute;inset:0"/>
                 <span id="ap-placeholder-costas" style="font-size:24px">📷</span>
               </label>
-              <input type="file" accept="image/*" capture="user" id="ap-input-costas" style="display:none" onchange="apSelecionarFoto('costas',this)"/>
+              <input type="file" accept="image/*" capture="environment" id="ap-input-costas" style="display:none" onchange="apSelecionarFoto('costas',this)"/>
               <div style="font-size:10px;color:var(--t2);margin-top:6px;font-weight:700">Costas</div>
             </div>
           </div>
@@ -2658,7 +2658,7 @@ html[data-tema="claro"] .hero-banner{background:#fff;}
             <span style="color:var(--mu);font-size:18px">›</span>
           </div>
         </div>
-        <div style="text-align:center;padding:20px 0 4px;font-size:11px;color:var(--mu)">FitQuest <span id="fq-version-badge-perfil">v264</span></div>
+        <div style="text-align:center;padding:20px 0 4px;font-size:11px;color:var(--mu)">FitQuest <span id="fq-version-badge-perfil">v267</span></div>
       </div>
     </div>
 
@@ -2828,6 +2828,7 @@ html[data-tema="claro"] .hero-banner{background:#fff;}
         <div style="position:relative;width:100%;aspect-ratio:1/1;background:#000;border-radius:12px;overflow:hidden">
           <video id="gv-video" autoplay muted playsinline style="width:100%;height:100%;object-fit:cover"></video>
           <div id="gv-contador" style="display:none;position:absolute;inset:0;align-items:center;justify-content:center;font-size:56px;font-weight:900;color:#fff;background:rgba(0,0,0,.35)"></div>
+          <button onclick="gvTrocarCamera()" aria-label="Trocar câmera" style="position:absolute;top:10px;right:10px;width:38px;height:38px;border-radius:50%;background:rgba(0,0,0,.5);border:1px solid rgba(255,255,255,.3);display:flex;align-items:center;justify-content:center;cursor:pointer"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 2l4 4-4 4M3 11V9a4 4 0 0 1 4-4h14M7 22l-4-4 4-4M21 13v2a4 4 0 0 1-4 4H3"/></svg></button>
         </div>
         <div style="font-size:11px;color:var(--mu);margin-top:10px">Grave uns 8 segundos mostrando o movimento completo do exercício.</div>
         <button class="btn-addex" id="gv-btn-gravar" onclick="gvComecarGravacao()" style="width:100%;margin-top:10px">⏺ Gravar (8s)</button>
@@ -2854,6 +2855,13 @@ html[data-tema="claro"] .hero-banner{background:#fff;}
       <div style="font-size:14px;font-weight:800;margin-bottom:2px" id="pacote-aluno-nome">—</div>
       <input type="hidden" id="pacote-aluno-email"/>
       <div style="background:var(--s);border:1px solid var(--b);border-radius:10px;padding:12px;margin:10px 0 16px" id="pacote-resumo-dados"></div>
+      <div style="font-size:11px;font-weight:800;color:var(--mu);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">Dados do documento</div>
+      <label style="font-size:11px;color:var(--t2)">Objetivo principal</label>
+      <input id="pacote-objetivo" type="text" placeholder="Ex: Manter a saúde, melhorar a composição corporal e o condicionamento físico." style="width:100%;background:var(--s2);border:1px solid var(--b);border-radius:8px;padding:10px 12px;color:#fff;font-size:13px;margin:4px 0 10px"/>
+      <label style="font-size:11px;color:var(--t2)">Meta de aeróbico (minutos por semana) — deixe vazio se não houver</label>
+      <input id="pacote-aerobico" type="number" min="0" inputmode="numeric" placeholder="Ex: 200" style="width:100%;background:var(--s2);border:1px solid var(--b);border-radius:8px;padding:10px 12px;color:#fff;font-size:13px;margin:4px 0 10px"/>
+      <label style="font-size:11px;color:var(--t2)">Acompanhamento</label>
+      <input id="pacote-acomp" type="text" style="width:100%;background:var(--s2);border:1px solid var(--b);border-radius:8px;padding:10px 12px;color:#fff;font-size:13px;margin:4px 0 16px"/>
       <div style="font-size:11px;font-weight:800;color:var(--mu);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">Estratégia pra alcançar o objetivo</div>
       <div style="font-size:11px;color:var(--t2);margin-bottom:8px;line-height:1.5">Escreva aqui o plano de ação — isso entra no PDF tal como você escrever. É sua análise profissional; o modelo abaixo só adianta o ponto de partida, baseado em literatura atual.</div>
       <select id="pacote-modelo-objetivo" onchange="admAplicarModeloEstrategia(this.value)" style="width:100%;background:var(--s2);border:1px solid var(--b);border-radius:8px;padding:10px 12px;color:#fff;font-size:12.5px;margin-bottom:10px">
@@ -2866,8 +2874,23 @@ html[data-tema="claro"] .hero-banner{background:#fff;}
         <option value="terceiraidade">🧓 Terceira idade / mobilidade</option>
       </select>
       <textarea id="pacote-estrategia" placeholder="Ex: Nas primeiras 4 semanas, foco em adaptação e técnica. A partir da semana 5, progressão de carga semanal..." style="width:100%;min-height:120px;background:var(--s2);border:1px solid var(--b);border-radius:8px;padding:10px 12px;color:#fff;font-size:13px;resize:vertical;margin-bottom:10px"></textarea>
-      <button onclick="admSalvarEstrategia()" style="width:100%;background:var(--s2);border:1px solid var(--b2);border-radius:8px;padding:10px;color:#fff;font-size:12px;font-weight:700;cursor:pointer;margin-bottom:10px">💾 Salvar estratégia (sem gerar PDF)</button>
-      <button class="btn-savewk" onclick="admGerarPacoteCliente()">📄 Gerar PDF completo</button>
+      <details id="pacote-personalizar" style="margin-bottom:16px">
+        <summary style="font-size:11px;font-weight:800;color:var(--mu);text-transform:uppercase;letter-spacing:1px;cursor:pointer;list-style:none;display:flex;align-items:center;gap:6px">
+          <span style="color:var(--r)">✏️</span> Personalizar textos fixos (fases e benefícios)
+        </summary>
+        <div style="font-size:11px;color:var(--t2);margin:8px 0 12px;line-height:1.5">Já vem preenchido com o texto padrão. Só edite o que quiser mudar — o resto fica como está.</div>
+        <div id="pacote-fases-wrap"></div>
+        <label style="font-size:11px;color:var(--t2);display:block;margin-top:4px">Benefícios do aeróbico (1 por linha)</label>
+        <textarea id="pacote-beneficios" style="width:100%;min-height:92px;background:var(--s2);border:1px solid var(--b);border-radius:8px;padding:10px 12px;color:#fff;font-size:12.5px;resize:vertical;margin:4px 0 4px"></textarea>
+      </details>
+      <button onclick="admPreviewPacote()" style="width:100%;background:var(--s2);border:1px solid var(--b2);border-radius:8px;padding:10px;color:#fff;font-size:12px;font-weight:700;cursor:pointer;margin-bottom:10px">🔍 Pré-visualizar</button>
+      <div id="pacote-preview-wrap" style="display:none;margin-bottom:14px">
+        <div style="font-size:11px;color:var(--t2);margin-bottom:6px">Prévia — role pra ver o documento inteiro:</div>
+        <div style="max-height:360px;overflow-y:auto;border:1px solid var(--b);border-radius:8px"><img id="pacote-preview-img" style="width:100%;display:block"/></div>
+      </div>
+      <button onclick="admSalvarEstrategia()" style="width:100%;background:var(--s2);border:1px solid var(--b2);border-radius:8px;padding:10px;color:#fff;font-size:12px;font-weight:700;cursor:pointer;margin-bottom:10px">💾 Salvar dados (sem gerar o documento)</button>
+      <button class="btn-savewk" onclick="admGerarPacoteCliente('pdf')">📄 Gerar PDF</button>
+      <button onclick="admGerarPacoteCliente('png')" style="width:100%;background:var(--s2);border:1px solid var(--b2);border-radius:12px;padding:13px;color:#fff;font-size:13px;font-weight:700;cursor:pointer;margin-top:8px">🖼️ Gerar imagem (PNG) — pra mandar no WhatsApp</button>
     </div>
   </div>
 </div>
@@ -2883,6 +2906,7 @@ html[data-tema="claro"] .hero-banner{background:#fff;}
         <div style="position:relative;width:100%;aspect-ratio:9/16;max-height:50vh;background:#000;border-radius:12px;overflow:hidden;margin:0 auto">
           <video id="vc-video" autoplay muted playsinline style="width:100%;height:100%;object-fit:cover"></video>
           <div id="vc-timer" style="display:none;position:absolute;top:10px;right:10px;background:rgba(225,6,0,.9);color:#fff;font-size:12px;font-weight:800;padding:4px 10px;border-radius:20px">● 0:00</div>
+          <button onclick="vcTrocarCamera()" aria-label="Trocar câmera" style="position:absolute;top:10px;left:10px;width:38px;height:38px;border-radius:50%;background:rgba(0,0,0,.5);border:1px solid rgba(255,255,255,.3);display:flex;align-items:center;justify-content:center;cursor:pointer"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 2l4 4-4 4M3 11V9a4 4 0 0 1 4-4h14M7 22l-4-4 4-4M21 13v2a4 4 0 0 1-4 4H3"/></svg></button>
         </div>
         <div style="font-size:11px;color:var(--mu);margin-top:10px">Grave até 20 segundos mostrando o movimento completo. Capriche no ângulo — quanto melhor o Rennan enxergar, melhor a correção.</div>
         <button class="btn-addex" id="vc-btn-gravar" onclick="vcComecarGravacao()" style="width:100%;margin-top:10px">⏺ Começar a gravar</button>
@@ -6347,17 +6371,41 @@ function renovarMissoesSemanais(u){
   return true;
 }
 function rowToUser(data){
-  return{id:data.id,name:data.nome,email:data.email,plano:data.plano,trialInicio:data.trial_inicio,runInicio:data.run_inicio,runAjusteLesao:!!data.run_ajuste_lesao,assinaturaStatus:data.assinatura_status||'trial',assinaturaAte:data.assinatura_ate,diaConversao:data.dia_conversao,dataConversao:data.data_conversao,planoConversao:data.plano_conversao,precoTravado:data.preco_travado,promoFundador:!!data.promo_fundador,pixFundador:!!data.pix_fundador,promoVaga:data.promo_vaga,solicitouTrocaTreino:!!data.solicitou_troca,solicitouTrocaData:data.solicitou_troca_data,solicitouTrocaTipo:data.solicitou_troca_tipo,trainApproved:data.treino_liberado,pushSubscription:data.push_subscription||null,correcoesVideo:data.correcoes_video||[],isAdmin:!!data.is_admin,aiPlan:data.ai_plan,anamnese:data.anamnese,anamneseDone:!!data.anamnese_geral,anamneseGeral:data.anamnese_geral||null,anamneseMusculacao:data.anamnese_musculacao||null,anamneseCorrida:data.anamnese_corrida||null,anamneseMuscDone:!!data.anamnese_musculacao,anamneseCorridaDone:!!data.anamnese_corrida,gymWeek:data.gym_week||1,runWeek:data.run_week||1,gymDone:data.gym_done||{},runDone:data.run_done||{},runFeedback:data.run_feedback||{},runAtividades:data.run_atividades||[],runTriagem:data.run_triagem||null,runStrength:data.run_strength||[],runStrengthDone:data.run_strength_done||{},runTestes:data.run_testes||[],runTestPace:data.run_test_pace||null,loadHistory:data.load_history||{},workoutHistory:data.workout_history||[],xp:data.xp||0,kidsXp:data.kids_xp||0,level:data.level||1,streak:data.streak||1,coins:data.coins||0,badges:data.badges||[],prs:data.prs||[],stats:data.stats||{treinos:0,distancia:0,semanas:0},purchases:data.purchases||[],pacoteEbooks:!!data.pacote_ebooks,programIntakes:data.program_intakes||{},avatar:data.avatar||null,avaliacoes:data.evals||[],avaliacoesPostural:data.avaliacoes_postural||[],estrategiaConsultoria:data.estrategia_consultoria||null,gifsPersonalizados:data.gifs_personalizados||{},exerciciosCustom:data.exercicios_custom||[],missions:MISSOES_PADRAO.map(m=>({...m})),createdAt:data.criado_em,lastLogin:data.ultimo_acesso};
+  return{id:data.id,name:data.nome,email:data.email,plano:data.plano,trialInicio:data.trial_inicio,runInicio:data.run_inicio,runAjusteLesao:!!data.run_ajuste_lesao,assinaturaStatus:data.assinatura_status||'trial',assinaturaAte:data.assinatura_ate,diaConversao:data.dia_conversao,dataConversao:data.data_conversao,planoConversao:data.plano_conversao,precoTravado:data.preco_travado,promoFundador:!!data.promo_fundador,pixFundador:!!data.pix_fundador,promoVaga:data.promo_vaga,solicitouTrocaTreino:!!data.solicitou_troca,solicitouTrocaData:data.solicitou_troca_data,solicitouTrocaTipo:data.solicitou_troca_tipo,trainApproved:data.treino_liberado,pushSubscription:data.push_subscription||null,correcoesVideo:data.correcoes_video||[],isAdmin:!!data.is_admin,aiPlan:data.ai_plan,anamnese:data.anamnese,anamneseDone:!!data.anamnese_geral,anamneseGeral:data.anamnese_geral||null,anamneseMusculacao:data.anamnese_musculacao||null,anamneseCorrida:data.anamnese_corrida||null,anamneseMuscDone:!!data.anamnese_musculacao,anamneseCorridaDone:!!data.anamnese_corrida,gymWeek:data.gym_week||1,runWeek:data.run_week||1,gymDone:data.gym_done||{},runDone:data.run_done||{},runFeedback:data.run_feedback||{},runAtividades:data.run_atividades||[],runTriagem:data.run_triagem||null,runStrength:data.run_strength||[],runStrengthDone:data.run_strength_done||{},runTestes:data.run_testes||[],runTestPace:data.run_test_pace||null,loadHistory:data.load_history||{},workoutHistory:data.workout_history||[],xp:data.xp||0,kidsXp:data.kids_xp||0,level:data.level||1,streak:data.streak||1,coins:data.coins||0,badges:data.badges||[],prs:data.prs||[],stats:data.stats||{treinos:0,distancia:0,semanas:0},purchases:data.purchases||[],pacoteEbooks:!!data.pacote_ebooks,programIntakes:data.program_intakes||{},avatar:data.avatar||null,avaliacoes:data.evals||[],avaliacoesPostural:data.avaliacoes_postural||[],estrategiaConsultoria:data.estrategia_consultoria||null,pacoteConfig:data.pacote_config||null,gifsPersonalizados:data.gifs_personalizados||{},exerciciosCustom:data.exercicios_custom||[],missions:MISSOES_PADRAO.map(m=>({...m})),createdAt:data.criado_em,lastLogin:data.ultimo_acesso};
 }
 function userToRow(u){
-  return{id:u.id,nome:u.name,email:u.email,plano:u.plano||'free',trial_inicio:u.trialInicio||undefined,run_inicio:u.runInicio||null,run_ajuste_lesao:u.runAjusteLesao||false,treino_liberado:u.trainApproved||false,...(u.pushSubscription?{push_subscription:u.pushSubscription}:(u.pushDesativado?{push_subscription:null}:{})),...((u.correcoesVideo&&u.correcoesVideo.length)?{correcoes_video:u.correcoesVideo}:{}),ai_plan:u.aiPlan||null,anamnese:u.anamnese||null,anamnese_geral:u.anamneseGeral||null,anamnese_musculacao:u.anamneseMusculacao||null,anamnese_corrida:u.anamneseCorrida||null,gym_week:u.gymWeek||1,run_week:u.runWeek||1,gym_done:u.gymDone||{},run_done:u.runDone||{},run_feedback:u.runFeedback||{},run_atividades:u.runAtividades||[],run_triagem:u.runTriagem||null,run_strength:u.runStrength||[],run_strength_done:u.runStrengthDone||{},run_testes:u.runTestes||[],run_test_pace:u.runTestPace||null,load_history:u.loadHistory||{},workout_history:u.workoutHistory||[],xp:u.xp||0,kids_xp:u.kidsXp||0,level:u.level||1,streak:u.streak||1,coins:u.coins||0,badges:u.badges||[],prs:u.prs||[],stats:u.stats||{treinos:0,distancia:0,semanas:0},avatar:u.avatar||null,evals:u.avaliacoes||[],avaliacoes_postural:u.avaliacoesPostural||[],estrategia_consultoria:u.estrategiaConsultoria||null,program_intakes:u.programIntakes||{},gifs_personalizados:u.gifsPersonalizados||{},exercicios_custom:u.exerciciosCustom||[],ultimo_acesso:new Date().toISOString(),updated_at:new Date().toISOString()};
+  return{id:u.id,nome:u.name,email:u.email,plano:u.plano||'free',trial_inicio:u.trialInicio||undefined,run_inicio:u.runInicio||null,run_ajuste_lesao:u.runAjusteLesao||false,treino_liberado:u.trainApproved||false,...(u.pushSubscription?{push_subscription:u.pushSubscription}:(u.pushDesativado?{push_subscription:null}:{})),...((u.correcoesVideo&&u.correcoesVideo.length)?{correcoes_video:u.correcoesVideo}:{}),ai_plan:u.aiPlan||null,anamnese:u.anamnese||null,anamnese_geral:u.anamneseGeral||null,anamnese_musculacao:u.anamneseMusculacao||null,anamnese_corrida:u.anamneseCorrida||null,gym_week:u.gymWeek||1,run_week:u.runWeek||1,gym_done:u.gymDone||{},run_done:u.runDone||{},run_feedback:u.runFeedback||{},run_atividades:u.runAtividades||[],run_triagem:u.runTriagem||null,run_strength:u.runStrength||[],run_strength_done:u.runStrengthDone||{},run_testes:u.runTestes||[],run_test_pace:u.runTestPace||null,load_history:u.loadHistory||{},workout_history:u.workoutHistory||[],xp:u.xp||0,kids_xp:u.kidsXp||0,level:u.level||1,streak:u.streak||1,coins:u.coins||0,badges:u.badges||[],prs:u.prs||[],stats:u.stats||{treinos:0,distancia:0,semanas:0},avatar:u.avatar||null,evals:u.avaliacoes||[],...((u.avaliacoesPostural&&u.avaliacoesPostural.length)?{avaliacoes_postural:u.avaliacoesPostural}:{}),...(u.estrategiaConsultoria?{estrategia_consultoria:u.estrategiaConsultoria}:{}),...(u.pacoteConfig?{pacote_config:u.pacoteConfig}:{}),program_intakes:u.programIntakes||{},gifs_personalizados:u.gifsPersonalizados||{},exercicios_custom:u.exerciciosCustom||[],ultimo_acesso:new Date().toISOString(),updated_at:new Date().toISOString()};
   // Obs.: purchases/pacote_ebooks/is_admin/plano NÃO são enviados pelo aluno — são protegidos no banco e só mudam via webhook de pagamento ou admin.
+}
+// ══ GRAVAÇÃO RESILIENTE ══
+// Colunas criadas em fases recentes (notificação, vídeo de correção, avaliação
+// postural, pacote do cliente) só existem no banco depois que o SQL do guia é
+// rodado. Se uma delas faltar, o Supabase recusa a linha INTEIRA — e nenhum
+// dado do aluno (nem um cadastro novo) seria salvo. Aqui, se o erro for de
+// coluna ausente, regrava sem os campos opcionais: o essencial sempre salva.
+const FQ_COLUNAS_OPCIONAIS=['push_subscription','correcoes_video','avaliacoes_postural','estrategia_consultoria','pacote_config'];
+function fqErroColunaAusente(err){
+  return !!err && (err.code==='PGRST204' || /could not find the .* column|schema cache|column .* does not exist/i.test(err.message||''));
+}
+function fqLinhaSemOpcionais(row){ const r={...row}; FQ_COLUNAS_OPCIONAIS.forEach(c=>delete r[c]); return r; }
+async function fqGravarAluno(modo,u){
+  const row=userToRow(u);
+  const exec=(r)=>modo==='upsert'
+    ? sb.from('alunos').upsert(r,{onConflict:'id'})
+    : sb.from('alunos').update(r).eq('id',u.id);
+  let res=await exec(row);
+  if(res.error && fqErroColunaAusente(res.error)){
+    console.warn('[FitQuest] Coluna opcional ausente no Supabase — regravando sem os campos novos. Rode o SQL do GUIA_COLUNAS_OPCIONAIS.md.',{code:res.error.code,message:res.error.message});
+    window.__fqColunasAusentes=true;
+    res=await exec(fqLinhaSemOpcionais(row));
+  }
+  return res;
 }
 async function syncU(u){
   if(!sb||!u){console.warn('sync: sem sb ou sem usuário');return;}
   if(!u.id){console.warn('sync: usuário sem id, não sincroniza');return;}
   try{
-    const{error}=await sb.from('alunos').upsert(userToRow(u),{onConflict:'id'});
+    const{error}=await fqGravarAluno('upsert',u);
     if(error){
       console.error('sync falhou:',error.message,error);
       // Não deixa o erro passar em silêncio — se a anamnese/plano não salvou no
@@ -6382,7 +6430,8 @@ async function syncAlunoAdmin(u){
   if(!sb||!u){console.warn('sync admin: sem sb ou sem usuário');return;}
   if(!u.id){console.warn('sync admin: usuário sem id, não sincroniza');return;}
   try{
-    const{error}=await sb.from('alunos').update(userToRow(u)).eq('id',u.id);
+    const{error}=await fqGravarAluno('update',u);
+    if(window.__fqColunasAusentes && !window.__fqAvisouColunas){ window.__fqAvisouColunas=true; fqToast('⚠️ Faltam colunas no Supabase — rode o SQL do GUIA_COLUNAS_OPCIONAIS.md (nada se perdeu, só alguns recursos novos não sincronizam).','warn',9000); }
     if(error){
       console.error('sync admin falhou:',error.message,error);
       fqToast('⚠️ Não foi possível salvar no servidor: '+error.message,'warn',6000);
@@ -6485,7 +6534,7 @@ async function doLogin(){
       // Primeiro login sem perfil ainda (conta criada antes ou pelo painel) — cria o perfil
       u=novoPerfilLocal(data.user.id,data.user.user_metadata?.nome||email.split('@')[0],email);
       if(email===ADMIN_EMAIL)u.isAdmin=true;
-      const{error:erroSalvar}=await sb.from('alunos').upsert(userToRow(u),{onConflict:'id'});
+      const{error:erroSalvar}=await fqGravarAluno('upsert',u);
       if(erroSalvar){
         console.error('Erro ao recriar perfil em alunos (proteção no login):',{
           code:erroSalvar.code, message:erroSalvar.message,
@@ -6621,7 +6670,7 @@ async function doRegister(){
     }
     const u=novoPerfilLocal(data.user.id,name,email);
     if(email===ADMIN_EMAIL)u.isAdmin=true;
-    const{error:erroSalvar}=await sb.from('alunos').upsert(userToRow(u),{onConflict:'id'});
+    const{error:erroSalvar}=await fqGravarAluno('upsert',u);
     if(erroSalvar){
       console.error('Erro ao criar perfil em alunos:',{
         code:erroSalvar.code, message:erroSalvar.message,
@@ -11499,15 +11548,23 @@ function gvContinuarParaCamera(){
   gvSetEstado('gv-camera-wrap');
   gvIniciarCamera();
 }
+let gvFacing='user';
 async function gvIniciarCamera(){
   try{
-    gvStream = await navigator.mediaDevices.getUserMedia({video:{facingMode:'user'},audio:false});
+    gvStream = await navigator.mediaDevices.getUserMedia({video:{facingMode:gvFacing},audio:false});
     const v=document.getElementById('gv-video');
     v.srcObject = gvStream;
   }catch(e){
     fqToast('Não consegui acessar a câmera. Verifique a permissão do navegador.','warn',5000);
     closeModal('modal-gravar-video');
   }
+}
+// Alterna frontal/traseira — útil quando outra pessoa está gravando o
+// exercício (mais comum em academia) em vez do próprio aluno se filmando.
+async function gvTrocarCamera(){
+  gvFacing = (gvFacing==='user') ? 'environment' : 'user';
+  if(gvStream){ gvStream.getTracks().forEach(tr=>tr.stop()); gvStream=null; }
+  await gvIniciarCamera();
 }
 function gvPararCamera(){
   if(gvStream){ gvStream.getTracks().forEach(tr=>tr.stop()); gvStream=null; }
@@ -11636,14 +11693,20 @@ function vcSetEstado(idVisivel){
     const el=document.getElementById(id); if(el) el.style.display=(id===idVisivel)?'block':'none';
   });
 }
+let vcFacing='user';
 async function vcIniciarCamera(){
   try{
-    vcStream=await navigator.mediaDevices.getUserMedia({video:{facingMode:'user'}, audio:true});
+    vcStream=await navigator.mediaDevices.getUserMedia({video:{facingMode:vcFacing}, audio:true});
     const v=document.getElementById('vc-video'); if(v) v.srcObject=vcStream;
   }catch(e){
     fqToast('Não consegui acessar a câmera (ou o microfone). Verifique a permissão do navegador.','warn',5500);
     closeModal('modal-video-correcao');
   }
+}
+async function vcTrocarCamera(){
+  vcFacing = (vcFacing==='user') ? 'environment' : 'user';
+  if(vcStream){ vcStream.getTracks().forEach(tr=>tr.stop()); vcStream=null; }
+  await vcIniciarCamera();
 }
 function vcPararCamera(){
   if(vcStream){ vcStream.getTracks().forEach(tr=>tr.stop()); vcStream=null; }
@@ -14460,6 +14523,29 @@ function admAbrirPacoteCliente(email){
   const nomeEl = document.getElementById('pacote-aluno-nome'); if(nomeEl) nomeEl.textContent = u.name||email;
   const emailHidden = document.getElementById('pacote-aluno-email'); if(emailHidden) emailHidden.value = email;
   const txt = document.getElementById('pacote-estrategia'); if(txt) txt.value = u.estrategiaConsultoria || '';
+  const cfg = u.pacoteConfig || {};
+  const objAnam = u.anamneseMusculacao?.objetivo || u.anamneseGeral?.objetivo || u.anamnese?.objetivo || '';
+  const setv = (id,v)=>{ const el=document.getElementById(id); if(el) el.value = v; };
+  setv('pacote-objetivo', cfg.objetivo || (Array.isArray(objAnam)?objAnam.join(', '):(objAnam||'')));
+  setv('pacote-aerobico', cfg.aerobicoMin || '');
+  setv('pacote-acomp', cfg.acompanhamento || 'Evolução de carga, desempenho e composição corporal.');
+
+  // Fases e benefícios — pré-preenche com a customização salva, ou com o
+  // texto padrão atual (pra você ver exatamente o que já existe e só mudar
+  // o que quiser).
+  const fasesWrap = document.getElementById('pacote-fases-wrap');
+  if(fasesWrap){
+    const fontes = (cfg.fases && cfg.fases.length===4) ? cfg.fases : PK_FASES;
+    fasesWrap.innerHTML = fontes.map((f,i)=>`
+      <div style="background:var(--s2);border:1px solid var(--b);border-radius:8px;padding:10px;margin-bottom:8px">
+        <label style="font-size:10.5px;color:var(--mu);font-weight:700">FASE ${i+1} — NOME</label>
+        <input id="pacote-fase-${i}-nome" type="text" value="${(f.nome||'').replace(/"/g,'&quot;')}" style="width:100%;background:var(--bg,#111);background:rgba(0,0,0,.25);border:1px solid var(--b);border-radius:6px;padding:7px 9px;color:#fff;font-size:12.5px;margin:3px 0 7px"/>
+        <label style="font-size:10.5px;color:var(--mu);font-weight:700">ITENS (1 por linha)</label>
+        <textarea id="pacote-fase-${i}-itens" style="width:100%;min-height:62px;background:rgba(0,0,0,.25);border:1px solid var(--b);border-radius:6px;padding:7px 9px;color:#fff;font-size:12.5px;resize:vertical;margin-top:3px">${(f.itens||[]).join(String.fromCharCode(10)).replace(/</g,'&lt;')}</textarea>
+      </div>`).join('');
+  }
+  setv('pacote-beneficios', (cfg.beneficios&&cfg.beneficios.length?cfg.beneficios:PK_BENEFICIOS).join('\n'));
+  const pv=document.getElementById('pacote-preview-wrap'); if(pv) pv.style.display='none';
 
   const semanasGym = Object.keys(u.aiPlan?.gym||{}).length;
   const semanasRun = Object.keys(u.aiPlan?.run||{}).length;
@@ -14475,15 +14561,571 @@ function admAbrirPacoteCliente(email){
   }
   abrirModal('modal-pacote-cliente');
 }
+// Lê tudo que você preencheu no modal e guarda no cadastro do aluno
+function admLerCamposPacote(u){
+  u.estrategiaConsultoria = document.getElementById('pacote-estrategia')?.value || '';
+  const min = parseInt(document.getElementById('pacote-aerobico')?.value,10);
+  const porLinha = (id)=>(document.getElementById(id)?.value||'').split('\n').map(s=>s.trim()).filter(Boolean);
+  const fases = [0,1,2,3].map(i=>({
+    nome: (document.getElementById(`pacote-fase-${i}-nome`)?.value||'').trim() || PK_FASES[i].nome,
+    itens: porLinha(`pacote-fase-${i}-itens`),
+  }));
+  // Se ninguém mexeu em nada (tudo igual ao padrão), não grava customização —
+  // mantém pacoteConfig enxuto e permite que atualizações futuras do padrão
+  // cheguem sozinhas a quem nunca personalizou.
+  const fasesIguaisAoPadrao = fases.every((f,i)=>f.nome===PK_FASES[i].nome && JSON.stringify(f.itens)===JSON.stringify(PK_FASES[i].itens));
+  const beneficios = porLinha('pacote-beneficios');
+  const beneficiosIguaisAoPadrao = JSON.stringify(beneficios)===JSON.stringify(PK_BENEFICIOS);
+  u.pacoteConfig = {
+    objetivo: (document.getElementById('pacote-objetivo')?.value||'').trim(),
+    aerobicoMin: min>0 ? min : null,
+    acompanhamento: (document.getElementById('pacote-acomp')?.value||'').trim(),
+    ...(fasesIguaisAoPadrao ? {} : {fases}),
+    ...(beneficiosIguaisAoPadrao ? {} : {beneficios}),
+  };
+}
+async function admPreviewPacote(){
+  const email = document.getElementById('pacote-aluno-email')?.value;
+  const u = admGetAluno(email);
+  if(!u){ fqToast('Aluno não encontrado.','warn'); return; }
+  admLerCamposPacote(u);
+  try{
+    try{ await Promise.all(['400','500','600','700','800'].map(w=>document.fonts.load(`${w} 16px Inter`))); }catch(e){}
+    const cv = fqPacoteDesenhar(fqPacoteDados(u));
+    const img = document.getElementById('pacote-preview-img');
+    if(img) img.src = cv.toDataURL('image/png');
+    const wrap = document.getElementById('pacote-preview-wrap');
+    if(wrap){ wrap.style.display='block'; wrap.scrollIntoView({behavior:'smooth',block:'nearest'}); }
+  }catch(err){
+    console.error('Erro ao pré-visualizar pacote:', err);
+    fqToast('Não consegui gerar a prévia. ['+(err&&err.message?err.message:err)+']','warn',6000);
+  }
+}
 async function admSalvarEstrategia(){
   const email = document.getElementById('pacote-aluno-email')?.value;
   const u = admGetAluno(email);
   if(!u){ fqToast('Aluno não encontrado.','warn'); return; }
-  u.estrategiaConsultoria = document.getElementById('pacote-estrategia')?.value || '';
+  admLerCamposPacote(u);
   await syncAlunoAdmin(u).catch(()=>{ fqToast('⚠️ Salvo aqui, mas não sincronizou. Confira a internet.','warn',6000); });
-  fqToast('💾 Estratégia salva.','ok',2500);
+  fqToast('💾 Dados do pacote salvos.','ok',2500);
 }
-async function admGerarPacoteCliente(){
+// ══════════════════════════════════════════════════════════════════════
+// ══ PACOTE DO CLIENTE — layout infográfico (molde visual aprovado) ══
+// O documento é desenhado num <canvas> (sem biblioteca extra) e sai como
+// PDF de página única contínua ou como imagem PNG (pra mandar direto no
+// WhatsApp). Tudo que aparece vem do cadastro REAL do aluno; o que depende
+// do seu julgamento profissional (objetivo, estratégia, meta de aeróbico,
+// acompanhamento) é preenchido por você no modal — nada é inventado.
+// A altura se ajusta sozinha: mais dias de treino ou mais texto = página
+// mais longa, sem cortar nada no meio.
+// ══════════════════════════════════════════════════════════════════════
+const PK_FONTE='"Inter","Helvetica Neue",Helvetica,Arial,sans-serif';
+const PK_COR={red:'#E10600',black:'#0B0B0B',ink:'#141414',text:'#2E2E2E',mute:'#6E6E6E',card:'#F3F3F3',pink:'#FDE8E8',line:'#E2E2E2'};
+const PK_F=(w,px)=>`${w} ${px}px ${PK_FONTE}`;
+const PK_DIAS=['Seg','Ter','Qua','Qui','Sex','Sáb','Dom'];
+// Em quais dias da semana cada quantidade de treinos de musculação cai (0=Seg … 6=Dom)
+const PK_PADRAO_TREINO={1:[2],2:[0,3],3:[0,2,4],4:[0,1,3,4],5:[0,1,2,3,4],6:[0,1,2,3,4,5]};
+const PK_FASES=[
+  {nome:'Adaptação',itens:['Técnica e execução','Carga moderada','Ajuste de volume']},
+  {nome:'Base',itens:['Aumento gradual do volume','Mais consistência','Evolução de cargas']},
+  {nome:'Progressão',itens:['Aumento de intensidade','Mais séries ou repetições','Maior estímulo muscular']},
+  {nome:'Consolidação',itens:['Manutenção da evolução','Ajustes finos','Preparação para novo ciclo']},
+];
+const PK_BENEFICIOS=['Melhora do condicionamento cardiorrespiratório','Auxílio na composição corporal','Mais energia no dia a dia','Saúde do coração','Controle de estresse e ansiedade'];
+const PK_ICONES={
+  alvo:'M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20zM12 6a6 6 0 1 0 0 12 6 6 0 0 0 0-12zM12 10a2 2 0 1 0 0 4 2 2 0 0 0 0-4zM12 12l8-8M16 4h4v4',
+  halter:'M6.5 6.5v11M3.5 9v6M17.5 6.5v11M20.5 9v6M6.5 12h11',
+  calendario:'M4 6h16v14H4zM4 10h16M8 3v4M16 3v4M8 14h.01M12 14h.01M16 14h.01M8 17h.01M12 17h.01',
+  barras:'M5 20V12M11 20V5M17 20V9M3 20h18',
+  pessoa:'M12 4a4 4 0 1 0 0 8 4 4 0 0 0 0-8zM4.5 21c.8-4 3.6-6 7.5-6s6.7 2 7.5 6z',
+  coracao:'M12 20.5C5 15.8 3 12.4 3 9.2 3 6.6 5 4.8 7.4 4.8c1.7 0 3.3.9 4.6 2.7 1.3-1.8 2.9-2.7 4.6-2.7C19 4.8 21 6.6 21 9.2c0 3.2-2 6.6-9 11.3z',
+  gota:'M12 3c3.2 4 6 7 6 10.2a6 6 0 0 1-12 0C6 10 8.8 7 12 3z',
+  peso:'M7 9h10l2.5 11h-15zM9.5 9a2.5 2.5 0 0 1 5 0',
+  check:'M7.5 12.5l3 3 6-7',
+  corrida:'M13 5a2 2 0 1 0 4 0 2 2 0 0 0-4 0zM8 21l3-6 3 2 1 4M11 15l-1-5 4-2 3 4 3 1M10 10l-3 2',
+};
+
+// ── Dados: tudo montado a partir do cadastro real do aluno ──
+function fqPacoteDistribuicao(gym,run,W){
+  const mapa={seg:0,ter:1,qua:2,qui:3,sex:4,sab:5,dom:6};
+  const norm=s=>String(s||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().slice(0,3);
+  const dias=PK_DIAS.map(()=>[]);
+  (run?.sessoes||[]).forEach(s=>{
+    const i=mapa[norm(s.day)];
+    if(i!=null) dias[i].push('Corrida: '+(s.type||'sessão')+(s.dist?' · '+s.dist:''));
+  });
+  const n=Math.min(gym?.dias?.length||0,6);
+  if(n){ const padrao=PK_PADRAO_TREINO[n]; gym.dias.slice(0,n).forEach((d,k)=>dias[padrao[k]].unshift(d.nome+' (Musculação)')); }
+  if(W){
+    const livres=[0,1,2,3,4,5].filter(i=>dias[i].length===0);
+    if(livres.length){
+      const por=W/livres.length, r5=v=>Math.max(5,Math.round(v/5)*5);
+      const lo=r5(por*0.75), hi=r5(por);
+      const faixa=lo<hi?`${lo}–${hi} min`:`${hi} min`;
+      livres.forEach(i=>dias[i].push(`Aeróbico (sugestão: ${faixa})`));
+    }
+  }
+  if(!dias[6].length) dias[6].push(W?'Descanso ativo ou aeróbico leve (conforme disponibilidade)':'Descanso');
+  return PK_DIAS.map((dia,i)=>({dia,txt:dias[i].length?dias[i].join(' + '):'Descanso'}));
+}
+function fqPacoteFases(N,fasesCfg){
+  if(!N||N<4) return null;
+  const base=Math.floor(N/4), resto=N%4; let ini=1;
+  const fontes=(fasesCfg&&fasesCfg.length===4)?fasesCfg:PK_FASES;
+  return fontes.map((f,i)=>{
+    const q=base+(i<resto?1:0), fim=ini+q-1;
+    const rotulo=q===1?`SEMANA ${ini}`:`SEMANAS ${ini}–${fim}`; ini=fim+1;
+    const itens=(f.itens||[]).filter(Boolean);
+    return {rotulo,nome:f.nome||PK_FASES[i].nome,itens:itens.length?itens:PK_FASES[i].itens};
+  });
+}
+function fqPacoteDados(u){
+  const cfg=u.pacoteConfig||{};
+  const semNum=k=>parseInt(String(k).replace(/\D/g,''))||0;
+  const ordenar=o=>Object.keys(o||{}).sort((a,b)=>semNum(a)-semNum(b));
+  const txt=v=>Array.isArray(v)?v.join(', '):(v==null?'':String(v));
+  const hoje=new Date().toLocaleDateString('pt-BR',{day:'2-digit',month:'long',year:'numeric'});
+
+  let gym=null; const gk=ordenar(u.aiPlan?.gym);
+  if(gk.length){
+    const chave=gk.includes('Semana '+(u.gymWeek||1))?'Semana '+(u.gymWeek||1):gk[0];
+    const sem=u.aiPlan.gym[chave]||{};
+    gym={semanas:gk.length,fase:sem.fase||'',dias:Object.entries(sem.days||{}).map(([nome,exs])=>({
+      nome,qtd:(exs||[]).length,
+      comp:(exs||[]).map(e=>{const ex=(typeof getExById==='function')?getExById(e.id):null;return ex?.name||e.id;}).join(', ')
+    }))};
+  }
+  let run=null; const rk=ordenar(u.aiPlan?.run);
+  if(rk.length){
+    const chave=rk.includes('Semana '+(u.runWeek||1))?'Semana '+(u.runWeek||1):rk[0];
+    const sem=u.aiPlan.run[chave]||{};
+    run={semanas:rk.length,meta:sem.meta||'',sessoes:(sem.sessions||[]).map(s=>({day:s.day||'',type:s.type||'',dist:s.dist||'',pace:s.pace||'',dur:s.dur||''}))};
+  }
+  const av=(u.avaliacoes||[]).slice().sort((a,b)=>new Date(a.date)-new Date(b.date)).slice(-1)[0];
+  let aval=null;
+  if(av){
+    const dt=new Date(av.date+'T12:00:00');
+    aval={data:isNaN(dt)?String(av.date||''):dt.toLocaleDateString('pt-BR'),peso:av.peso,massa:av.leanKg,gordura:av.fatPct};
+  }
+  const W=parseInt(cfg.aerobicoMin,10)>0?parseInt(cfg.aerobicoMin,10):null;
+  const objAnam=txt(u.anamneseMusculacao?.objetivo||u.anamneseGeral?.objetivo||u.anamnese?.objetivo);
+  const partes=[]; if(gym) partes.push('Musculação'); if(run) partes.push('Corrida');
+  let metodo=partes.join(' + ');
+  if(W) metodo+=(metodo?' + ':'')+`${W} minutos semanais de aeróbico`;
+  const N=Math.max(gym?.semanas||0,run?.semanas||0);
+  return {
+    nome:u.name||'Aluno(a)',hoje,
+    objetivo:(cfg.objetivo||objAnam||'').trim()||'A alinhar junto com o aluno.',
+    metodo:(metodo||'Acompanhamento personalizado')+'.',
+    semanasTotal:N,fase:gym?.fase||run?.meta||'',
+    acompanhamento:(cfg.acompanhamento||'').trim()||'Evolução de carga, desempenho e composição corporal.',
+    aerobicoMin:W,
+    estrategia:(u.estrategiaConsultoria||'').trim()||'Estratégia a ser detalhada junto com o aluno na primeira conversa de alinhamento.',
+    aval,gym,run,
+    fases:fqPacoteFases(N,cfg.fases),
+    beneficios:(cfg.beneficios&&cfg.beneficios.length)?cfg.beneficios:PK_BENEFICIOS,
+    distrib:(gym||run||W)?fqPacoteDistribuicao(gym,run,W):null,
+  };
+}
+
+// ── Desenho ──
+// Contexto "seco": faz de conta que desenha, mas mede texto de verdade. Assim
+// o MESMO código de layout calcula a altura total (1ª passada) e depois pinta
+// (2ª passada), sem duplicar nenhuma conta.
+function fqCtxSeco(real){
+  const noop=new Proxy(function(){},{get:()=>noop,apply:()=>noop,set:()=>true});
+  return new Proxy({},{
+    get:(t,p)=>p==='measureText'?(s=>real.measureText(s)):(p==='font'?real.font:noop),
+    set:(t,p,v)=>{ if(p==='font') real.font=v; return true; }
+  });
+}
+const PK={
+  nf(v){ const n=Number(v); return (v===''||v==null||!isFinite(n))?'—':n.toFixed(1).replace('.',','); },
+  rr(ctx,x,y,w,h,r){
+    const [tl,tr,br,bl]=Array.isArray(r)?r:[r,r,r,r];
+    ctx.beginPath(); ctx.moveTo(x+tl,y); ctx.lineTo(x+w-tr,y); ctx.arcTo(x+w,y,x+w,y+tr,tr);
+    ctx.lineTo(x+w,y+h-br); ctx.arcTo(x+w,y+h,x+w-br,y+h,br); ctx.lineTo(x+bl,y+h); ctx.arcTo(x,y+h,x,y+h-bl,bl);
+    ctx.lineTo(x,y+tl); ctx.arcTo(x,y,x+tl,y,tl); ctx.closePath();
+  },
+  quebrar(ctx,texto,maxW,font){
+    ctx.font=font; const out=[];
+    String(texto==null?'':texto).split('\n').forEach(par=>{
+      const pal=par.split(/\s+/).filter(Boolean);
+      if(!pal.length){ out.push(''); return; }
+      let lin='';
+      pal.forEach(p=>{ const t=lin?lin+' '+p:p; if(!lin||ctx.measureText(t).width<=maxW) lin=t; else{ out.push(lin); lin=p; } });
+      out.push(lin);
+    });
+    return out;
+  },
+  texto(ctx,t,x,y,font,cor,align){ ctx.font=font; ctx.fillStyle=cor; ctx.textAlign=align||'left'; ctx.fillText(t,x,y); ctx.textAlign='left'; },
+  linhas(ctx,lin,x,y,lh,font,cor,align){ lin.forEach((l,i)=>PK.texto(ctx,l,x,y+i*lh,font,cor,align)); },
+  espacado(ctx,t,x,y,font,cor,sp){ ctx.font=font; ctx.fillStyle=cor; let cx=x; for(const ch of t){ ctx.fillText(ch,cx,y); cx+=ctx.measureText(ch).width+sp; } },
+  ajustar(ctx,t,peso,max,min,larg){ let px=max; while(px>min){ ctx.font=PK_F(peso,px); if(ctx.measureText(t).width<=larg) return px; px--; } return min; },
+  icone(ctx,nome,x,y,s,cor,lw,fill){
+    const d=PK_ICONES[nome]; if(!d) return;
+    ctx.save(); ctx.translate(x,y); ctx.scale(s/24,s/24);
+    const p=new Path2D(d); ctx.lineWidth=lw||2; ctx.lineCap='round'; ctx.lineJoin='round';
+    if(fill){ ctx.fillStyle=cor; ctx.fill(p); } else { ctx.strokeStyle=cor; ctx.stroke(p); }
+    ctx.restore();
+  },
+  // parágrafo com trechos em negrito; devolve quantas linhas ocupou
+  rico(ctx,segs,x,y,maxW,lh,px){
+    const toks=[]; segs.forEach(s=>String(s.t).split(/(\s+)/).forEach(p=>{ if(p!=='') toks.push({p,b:!!s.b}); }));
+    let cx=0,cy=y,n=1;
+    toks.forEach(k=>{
+      ctx.font=PK_F(k.b?'800':'400',px); const w=ctx.measureText(k.p).width, esp=/^\s+$/.test(k.p);
+      if(!esp&&cx+w>maxW&&cx>0){ cx=0; cy+=lh; n++; }
+      if(esp&&cx===0) return;
+      ctx.fillStyle=k.b?PK_COR.ink:PK_COR.text; ctx.fillText(k.p,x+cx,cy); cx+=w;
+    });
+    return n;
+  },
+  painel(ctx,x,y,w,titulo,icone,h){
+    PK.rr(ctx,x,y,w,h,10); ctx.fillStyle='#fff'; ctx.fill(); ctx.strokeStyle=PK_COR.line; ctx.lineWidth=1; ctx.stroke();
+    PK.rr(ctx,x,y,w,44,[10,10,0,0]); ctx.fillStyle=PK_COR.black; ctx.fill();
+    PK.rr(ctx,x+14,y+9,8,26,3); ctx.fillStyle=PK_COR.red; ctx.fill();
+    const px=PK.ajustar(ctx,titulo,'800',21,13,w-40-(icone?58:14));
+    PK.texto(ctx,titulo,x+38,y+29,PK_F('800',px),'#fff');
+    if(icone) PK.icone(ctx,icone,x+w-46,y+8,28,PK_COR.red,2);
+  },
+
+  cabecalho(ctx,d,W){
+    const H=318;
+    ctx.fillStyle=PK_COR.black; ctx.fillRect(0,0,W,H);
+    ctx.save(); ctx.beginPath(); ctx.rect(0,0,W,H); ctx.clip();
+    let g=ctx.createLinearGradient(380,0,W,H); g.addColorStop(0,'rgba(70,70,70,0)'); g.addColorStop(1,'rgba(98,94,94,.6)');
+    ctx.fillStyle=g; ctx.fillRect(0,0,W,H);
+    g=ctx.createRadialGradient(850,60,10,850,60,340); g.addColorStop(0,'rgba(225,6,0,.30)'); g.addColorStop(1,'rgba(225,6,0,0)');
+    ctx.fillStyle=g; ctx.fillRect(0,0,W,H);
+    ctx.fillStyle='rgba(225,6,0,.92)'; ctx.beginPath(); ctx.moveTo(640,0); ctx.lineTo(664,0); ctx.lineTo(494,H); ctx.lineTo(470,H); ctx.closePath(); ctx.fill();
+    ctx.fillStyle='rgba(225,6,0,.32)'; ctx.beginPath(); ctx.moveTo(684,0); ctx.lineTo(742,0); ctx.lineTo(572,H); ctx.lineTo(514,H); ctx.closePath(); ctx.fill();
+    ctx.restore();
+    PK.texto(ctx,'FIT',50,66,PK_F('800',46),'#fff');
+    ctx.font=PK_F('800',46); const wf=ctx.measureText('FIT').width;
+    PK.texto(ctx,'QUEST',50+wf,66,PK_F('800',46),PK_COR.red);
+    PK.espacado(ctx,'ASSESSORIA FITNESS — RENNAN DIAS',50,92,PK_F('500',13),'#E6E6E6',2.4);
+    ctx.strokeStyle=PK_COR.red; ctx.lineWidth=2; ctx.beginPath(); ctx.moveTo(50,114); ctx.lineTo(150,114); ctx.stroke();
+    PK.texto(ctx,'PLANO PERSONALIZADO',46,168,PK_F('800',44),'#fff');
+    PK.texto(ctx,'DE CONSULTORIA',46,208,PK_F('800',36),PK_COR.red);
+    // caixa do nome
+    PK.rr(ctx,45,232,410,70,8); ctx.fillStyle='rgba(0,0,0,.38)'; ctx.fill(); ctx.strokeStyle=PK_COR.red; ctx.lineWidth=1.6; ctx.stroke();
+    PK.icone(ctx,'pessoa',62,250,32,PK_COR.red,1,true);
+    const npx=PK.ajustar(ctx,d.nome,'700',22,13,320);
+    PK.texto(ctx,d.nome,116,263,PK_F('700',npx),'#fff');
+    PK.texto(ctx,'Documento gerado em '+d.hoje,116,288,PK_F('400',14.5),'#DCDCDC');
+    // bloco à direita
+    PK.texto(ctx,'Rennan Dias',902,196,PK_F('600',13),'#fff');
+    PK.texto(ctx,'Personal Trainer',902,214,PK_F('400',11.5),'#C4C4C4');
+    PK.texto(ctx,'CREF 28945-G/MG',902,230,PK_F('400',11.5),'#C4C4C4');
+    ctx.strokeStyle=PK_COR.red; ctx.lineWidth=2; ctx.beginPath(); ctx.moveTo(902,246); ctx.lineTo(938,246); ctx.stroke();
+    PK.texto(ctx,'FitQuest',902,272,PK_F('600',13),'#fff');
+    PK.texto(ctx,'rennandias.com.br',902,289,PK_F('400',11.5),'#C4C4C4');
+    return H;
+  },
+
+  cartoes(ctx,d,M,y,CW){
+    const gap=12, cw=(CW-gap*3)/4, tx=66, tw=cw-tx-12;
+    const cards=[
+      {ic:'alvo',rot:'OBJETIVO PRINCIPAL',rows:[{t:d.objetivo}]},
+      {ic:'halter',rot:'MÉTODO',rows:[{t:d.metodo}]},
+      {ic:'calendario',rot:'DURAÇÃO DO CICLO',rows:[
+        {t:d.semanasTotal?`${d.semanasTotal} semanas`:'A definir',f:PK_F('800',20),c:PK_COR.ink,lh:25},
+        ...(d.fase?[{t:'Fase atual:'},{t:d.fase}]:[])]},
+      {ic:'barras',rot:'ACOMPANHAMENTO',rows:[{t:d.acompanhamento}]},
+    ];
+    const med=cards.map(c=>{
+      let cur=56; const rows=c.rows.map(r=>{
+        const f=r.f||PK_F('400',14.5), lh=r.lh||19, lin=PK.quebrar(ctx,r.t,tw,f);
+        const o={lin,f,lh,c:r.c||PK_COR.text,y0:cur}; cur+=lin.length*lh; return o;
+      });
+      return {rows,fim:cur};
+    });
+    const ch=Math.max(118,Math.max(...med.map(m=>m.fim))+6);
+    cards.forEach((c,i)=>{
+      const x=M+i*(cw+gap);
+      PK.rr(ctx,x,y,cw,ch,10); ctx.fillStyle=PK_COR.card; ctx.fill();
+      PK.icone(ctx,c.ic,x+16,y+22,36,PK_COR.red,1.8);
+      PK.espacado(ctx,c.rot,x+tx,y+30,PK_F('800',12),PK_COR.ink,0.6);
+      med[i].rows.forEach(r=>PK.linhas(ctx,r.lin,x+tx,y+r.y0,r.lh,r.f,r.c));
+    });
+    return y+ch;
+  },
+
+  corpoComposicao(ctx,d,x,y,w){
+    const pad=16;
+    if(!d.aval){
+      const lin=PK.quebrar(ctx,'Nenhuma avaliação de composição corporal registrada ainda.',w-2*pad,PK_F('400',15));
+      PK.linhas(ctx,lin,x+pad,y+34,20,PK_F('400',15),PK_COR.mute);
+      return 34+lin.length*20+14;
+    }
+    PK.texto(ctx,`Avaliação mais recente — ${d.aval.data}`,x+pad,y+32,PK_F('400',15),PK_COR.text);
+    const gap=12, bw=(w-2*pad-2*gap)/3, by=y+48, bh=82;
+    [[d.aval.peso,' kg','Peso Corporal'],[d.aval.massa,' kg','Massa Magra'],[d.aval.gordura,'%','% de Gordura']].forEach((c,i)=>{
+      const bx=x+pad+i*(bw+gap);
+      PK.rr(ctx,bx,by,bw,bh,8); ctx.fillStyle=PK_COR.card; ctx.fill();
+      const val=PK.nf(c[0]);
+      ctx.font=PK_F('800',29); const wv=ctx.measureText(val).width;
+      ctx.font=PK_F('600',17); const wu=ctx.measureText(c[1]).width;
+      const sx=bx+bw/2-(wv+wu)/2;
+      PK.texto(ctx,val,sx,by+38,PK_F('800',29),PK_COR.ink);
+      PK.texto(ctx,c[1],sx+wv,by+38,PK_F('600',17),PK_COR.ink);
+      PK.texto(ctx,c[2],bx+bw/2,by+65,PK_F('400',14.5),PK_COR.text,'center');
+    });
+    const peso=Number(d.aval.peso)||0, esc=peso*1.3||1;
+    let ry=by+bh+32;
+    [['gota','Gordura Corporal',Math.min((Number(d.aval.gordura)||0)/50,1),PK_COR.red,PK.nf(d.aval.gordura)+'%'],
+     ['halter','Massa Magra',Math.min((Number(d.aval.massa)||0)/esc,1),'#222222',PK.nf(d.aval.massa)+' kg'],
+     ['peso','Peso Corporal',Math.min(peso/esc,1),'#BDBDBD',PK.nf(d.aval.peso)+' kg']].forEach(b=>{
+      PK.icone(ctx,b[0],x+pad,ry-20,26,PK_COR.ink,1.7);
+      PK.texto(ctx,b[1],x+pad+38,ry,PK_F('400',15),PK_COR.text);
+      const tx=x+pad+38+134, tw=x+w-pad-84-tx;
+      PK.rr(ctx,tx,ry-9,tw,9,4.5); ctx.fillStyle='#E6E6E6'; ctx.fill();
+      if(b[2]>0){ PK.rr(ctx,tx,ry-9,Math.max(9,tw*b[2]),9,4.5); ctx.fillStyle=b[3]; ctx.fill(); }
+      PK.texto(ctx,b[4],x+w-pad,ry,PK_F('600',15.5),PK_COR.ink,'right');
+      ry+=36;
+    });
+    const fn=PK.quebrar(ctx,'Relatório completo com dobras cutâneas disponível em avaliações individuais no app.',w-2*pad,PK_F('400',13.5));
+    PK.linhas(ctx,fn,x+pad,ry+6,18,PK_F('400',13.5),PK_COR.mute);
+    return (ry+6+fn.length*18+10)-y;
+  },
+
+  corpoAerobico(ctx,d,x,y,w){
+    const pad=16, Wm=d.aerobicoMin;
+    const nL=PK.rico(ctx,[{t:'Seu objetivo é realizar '},{t:`${Wm} minutos de aeróbico por semana`,b:1},
+      {t:', podendo ser em atividades como caminhada, bike, elíptico, remo, natação ou outras modalidades que preferir.'}],x+pad,y+34,w-2*pad,23,16);
+    const ty=y+34+(nL-1)*23+20;
+    const rcx=x+pad+84, rcy=ty+92, R=70;
+    ctx.lineWidth=16; ctx.lineCap='round';
+    ctx.strokeStyle='#DDDDDD'; ctx.beginPath(); ctx.arc(rcx,rcy,R,0,Math.PI*2); ctx.stroke();
+    ctx.strokeStyle=PK_COR.red; ctx.beginPath(); ctx.arc(rcx,rcy,R,-Math.PI/2,-Math.PI/2+Math.PI*1.5); ctx.stroke();
+    const npx=PK.ajustar(ctx,String(Wm),'800',56,30,104);
+    PK.texto(ctx,String(Wm),rcx,rcy+8,PK_F('800',npx),PK_COR.ink,'center');
+    PK.texto(ctx,'minutos',rcx,rcy+32,PK_F('600',19),PK_COR.ink,'center');
+    PK.texto(ctx,'/ semana',rcx,rcy+51,PK_F('400',16),PK_COR.text,'center');
+    // benefícios
+    const bx=x+pad+176+4, bw=x+w-pad-bx, tw=bw-16-34;
+    const itens=d.beneficios.map(t=>PK.quebrar(ctx,t,tw,PK_F('400',14.5)));
+    let alt=44; itens.forEach(l=>{ alt+=Math.max(26,l.length*17+8); });
+    const bh=alt+10;
+    PK.rr(ctx,bx,ty,bw,bh,8); ctx.fillStyle=PK_COR.pink; ctx.fill();
+    PK.texto(ctx,'BENEFÍCIOS',bx+16,ty+28,PK_F('800',15.5),PK_COR.red);
+    let iy=ty+44;
+    itens.forEach(l=>{
+      const hh=Math.max(26,l.length*17+8);
+      ctx.fillStyle=PK_COR.ink; ctx.beginPath(); ctx.arc(bx+26,iy+11,9.5,0,Math.PI*2); ctx.fill();
+      PK.icone(ctx,'check',bx+26-9,iy+11-9,18,'#fff',2.6);
+      PK.linhas(ctx,l,bx+44,iy+16,17,PK_F('400',14.5),PK_COR.text);
+      iy+=hh;
+    });
+    return Math.max(ty+bh,rcy+R+20)-y+10;
+  },
+
+  corpoEstrategia(ctx,d,x,y,w){
+    const pad=20; let cy=y+34;
+    d.estrategia.split(/\n+/).forEach(par=>{
+      const lin=PK.quebrar(ctx,par,w-2*pad,PK_F('400',16));
+      PK.linhas(ctx,lin,x+pad,cy,24,PK_F('400',16),PK_COR.text); cy+=lin.length*24+6;
+    });
+    if(d.fases){
+      cy+=10; const gap=34, cw=(w-2*pad-3*gap)/4;
+      const med=d.fases.map(f=>f.itens.map(it=>PK.quebrar(ctx,it,cw-48,PK_F('400',13.5))));
+      const ch=Math.max(...med.map(m=>78+m.reduce((s,l)=>s+l.length,0)*17+6));
+      d.fases.forEach((f,i)=>{
+        const fx=x+pad+i*(cw+gap);
+        PK.rr(ctx,fx,cy,cw,ch,10); ctx.fillStyle=PK_COR.pink; ctx.fill();
+        ctx.fillStyle=PK_COR.red; ctx.beginPath(); ctx.arc(fx+27,cy+31,15,0,Math.PI*2); ctx.fill();
+        PK.texto(ctx,String(i+1),fx+27,cy+37,PK_F('800',16),'#fff','center');
+        PK.espacado(ctx,f.rotulo,fx+51,cy+29,PK_F('800',13.5),PK_COR.red,0.4);
+        PK.texto(ctx,f.nome,fx+51,cy+51,PK_F('800',19),PK_COR.ink);
+        let by=cy+80;
+        med[i].forEach(lin=>{
+          ctx.fillStyle=PK_COR.ink; ctx.beginPath(); ctx.arc(fx+19,by-4.5,2.2,0,Math.PI*2); ctx.fill();
+          lin.forEach(t=>{ PK.texto(ctx,t,fx+29,by,PK_F('400',13.5),PK_COR.text); by+=17; });
+        });
+        if(i<3){
+          const ax=fx+cw+gap/2, ay=cy+ch/2;
+          ctx.strokeStyle='#9A9A9A'; ctx.lineWidth=2; ctx.lineCap='round'; ctx.lineJoin='round';
+          ctx.beginPath(); ctx.moveTo(ax-8,ay); ctx.lineTo(ax+8,ay); ctx.moveTo(ax+3,ay-5.5); ctx.lineTo(ax+8,ay); ctx.lineTo(ax+3,ay+5.5); ctx.stroke();
+        }
+      });
+      cy+=ch;
+    }
+    return cy+14-y;
+  },
+
+  corpoTreino(ctx,d,x,y,w){
+    const pad=16;
+    if(!d.gym){
+      const lin=PK.quebrar(ctx,'Plano de musculação ainda não foi montado.',w-2*pad,PK_F('400',15));
+      PK.linhas(ctx,lin,x+pad,y+34,20,PK_F('400',15),PK_COR.mute); return 34+lin.length*20+14;
+    }
+    const sub=PK.quebrar(ctx,`${d.gym.semanas} semana(s) planejada(s)${d.gym.fase?` · Fase atual: ${d.gym.fase}`:''}`,w-2*pad,PK_F('400',14.5));
+    PK.linhas(ctx,sub,x+pad,y+30,19,PK_F('400',14.5),PK_COR.text);
+    let ty=y+30+(sub.length-1)*19+16;
+    const c1=118,c2=104,tw=w-2*pad,c3=tw-c1-c2, hh=32;
+    const lins=d.gym.dias.map(r=>({n:PK.quebrar(ctx,r.nome,c1-20,PK_F('400',13.5)),c:PK.quebrar(ctx,r.comp,c3-22,PK_F('400',13.5)),q:r.qtd}));
+    const hs=lins.map(l=>Math.max(46,Math.max(l.n.length,l.c.length)*17.5+22));
+    const total=hh+hs.reduce((a,b)=>a+b,0);
+    PK.rr(ctx,x+pad,ty,tw,total,6); ctx.fillStyle='#fff'; ctx.fill();
+    PK.rr(ctx,x+pad,ty,tw,hh,[6,6,0,0]); ctx.fillStyle=PK_COR.red; ctx.fill();
+    PK.texto(ctx,'Dia de treino',x+pad+12,ty+21,PK_F('700',14),'#fff');
+    PK.texto(ctx,'Exercícios',x+pad+c1+c2/2,ty+21,PK_F('700',14),'#fff','center');
+    PK.texto(ctx,'Composição',x+pad+c1+c2+12,ty+21,PK_F('700',14),'#fff');
+    let ry=ty+hh;
+    ctx.strokeStyle='#D8D8D8'; ctx.lineWidth=1;
+    lins.forEach((l,i)=>{
+      const h=hs[i];
+      ctx.beginPath(); ctx.moveTo(x+pad,ry+h); ctx.lineTo(x+pad+tw,ry+h); ctx.stroke();
+      PK.linhas(ctx,l.n,x+pad+12,ry+h/2-(l.n.length-1)*8.75+5,17.5,PK_F('400',13.5),PK_COR.ink);
+      PK.texto(ctx,String(l.q),x+pad+c1+c2/2,ry+h/2+5,PK_F('600',14),PK_COR.ink,'center');
+      PK.linhas(ctx,l.c,x+pad+c1+c2+12,ry+h/2-(l.c.length-1)*8.75+5,17.5,PK_F('400',13.5),PK_COR.text);
+      ry+=h;
+    });
+    ctx.beginPath(); ctx.moveTo(x+pad+c1,ty+hh); ctx.lineTo(x+pad+c1,ty+total); ctx.moveTo(x+pad+c1+c2,ty+hh); ctx.lineTo(x+pad+c1+c2,ty+total); ctx.stroke();
+    PK.rr(ctx,x+pad,ty,tw,total,6); ctx.strokeStyle='#D8D8D8'; ctx.stroke();
+    return (ty+total+16)-y;
+  },
+
+  corpoDistrib(ctx,d,x,y,w){
+    const pad=16, pw=92; let cy=y+16;
+    d.distrib.forEach(r=>{
+      const lin=PK.quebrar(ctx,r.txt,w-2*pad-pw-8-24,PK_F('400',14.5));
+      const rh=Math.max(38,lin.length*18+16);
+      PK.rr(ctx,x+pad,cy,pw,rh,7); ctx.fillStyle=PK_COR.black; ctx.fill();
+      PK.texto(ctx,r.dia,x+pad+pw/2,cy+rh/2+6,PK_F('800',16),'#fff','center');
+      PK.rr(ctx,x+pad+pw+8,cy,w-2*pad-pw-8,rh,5); ctx.fillStyle='#fff'; ctx.fill(); ctx.strokeStyle='#D8D8D8'; ctx.lineWidth=1; ctx.stroke();
+      PK.linhas(ctx,lin,x+pad+pw+20,cy+(rh-lin.length*18)/2+13,18,PK_F('400',14.5),PK_COR.ink);
+      cy+=rh+8;
+    });
+    return cy-y+8;
+  },
+
+  corpoCorrida(ctx,d,x,y,w){
+    const pad=16, r=d.run;
+    const sub=PK.quebrar(ctx,`${r.semanas} semana(s) planejada(s)${r.meta?` · ${r.meta}`:''}`,w-2*pad,PK_F('400',14.5));
+    PK.linhas(ctx,sub,x+pad,y+30,19,PK_F('400',14.5),PK_COR.text);
+    let ty=y+30+(sub.length-1)*19+16;
+    const tw=w-2*pad, cols=[80,200,tw-80-200-120-130,120,130];
+    const nomes=['Dia','Tipo','Distância','Pace','Duração'], hh=32;
+    const lins=r.sessoes.map(s=>[s.day,s.type,s.dist,s.pace,s.dur].map((t,i)=>PK.quebrar(ctx,t||'—',cols[i]-20,PK_F('400',13.5))));
+    const hs=lins.map(l=>Math.max(38,Math.max(...l.map(c=>c.length))*17.5+18));
+    const total=hh+hs.reduce((a,b)=>a+b,0);
+    PK.rr(ctx,x+pad,ty,tw,total,6); ctx.fillStyle='#fff'; ctx.fill();
+    PK.rr(ctx,x+pad,ty,tw,hh,[6,6,0,0]); ctx.fillStyle=PK_COR.red; ctx.fill();
+    let cx=x+pad; nomes.forEach((n,i)=>{ PK.texto(ctx,n,cx+12,ty+21,PK_F('700',14),'#fff'); cx+=cols[i]; });
+    let ry=ty+hh; ctx.strokeStyle='#D8D8D8'; ctx.lineWidth=1;
+    lins.forEach((l,i)=>{
+      const h=hs[i]; ctx.beginPath(); ctx.moveTo(x+pad,ry+h); ctx.lineTo(x+pad+tw,ry+h); ctx.stroke();
+      let px=x+pad; l.forEach((c,k)=>{ PK.linhas(ctx,c,px+12,ry+h/2-(c.length-1)*8.75+5,17.5,PK_F(k===1?'600':'400',13.5),k===1?PK_COR.ink:PK_COR.text); px+=cols[k]; });
+      ry+=h;
+    });
+    let vx=x+pad; ctx.beginPath(); cols.slice(0,-1).forEach(c=>{ vx+=c; ctx.moveTo(vx,ty+hh); ctx.lineTo(vx,ty+total); }); ctx.stroke();
+    PK.rr(ctx,x+pad,ty,tw,total,6); ctx.strokeStyle='#D8D8D8'; ctx.stroke();
+    return (ty+total+16)-y;
+  },
+};
+
+function fqPacoteLayout(ctx,d,W){
+  const M=30, CW=W-2*M, sec=fqCtxSeco(ctx);
+  let y=PK.cabecalho(ctx,d,W)+14;
+  y=PK.cartoes(ctx,d,M,y,CW)+16;
+
+  if(d.aval||d.aerobicoMin){
+    const dois=!!d.aerobicoMin, wl=dois?494:CW, wr=CW-wl-10;
+    const hb=Math.max(PK.corpoComposicao(sec,d,0,0,wl),dois?PK.corpoAerobico(sec,d,0,0,wr):0), ph=44+hb;
+    PK.painel(ctx,M,y,wl,'COMPOSIÇÃO CORPORAL',null,ph); PK.corpoComposicao(ctx,d,M,y+44,wl);
+    if(dois){ PK.painel(ctx,M+wl+10,y,wr,'META SEMANAL DE AERÓBICO','coracao',ph); PK.corpoAerobico(ctx,d,M+wl+10,y+44,wr); }
+    y+=ph+16;
+  }
+
+  { const ph=44+PK.corpoEstrategia(sec,d,0,0,CW);
+    PK.painel(ctx,M,y,CW,'ESTRATÉGIA DO PLANO',null,ph); PK.corpoEstrategia(ctx,d,M,y+44,CW);
+    y+=ph+16; }
+
+  if(d.gym){
+    const dist=!!d.distrib, wl=dist?570:CW, wr=CW-wl-10;
+    const hb=Math.max(PK.corpoTreino(sec,d,0,0,wl),dist?PK.corpoDistrib(sec,d,0,0,wr):0), ph=44+hb;
+    PK.painel(ctx,M,y,wl,'PLANO DE TREINAMENTO — MUSCULAÇÃO','halter',ph); PK.corpoTreino(ctx,d,M,y+44,wl);
+    if(dist){ PK.painel(ctx,M+wl+10,y,wr,'DISTRIBUIÇÃO SEMANAL',null,ph); PK.corpoDistrib(ctx,d,M+wl+10,y+44,wr); }
+    y+=ph+16;
+  } else if(d.distrib){
+    const ph=44+PK.corpoDistrib(sec,d,0,0,CW);
+    PK.painel(ctx,M,y,CW,'DISTRIBUIÇÃO SEMANAL',null,ph); PK.corpoDistrib(ctx,d,M,y+44,CW);
+    y+=ph+16;
+  } else {
+    const ph=44+PK.corpoTreino(sec,d,0,0,CW);
+    PK.painel(ctx,M,y,CW,'PLANO DE TREINAMENTO',null,ph); PK.corpoTreino(ctx,d,M,y+44,CW);
+    y+=ph+16;
+  }
+
+  if(d.run){
+    const ph=44+PK.corpoCorrida(sec,d,0,0,CW);
+    PK.painel(ctx,M,y,CW,'PLANO DE CORRIDA','corrida',ph); PK.corpoCorrida(ctx,d,M,y+44,CW);
+    y+=ph+16;
+  }
+
+  ctx.fillStyle=PK_COR.black; ctx.fillRect(0,y,W,46);
+  PK.texto(ctx,'FitQuest · Assessoria Fitness — Rennan Dias · rennandias.com.br',W/2,y+28,PK_F('500',12),'#9A9A9A','center');
+  return y+46;
+}
+function fqPacoteDesenhar(d){
+  const W=1024;
+  const m=document.createElement('canvas'); m.width=10; m.height=10;
+  const H=Math.ceil(fqPacoteLayout(fqCtxSeco(m.getContext('2d')),d,W));
+  const S=Math.max(1,Math.min(2,Math.sqrt(14e6/(W*H))));
+  const cv=document.createElement('canvas'); cv.width=Math.round(W*S); cv.height=Math.round(H*S);
+  const ctx=cv.getContext('2d'); ctx.scale(S,S);
+  ctx.fillStyle='#fff'; ctx.fillRect(0,0,W,H);
+  fqPacoteLayout(ctx,d,W);
+  return cv;
+}
+
+// Entrega da imagem: abre a folha de compartilhar do celular (WhatsApp etc.);
+// se o aparelho não suportar, baixa o arquivo.
+async function fqEntregarImagem(blob,nome){
+  try{
+    const file=new File([blob],nome,{type:'image/png'});
+    if(navigator.canShare && navigator.canShare({files:[file]})){ await navigator.share({files:[file],title:nome}); return true; }
+  }catch(e){ if(e && e.name==='AbortError') return true; }
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a'); a.href=url; a.download=nome; document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(()=>URL.revokeObjectURL(url),60000);
+  return true;
+}
+async function admGerarPacoteCliente(formato){
+  formato = formato==='png' ? 'png' : 'pdf';
+  const email = document.getElementById('pacote-aluno-email')?.value;
+  const u = admGetAluno(email);
+  if(!u){ fqToast('Aluno não encontrado.','warn'); return; }
+  admLerCamposPacote(u);
+  await syncAlunoAdmin(u).catch(()=>{});   // salva antes, pra não perder o que você escreveu se algo falhar
+  fqToast('Montando o documento...','ok',2500);
+  try{
+    try{ await Promise.all(['400','500','600','700','800'].map(w=>document.fonts.load(`${w} 16px Inter`))); }catch(e){}
+    const d = fqPacoteDados(u);
+    const cv = fqPacoteDesenhar(d);
+    const base = `Plano-Consultoria-${(u.name||'aluno').replace(/\s+/g,'-')}`;
+    if(formato==='png'){
+      const blob = await new Promise(res=>cv.toBlob(res,'image/png'));
+      if(!blob) throw new Error('canvas não gerou a imagem');
+      await fqEntregarImagem(blob, base+'.png');
+    } else {
+      if(!(await garantirPDFPronto())){ fqToast('Gerador de PDF indisponível agora — use "Gerar imagem (PNG)", que não depende dele.','warn',9000); return; }
+      const { jsPDF } = window.jspdf;
+      const wMm = 210, hMm = wMm*cv.height/cv.width;
+      const doc = new jsPDF({unit:'mm', format:[wMm,hMm], orientation:'portrait'});
+      doc.addImage(cv.toDataURL('image/jpeg',0.92),'JPEG',0,0,wMm,hMm,undefined,'FAST');
+      await baixarPDFRobusto(doc, base+'.pdf');
+    }
+    closeModal('modal-pacote-cliente');
+  }catch(err){
+    console.error('Erro ao gerar pacote (layout novo):', err);
+    if(formato==='pdf'){ fqToast('O layout novo falhou — gerando o modelo simples.','warn',5000); return admGerarPacoteClienteClassico(); }
+    fqToast('Não consegui gerar a imagem. ['+(err&&err.message?err.message:err)+']','warn',8000);
+  }
+}
+async function admGerarPacoteClienteClassico(){
   const email = document.getElementById('pacote-aluno-email')?.value;
   const u = admGetAluno(email);
   if(!u){ fqToast('Aluno não encontrado.','warn'); return; }
@@ -20431,7 +21073,7 @@ async function admCriarAluno(){
       return;
     }
     const u = novoPerfilLocal(data.user.id, nome, email);
-    const{error:erroCriarAluno}=await sb.from('alunos').upsert(userToRow(u), {onConflict:'id'});
+    const{error:erroCriarAluno}=await fqGravarAluno('upsert',u);
     if(erroCriarAluno){
       console.error('Erro ao salvar novo aluno criado pelo admin:',erroCriarAluno.message,erroCriarAluno);
       fqToast('⚠️ A conta de login foi criada, mas os dados não foram salvos no servidor: '+erroCriarAluno.message,'warn',7000);
