@@ -1388,7 +1388,7 @@ html[data-tema="claro"] .hero-banner{background:#fff;}
       <option value="es">🇪🇸 ES</option>
     </select>
   </div>
-  <div id="fq-version-badge" style="position:absolute;bottom:8px;right:12px;font-size:9px;color:#333;font-weight:700;z-index:5">v268</div>
+  <div id="fq-version-badge" style="position:absolute;bottom:8px;right:12px;font-size:9px;color:#333;font-weight:700;z-index:5">v269</div>
   <img src="https://images.unsplash.com/photo-1517836357463-d25dfeac3438?w=800&q=80" alt="Fitness" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center top;filter:brightness(.35);z-index:0"/>
   <div class="splash-glow"></div>
   <div class="splash-noise"></div>
@@ -2658,7 +2658,7 @@ html[data-tema="claro"] .hero-banner{background:#fff;}
             <span style="color:var(--mu);font-size:18px">›</span>
           </div>
         </div>
-        <div style="text-align:center;padding:20px 0 4px;font-size:11px;color:var(--mu)">FitQuest <span id="fq-version-badge-perfil">v268</span></div>
+        <div style="text-align:center;padding:20px 0 4px;font-size:11px;color:var(--mu)">FitQuest <span id="fq-version-badge-perfil">v269</span></div>
       </div>
     </div>
 
@@ -2848,6 +2848,18 @@ html[data-tema="claro"] .hero-banner{background:#fff;}
           <button class="btn-savewk" onclick="gvSalvarResultado()" style="flex:1;margin-top:0">✅ Usar este</button>
         </div>
       </div>
+    </div>
+  </div>
+</div>
+<!-- Ver/trocar o gif de um exercício, direto do editor de treino do admin -->
+<div class="modal-ov" id="modal-editar-gif" style="align-items:flex-start">
+  <div class="modal-bx" style="max-width:360px;width:100%;padding:0;border-radius:16px 16px 0 0;margin-top:auto">
+    <div class="modal-t"><span>🎬 <span id="gifed-nome">—</span></span><button class="modal-cl" onclick="closeModal('modal-editar-gif')">✕</button></div>
+    <input type="hidden" id="gifed-exid"/>
+    <div style="padding:16px;text-align:center">
+      <img id="gifed-preview" style="display:none;width:100%;aspect-ratio:1/1;object-fit:cover;border-radius:12px;background:#000"/>
+      <div id="gifed-sem-gif" style="display:none;padding:40px 0;color:var(--mu);font-size:13px">Esse exercício ainda não tem demonstração.</div>
+      <button class="btn-savewk" onclick="admGravarNovoGifExercicio()" style="margin-top:14px">🎥 Gravar novo (vira o oficial pra todos)</button>
     </div>
   </div>
 </div>
@@ -11540,6 +11552,7 @@ function gvSetEstado(nome){
     const el=document.getElementById(id); if(el) el.style.display = (id===nome) ? 'block' : 'none';
   });
 }
+let gvModoEditorAdmin=false;
 function gvAbrirParaExercicio(exId){
   gvExIdAlvo = exId; gvModoNovoExercicio = false; gvGifBlobPronto = null;
   document.getElementById('gv-titulo').textContent = '🎥 Gravar meu vídeo';
@@ -11582,7 +11595,24 @@ function gvPararCamera(){
   if(gvStream){ gvStream.getTracks().forEach(tr=>tr.stop()); gvStream=null; }
   if(gvIntervaloCaptura){ clearInterval(gvIntervaloCaptura); gvIntervaloCaptura=null; }
 }
-function gvCancelar(){ gvPararCamera(); closeModal('modal-gravar-video'); }
+function gvCancelar(){
+  gvPararCamera(); closeModal('modal-gravar-video');
+  if(gvModoEditorAdmin) gvFinalizarModoEditorAdmin();
+}
+// Fecha o laço do fluxo "editar gif pelo editor de treino do admin" (ver
+// admEditarGifExercicio → admGravarNovoGifExercicio → aqui), tanto no
+// caminho de salvar quanto no de cancelar. Em vez de tentar acertar o
+// número exato de history.back() encadeados (frágil: são chamadas
+// assíncronas, a segunda pode disparar antes do popstate da primeira
+// resolver), garante direto que o editor de treino volta visível — a
+// prioridade é a tela ficar certa, não a profundidade exata do histórico.
+function gvFinalizarModoEditorAdmin(){
+  gvModoEditorAdmin=false;
+  document.getElementById('modal-editar-gif')?.classList.remove('open');
+  document.getElementById('modal-gravar-video')?.classList.remove('open');
+  document.getElementById('modal-student')?.classList.add('open');
+  const ua=admGetAluno(editEmail); if(ua && typeof renderEGW==='function') renderEGW(editGW,ua);
+}
 function gvComecarGravacao(){
   if(typeof GIF==='undefined'){
     fqToast('A ferramenta de conversão não carregou — verifique sua internet e tente de novo.','warn',5000);
@@ -11632,6 +11662,37 @@ function gvRegravar(){
 }
 async function gvSalvarResultado(){
   if(!gvGifBlobPronto){ fqToast('Nada gravado ainda.','warn'); return; }
+  // BUGFIX: no painel admin (dashboard), getU() retorna null de propósito
+  // — é assim que o app distingue "logado como admin no painel" de "logado
+  // como um aluno qualquer". O editor de treino abre a gravação a partir do
+  // painel, então aqui NÃO dá pra depender de getU() — trata esse caso à
+  // parte, sem usuário "dono" nenhum, só a gravação virando oficial.
+  if(gvModoEditorAdmin){
+    if(!sb){ fqToast('Sem conexão com o servidor agora — tente de novo com internet.','warn'); return; }
+    fqToast('Enviando...','ok',2000);
+    const timestamp=Date.now();
+    const caminho = `${ADMIN_EMAIL||'admin'}/${gvExIdAlvo}_${timestamp}.gif`;
+    try{
+      const{error:erroUpload}=await sb.storage.from('exercicios-midia').upload(caminho, gvGifBlobPronto, {contentType:'image/gif', upsert:true});
+      if(erroUpload){ fqToast('Erro ao enviar o vídeo: '+erroUpload.message,'warn',5000); return; }
+      const{data:pub}=sb.storage.from('exercicios-midia').getPublicUrl(caminho);
+      const url=pub?.publicUrl;
+      if(!url){ fqToast('Erro ao gerar o link do vídeo.','warn'); return; }
+      const{error:erroExtra}=await sb.from('gifs_extras').upsert({exercicio_id:gvExIdAlvo, url, atualizado_em:new Date().toISOString()});
+      if(erroExtra){
+        console.warn('Não deu pra salvar como demonstração oficial (tabela gifs_extras existe?):', erroExtra.message);
+        fqToast('Não consegui salvar como oficial — confira se a tabela gifs_extras existe (GUIA_GIFS_OFICIAIS.md).','warn',7000);
+      } else {
+        GIFS_EXTRAS_CACHE[gvExIdAlvo]=url;
+        fqToast('🎉 Virou a demonstração oficial pra todos os alunos!','ok',3500);
+      }
+    }catch(e){
+      console.error('Erro ao gravar gif pelo editor do admin:',e);
+      fqToast('Algo deu errado ao enviar.','warn',5000);
+    }
+    gvFinalizarModoEditorAdmin();
+    return;
+  }
   const u=getU(); if(!u){ fqToast('Faça login de novo.','warn'); return; }
   if(!sb){ fqToast('Sem conexão com o servidor agora — tente de novo com internet.','warn'); return; }
   fqToast('Enviando...','ok',2000);
@@ -11660,11 +11721,12 @@ async function gvSalvarResultado(){
     users[u.email]=u; DB.set('fq_users',users);
     await syncU(u).catch(()=>{});
 
-    // Se for VOCÊ (admin) gravando um exercício real que ainda não tem gif
-    // oficial, essa gravação vira a demonstração de TODOS os alunos — não só
-    // sua referência pessoal. Preenche a lacuna de verdade, pra sempre.
+    // Se for VOCÊ (admin) gravando um exercício real, essa gravação vira a
+    // demonstração de TODOS os alunos — não só sua referência pessoal. Tanto
+    // faz se já existia um gif (substitui) ou não (preenche a lacuna): é
+    // sempre a forma de "editar o gif" de um exercício pelo painel.
     let viroiOficial=false;
-    if(u.isAdmin && !gvModoNovoExercicio && !EXERCICIOS_COM_GIF.has(exIdFinal)){
+    if(u.isAdmin && !gvModoNovoExercicio){
       try{
         const{error:erroExtra}=await sb.from('gifs_extras').upsert({exercicio_id:exIdFinal, url, atualizado_em:new Date().toISOString()});
         if(!erroExtra){ GIFS_EXTRAS_CACHE[exIdFinal]=url; viroiOficial=true; }
@@ -11674,8 +11736,16 @@ async function gvSalvarResultado(){
 
     fqToast(gvModoNovoExercicio?'🎉 Exercício criado!':(viroiOficial?'🎉 Virou a demonstração oficial pra todos os alunos!':'🎉 Seu vídeo foi salvo!'),'ok',3500);
     closeModal('modal-gravar-video');
-    if(!gvModoNovoExercicio && typeof abrirFichaExercicio==='function') abrirFichaExercicio(gvExIdAlvo);
-    if(gvModoNovoExercicio && typeof renderMeusExercicios==='function') renderMeusExercicios();
+    // Se veio do editor de treino do admin, volta pro editor (com a miniatura
+    // já atualizada) em vez de navegar pra ficha — o admin estava editando o
+    // plano de outro aluno, não o seu próprio treino.
+    if(gvModoEditorAdmin){
+      gvModoEditorAdmin=false;
+      const ua=admGetAluno(editEmail); if(ua && typeof renderEGW==='function') renderEGW(editGW,ua);
+    } else {
+      if(!gvModoNovoExercicio && typeof abrirFichaExercicio==='function') abrirFichaExercicio(gvExIdAlvo);
+      if(gvModoNovoExercicio && typeof renderMeusExercicios==='function') renderMeusExercicios();
+    }
   }catch(e){
     fqToast('Erro inesperado ao salvar: '+e.message,'warn',5000);
   }
@@ -15967,6 +16037,42 @@ async function ctExecutarCopia(){
 }
 function selEGW(w,el){editGW=w;document.querySelectorAll('#egw-tabs .wsb').forEach(b=>b.classList.remove('active'));el.classList.add('active');renderEGW(w,admGetAluno(editEmail));}
 function selERW(w,el){editRW=w;document.querySelectorAll('#erw-tabs .wsb').forEach(b=>b.classList.remove('active'));el.classList.add('active');renderERW(w,admGetAluno(editEmail));}
+// Miniatura do gif na linha do exercício, dentro do editor de treino do
+// admin. GIF de verdade (arquivo .gif) anima sozinho mesmo numa <img>
+// comum — não precisa do canvas/gifler usado na ficha grande, que seria
+// pesado demais pra várias miniaturas ao mesmo tempo numa lista. Toque
+// abre o modal de ver/trocar.
+function egwThumbGif(exId,u){
+  const url = u?.gifsPersonalizados?.[exId] || GIFS_EXTRAS_CACHE[exId] || (EXERCICIOS_COM_GIF.has(exId)?(GIF_SEARCH_PATHS[0]+exId+'.gif'):null);
+  if(url){
+    return `<img src="${url}" onclick="admEditarGifExercicio('${exId}')" onerror="this.replaceWith(Object.assign(document.createElement('button'),{innerHTML:'📷',onclick:()=>admEditarGifExercicio('${exId}')}))" style="width:34px;height:34px;border-radius:7px;object-fit:cover;flex-shrink:0;cursor:pointer;background:#000;border:1px solid var(--b)" title="Toque pra ver ou trocar o gif"/>`;
+  }
+  return `<button type="button" onclick="admEditarGifExercicio('${exId}')" style="width:34px;height:34px;border-radius:7px;background:var(--s2);border:1px solid var(--b);display:flex;align-items:center;justify-content:center;flex-shrink:0;cursor:pointer;font-size:13px;color:var(--mu)" title="Sem demonstração — toque pra gravar">📷</button>`;
+}
+function admEditarGifExercicio(exId){
+  const u = admGetAluno(editEmail);
+  const ex = getExById(exId,u);
+  const url = u?.gifsPersonalizados?.[exId] || GIFS_EXTRAS_CACHE[exId] || (EXERCICIOS_COM_GIF.has(exId)?(GIF_SEARCH_PATHS[0]+exId+'.gif'):null);
+  const nomeEl=document.getElementById('gifed-nome'); if(nomeEl) nomeEl.textContent = ex?.name || exId;
+  const img=document.getElementById('gifed-preview'), vazio=document.getElementById('gifed-sem-gif');
+  if(url){ img.src=url; img.style.display='block'; vazio.style.display='none'; }
+  else { img.style.display='none'; vazio.style.display='block'; }
+  const hid=document.getElementById('gifed-exid'); if(hid) hid.value=exId;
+  abrirModal('modal-editar-gif');
+}
+function admGravarNovoGifExercicio(){
+  const exId = document.getElementById('gifed-exid')?.value;
+  if(!exId) return;
+  // Troca de modal "na mão" (sem closeModal) — só esconde a classe, sem
+  // consumir a entrada de histórico. Senão fica desbalanceado: abrir o
+  // editor-de-gif empilha 1 entrada, gravar-vídeo empilha outra, e fechar só
+  // o de gravar no final devolveria pro editor-de-gif (escondido), não pro
+  // editor de treino. Compensa com 1 history.back() extra ao terminar
+  // (ver gvSalvarResultado, trecho gvModoEditorAdmin).
+  document.getElementById('modal-editar-gif').classList.remove('open');
+  gvModoEditorAdmin = true;
+  gvAbrirParaExercicio(exId);
+}
 function renderEGW(w,u){
   ensureAP(u);if(!u.aiPlan.gym[w])u.aiPlan.gym[w]=JSON.parse(JSON.stringify(DG[w]||{fase:'Nova fase',days:{'Treino A':[]}}));
   const prog=u.aiPlan.gym[w];
@@ -15994,6 +16100,7 @@ function renderEGW(w,u){
       h+=`<div class="exer" style="position:relative"><div class="exer-t" style="display:flex;align-items:center;gap:6px">
       <div class="egw-drag-handle" style="display:flex;align-items:center;justify-content:center;flex-shrink:0;width:20px;height:24px;color:var(--mu);font-size:14px;cursor:grab;letter-spacing:-1px" title="Segure e arraste pra reordenar">⠿</div>
       <div style="background:var(--r);color:#fff;border-radius:5px;min-width:20px;height:20px;display:flex;align-items:center;justify-content:center;font-size:9.5px;font-weight:900;flex-shrink:0">${ei+1}</div>
+      ${egwThumbGif(ed.id,u)}
       <div style="font-size:12px;font-weight:700;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${ex?ex.name:ed.id}</div>
       <button onclick="remSEx('${w}','${day}',${ei})" style="background:rgba(225,6,0,.08);border:1px solid rgba(225,6,0,.15);border-radius:4px;padding:2px 7px;color:var(--r);font-size:9px;cursor:pointer;flex-shrink:0">✕</button></div>
       <div class="exer-g"><div><div class="ml2">Exercício</div><button type="button" onclick="abrirBuscaExercicio('${w}','${day}',${ei})" style="width:100%;text-align:left;background:var(--s2);border:1px solid var(--b);border-radius:8px;padding:8px 10px;color:#fff;font-size:12.5px;cursor:pointer;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${ex?ex.name:ed.id}${(u.exerciciosCustom||[]).some(c=>c.id===ed.id)?' 🎬':''} ▾</button></div><div><div class="ml2">Séries</div><input class="mi" type="number" data-day="${day}" data-idx="${ei}" data-field="sets" value="${ed.sets}"/></div><div><div class="ml2">Reps</div><input class="mi" data-day="${day}" data-idx="${ei}" data-field="reps" value="${ed.reps}"/></div></div>
