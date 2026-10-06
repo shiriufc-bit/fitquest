@@ -1388,7 +1388,7 @@ html[data-tema="claro"] .hero-banner{background:#fff;}
       <option value="es">🇪🇸 ES</option>
     </select>
   </div>
-  <div id="fq-version-badge" style="position:absolute;bottom:8px;right:12px;font-size:9px;color:#333;font-weight:700;z-index:5">v269</div>
+  <div id="fq-version-badge" style="position:absolute;bottom:8px;right:12px;font-size:9px;color:#333;font-weight:700;z-index:5">v270</div>
   <img src="https://images.unsplash.com/photo-1517836357463-d25dfeac3438?w=800&q=80" alt="Fitness" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center top;filter:brightness(.35);z-index:0"/>
   <div class="splash-glow"></div>
   <div class="splash-noise"></div>
@@ -2658,7 +2658,7 @@ html[data-tema="claro"] .hero-banner{background:#fff;}
             <span style="color:var(--mu);font-size:18px">›</span>
           </div>
         </div>
-        <div style="text-align:center;padding:20px 0 4px;font-size:11px;color:var(--mu)">FitQuest <span id="fq-version-badge-perfil">v269</span></div>
+        <div style="text-align:center;padding:20px 0 4px;font-size:11px;color:var(--mu)">FitQuest <span id="fq-version-badge-perfil">v270</span></div>
       </div>
     </div>
 
@@ -2836,10 +2836,22 @@ html[data-tema="claro"] .hero-banner{background:#fff;}
         </div>
         <div style="font-size:11px;color:var(--mu);margin-top:10px">Grave uns 8 segundos mostrando o movimento completo do exercício.</div>
         <button class="btn-addex" id="gv-btn-gravar" onclick="gvComecarGravacao()" style="width:100%;margin-top:10px">⏺ Gravar (8s)</button>
+        <div style="display:flex;align-items:center;gap:8px;margin:12px 0;color:var(--mu);font-size:10.5px"><div style="flex:1;height:1px;background:var(--b)"></div>ou<div style="flex:1;height:1px;background:var(--b)"></div></div>
+        <input type="file" accept="video/*" id="gv-input-arquivo" style="display:none" onchange="gvVideoSelecionado(this)"/>
+        <button class="btn-addex" onclick="document.getElementById('gv-input-arquivo').click()" style="width:100%;background:var(--s2);border-color:var(--b2)">📁 Escolher vídeo do celular</button>
+      </div>
+      <!-- Vídeo escolhido da galeria é mais longo que 8s: escolher o trecho -->
+      <div id="gv-cortar-wrap" style="display:none;text-align:center">
+        <video id="gv-video-arquivo" controls playsinline style="width:100%;max-height:260px;border-radius:12px;background:#000"></video>
+        <div style="font-size:11px;color:var(--mu);margin:10px 0 4px">Esse vídeo tem <span id="gv-corte-duracao-total">—</span>. Escolha de onde começam os 8 segundos a usar:</div>
+        <input type="range" id="gv-corte-inicio" min="0" max="0" step="0.1" value="0" style="width:100%" oninput="gvAtualizarTrecho()"/>
+        <div style="font-size:12px;font-weight:700;margin-top:4px"><span id="gv-corte-label-inicio">0:00</span> → <span id="gv-corte-label-fim">0:08</span></div>
+        <button class="btn-addex" id="gv-btn-usar-trecho" onclick="gvConfirmarTrecho()" style="width:100%;margin-top:12px">✅ Usar este trecho de 8s</button>
+        <button onclick="gvCancelarArquivo()" style="width:100%;background:none;border:none;color:var(--mu);font-size:12px;padding:10px;cursor:pointer">Cancelar e escolher outro vídeo</button>
       </div>
       <div id="gv-processando" style="display:none;text-align:center;padding:30px 0">
         <div style="font-size:32px">⏳</div>
-        <div style="font-size:12.5px;color:var(--mu);margin-top:8px">Convertendo em GIF...</div>
+        <div style="font-size:12.5px;color:var(--mu);margin-top:8px" id="gv-processando-texto">Convertendo em GIF...</div>
       </div>
       <div id="gv-resultado-wrap" style="display:none;text-align:center">
         <img id="gv-resultado-img" style="width:100%;aspect-ratio:1/1;object-fit:cover;border-radius:12px;background:#000"/>
@@ -11548,13 +11560,15 @@ function renderExThumbFallback(exId){
 let gvStream=null, gvExIdAlvo=null, gvModoNovoExercicio=false, gvGifBlobPronto=null, gvIntervaloCaptura=null, gvCanvasOff=null, gvCtxOff=null;
 
 function gvSetEstado(nome){
-  ['gv-form-novo','gv-camera-wrap','gv-processando','gv-resultado-wrap'].forEach(id=>{
+  ['gv-form-novo','gv-camera-wrap','gv-cortar-wrap','gv-processando','gv-resultado-wrap'].forEach(id=>{
     const el=document.getElementById(id); if(el) el.style.display = (id===nome) ? 'block' : 'none';
   });
 }
 let gvModoEditorAdmin=false;
 function gvAbrirParaExercicio(exId){
   gvExIdAlvo = exId; gvModoNovoExercicio = false; gvGifBlobPronto = null;
+  gvCancelarArquivo(); // limpa seleção de arquivo de uma vez anterior, se houver
+  const btn=document.getElementById('gv-btn-gravar'); if(btn){ btn.disabled=false; btn.style.opacity='1'; btn.textContent='⏺ Gravar (8s)'; }
   document.getElementById('gv-titulo').textContent = '🎥 Gravar meu vídeo';
   abrirModal('modal-gravar-video');
   gvSetEstado('gv-camera-wrap');
@@ -11580,8 +11594,13 @@ async function gvIniciarCamera(){
     const v=document.getElementById('gv-video');
     v.srcObject = gvStream;
   }catch(e){
-    fqToast('Não consegui acessar a câmera. Verifique a permissão do navegador.','warn',5000);
-    closeModal('modal-gravar-video');
+    // BUGFIX: antes fechava o modal INTEIRO quando a câmera falhava (sem
+    // permissão, sem hardware) — mas agora existe a opção de escolher um
+    // vídeo já gravado da galeria, que não precisa de câmera nenhuma. Fechar
+    // tudo bloqueava essa alternativa à toa. Agora só avisa e desativa o
+    // botão de gravar; "Escolher vídeo do celular" continua funcionando.
+    fqToast('Não consegui acessar a câmera — você ainda pode escolher um vídeo já gravado.','warn',6000);
+    const btn=document.getElementById('gv-btn-gravar'); if(btn){ btn.disabled=true; btn.style.opacity='.4'; btn.textContent='📵 Câmera indisponível'; }
   }
 }
 // Alterna frontal/traseira — útil quando outra pessoa está gravando o
@@ -11612,6 +11631,99 @@ function gvFinalizarModoEditorAdmin(){
   document.getElementById('modal-gravar-video')?.classList.remove('open');
   document.getElementById('modal-student')?.classList.add('open');
   const ua=admGetAluno(editEmail); if(ua && typeof renderEGW==='function') renderEGW(editGW,ua);
+}
+// ══════════════════════════════════════════════════════════════════════
+// ══ IMPORTAR VÍDEO DA GALERIA (em vez de gravar ao vivo) ══
+// Mesmo destino final (GIF de 8s, 8 quadros/segundo, recorte quadrado
+// centralizado) que a gravação ao vivo já usa — só que os quadros vêm de
+// um arquivo de vídeo escolhido, não da câmera em tempo real. Por isso
+// busca cada quadro (seek + espera o evento 'seeked') em vez de usar um
+// intervalo: um vídeo parado não "anda" sozinho como uma câmera ligada.
+// Se o vídeo for mais longo que 8s, mostra uma etapa de corte antes —
+// um controle deslizante escolhe onde os 8 segundos começam.
+// ══════════════════════════════════════════════════════════════════════
+let gvArquivoVideo=null;
+function gvFormatarTempo(s){ s=Math.max(0,s||0); return `${Math.floor(s/60)}:${String(Math.floor(s%60)).padStart(2,'0')}`; }
+function gvVideoSelecionado(input){
+  const arquivo=input.files?.[0];
+  if(!arquivo) return;
+  if(!arquivo.type.startsWith('video/')){ fqToast('Escolha um arquivo de vídeo.','warn'); input.value=''; return; }
+  gvArquivoVideo=arquivo;
+  const video=document.getElementById('gv-video-arquivo');
+  video.src=URL.createObjectURL(arquivo);
+  video.onloadedmetadata=()=>{
+    const dur=video.duration;
+    if(!isFinite(dur)||dur<=0){ fqToast('Não consegui ler esse vídeo. Tenta outro.','warn'); gvCancelarArquivo(); return; }
+    if(dur<=8.05){
+      gvIniciarExtracaoArquivo(0, dur); // já cabe inteiro, sem precisar escolher trecho
+      return;
+    }
+    const inicioEl=document.getElementById('gv-corte-inicio');
+    inicioEl.max=(dur-8).toFixed(1); inicioEl.value=0;
+    document.getElementById('gv-corte-duracao-total').textContent=gvFormatarTempo(dur)+' de duração';
+    gvAtualizarTrecho();
+    gvSetEstado('gv-cortar-wrap');
+  };
+  video.onerror=()=>{ fqToast('Não consegui abrir esse vídeo. Tenta outro.','warn'); gvCancelarArquivo(); };
+}
+function gvAtualizarTrecho(){
+  const inicio=parseFloat(document.getElementById('gv-corte-inicio').value)||0;
+  document.getElementById('gv-corte-label-inicio').textContent=gvFormatarTempo(inicio);
+  document.getElementById('gv-corte-label-fim').textContent=gvFormatarTempo(inicio+8);
+  const video=document.getElementById('gv-video-arquivo');
+  if(video) video.currentTime=inicio; // pré-visualiza o quadro de início
+}
+function gvCancelarArquivo(){
+  gvArquivoVideo=null;
+  const video=document.getElementById('gv-video-arquivo');
+  if(video){ video.pause(); video.removeAttribute('src'); video.load(); }
+  const inp=document.getElementById('gv-input-arquivo'); if(inp) inp.value='';
+  gvSetEstado('gv-camera-wrap');
+}
+function gvConfirmarTrecho(){
+  const inicio=parseFloat(document.getElementById('gv-corte-inicio').value)||0;
+  gvIniciarExtracaoArquivo(inicio, 8);
+}
+function gvBuscarFrame(video,t){
+  return new Promise((resolve,reject)=>{
+    const onSeeked=()=>{ video.removeEventListener('seeked',onSeeked); video.removeEventListener('error',onErr); resolve(); };
+    const onErr=(e)=>{ video.removeEventListener('seeked',onSeeked); video.removeEventListener('error',onErr); reject(e); };
+    video.addEventListener('seeked',onSeeked);
+    video.addEventListener('error',onErr);
+    video.currentTime=t;
+  });
+}
+async function gvIniciarExtracaoArquivo(inicio, duracaoS){
+  if(typeof GIF==='undefined'){ fqToast('A ferramenta de conversão não carregou — verifique sua internet e tente de novo.','warn',5000); return; }
+  gvSetEstado('gv-processando');
+  const textoEl=document.getElementById('gv-processando-texto');
+  const video=document.getElementById('gv-video-arquivo');
+  const TAMANHO=240, FPS=8, TOTAL_FRAMES=Math.max(1,Math.round(FPS*duracaoS));
+  gvCanvasOff=document.createElement('canvas'); gvCanvasOff.width=TAMANHO; gvCanvasOff.height=TAMANHO;
+  gvCtxOff=gvCanvasOff.getContext('2d');
+  const gif=new GIF({workers:2,quality:15,width:TAMANHO,height:TAMANHO,workerScript:'lib/gif.worker.js'});
+  try{
+    for(let i=0;i<TOTAL_FRAMES;i++){
+      const t=Math.min(inicio+i/FPS, Math.max(0,video.duration-0.05));
+      await gvBuscarFrame(video,t);
+      const vw=video.videoWidth||TAMANHO, vh=video.videoHeight||TAMANHO;
+      const lado=Math.min(vw,vh), sx=(vw-lado)/2, sy=(vh-lado)/2;
+      gvCtxOff.drawImage(video, sx, sy, lado, lado, 0, 0, TAMANHO, TAMANHO);
+      gif.addFrame(gvCtxOff, {copy:true, delay:Math.round(1000/FPS)});
+      if(textoEl) textoEl.textContent=`Processando o vídeo... ${Math.round((i+1)/TOTAL_FRAMES*100)}%`;
+    }
+  }catch(e){
+    console.error('Erro ao extrair quadros do vídeo escolhido:',e);
+    fqToast('Não consegui processar esse vídeo. Tenta outro, ou grave direto pela câmera.','warn',6000);
+    gvSetEstado('gv-camera-wrap');
+    return;
+  }
+  gif.on('finished', (blob)=>{
+    gvGifBlobPronto=blob;
+    document.getElementById('gv-resultado-img').src=URL.createObjectURL(blob);
+    gvSetEstado('gv-resultado-wrap');
+  });
+  gif.render();
 }
 function gvComecarGravacao(){
   if(typeof GIF==='undefined'){
