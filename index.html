@@ -1388,7 +1388,7 @@ html[data-tema="claro"] .hero-banner{background:#fff;}
       <option value="es">🇪🇸 ES</option>
     </select>
   </div>
-  <div id="fq-version-badge" style="position:absolute;bottom:8px;right:12px;font-size:9px;color:#333;font-weight:700;z-index:5">v270</div>
+  <div id="fq-version-badge" style="position:absolute;bottom:8px;right:12px;font-size:9px;color:#333;font-weight:700;z-index:5">v271</div>
   <img src="https://images.unsplash.com/photo-1517836357463-d25dfeac3438?w=800&q=80" alt="Fitness" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center top;filter:brightness(.35);z-index:0"/>
   <div class="splash-glow"></div>
   <div class="splash-noise"></div>
@@ -2658,7 +2658,7 @@ html[data-tema="claro"] .hero-banner{background:#fff;}
             <span style="color:var(--mu);font-size:18px">›</span>
           </div>
         </div>
-        <div style="text-align:center;padding:20px 0 4px;font-size:11px;color:var(--mu)">FitQuest <span id="fq-version-badge-perfil">v270</span></div>
+        <div style="text-align:center;padding:20px 0 4px;font-size:11px;color:var(--mu)">FitQuest <span id="fq-version-badge-perfil">v271</span></div>
       </div>
     </div>
 
@@ -15948,8 +15948,18 @@ async function admRevoke(e){
 async function admDel(e){
   if(!await fqConfirm('Excluir aluno',`Excluir ${e} definitivamente? Os dados de treino serão perdidos.`,'Excluir','🗑️'))return;
   if(sb){
-    const{error}=await sb.from('alunos').delete().eq('email',e);
+    // BUGFIX: ".delete()" sozinho não diz quantas linhas foram apagadas de
+    // verdade — se uma permissão (RLS) do Supabase bloquear a exclusão de
+    // OUTRO aluno (só liberando cada um apagar a própria linha), a resposta
+    // vem "sem erro" mesmo sem apagar nada, e o aluno "reaparecia" porque,
+    // na real, nunca saiu do banco. ".select()" no final faz o Supabase
+    // devolver as linhas que FORAM apagadas — veio vazio, não apagou nada.
+    const{data,error}=await sb.from('alunos').delete().eq('email',e).select();
     if(error){ console.error('Erro ao excluir aluno:',error.message,error); fqToast('⚠️ Não foi possível excluir no servidor: '+error.message,'warn',6000); return; }
+    if(!data || data.length===0){
+      fqToast('⚠️ O servidor não excluiu o aluno — provavelmente falta uma permissão (RLS) liberando você, como admin, a apagar outros alunos. O aluno continua lá.','warn',9000);
+      return; // não mexe no cache local nem recarrega — manter igual ao banco, que não mudou de verdade
+    }
   }
   const users=DB.get('fq_users')||{};delete users[e];DB.set('fq_users',users);await loadAdmin();
 }
