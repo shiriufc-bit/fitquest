@@ -1394,7 +1394,7 @@ html[data-tema="claro"] .hero-banner{background:#fff;}
       <option value="es">🇪🇸 ES</option>
     </select>
   </div>
-  <div id="fq-version-badge" style="position:absolute;bottom:8px;right:12px;font-size:9px;color:#333;font-weight:700;z-index:5">v274</div>
+  <div id="fq-version-badge" style="position:absolute;bottom:8px;right:12px;font-size:9px;color:#333;font-weight:700;z-index:5">v275</div>
   <img src="https://images.unsplash.com/photo-1517836357463-d25dfeac3438?w=800&q=80" alt="Fitness" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center top;filter:brightness(.35);z-index:0"/>
   <div class="splash-glow"></div>
   <div class="splash-noise"></div>
@@ -2675,7 +2675,7 @@ html[data-tema="claro"] .hero-banner{background:#fff;}
             <span style="color:var(--mu);font-size:18px">›</span>
           </div>
         </div>
-        <div style="text-align:center;padding:20px 0 4px;font-size:11px;color:var(--mu)">FitQuest <span id="fq-version-badge-perfil">v274</span></div>
+        <div style="text-align:center;padding:20px 0 4px;font-size:11px;color:var(--mu)">FitQuest <span id="fq-version-badge-perfil">v275</span></div>
       </div>
     </div>
 
@@ -2763,6 +2763,10 @@ html[data-tema="claro"] .hero-banner{background:#fff;}
       <!-- Pasta de vídeos gravados por aluno — GIFs pessoais + vídeos de correção, de todos os alunos -->
       <div class="adm-sec-title" style="color:#fff">🎬 Vídeos dos Alunos <span id="adm-videos-count"></span></div>
       <div id="adm-videos-list" style="padding:0 12px 4px"></div>
+
+      <!-- Demonstrações oficiais customizadas (gifs_extras) — editáveis/removíveis sem SQL -->
+      <div class="adm-sec-title" style="color:#fff">⭐ Demonstrações Oficiais <span id="adm-oficiais-count"></span></div>
+      <div id="adm-oficiais-list" style="padding:0 12px 4px"></div>
     </div>
 
     <!-- TAB: ALUNOS -->
@@ -14492,6 +14496,7 @@ async function loadAdmin(){
   renderCorrecoesPendentes(all);
   renderPosturaisPendentes(all);
   renderVideosAlunos(all);
+  renderDemonstracoesOficiais();
 
   // ── Full students list ──
   admRenderStudents(all,'all');
@@ -14813,7 +14818,56 @@ async function admUsarGifComoOficial(email, exId){
     GIFS_EXTRAS_CACHE[exId]=url;
     fqToast('🎉 Virou a demonstração oficial pra todos os alunos!','ok',3500);
     admAbrirVideosAluno(email); // re-renderiza o modal com o botão já marcado
+    renderDemonstracoesOficiais(); // e a lista de oficiais no painel, se estiver visível
   }catch(e){ console.error('Erro ao promover gif:',e); fqToast('Algo deu errado.','warn',5000); }
+}
+
+// ── Gerencia o que está marcado como demonstração oficial (gifs_extras) —
+// pra poder DESFAZER sem precisar de SQL, caso algo tenha virado oficial
+// sem querer (ex: gravações feitas antes da v274, quando o editor de treino
+// ainda promovia a oficial automaticamente). ──
+function renderDemonstracoesOficiais(){
+  const el = document.getElementById('adm-oficiais-list');
+  const countEl = document.getElementById('adm-oficiais-count');
+  if(!el) return;
+  const entradas = Object.entries(GIFS_EXTRAS_CACHE||{});
+  if(countEl) countEl.textContent = entradas.length ? `(${entradas.length})` : '';
+  if(!entradas.length){
+    el.innerHTML = `<div class="adm-empty"><div class="adm-empty-icon">⭐</div><div>Nenhuma demonstração oficial customizada ainda</div></div>`;
+    return;
+  }
+  el.innerHTML = entradas.map(([exId,url])=>{
+    const ex = (typeof getExById==='function') ? getExById(exId) : null;
+    const nome = ex?.name || exId;
+    return `<div style="display:flex;align-items:center;gap:12px;background:var(--s);border:1px solid var(--b);border-radius:10px;padding:10px;margin-bottom:8px">
+      <img src="${url}" style="width:48px;height:48px;object-fit:cover;border-radius:8px;background:#000;flex-shrink:0"/>
+      <div style="flex:1;min-width:0"><div style="font-size:12.5px;font-weight:700">${nome}</div>
+        <div style="font-size:10.5px;color:var(--mu)">Demonstração oficial — vale pra todos os alunos</div></div>
+      <button onclick="admRemoverGifOficial('${exId}')" style="background:rgba(225,6,0,.12);color:var(--r);border:none;border-radius:8px;padding:8px 12px;font-size:11.5px;font-weight:800;cursor:pointer;flex-shrink:0">🗑️ Remover</button>
+    </div>`;
+  }).join('');
+}
+async function admRemoverGifOficial(exId){
+  const ex = (typeof getExById==='function') ? getExById(exId) : null;
+  const ok = await fqConfirm(
+    'Remover demonstração oficial?',
+    `${ex?.name||exId} volta a mostrar o gif padrão (ou o convite pra gravar, se nunca teve nenhum). Isso afeta TODOS os alunos.`,
+    'Remover','🗑️'
+  );
+  if(!ok) return;
+  if(!sb){ fqToast('Sem conexão com o servidor agora.','warn'); return; }
+  // Mesma proteção da exclusão de aluno: ".select()" no final confere se
+  // alguma linha foi REALMENTE apagada — sem isso, uma permissão (RLS)
+  // faltando bloquearia em silêncio e o item "voltaria" sem explicação.
+  const{data,error} = await sb.from('gifs_extras').delete().eq('exercicio_id',exId).select();
+  if(error){ console.error('Erro ao remover demonstração oficial:',error.message,error); fqToast('Não consegui remover: '+error.message,'warn',6000); return; }
+  if(!data || data.length===0){
+    fqToast('⚠️ O servidor não removeu — provavelmente falta uma permissão (RLS) de exclusão na tabela gifs_extras. Me avise que eu te passo o SQL.','warn',9000);
+    return;
+  }
+  delete GIFS_EXTRAS_CACHE[exId];
+  fqToast('✅ Demonstração oficial removida — voltou ao normal pra todos.','ok',3500);
+  renderDemonstracoesOficiais();
 }
 
 // ══════════════════════════════════════════════════════════════════════
