@@ -1394,7 +1394,7 @@ html[data-tema="claro"] .hero-banner{background:#fff;}
       <option value="es">🇪🇸 ES</option>
     </select>
   </div>
-  <div id="fq-version-badge" style="position:absolute;bottom:8px;right:12px;font-size:9px;color:#333;font-weight:700;z-index:5">v275</div>
+  <div id="fq-version-badge" style="position:absolute;bottom:8px;right:12px;font-size:9px;color:#333;font-weight:700;z-index:5">v276</div>
   <img src="https://images.unsplash.com/photo-1517836357463-d25dfeac3438?w=800&q=80" alt="Fitness" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center top;filter:brightness(.35);z-index:0"/>
   <div class="splash-glow"></div>
   <div class="splash-noise"></div>
@@ -2675,7 +2675,7 @@ html[data-tema="claro"] .hero-banner{background:#fff;}
             <span style="color:var(--mu);font-size:18px">›</span>
           </div>
         </div>
-        <div style="text-align:center;padding:20px 0 4px;font-size:11px;color:var(--mu)">FitQuest <span id="fq-version-badge-perfil">v275</span></div>
+        <div style="text-align:center;padding:20px 0 4px;font-size:11px;color:var(--mu)">FitQuest <span id="fq-version-badge-perfil">v276</span></div>
       </div>
     </div>
 
@@ -5822,6 +5822,7 @@ function avancarSemanaCorridaKids(semanaConcluida){
   u.kidsXp=(u.kidsXp||0)+80;u.coins=(u.coins||0)+15;
   atualizarStreak(u);
   DB.set('fq_users',users);
+  if(typeof syncU==='function') syncU(u).catch(()=>{});
   renderKidsConteudo();
   fqToast('🎉 Semana concluída! Próxima semana liberada. +80 pontos de aventura','ok');
   try{dispararConfete(28);}catch(e){}
@@ -6015,6 +6016,7 @@ function chkKidsEx(routineId, exId, i){
   const dk=`kids_${routineId}_${exId}`;
   u.mobExDone[dk]=!u.mobExDone[dk];
   DB.set('fq_users',users);
+  if(typeof syncU==='function') syncU(u).catch(()=>{});
   const r=getKidsRotinaById(routineId);
   const card=document.getElementById(`kids-ep-${i}`);
   if(card){
@@ -6046,6 +6048,7 @@ function concluirRotinaKids(routineId){
   u.kidsXp=(u.kidsXp||0)+50;u.coins=(u.coins||0)+10;
   atualizarStreak(u);
   DB.set('fq_users',users);
+  if(typeof syncU==='function') syncU(u).catch(()=>{});
   const wrap=document.getElementById('kids-rotina-concluir');
   if(wrap) wrap.innerHTML=kidsBtnConcluirHTML(r);
   fqToast('🎉 Treino concluído! +50 pontos de aventura','ok');
@@ -6144,6 +6147,7 @@ function chkMobEx(routineId, exId, i){
   const dk=`${routineId}_${exId}`;
   u.mobExDone[dk]=!u.mobExDone[dk]; // permite desmarcar por engano
   DB.set('fq_users',users);
+  if(typeof syncU==='function') syncU(u).catch(()=>{});
   const r=getRotinaById(routineId);
   const card=document.getElementById(`mob-ep-${i}`);
   if(card){
@@ -6174,6 +6178,7 @@ function concluirRotina(routineId){
   try{registrarEventoComunidade('treino',{nome:u.name,nome_treino:'Alongamento: '+r.nome,titulo:tituloAtual(u)?.emoji});}catch(e){}
   if((u.xp||0)>=(u.level||1)*1000){u.level=(u.level||1)+1;u.xp=0;setTimeout(()=>fqToast(t('msg.e4f2eae161')+(u.level||1)+'!','ok',5000),200);try{dispararConfete(40);}catch(e){}}
   DB.set('fq_users',users);
+  if(typeof syncU==='function') syncU(u).catch(()=>{});
   const wrap=document.getElementById('mob-rotina-concluir');
   if(wrap) wrap.innerHTML=mobBtnConcluirHTML(r);
   fqToast('✅ Rotina concluída! +60 XP','ok');
@@ -12971,10 +12976,12 @@ async function toggleTurbo(){
     }
     u.turboOn=true;
     DB.set('fq_users',users);
+  if(typeof syncU==='function') syncU(u).catch(()=>{});
     fqToast('⚡ Modo Turbo ativado!','ok');
   } else {
     u.turboOn=false;
     DB.set('fq_users',users);
+  if(typeof syncU==='function') syncU(u).catch(()=>{});
     fqToast('Modo Turbo desativado.','info');
   }
   if(typeof renderGym==='function')renderGym(u);
@@ -13079,7 +13086,7 @@ function gymReordenarEx(de, para){
 }
 
 function togEp(i){ if(fqAcabouDeArrastar()) return; document.getElementById(`ep-${i}`).classList.toggle('open'); }
-function saveCarga(lk,ei,si){const email=DB.get('fq_cur');const users=DB.get('fq_users')||{};const u=users[email];if(!u)return;const v=document.getElementById(`ci-${ei}-${si}`)?.value||'';if(!u.loadHistory)u.loadHistory={};u.loadHistory[`${lk}_s${si}`]=v;DB.set('fq_users',users);}
+function saveCarga(lk,ei,si){const email=DB.get('fq_cur');const users=DB.get('fq_users')||{};const u=users[email];if(!u)return;const v=document.getElementById(`ci-${ei}-${si}`)?.value||'';if(!u.loadHistory)u.loadHistory={};u.loadHistory[`${lk}_s${si}`]=v;DB.set('fq_users',users);if(typeof syncU==='function')syncU(u).catch(()=>{});}
 // ── Reps REALIZADAS por série (Fase 5) ──
 // Campo novo, aditivo — NÃO mexe na prescrição original (ed.reps, intacta)
 // nem no loadHistory existente. Guarda num campo próprio, de verdade por
@@ -13092,6 +13099,7 @@ function saveRepsRealizados(lk,ei,si){
   const rk=`${lk}_s${si}`;
   u.repsHistory[rk]=v;
   DB.set('fq_users',users);
+  if(typeof syncU==='function') syncU(u).catch(()=>{});
 }
 function chkSet(w,d,ei,si,total,rest,lk){
   const email=DB.get('fq_cur');const users=DB.get('fq_users')||{};const u=users[email];if(!u)return;
@@ -13101,6 +13109,13 @@ function chkSet(w,d,ei,si,total,rest,lk){
   const chk=document.getElementById(`sc-${ei}-${si}`);if(chk){chk.classList.add('ck');chk.textContent='✓';}
   const row=document.getElementById(`sr-${ei}-${si}`);if(row)row.classList.add('done');
   if(si<total-1)startTimer(rest);
+  // BUGFIX: cada série marcada também nunca sincronizava — se o aluno
+  // fechasse o app no meio do treino (comum — treino leva 30-60+ min), tudo
+  // que não tivesse chegado no "Concluir treino" ficava só no celular,
+  // invisível pro admin. Sincroniza a cada série (sem travar a tela: segue
+  // em segundo plano; sem toast aqui — só a conclusão final avisa se falhar,
+  // pra não interromper o aluno no meio do treino com avisos repetidos).
+  if(typeof syncU==='function') syncU(u).catch(e=>console.warn('Série não sincronizou agora (sem internet?):',e?.message||e));
 }
 
 // ── Chama de streak escalonada (feedback visual crescente) ──
@@ -13145,13 +13160,28 @@ function completeWk(w,d){
   u.stats.treinos=(u.stats.treinos||0)+1;u.xp=(u.xp||0)+80;u.coins=(u.coins||0)+15;
   atualizarStreak(u);
   try{registrarEventoComunidade('treino',{nome:u.name,nome_treino:d,titulo:tituloAtual(u)?.emoji});}catch(e){}
-  const P=getGP(u);const exs=P[w].days[d];
-  if(!u.workoutHistory)u.workoutHistory=[];
-  u.workoutHistory.push({week:w,day:d,date:new Date().toLocaleDateString('pt-BR'),exercises:exs.map(e=>{const ex=getExById(e.id);return{name:ex?.name||e.id,load:u.loadHistory?.[`${w}_${d}_${e.id}_s0`]||u.loadHistory?.[`${w}_${d}_${e.id}`]||''};})});
-  const allDays=Object.keys(P[w].days);const tw=Object.keys(P).length;
-  if(allDays.every(dd=>u.gymDone[`${w}_${dd}`])){const wn=parseInt(w.split(' ')[1]);if(wn===(u.gymWeek||1)&&(u.gymWeek||1)<tw){u.gymWeek=(u.gymWeek||1)+1;u.xp+=200;u.coins+=50;u.stats.semanas=(u.stats.semanas||0)+1;}}
+  // BUGFIX: montar o histórico (abaixo) dependia de P[w].days[d] existir
+  // exatamente com esse nome — se o dia tivesse sido renomeado/removido
+  // nesse meio tempo (ex: o admin editou o plano enquanto o aluno treinava),
+  // isso lançava um erro e a função TODA parava ali, sem nunca chegar no
+  // DB.set() logo abaixo — ou seja, o treino "concluído" não salvava NEM NO
+  // CELULAR, só travava sem aviso nenhum pro aluno. Isolado num try/catch
+  // própria: o essencial (treino contado, XP, streak) salva de qualquer
+  // jeito, e o histórico detalhado só fica incompleto no pior caso.
+  try{
+    const P=getGP(u);const exs=P[w].days[d];
+    if(!u.workoutHistory)u.workoutHistory=[];
+    u.workoutHistory.push({week:w,day:d,date:new Date().toLocaleDateString('pt-BR'),exercises:exs.map(e=>{const ex=getExById(e.id);return{name:ex?.name||e.id,load:u.loadHistory?.[`${w}_${d}_${e.id}_s0`]||u.loadHistory?.[`${w}_${d}_${e.id}`]||''};})});
+    const allDays=Object.keys(P[w].days);const tw=Object.keys(P).length;
+    if(allDays.every(dd=>u.gymDone[`${w}_${dd}`])){const wn=parseInt(w.split(' ')[1]);if(wn===(u.gymWeek||1)&&(u.gymWeek||1)<tw){u.gymWeek=(u.gymWeek||1)+1;u.xp+=200;u.coins+=50;u.stats.semanas=(u.stats.semanas||0)+1;}}
+  }catch(e){ console.error('Erro ao montar histórico do treino (treino continua contabilizado):',e); }
   if((u.xp||0)>=(u.level||1)*1000){u.level=(u.level||1)+1;u.xp=0;setTimeout(()=>fqToast(t('msg.e4f2eae161')+(u.level||1)+'!','ok',5000),200);try{dispararConfete(40);}catch(e){}}
-  DB.set('fq_users',users);loadApp(email);switchTab('gym',document.querySelectorAll('.nbtn')[1]);
+  DB.set('fq_users',users);
+  // BUGFIX: faltava sincronizar com o servidor — o treino concluído ficava
+  // só no celular do aluno, nunca chegava no seu painel. Se não sincronizar
+  // agora, avisa com um alerta visível em vez de falhar em silêncio.
+  if(typeof syncU==='function') syncU(u).catch(()=>{ fqToast('⚠️ Treino salvo no aparelho, mas ainda não sincronizou com o servidor. Abra o app com internet em breve.','warn',7000); });
+  loadApp(email);switchTab('gym',document.querySelectorAll('.nbtn')[1]);
 }
 // ── Wrapper de completeWk() que mostra um resumo real ao final (Fase 5) ──
 // NÃO duplica nem altera completeWk() — só chama ela (preserva 100% da
@@ -13695,6 +13725,10 @@ async function gpsFinalizar(){
       pontos:gpsState.pontos.slice(0,900) // teto de segurança pro tamanho do registro
     });
     DB.set('fq_users',users);
+    // Sincroniza aqui também (além do fim do feedback) — se o aluno fechar o
+    // app sem preencher o feedback, os dados reais do GPS (distância, rota)
+    // não ficam presos só no celular à toa.
+    if(typeof syncU==='function') syncU(u).catch(()=>{});
   }
 
   runGpsResultado={w,i,km,seg,paceMedio};
@@ -14013,7 +14047,10 @@ function runConcluirSessao(w,i){
     }
   }
   if((u.xp||0)>=(u.level||1)*1000){u.level=(u.level||1)+1;u.xp=0;setTimeout(()=>fqToast(t('msg.e4f2eae161')+(u.level||1)+'!','ok',5000),200);try{dispararConfete(40);}catch(e){}}
-  DB.set('fq_users',users);loadApp(email);switchTab('run',document.querySelectorAll('.nbtn')[2]);
+  DB.set('fq_users',users);
+  // BUGFIX: mesmo problema do treino de musculação — faltava sincronizar.
+  if(typeof syncU==='function') syncU(u).catch(()=>{ fqToast('⚠️ Corrida salva no aparelho, mas ainda não sincronizou com o servidor. Abra o app com internet em breve.','warn',7000); });
+  loadApp(email);switchTab('run',document.querySelectorAll('.nbtn')[2]);
 }
 
 // ══ PRs ══
@@ -14128,6 +14165,7 @@ function logPR(){
   const val=prompt('Resultado (ex: 90kg, 24:30):');if(!val)return;
   if(!u.prs)u.prs=[];u.prs.push({exercise:ex,value:val,date:new Date().toLocaleDateString('pt-BR',{day:'2-digit',month:'2-digit'}),icon:'⭐'});
   u.xp=(u.xp||0)+100;u.coins=(u.coins||0)+20;DB.set('fq_users',users);
+  if(typeof syncU==='function') syncU(u).catch(()=>{});
   try{registrarEventoComunidade('pr',{nome:u.name,ex:ex,titulo:tituloAtual(u)?.emoji});}catch(e){}
   try{dispararConfete(36);}catch(e){}
   loadApp(email);
@@ -19005,6 +19043,7 @@ function buyProgram(id, link){
     if(!users[email].pendingPurchases) users[email].pendingPurchases=[];
     if(!users[email].pendingPurchases.includes(id)) users[email].pendingPurchases.push(id);
     DB.set('fq_users', users);
+    if(typeof syncU==='function') syncU(users[email]).catch(()=>{});
   }
   fqCheckout(id, link||'https://mpago.la/22dn7UY');
 }
@@ -20110,7 +20149,7 @@ async function agendarNotifTreino(){
   if(!ok)return;
   // Salvar preferência
   const users=DB.get('fq_users')||{};
-  if(users[u.email]){users[u.email].notifAtivas=true;DB.set('fq_users',users);}
+if(users[u.email]){users[u.email].notifAtivas=true;DB.set('fq_users',users);if(typeof syncU==='function')syncU(users[u.email]).catch(()=>{});}
   // Notificação de teste imediata
   try{
     new Notification('🔥 FitQuest',{
