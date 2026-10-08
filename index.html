@@ -1394,7 +1394,7 @@ html[data-tema="claro"] .hero-banner{background:#fff;}
       <option value="es">🇪🇸 ES</option>
     </select>
   </div>
-  <div id="fq-version-badge" style="position:absolute;bottom:8px;right:12px;font-size:9px;color:#333;font-weight:700;z-index:5">v276</div>
+  <div id="fq-version-badge" style="position:absolute;bottom:8px;right:12px;font-size:9px;color:#333;font-weight:700;z-index:5">v278</div>
   <img src="https://images.unsplash.com/photo-1517836357463-d25dfeac3438?w=800&q=80" alt="Fitness" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center top;filter:brightness(.35);z-index:0"/>
   <div class="splash-glow"></div>
   <div class="splash-noise"></div>
@@ -2675,7 +2675,7 @@ html[data-tema="claro"] .hero-banner{background:#fff;}
             <span style="color:var(--mu);font-size:18px">›</span>
           </div>
         </div>
-        <div style="text-align:center;padding:20px 0 4px;font-size:11px;color:var(--mu)">FitQuest <span id="fq-version-badge-perfil">v276</span></div>
+        <div style="text-align:center;padding:20px 0 4px;font-size:11px;color:var(--mu)">FitQuest <span id="fq-version-badge-perfil">v278</span></div>
       </div>
     </div>
 
@@ -2884,6 +2884,13 @@ html[data-tema="claro"] .hero-banner{background:#fff;}
     </div>
   </div>
 </div>
+<!-- Frequência de treino de um aluno — quantas vezes por semana ele tem ido -->
+<div class="modal-ov" id="modal-frequencia-aluno" style="align-items:flex-start">
+  <div class="modal-bx" style="max-width:420px;width:100%;padding:0;border-radius:16px 16px 0 0;margin-top:auto;max-height:92vh;overflow-y:auto">
+    <div class="modal-t"><span>📅 <span id="freq-aluno-nome">—</span></span><button class="modal-cl" onclick="closeModal('modal-frequencia-aluno')">✕</button></div>
+    <div style="padding:16px" id="freq-aluno-corpo"></div>
+  </div>
+</div>
 <!-- Ver/trocar o gif de um exercício, direto do editor de treino do admin -->
 <div class="modal-ov" id="modal-editar-gif" style="align-items:flex-start">
   <div class="modal-bx" style="max-width:360px;width:100%;padding:0;border-radius:16px 16px 0 0;margin-top:auto">
@@ -2893,6 +2900,7 @@ html[data-tema="claro"] .hero-banner{background:#fff;}
       <img id="gifed-preview" style="display:none;width:100%;aspect-ratio:1/1;object-fit:cover;border-radius:12px;background:#000"/>
       <div id="gifed-sem-gif" style="display:none;padding:40px 0;color:var(--mu);font-size:13px">Esse exercício ainda não tem demonstração.</div>
       <button class="btn-savewk" onclick="admGravarNovoGifExercicio()" style="margin-top:14px">🎥 Gravar novo (só pra este aluno)</button>
+      <button id="gifed-btn-remover" onclick="admRemoverGifPessoal()" style="display:none;width:100%;margin-top:8px;background:rgba(225,6,0,.08);border:1px solid rgba(225,6,0,.2);border-radius:10px;padding:12px;color:var(--r);font-size:13px;font-weight:700;cursor:pointer">🗑️ Remover vídeo deste aluno</button>
       <div style="font-size:10.5px;color:var(--mu);margin-top:8px;line-height:1.4">Quer que vire a demonstração oficial pra todos? Use "🎬 Vídeos dos Alunos" no painel depois de gravar.</div>
     </div>
   </div>
@@ -6281,7 +6289,7 @@ function abrirFichaExercicio(exId){
     <div style="padding:10px 20px 0;display:flex;gap:8px;flex-wrap:wrap">
       ${u?.gifsPersonalizados?.[ex.id] ? `
         <button onclick="gvAbrirParaExercicio('${ex.id}')" style="flex:1;background:var(--s2);border:1px solid var(--b);border-radius:8px;padding:8px 10px;color:#fff;font-size:11px;font-weight:700;cursor:pointer">🔁 Gravar de novo</button>
-        <button onclick="gvRemoverPersonalizado('${ex.id}')" style="flex:1;background:rgba(255,255,255,.03);border:1px solid var(--b);border-radius:8px;padding:8px 10px;color:var(--mu);font-size:11px;font-weight:700;cursor:pointer">↩️ Usar gif original</button>
+        <button onclick="gvRemoverPersonalizado('${ex.id}')" style="flex:1;background:rgba(225,6,0,.08);border:1px solid rgba(225,6,0,.2);border-radius:8px;padding:8px 10px;color:var(--r);font-size:11px;font-weight:700;cursor:pointer">🗑️ Remover meu vídeo</button>
       ` : `
         <button onclick="gvAbrirParaExercicio('${ex.id}')" style="flex:1;background:var(--s2);border:1px solid var(--b);border-radius:8px;padding:8px 10px;color:#fff;font-size:11px;font-weight:700;cursor:pointer">🎥 Gravar meu vídeo deste exercício</button>
       `}
@@ -12188,14 +12196,18 @@ function renderAvaliacaoPostural(u){
       ${av.observacoes?`<div style="background:rgba(46,204,113,.08);border:1px solid rgba(46,204,113,.25);border-radius:8px;padding:10px 12px;font-size:12px;color:#fff;line-height:1.5">${av.observacoes}</div>`:''}
     </div>`).join('');
 }
-function gvRemoverPersonalizado(exId){
+async function gvRemoverPersonalizado(exId){
   const u=getU(); if(!u) return;
-  if(!confirm('Voltar a usar o gif original deste exercício?')) return;
+  // BUGFIX: usava confirm() nativo do navegador — inconsistente em PWA
+  // instalado (alguns navegadores/telas cheias tratam isso de forma
+  // estranha). Troca pro modal de confirmação do próprio app.
+  const ok=await fqConfirm('Remover vídeo','Apagar seu vídeo deste exercício? Volta a mostrar a demonstração padrão.','Remover','🗑️');
+  if(!ok) return;
   const users=DB.get('fq_users')||{};
   if(u.gifsPersonalizados) delete u.gifsPersonalizados[exId];
   users[u.email]=u; DB.set('fq_users',users);
-  syncU(u).catch(()=>{});
-  fqToast('Voltamos pro gif original.','ok',2500);
+  await syncU(u).catch(()=>{ fqToast('⚠️ Removido aqui, mas não sincronizou. Confira a internet.','warn',6000); });
+  fqToast('🗑️ Seu vídeo foi removido.','ok',2500);
   if(typeof abrirFichaExercicio==='function') abrirFichaExercicio(exId);
 }
 function gvExcluirCustom(exId){
@@ -14821,7 +14833,10 @@ function admAbrirVideosAluno(email){
           <div style="font-size:10.5px;color:var(--mu);margin-top:2px">GIF pessoal · sem áudio</div>
         </div>
       </div>
-      <button onclick="admUsarGifComoOficial('${email}','${exId}')" ${jaEhOficial?'disabled':''} style="width:100%;margin-top:8px;background:${jaEhOficial?'rgba(46,204,113,.12)':'var(--r)'};color:${jaEhOficial?'#2ecc71':'#fff'};border:none;border-radius:8px;padding:8px;font-size:11.5px;font-weight:800;cursor:${jaEhOficial?'default':'pointer'}">${jaEhOficial?'✅ Já é a demonstração oficial':'📌 Usar como demonstração oficial'}</button>
+      <div style="display:flex;gap:6px;margin-top:8px">
+        <button onclick="admUsarGifComoOficial('${email}','${exId}')" ${jaEhOficial?'disabled':''} style="flex:1;background:${jaEhOficial?'rgba(46,204,113,.12)':'var(--r)'};color:${jaEhOficial?'#2ecc71':'#fff'};border:none;border-radius:8px;padding:8px;font-size:11px;font-weight:800;cursor:${jaEhOficial?'default':'pointer'}">${jaEhOficial?'✅ Já é oficial':'📌 Usar como oficial'}</button>
+        <button onclick="admRemoverGifPessoalDaLista('${email}','${exId}')" style="background:rgba(225,6,0,.1);color:var(--r);border:none;border-radius:8px;padding:8px 12px;font-size:11px;font-weight:800;cursor:pointer">🗑️</button>
+      </div>
     </div>`;
   }).join('') : `<div style="font-size:12px;color:var(--mu);text-align:center;padding:12px 0">Nenhum GIF pessoal gravado.</div>`;
 
@@ -14858,6 +14873,88 @@ async function admUsarGifComoOficial(email, exId){
     admAbrirVideosAluno(email); // re-renderiza o modal com o botão já marcado
     renderDemonstracoesOficiais(); // e a lista de oficiais no painel, se estiver visível
   }catch(e){ console.error('Erro ao promover gif:',e); fqToast('Algo deu errado.','warn',5000); }
+}
+
+// ══════════════════════════════════════════════════════════════════════
+// ══ FREQUÊNCIA DE TREINO — quantas vezes por semana cada aluno vai ══
+// Toca no nome/avatar do aluno no painel → abre aqui. Mesma matemática de
+// semanas que a tela "Minha Evolução" do próprio aluno já usa — só que
+// olhando pro histórico de quem o admin escolheu, não de quem está logado.
+// Atualiza assim que o aluno marca um treino como feito, porque agora essa
+// ação sincroniza de verdade com o servidor (corrigido na auditoria).
+// ══════════════════════════════════════════════════════════════════════
+function admAbrirFrequencia(email){
+  const u = admGetAluno(email);
+  if(!u){ fqToast('Aluno não encontrado.','warn'); return; }
+  const nomeEl=document.getElementById('freq-aluno-nome'); if(nomeEl) nomeEl.textContent=u.name||email;
+
+  const hoje=new Date(); hoje.setHours(0,0,0,0);
+  const semanas=[];
+  for(let i=7;i>=0;i--){
+    const fim=new Date(hoje); fim.setDate(hoje.getDate()-i*7);
+    const ini=new Date(fim); ini.setDate(fim.getDate()-6);
+    semanas.push({inicio:ini,fim,count:0,datas:[]});
+  }
+  (u.workoutHistory||[]).forEach(h=>{
+    const m=String(h.date||'').match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/); if(!m) return;
+    const d=new Date(+m[3],+m[2]-1,+m[1]);
+    semanas.forEach(s=>{ if(d>=s.inicio && d<=s.fim){ s.count++; s.datas.push({data:h.date,dia:h.day}); } });
+  });
+  const semanaAtual=semanas[semanas.length-1];
+  const totalGeral=semanas.reduce((a,s)=>a+s.count,0);
+  const maxCount=Math.max(1,...semanas.map(s=>s.count));
+
+  // "Há quanto tempo não treina" — mesmo critério do alerta "Alunos sem treinar" já usado no painel
+  const datasOrdenadas=(u.workoutHistory||[]).map(h=>{const m=String(h.date||'').match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/); return m?new Date(+m[3],+m[2]-1,+m[1]):null;}).filter(Boolean).sort((a,b)=>b-a);
+  const ultimoTreino=datasOrdenadas[0]||null;
+  const diasSemTreinar=ultimoTreino?Math.floor((hoje-ultimoTreino)/86400000):null;
+
+  const corpo=document.getElementById('freq-aluno-corpo'); if(!corpo) return;
+  if(totalGeral===0){
+    corpo.innerHTML=`<div style="text-align:center;padding:30px 0;color:var(--mu);font-size:13px">Nenhum treino concluído ainda por este aluno.</div>`;
+    abrirModal('modal-frequencia-aluno'); return;
+  }
+
+  const barras=semanas.map((s,i)=>{
+    const alturaPct=Math.max(6,Math.round((s.count/maxCount)*100));
+    const ehAtual=i===semanas.length-1;
+    const rotulo=`${s.inicio.getDate()}/${s.inicio.getMonth()+1}`;
+    return `<div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px">
+      <div style="font-size:11px;font-weight:800;color:${s.count>0?'var(--r)':'var(--mu)'}">${s.count}</div>
+      <div style="width:100%;max-width:26px;height:70px;display:flex;align-items:flex-end">
+        <div style="width:100%;height:${alturaPct}%;background:${ehAtual?'var(--r)':'var(--s2)'};border-radius:4px 4px 0 0;transition:height .4s"></div>
+      </div>
+      <div style="font-size:8.5px;color:var(--mu)">${rotulo}</div>
+    </div>`;
+  }).join('');
+
+  const corAlerta = diasSemTreinar==null?'var(--mu)' : diasSemTreinar>=5?'#e74c3c' : diasSemTreinar>=3?'#e8b566':'#2ecc71';
+  const textoAlerta = diasSemTreinar==null?'Nunca treinou' : diasSemTreinar===0?'Treinou hoje' : diasSemTreinar===1?'Treinou ontem' : `Há ${diasSemTreinar} dias sem treinar`;
+
+  const recentes=datasOrdenadas.slice(0,6).map((d,i)=>{
+    const entry=(u.workoutHistory||[]).slice().reverse().find(h=>{const m=String(h.date||'').match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/); if(!m)return false; const dd=new Date(+m[3],+m[2]-1,+m[1]); return dd.getTime()===d.getTime();});
+    return `<div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--b);font-size:12.5px">
+      <span>${entry?.day||'Treino'}</span><span style="color:var(--mu)">${entry?.date||''}</span>
+    </div>`;
+  }).join('');
+
+  corpo.innerHTML=`
+    <div style="display:flex;gap:10px;margin-bottom:16px">
+      <div style="flex:1;background:var(--s);border:1px solid var(--b);border-radius:10px;padding:12px;text-align:center">
+        <div style="font-size:24px;font-weight:800">${semanaAtual.count}</div>
+        <div style="font-size:10.5px;color:var(--mu)">treinos essa semana</div>
+      </div>
+      <div style="flex:1;background:var(--s);border:1px solid var(--b);border-radius:10px;padding:12px;text-align:center">
+        <div style="font-size:13px;font-weight:800;color:${corAlerta}">${textoAlerta}</div>
+        <div style="font-size:10.5px;color:var(--mu);margin-top:4px">último treino</div>
+      </div>
+    </div>
+    <div style="font-size:11px;font-weight:800;color:var(--mu);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px">Treinos por semana · últimas 8 semanas</div>
+    <div style="display:flex;gap:4px;align-items:flex-end;margin-bottom:20px">${barras}</div>
+    <div style="font-size:11px;font-weight:800;color:var(--mu);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px">Últimos treinos</div>
+    ${recentes}
+  `;
+  abrirModal('modal-frequencia-aluno');
 }
 
 // ── Gerencia o que está marcado como demonstração oficial (gifs_extras) —
@@ -15914,7 +16011,7 @@ function admStudentCard(u, compact=false){
 
   return `<div class="st-card ${u.trainApproved?'ok':'pend'}">
     <!-- Header -->
-    <div class="st-card-header">
+    <div class="st-card-header" onclick="admAbrirFrequencia('${u.email}')" style="cursor:pointer" title="Toque pra ver a frequência de treino">
       <div class="st-av" style="background:linear-gradient(135deg,${u.avatar?.color||'#E10600'},#600)">${u.name?escHtml(u.name[0].toUpperCase()):'?'}</div>
       <div class="st-inf">
         <div class="st-nm">${escHtml(u.name)||'Sem nome'}</div>
@@ -16321,13 +16418,47 @@ function egwThumbGif(exId,u){
 function admEditarGifExercicio(exId){
   const u = admGetAluno(editEmail);
   const ex = getExById(exId,u);
+  const temPessoal = !!u?.gifsPersonalizados?.[exId];
   const url = u?.gifsPersonalizados?.[exId] || GIFS_EXTRAS_CACHE[exId] || (EXERCICIOS_COM_GIF.has(exId)?(GIF_SEARCH_PATHS[0]+exId+'.gif'):null);
   const nomeEl=document.getElementById('gifed-nome'); if(nomeEl) nomeEl.textContent = ex?.name || exId;
   const img=document.getElementById('gifed-preview'), vazio=document.getElementById('gifed-sem-gif');
   if(url){ img.src=url; img.style.display='block'; vazio.style.display='none'; }
   else { img.style.display='none'; vazio.style.display='block'; }
   const hid=document.getElementById('gifed-exid'); if(hid) hid.value=exId;
+  // Só mostra "remover" quando o vídeo é PESSOAL desse aluno — se for o gif
+  // padrão (repositório) ou a demonstração oficial compartilhada, não tem o
+  // que "remover" aqui; a oficial some só pela tela "Vídeos dos Alunos".
+  const btnRem=document.getElementById('gifed-btn-remover'); if(btnRem) btnRem.style.display = temPessoal ? 'block' : 'none';
   abrirModal('modal-editar-gif');
+}
+async function admRemoverGifPessoal(){
+  const exId = document.getElementById('gifed-exid')?.value;
+  const u = admGetAluno(editEmail);
+  if(!exId || !u){ fqToast('Aluno não encontrado.','warn'); return; }
+  const ex = getExById(exId,u);
+  const ok = await fqConfirm('Remover vídeo?',`Apagar o vídeo de ${u.name||'esse aluno'} pra "${ex?.name||exId}"? Volta a mostrar a demonstração padrão só pra ele.`,'Remover','🗑️');
+  if(!ok) return;
+  if(u.gifsPersonalizados) delete u.gifsPersonalizados[exId];
+  const users=DB.get('fq_users')||{}; users[u.email]=u; DB.set('fq_users',users);
+  await syncAlunoAdmin(u).catch(()=>{ fqToast('⚠️ Removido aqui, mas não sincronizou. Confira a internet.','warn',6000); });
+  fqToast('🗑️ Vídeo removido.','ok',2500);
+  closeModal('modal-editar-gif');
+  if(typeof renderEGW==='function') renderEGW(editGW,u); // atualiza a miniatura na lista
+}
+// Mesma remoção, só que chamada a partir da pasta "Vídeos dos Alunos" (onde
+// não existe um "editEmail" ativo — email e exId vêm como parâmetro mesmo).
+async function admRemoverGifPessoalDaLista(email, exId){
+  const u = admGetAluno(email);
+  if(!u){ fqToast('Aluno não encontrado.','warn'); return; }
+  const ex = getExById(exId,u);
+  const ok = await fqConfirm('Remover vídeo?',`Apagar o vídeo de ${u.name||'esse aluno'} pra "${ex?.name||exId}"?`,'Remover','🗑️');
+  if(!ok) return;
+  if(u.gifsPersonalizados) delete u.gifsPersonalizados[exId];
+  const users=DB.get('fq_users')||{}; users[u.email]=u; DB.set('fq_users',users);
+  await syncAlunoAdmin(u).catch(()=>{ fqToast('⚠️ Removido aqui, mas não sincronizou. Confira a internet.','warn',6000); });
+  fqToast('🗑️ Vídeo removido.','ok',2500);
+  admAbrirVideosAluno(email); // re-renderiza a lista sem esse item
+  renderVideosAlunos(window.ADM_CACHE||[]); // e a contagem no painel, se o aluno ficar sem nenhum vídeo
 }
 function admGravarNovoGifExercicio(){
   const exId = document.getElementById('gifed-exid')?.value;
