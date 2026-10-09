@@ -1394,7 +1394,7 @@ html[data-tema="claro"] .hero-banner{background:#fff;}
       <option value="es">🇪🇸 ES</option>
     </select>
   </div>
-  <div id="fq-version-badge" style="position:absolute;bottom:8px;right:12px;font-size:9px;color:#333;font-weight:700;z-index:5">v279</div>
+  <div id="fq-version-badge" style="position:absolute;bottom:8px;right:12px;font-size:9px;color:#333;font-weight:700;z-index:5">v280</div>
   <img src="https://images.unsplash.com/photo-1517836357463-d25dfeac3438?w=800&q=80" alt="Fitness" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center top;filter:brightness(.35);z-index:0"/>
   <div class="splash-glow"></div>
   <div class="splash-noise"></div>
@@ -2675,7 +2675,7 @@ html[data-tema="claro"] .hero-banner{background:#fff;}
             <span style="color:var(--mu);font-size:18px">›</span>
           </div>
         </div>
-        <div style="text-align:center;padding:20px 0 4px;font-size:11px;color:var(--mu)">FitQuest <span id="fq-version-badge-perfil">v279</span></div>
+        <div style="text-align:center;padding:20px 0 4px;font-size:11px;color:var(--mu)">FitQuest <span id="fq-version-badge-perfil">v280</span></div>
       </div>
     </div>
 
@@ -16482,6 +16482,7 @@ function renderEGW(w,u){
       <div style="font-size:11px;font-weight:800;color:var(--r);display:flex;align-items:center;gap:5px">
         <span>${day}</span>
         <button onclick="renomearDiaEGW('${w}','${day}')" style="background:none;border:none;color:var(--mu);font-size:12px;cursor:pointer;padding:2px 4px;line-height:1" title="Renomear este dia">✏️</button>
+        ${nomesDias.length>1?`<button onclick="removerDiaEGW('${w}','${day}')" style="background:none;border:none;color:var(--mu);font-size:12px;cursor:pointer;padding:2px 4px;line-height:1" title="Excluir este dia inteiro">🗑️</button>`:''}
       </div>
       <div style="display:flex;gap:6px;flex-wrap:wrap">
         <select onchange="if(this.value){admAplicarPackNoDia('${w}','${day}',this.value);this.value='';}" style="font-size:9.5px;padding:4px 6px;border-radius:6px;background:var(--s2);color:#fff;border:1px solid var(--b);max-width:150px">
@@ -16543,6 +16544,26 @@ function limparTreinoDia(w,day){
   DB.set('fq_users',users);renderEGW(w,u);
   syncAlunoAdmin(u).catch(()=>{});
   fqToast(`"${day}" foi limpo — adicione exercícios ou use um pacote pronto.`,'ok',3000);
+}
+// Exclui o dia INTEIRO (diferente de "Limpar", que só esvazia os exercícios
+// mas mantém o dia aparecendo). Útil quando o plano foi criado com mais dias
+// do que o aluno vai usar de verdade (ex: pacote pronto trouxe Treino A/B/C
+// e só A e B serão usados) — exclui C, some da tela, sem poluir visualmente.
+// Protegido pra nunca deixar a semana sem nenhum dia (o botão já nem aparece
+// nesse caso, mas a função confere de novo por segurança).
+async function removerDiaEGW(w, day){
+  const u=admGetAluno(editEmail); if(!u) return;
+  ensureAP(u);
+  const dias=Object.keys(u.aiPlan.gym[w]?.days||{});
+  if(dias.length<=1){ fqToast('Não dá pra excluir o único dia da semana — crie outro antes, ou use "Limpar".','warn',5000); return; }
+  const qtdEx=(u.aiPlan.gym[w].days[day]||[]).length;
+  const ok=await fqConfirm('Excluir este dia?',`"${day}" vai sumir da semana inteira${qtdEx?`, junto com ${qtdEx} exercício${qtdEx>1?'s':''} nele`:''}. Isso não pode ser desfeito.`,'Excluir','🗑️');
+  if(!ok) return;
+  const users=DB.get('fq_users')||{}; users[editEmail]=u;
+  delete u.aiPlan.gym[w].days[day];
+  DB.set('fq_users',users); renderEGW(w,u);
+  await syncAlunoAdmin(u).catch(()=>{ fqToast('⚠️ Excluído aqui, mas não sincronizou. Confira a internet.','warn',6000); });
+  fqToast(`"${day}" foi excluído da semana.`,'ok',3000);
 }
 function novoDiaEGW(w){
   const u=admGetAluno(editEmail);if(!u)return;
