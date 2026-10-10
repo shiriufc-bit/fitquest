@@ -1394,7 +1394,7 @@ html[data-tema="claro"] .hero-banner{background:#fff;}
       <option value="es">🇪🇸 ES</option>
     </select>
   </div>
-  <div id="fq-version-badge" style="position:absolute;bottom:8px;right:12px;font-size:9px;color:#333;font-weight:700;z-index:5">v280</div>
+  <div id="fq-version-badge" style="position:absolute;bottom:8px;right:12px;font-size:9px;color:#333;font-weight:700;z-index:5">v281</div>
   <img src="https://images.unsplash.com/photo-1517836357463-d25dfeac3438?w=800&q=80" alt="Fitness" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center top;filter:brightness(.35);z-index:0"/>
   <div class="splash-glow"></div>
   <div class="splash-noise"></div>
@@ -2675,7 +2675,7 @@ html[data-tema="claro"] .hero-banner{background:#fff;}
             <span style="color:var(--mu);font-size:18px">›</span>
           </div>
         </div>
-        <div style="text-align:center;padding:20px 0 4px;font-size:11px;color:var(--mu)">FitQuest <span id="fq-version-badge-perfil">v280</span></div>
+        <div style="text-align:center;padding:20px 0 4px;font-size:11px;color:var(--mu)">FitQuest <span id="fq-version-badge-perfil">v281</span></div>
       </div>
     </div>
 
@@ -3172,6 +3172,16 @@ html[data-tema="claro"] .hero-banner{background:#fff;}
         <label class="fl">Peso corporal (kg)</label>
         <input class="fi" type="number" id="eval-peso" placeholder="75.5" step="0.1" style="font-size:16px"/>
       </div>
+    </div>
+    <!-- BUGFIX: altura não era pedida AQUI — ficava só na anamnese, e quem
+    cria conta de aluno direto pelo painel (sem anamnese) nunca tinha esse
+    dado, quebrando o cálculo de IMC em silêncio. Agora cada avaliação guarda
+    a própria altura, pré-preenchida da anamnese quando existir, mas sempre
+    editável (e salva aqui também serve de repescagem pra avaliações
+    antigas, que passam a usar este valor se nunca tiverem tido o próprio). -->
+    <div class="fg" style="margin-bottom:14px">
+      <label class="fl">Altura (cm)</label>
+      <input class="fi" type="number" id="eval-altura" placeholder="175" style="font-size:16px"/>
     </div>
 
     <!-- POLLOCK 7 DOBRAS -->
@@ -17473,6 +17483,10 @@ function openEvalModal(emailAlvo, evalId){
   // Reset peso from profile (do aluno certo, seja ele quem for)
   const pesoEl = document.getElementById('eval-peso');
   if(pesoEl && alvo?.anamnese?.peso) pesoEl.value = alvo.anamnese.peso;
+  // Mesma ideia pra altura — pré-preenche da anamnese quando existir, mas
+  // continua editável (aluno sem anamnese completa, ou altura que mudou).
+  const alturaEl = document.getElementById('eval-altura');
+  if(alturaEl) alturaEl.value = alvo?.anamnese?.altura || '';
   // Reset results
   ['rt-soma','rt-fat','rt-lean','bio-rt-fat','bio-rt-lean','bio-rt-gorda'].forEach(id=>{
     const el=document.getElementById(id); if(el) el.textContent='—';
@@ -17492,6 +17506,7 @@ function openEvalModal(emailAlvo, evalId){
     if(av){
       if(dateEl) dateEl.value = av.date;
       if(pesoEl) pesoEl.value = av.peso;
+      if(alturaEl) alturaEl.value = av.altura || (alvo?.anamnese?.altura || '');
       const obsEl=document.getElementById('eval-obs'); if(obsEl) obsEl.value = av.obs||'';
 
       const metodoTab = document.getElementById(av.method==='bio'?'mtab-bio':'mtab-pollock');
@@ -17529,13 +17544,23 @@ async function saveEval(){
 
   const date  = document.getElementById('eval-date')?.value;
   const peso  = parseFloat(document.getElementById('eval-peso')?.value||0);
+  const altura = parseFloat(document.getElementById('eval-altura')?.value||0) || null;
   const obs   = document.getElementById('eval-obs')?.value||'';
   if(!date||!peso){ fqToast('Preencha a data e o peso!','warn'); return; }
 
   const idade = u.anamnese?.nasc ? Math.floor((Date.now()-new Date(u.anamnese.nasc))/(365.25*24*3600*1000)) : 30;
   const sexo  = u.anamnese?.sexo || 'Masculino';
 
-  let evalData = { id: _evalEditandoId ? (isNaN(Number(_evalEditandoId))?_evalEditandoId:Number(_evalEditandoId)) : Date.now(), date, peso, obs, method:evalMethod };
+  // BUGFIX: a altura agora é salva JUNTO de cada avaliação (não depende só
+  // da anamnese, que pode nunca ter sido preenchida — ex: aluno criado
+  // direto pelo painel). Se a anamnese ainda não tem altura registrada,
+  // aproveita e já preenche ela também, pra não precisar digitar de novo.
+  if(altura && (!u.anamnese || !u.anamnese.altura)){
+    if(!u.anamnese) u.anamnese={};
+    u.anamnese.altura = altura;
+  }
+
+  let evalData = { id: _evalEditandoId ? (isNaN(Number(_evalEditandoId))?_evalEditandoId:Number(_evalEditandoId)) : Date.now(), date, peso, altura, obs, method:evalMethod };
 
   if(evalMethod === 'pollock'){
     const dobras = [
@@ -17594,7 +17619,11 @@ async function saveEval(){
     // Admin lançando avaliação de outro aluno — grava direto no servidor,
     // checando erro de verdade (não pode falhar em silêncio).
     if(sb){
-      const{error}=await sb.from('alunos').update({evals:u.avaliacoes}).eq('email',email);
+      // Inclui anamnese junto — a repescagem de altura (acima) muda esse
+      // campo em memória, e só mandar "evals" deixaria essa parte sem
+      // persistir de verdade no servidor quando é o admin lançando a
+      // avaliação de outro aluno.
+      const{error}=await sb.from('alunos').update({evals:u.avaliacoes, anamnese:u.anamnese||null}).eq('email',email);
       if(error){
         console.error('Erro ao salvar avaliação (admin):',error.message,error);
         fqToast('⚠️ Não foi possível salvar no servidor: '+error.message,'warn',6000);
@@ -18014,7 +18043,10 @@ function abrirComparativo(emailAlvo){
   const anterior = avs.length>1 ? avs[avs.length-2] : null;
   const sexo = u.anamnese?.sexo || 'Masculino';
   const idade = u.anamnese?.nasc ? Math.floor((Date.now()-new Date(u.anamnese.nasc))/(365.25*24*3600*1000)) : 30;
-  const altura = u.anamnese?.altura ? parseFloat(u.anamnese.altura) : null;
+  // BUGFIX: prioriza a altura salva NA PRÓPRIA avaliação (novo, a partir de
+  // agora) — cai pra anamnese só como repescagem de avaliações antigas, de
+  // antes dessa correção, que nunca guardaram altura nenhuma.
+  const altura = (atual.altura ? parseFloat(atual.altura) : null) || (u.anamnese?.altura ? parseFloat(u.anamnese.altura) : null);
 
   const {cls, color} = classifyFat(parseFloat(atual.fatPct||0), sexo, idade);
   const imc = calcIMC(atual.peso, altura);
