@@ -1394,7 +1394,7 @@ html[data-tema="claro"] .hero-banner{background:#fff;}
       <option value="es">🇪🇸 ES</option>
     </select>
   </div>
-  <div id="fq-version-badge" style="position:absolute;bottom:8px;right:12px;font-size:9px;color:#333;font-weight:700;z-index:5">v283</div>
+  <div id="fq-version-badge" style="position:absolute;bottom:8px;right:12px;font-size:9px;color:#333;font-weight:700;z-index:5">v285</div>
   <img src="https://images.unsplash.com/photo-1517836357463-d25dfeac3438?w=800&q=80" alt="Fitness" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center top;filter:brightness(.35);z-index:0"/>
   <div class="splash-glow"></div>
   <div class="splash-noise"></div>
@@ -1405,8 +1405,8 @@ html[data-tema="claro"] .hero-banner{background:#fff;}
     <div class="splash-title" data-i18n="splash.title">Seu treino.<br>Sua <span class="hl" data-i18n="ui.cca38aeb0f">evolução.</span><br>Seu ritmo.</div>
     <div class="splash-sub" data-i18n="splash.sub">Plataforma de assessoria esportiva com treinos personalizados e acompanhamento completo.</div>
     <div class="splash-btns">
-      <button class="btn-splash-primary" data-i18n="splash.cta" onclick="goAuth('register')">▶ Testar 7 dias grátis</button>
-      <button class="btn-splash-secondary" data-i18n="splash.login" onclick="goAuth('login')">Já tenho uma conta</button>
+      <button class="btn-splash-primary" data-i18n="splash.cta" onclick="goAuth('register')">▶ Cadastrar</button>
+      <button class="btn-splash-secondary" data-i18n="splash.login" onclick="goAuth('login')">Entrar</button>
     </div>
     <div style="text-align:center;font-size:11px;color:rgba(255,255,255,.55);margin-top:12px;font-weight:600" data-i18n="splash.nocard">✅ Sem cartão salvo · sem renovação automática</div>
   </div>
@@ -1419,7 +1419,7 @@ html[data-tema="claro"] .hero-banner{background:#fff;}
     <div class="auth-logo-sm"><span class="r">FIT</span>QUEST</div>
     <div class="auth-box">
       <div class="auth-title" id="auth-title">Criar conta</div>
-      <div id="auth-trial-badge" style="background:rgba(46,204,113,.1);border:1px solid rgba(46,204,113,.3);border-radius:8px;padding:9px 12px;margin-bottom:14px;text-align:center;font-size:11.5px;font-weight:700;color:#2ecc71" data-i18n="auth.trial.badge">🎁 7 dias grátis · sem cartão de crédito</div>
+      <div id="auth-trial-badge" style="background:rgba(46,204,113,.1);border:1px solid rgba(46,204,113,.3);border-radius:8px;padding:9px 12px;margin-bottom:14px;text-align:center;font-size:11.5px;font-weight:700;color:#2ecc71" data-i18n="auth.trial.badge">🎁 48h grátis · sem cartão de crédito</div>
       <div class="auth-tabs">
         <button class="auth-tab" id="tab-login" data-i18n="auth.tab.login" onclick="switchAuth('login')">Entrar</button>
         <button class="auth-tab active" id="tab-reg" data-i18n="auth.tab.register" onclick="switchAuth('register')">Criar conta</button>
@@ -1446,7 +1446,7 @@ html[data-tema="claro"] .hero-banner{background:#fff;}
         <div class="fg"><label class="fl" data-i18n="auth.field.email">E-mail</label><input id="reg-email" class="fi" type="email" placeholder="seu@email.com"/></div>
         <div class="fg"><label class="fl" data-i18n="auth.field.pass">Senha</label><input id="reg-pass" class="fi" type="password" placeholder="Mínimo 6 caracteres"/></div>
         <div class="fg"><label class="fl" data-i18n="auth.field.pass2">Confirmar senha</label><input id="reg-pass2" class="fi" type="password" placeholder="Repita a senha"/></div>
-        <button class="btn-p" id="btn-reg" data-i18n="auth.btn.register" onclick="doRegister()">Começar meus 7 dias grátis</button>
+        <button class="btn-p" id="btn-reg" data-i18n="auth.btn.register" onclick="doRegister()">Começar minhas 48h grátis</button>
         <div style="font-size:10.5px;color:var(--mu);text-align:center;margin-top:12px;line-height:1.6" data-i18n="auth.privacidade">Ao criar sua conta, você concorda com nossos <a href="termos.html" target="_blank" style="color:var(--r)">Termos de Uso</a> e nossa <a href="privacidade.html" target="_blank" style="color:var(--r)" data-i18n="ui.60324c31ec">Política de Privacidade</a>. Coletamos informações de saúde para montar um treino seguro para você.</div>
       </div>
     </div>
@@ -2675,7 +2675,7 @@ html[data-tema="claro"] .hero-banner{background:#fff;}
             <span style="color:var(--mu);font-size:18px">›</span>
           </div>
         </div>
-        <div style="text-align:center;padding:20px 0 4px;font-size:11px;color:var(--mu)">FitQuest <span id="fq-version-badge-perfil">v283</span></div>
+        <div style="text-align:center;padding:20px 0 4px;font-size:11px;color:var(--mu)">FitQuest <span id="fq-version-badge-perfil">v285</span></div>
       </div>
     </div>
 
@@ -9137,8 +9137,8 @@ const FQ_I18N = {
     'splash.tagline': 'Rennan Dias Assessoria',
     'splash.title': 'Seu treino.<br>Sua <span class="hl">evolução.</span><br>Seu ritmo.',
     'splash.sub': 'Plataforma de assessoria esportiva com treinos personalizados e acompanhamento completo.',
-    'splash.cta': '▶ Testar {dias} dias grátis',
-    'splash.login': 'Já tenho uma conta',
+    'splash.cta': '▶ Cadastrar',
+    'splash.login': 'Entrar',
     'splash.nocard': '✅ Sem cartão salvo · sem renovação automática',
 
     // ── Autenticação ──
@@ -9146,13 +9146,13 @@ const FQ_I18N = {
     'auth.tab.register': 'Criar conta',
     'auth.title.login': 'Entrar na sua conta',
     'auth.title.register': 'Criar conta grátis',
-    'auth.trial.badge': '🎁 {dias} dias grátis · sem cartão de crédito',
+    'auth.trial.badge': '🎁 {horas}h grátis · sem cartão de crédito',
     'auth.field.name': 'Nome completo',
     'auth.field.email': 'E-mail',
     'auth.field.pass': 'Senha',
     'auth.field.pass2': 'Confirmar senha',
     'auth.btn.login': 'Entrar',
-    'auth.btn.register': 'Começar meus {dias} dias grátis',
+    'auth.btn.register': 'Começar minhas {horas}h grátis',
     'auth.forgot': 'Esqueci minha senha',
 
     // ── Navegação ──
@@ -9172,7 +9172,7 @@ const FQ_I18N = {
     'plan.monthly.note': 'Cobrado mês a mês',
     'plan.annual.note': 'Economize 34% · R$118,80 (em até 12x)',
     'plan.subscribe': 'Assinar plano {plano}',
-    'plan.expired.title': 'Seus {dias} dias acabaram, {nome}',
+    'plan.expired.title': 'Suas {horas}h acabaram, {nome}',
     'plan.expired.sub': 'Continue com musculação e corrida personalizadas,<br/>a Jornada das Missões, e-books e a comunidade completa.',
     'plan.logout': 'Sair da conta',
     'plan.benefit1': '✅ Musculação e corrida sob medida',
@@ -9362,7 +9362,7 @@ const FQ_I18N = {
     'anam.4b8addfeca': "✅ Não uso suplementos",
 
     // ── Banner de teste ──
-    'trial.days': '{n} dias de teste grátis',
+    'trial.days': '{n}h de teste grátis',
     'trial.lastday': 'Último dia grátis!',
     'trial.after': 'Depois, a partir de {preco}/mês para continuar',
     'trial.subscribe': 'Assinar',
@@ -9723,8 +9723,8 @@ const FQ_I18N = {
     'splash.tagline': 'Rennan Dias Coaching',
     'splash.title': 'Your training.<br>Your <span class="hl">progress.</span><br>Your pace.',
     'splash.sub': 'Sports coaching platform with personalized training plans and full progress tracking.',
-    'splash.cta': '▶ Try {dias} days free',
-    'splash.login': 'I already have an account',
+    'splash.cta': '▶ Sign up',
+    'splash.login': 'Log in',
     'splash.nocard': '✅ No card required · no auto-renewal',
 
     // ── Autenticação ──
@@ -9732,13 +9732,13 @@ const FQ_I18N = {
     'auth.tab.register': 'Sign up',
     'auth.title.login': 'Sign in to your account',
     'auth.title.register': 'Create your free account',
-    'auth.trial.badge': '🎁 {dias} days free · no credit card',
+    'auth.trial.badge': '🎁 {horas}h free · no credit card',
     'auth.field.name': 'Full name',
     'auth.field.email': 'Email',
     'auth.field.pass': 'Password',
     'auth.field.pass2': 'Confirm password',
     'auth.btn.login': 'Sign in',
-    'auth.btn.register': 'Start my {dias} free days',
+    'auth.btn.register': 'Start my {horas}h free trial',
     'auth.forgot': 'Forgot my password',
 
     // ── Navegação ──
@@ -9758,7 +9758,7 @@ const FQ_I18N = {
     'plan.monthly.note': 'Billed monthly',
     'plan.annual.note': 'Save 34% · R$118.80 (up to 12x)',
     'plan.subscribe': 'Subscribe {plano}',
-    'plan.expired.title': 'Your {dias} days are over, {nome}',
+    'plan.expired.title': 'Your {horas}h are over, {nome}',
     'plan.expired.sub': 'Keep your personalized strength and running plans,<br/>the Mission Journeys, e-books and the full community.',
     'plan.logout': 'Sign out',
     'plan.benefit1': '✅ Tailored strength & running plans',
@@ -9948,7 +9948,7 @@ const FQ_I18N = {
     'anam.4b8addfeca': "✅ I don't take supplements",
 
     // ── Banner de teste ──
-    'trial.days': '{n} days left in your free trial',
+    'trial.days': '{n}h left in your free trial',
     'trial.lastday': 'Last free day!',
     'trial.after': 'After that, from {preco}/mo to continue',
     'trial.subscribe': 'Subscribe',
@@ -10307,20 +10307,20 @@ const FQ_I18N = {
     'splash.tagline': 'Rennan Dias Asesoría',
     'splash.title': 'Tu entrenamiento.<br>Tu <span class="hl">evolución.</span><br>Tu ritmo.',
     'splash.sub': 'Plataforma de asesoría deportiva con entrenamientos personalizados y seguimiento completo.',
-    'splash.cta': '▶ Probar {dias} días gratis',
-    'splash.login': 'Ya tengo una cuenta',
+    'splash.cta': '▶ Registrarse',
+    'splash.login': 'Iniciar sesión',
     'splash.nocard': '✅ Sin tarjeta · sin renovación automática',
     'auth.tab.login': 'Entrar',
     'auth.tab.register': 'Crear cuenta',
     'auth.title.login': 'Entra en tu cuenta',
     'auth.title.register': 'Crea tu cuenta gratis',
-    'auth.trial.badge': '🎁 {dias} días gratis · sin tarjeta de crédito',
+    'auth.trial.badge': '🎁 {horas}h gratis · sin tarjeta de crédito',
     'auth.field.name': 'Nombre completo',
     'auth.field.email': 'Correo electrónico',
     'auth.field.pass': 'Contraseña',
     'auth.field.pass2': 'Confirmar contraseña',
     'auth.btn.login': 'Entrar',
-    'auth.btn.register': 'Empezar mis {dias} días gratis',
+    'auth.btn.register': 'Empezar mis {horas}h gratis',
     'auth.forgot': 'Olvidé mi contraseña',
     'nav.home': 'Inicio',
     'nav.train': 'Entrenos',
@@ -10336,7 +10336,7 @@ const FQ_I18N = {
     'plan.monthly.note': 'Cobro mensual',
     'plan.annual.note': 'Ahorra 34% · R$118,80 (hasta 12x)',
     'plan.subscribe': 'Suscribir {plano}',
-    'plan.expired.title': 'Tus {dias} días terminaron, {nome}',
+    'plan.expired.title': 'Tus {horas}h terminaron, {nome}',
     'plan.expired.sub': 'Mantén tus planes personalizados de fuerza y carrera,<br/>las Misiones, e-books y toda la comunidad.',
     'plan.logout': 'Cerrar sesión',
     'plan.benefit1': '✅ Planes de fuerza y carrera a tu medida',
@@ -10521,7 +10521,7 @@ const FQ_I18N = {
     'anam.edd733c688': "Colágeno",
     'anam.63f5283532': "Vitaminas / Minerales",
     'anam.4b8addfeca': "✅ No tomo suplementos",
-    'trial.days': 'Te quedan {n} días de prueba gratis',
+    'trial.days': 'Te quedan {n}h de prueba gratis',
     'trial.lastday': '¡Último día gratis!',
     'trial.after': 'Después, desde {preco}/mes para continuar',
     'trial.subscribe': 'Suscribirse',
@@ -10953,13 +10953,13 @@ function fqTrocarIdioma(lang){
 
 // Aplica as traduções em tudo que estiver marcado com data-i18n
 function aplicarIdioma(){
-  const dias = (typeof TRIAL_DIAS !== 'undefined') ? TRIAL_DIAS : 14;
+  const horas = (typeof TRIAL_HORAS !== 'undefined') ? TRIAL_HORAS : 48;
   document.querySelectorAll('[data-i18n]').forEach(el=>{
     const chave = el.getAttribute('data-i18n');
-    el.innerHTML = t(chave, {dias});
+    el.innerHTML = t(chave, {horas});
   });
   document.querySelectorAll('[data-i18n-ph]').forEach(el=>{
-    el.setAttribute('placeholder', t(el.getAttribute('data-i18n-ph'), {dias}));
+    el.setAttribute('placeholder', t(el.getAttribute('data-i18n-ph'), {horas}));
   });
   const _lng = fqLangAtual();
   document.documentElement.setAttribute('lang', _lng==='en' ? 'en' : (_lng==='es' ? 'es' : 'pt-BR'));
@@ -10969,7 +10969,10 @@ function aplicarIdioma(){
   if(selP) selP.value = fqLangAtual();
 }
 
-const TRIAL_DIAS = 7;
+const TRIAL_HORAS = 48; // antes: TRIAL_DIAS = 7 (dias). Trocado pra horas de
+// propósito, não só o número — com um período curto como 48h, arredondar
+// pro número de DIAS restantes ficaria impreciso (alguém com 30h restantes
+// veria só "1 dia", que soa bem mais vago que "30 horas").
 // ══ CAMPANHA DE LANÇAMENTO ══
 // Os primeiros N assinantes travam o preço promocional PARA SEMPRE.
 // Depois disso, os preços sobem automaticamente para quem entrar novo.
@@ -11064,12 +11067,12 @@ async function carregarContagemPixFundador(){
   }catch(e){ /* mantém a oferta visível por segurança */ }
 }
 
-function diasRestantesTrial(u){
-  if(!u||!u.trialInicio) return TRIAL_DIAS;
+function horasRestantesTrial(u){
+  if(!u||!u.trialInicio) return TRIAL_HORAS;
   const inicio = new Date(u.trialInicio);
   const agora = new Date();
-  const diasPassados = Math.floor((agora - inicio)/(1000*60*60*24));
-  return Math.max(0, TRIAL_DIAS - diasPassados);
+  const horasPassadas = Math.floor((agora - inicio)/(1000*60*60));
+  return Math.max(0, TRIAL_HORAS - horasPassadas);
 }
 
 function statusAssinatura(u){
@@ -11080,7 +11083,7 @@ function statusAssinatura(u){
     if(u.assinaturaAte && new Date(u.assinaturaAte) < new Date()) return 'expirada';
     return 'ativa';
   }
-  return diasRestantesTrial(u) > 0 ? 'trial' : 'expirada';
+  return horasRestantesTrial(u) > 0 ? 'trial' : 'expirada';
 }
 
 function temAcesso(u){ return statusAssinatura(u) !== 'expirada'; }
@@ -11092,8 +11095,8 @@ function renderBannerTrial(u){
   if(st === 'ativa'){ el.innerHTML=''; return; }
 
   if(st === 'trial'){
-    const dias = diasRestantesTrial(u);
-    const urgente = dias <= 3;
+    const horas = horasRestantesTrial(u);
+    const urgente = horas <= 12; // antes: 3 dias restantes — ajustado pro período de 48h
 
     // Enquanto a oferta Fundador (R$100/ano, vagas limitadas) estiver ativa,
     // o banner da tela inicial vira a PRÓPRIA chamada da promoção — é a
@@ -11121,7 +11124,7 @@ function renderBannerTrial(u){
       <div style="font-size:20px">${urgente?'⏳':'🎁'}</div>
       <div style="flex:1;min-width:0">
         <div style="font-size:12px;font-weight:800;color:${urgente?'#f39c12':'#2ecc71'}">
-          ${dias <= 1 ? 'Último dia grátis!' : `${dias} dias de teste grátis`}
+          ${horas <= 1 ? 'Última hora grátis!' : `${horas}h de teste grátis`}
         </div>
         <div style="font-size:10.5px;color:var(--t2)">Depois, a partir de ${PLANOS.anual.preco}/mês para continuar</div>
       </div>
@@ -11291,7 +11294,7 @@ function mostrarTelaExpirada(u){
   if(elc) elc.innerHTML = `
     <div style="text-align:center;padding:30px 24px">
       <div style="font-size:56px;margin-bottom:16px">🔓</div>
-      <div style="font-size:21px;font-weight:900;margin-bottom:8px">Seus ${TRIAL_DIAS} dias de teste acabaram, ${nome}</div>
+      <div style="font-size:21px;font-weight:900;margin-bottom:8px">Suas ${TRIAL_HORAS}h de teste acabaram, ${nome}</div>
       <div style="font-size:13px;color:var(--t2);line-height:1.7;margin-bottom:24px">
         Foi bom te ter por aqui! Pra continuar treinando com<br/>
         musculação e corrida personalizadas, a Jornada das<br/>
@@ -11462,10 +11465,10 @@ function renderPerfilPlano(u){
   }
 
   if(st==='trial'){
-    const dias=diasRestantesTrial(u);
+    const horas=horasRestantesTrial(u);
     el.innerHTML=`<div style="background:var(--s);border:1px solid var(--b);border-radius:14px;padding:16px">
       <div style="font-size:11px;color:var(--t2);font-weight:800;text-transform:uppercase;letter-spacing:.5px">Meu Plano</div>
-      <div style="font-size:16px;font-weight:900;margin-top:4px">🎁 ${dias<=1?'Último dia':dias+' dias'} de teste grátis</div>
+      <div style="font-size:16px;font-weight:900;margin-top:4px">🎁 ${horas<=1?'Última hora':horas+'h'} de teste grátis</div>
       <div style="font-size:11.5px;color:var(--t2);margin-top:4px">Depois, a partir de ${PLANOS.anual.preco}/mês</div>
       <button onclick="abrirAssinatura()" style="width:100%;margin-top:12px;background:var(--r);color:#fff;border:none;border-radius:9px;padding:11px;font-size:12.5px;font-weight:800;cursor:pointer">⭐ Assinar agora</button>
     </div>`;
@@ -16105,8 +16108,8 @@ function admStatusAssinaturaTxt(u){
     return `💳 Assinatura ativa · válida até ${ate}`;
   }
   if(st==='expirada') return `⛔ Assinatura expirada`;
-  const dias = typeof diasRestantesTrial==='function' ? diasRestantesTrial(u) : '?';
-  return `🎁 Em trial · ${dias} dias restantes`;
+  const horas = typeof horasRestantesTrial==='function' ? horasRestantesTrial(u) : '?';
+  return `🎁 Em trial · ${horas}h restantes`;
 }
 
 function admRenderStudents(list, filter){
@@ -20534,7 +20537,7 @@ async function enviarEmailBoasVindas(nome, email){
           from_name: 'Rennan Dias — FitQuest',
           app_link: 'https://shiriufc-bit.github.io/fitquest/',
           whatsapp: '(31) 99525-0330',
-          trial_dias: TRIAL_DIAS
+          trial_horas: TRIAL_HORAS
         }
       })
     });
