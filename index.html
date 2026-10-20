@@ -1394,7 +1394,7 @@ html[data-tema="claro"] .hero-banner{background:#fff;}
       <option value="es">🇪🇸 ES</option>
     </select>
   </div>
-  <div id="fq-version-badge" style="position:absolute;bottom:8px;right:12px;font-size:9px;color:#333;font-weight:700;z-index:5">v285</div>
+  <div id="fq-version-badge" style="position:absolute;bottom:8px;right:12px;font-size:9px;color:#333;font-weight:700;z-index:5">v286</div>
   <img src="https://images.unsplash.com/photo-1517836357463-d25dfeac3438?w=800&q=80" alt="Fitness" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center top;filter:brightness(.35);z-index:0"/>
   <div class="splash-glow"></div>
   <div class="splash-noise"></div>
@@ -2675,7 +2675,7 @@ html[data-tema="claro"] .hero-banner{background:#fff;}
             <span style="color:var(--mu);font-size:18px">›</span>
           </div>
         </div>
-        <div style="text-align:center;padding:20px 0 4px;font-size:11px;color:var(--mu)">FitQuest <span id="fq-version-badge-perfil">v285</span></div>
+        <div style="text-align:center;padding:20px 0 4px;font-size:11px;color:var(--mu)">FitQuest <span id="fq-version-badge-perfil">v286</span></div>
       </div>
     </div>
 
@@ -7958,6 +7958,18 @@ const RD_TURBO_TECNICAS = {
 };
 // Quantos exercícios do dia recebem técnica extra quando o Turbo está ligado
 const RD_TURBO_MAX = 2;
+// Lista única de técnicas (sem repetir entre objetivos) pro admin escolher
+// manualmente, exercício por exercício, pelo editor de treino — deriva do
+// mesmo dicionário do Turbo acima, então editar uma técnica ali já reflete
+// aqui também, sem duplicar o texto em dois lugares.
+const RD_TECNICAS_FLAT = (()=>{
+  const vistos=new Set(), lista=[];
+  Object.values(RD_TURBO_TECNICAS).forEach(grupo=>grupo.forEach(t=>{
+    if(vistos.has(t.nome)) return; // "Densidade" aparece com ids diferentes em objetivos diferentes — deduplica pelo nome
+    vistos.add(t.nome); lista.push(t);
+  }));
+  return lista;
+})();
 // O aluno ligou o modo turbo?
 function fqTurboOn(){ const u=getU(); return !!(u && u.turboOn); }
 
@@ -16572,7 +16584,8 @@ function renderEGW(w,u){
       <div style="font-size:12px;font-weight:700;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${ex?ex.name:ed.id}</div>
       <button onclick="remSEx('${w}','${day}',${ei})" style="background:rgba(225,6,0,.08);border:1px solid rgba(225,6,0,.15);border-radius:4px;padding:2px 7px;color:var(--r);font-size:9px;cursor:pointer;flex-shrink:0">✕</button></div>
       <div class="exer-g"><div><div class="ml2">Exercício</div><button type="button" onclick="abrirBuscaExercicio('${w}','${day}',${ei})" style="width:100%;text-align:left;background:var(--s2);border:1px solid var(--b);border-radius:8px;padding:8px 10px;color:#fff;font-size:12.5px;cursor:pointer;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${ex?ex.name:ed.id}${(u.exerciciosCustom||[]).some(c=>c.id===ed.id)?' 🎬':''} ▾</button></div><div><div class="ml2">Séries</div><input class="mi" type="number" data-day="${day}" data-idx="${ei}" data-field="sets" value="${ed.sets}"/></div><div><div class="ml2">Reps</div><input class="mi" data-day="${day}" data-idx="${ei}" data-field="reps" value="${ed.reps}"/></div></div>
-      <div class="exer-g"><div><div class="ml2">Carga</div><input class="mi" data-day="${day}" data-idx="${ei}" data-field="load" value="${ed.load||''}"/></div><div><div class="ml2">Descanso(s)</div><input class="mi" type="number" data-day="${day}" data-idx="${ei}" data-field="rest" value="${ed.rest||60}"/></div></div></div>`;
+      <div class="exer-g"><div><div class="ml2">Carga</div><input class="mi" data-day="${day}" data-idx="${ei}" data-field="load" value="${ed.load||''}"/></div><div><div class="ml2">Descanso(s)</div><input class="mi" type="number" data-day="${day}" data-idx="${ei}" data-field="rest" value="${ed.rest||60}"/></div></div>
+      ${admSeletorTecnica(w,day,ei,ed)}</div>`;
     });
     h+=`</div>`;
     if(prog.days[day].length>1) h+=`<div style="text-align:center;font-size:10px;color:var(--mu);margin:2px 0 10px">Segure num exercício pra arrastar e reordenar</div>`;
@@ -16603,6 +16616,50 @@ function admReordenarEx(w,day,de,para){
   renderEGW(w,u);
   syncAlunoAdmin(u).catch(()=>{});
   if(navigator.vibrate){ try{ navigator.vibrate(12); }catch(_){} }
+}
+// ══════════════════════════════════════════════════════════════════════
+// ══ ESCOLHER TÉCNICA MANUALMENTE EM CADA EXERCÍCIO ══
+// Reaproveita os MESMOS campos que o Modo Turbo já usa (ed.tecnica,
+// ed.tecnicaObs, ed.turbo) — por isso sai com o mesmo destaque verde e a
+// mesma explicação detalhada, sem precisar duplicar nenhum estilo ou
+// lógica de exibição. Bônus de graça: o Turbo automático já pula qualquer
+// exercício que "já tem técnica" (ver toggleTurbo acima), então escolher
+// aqui manualmente protege essa escolha de ser sobrescrita depois.
+// Usa o ÍNDICE na lista (não o id da técnica) como valor do <select> — a
+// lista deduplicada por nome ainda pode ter o mesmo id de origem repetido
+// (ex: duas variações de "excêntrica" vindas de objetivos diferentes),
+// então só o índice garante que cada opção aponta pro item certo.
+// ══════════════════════════════════════════════════════════════════════
+function admSeletorTecnica(w,day,ei,ed){
+  const ativo = !!ed.tecnica;
+  const idxAtual = ativo ? RD_TECNICAS_FLAT.findIndex(t=>t.nome===ed.tecnica) : -1;
+  const opcoes = RD_TECNICAS_FLAT.map((t,ti)=>`<option value="${ti}" ${idxAtual===ti?'selected':''}>${t.nome}</option>`).join('');
+  return `<div style="margin-top:7px;padding:8px 9px;border-radius:8px;${ativo?'background:rgba(46,204,113,.08);border:1px solid rgba(46,204,113,.3)':'background:var(--s2);border:1px solid var(--b)'}">
+    <div style="display:flex;align-items:center;gap:7px">
+      <span style="font-size:10.5px;color:${ativo?'#2ecc71':'var(--mu)'};white-space:nowrap;font-weight:700">${ativo?'⚡ Técnica':'🎯 Técnica'}</span>
+      <select onchange="admDefinirTecnica('${w}','${day}',${ei},this.value)" style="flex:1;background:var(--bg,#0d0d0d);border:1px solid var(--b);border-radius:6px;padding:5px 7px;color:#fff;font-size:11px">
+        <option value="">Nenhuma</option>
+        ${opcoes}
+      </select>
+    </div>
+    ${ativo?`<div style="font-size:10px;color:#4ade80;margin-top:6px;line-height:1.5">${ed.tecnicaObs}</div>`:''}
+  </div>`;
+}
+async function admDefinirTecnica(w,day,ei,idxStr){
+  const u = admGetAluno(editEmail); if(!u){ fqToast('Aluno não encontrado.','warn'); return; }
+  const ed = u.aiPlan?.gym?.[w]?.days?.[day]?.[ei];
+  if(!ed){ fqToast('Exercício não encontrado.','warn'); return; }
+  const users = DB.get('fq_users')||{}; users[editEmail]=u;
+  if(idxStr===''){
+    delete ed.tecnica; delete ed.tecnicaObs; delete ed.turbo;
+  } else {
+    const tec = RD_TECNICAS_FLAT[parseInt(idxStr,10)];
+    if(!tec) return;
+    ed.tecnica = tec.nome; ed.tecnicaObs = tec.obs; ed.turbo = true; // mesmo destaque do Turbo
+  }
+  DB.set('fq_users',users);
+  renderEGW(w,u);
+  await syncAlunoAdmin(u).catch(()=>{ fqToast('⚠️ Salvo aqui, mas não sincronizou. Confira a internet.','warn',6000); });
 }
 function limparTreinoDia(w,day){
   const u=admGetAluno(editEmail);if(!u)return;
