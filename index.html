@@ -1394,7 +1394,7 @@ html[data-tema="claro"] .hero-banner{background:#fff;}
       <option value="es">🇪🇸 ES</option>
     </select>
   </div>
-  <div id="fq-version-badge" style="position:absolute;bottom:8px;right:12px;font-size:9px;color:#333;font-weight:700;z-index:5">v286</div>
+  <div id="fq-version-badge" style="position:absolute;bottom:8px;right:12px;font-size:9px;color:#333;font-weight:700;z-index:5">v287</div>
   <img src="https://images.unsplash.com/photo-1517836357463-d25dfeac3438?w=800&q=80" alt="Fitness" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center top;filter:brightness(.35);z-index:0"/>
   <div class="splash-glow"></div>
   <div class="splash-noise"></div>
@@ -2675,7 +2675,7 @@ html[data-tema="claro"] .hero-banner{background:#fff;}
             <span style="color:var(--mu);font-size:18px">›</span>
           </div>
         </div>
-        <div style="text-align:center;padding:20px 0 4px;font-size:11px;color:var(--mu)">FitQuest <span id="fq-version-badge-perfil">v286</span></div>
+        <div style="text-align:center;padding:20px 0 4px;font-size:11px;color:var(--mu)">FitQuest <span id="fq-version-badge-perfil">v287</span></div>
       </div>
     </div>
 
@@ -14916,41 +14916,195 @@ async function admUsarGifComoOficial(email, exId){
 // Atualiza assim que o aluno marca um treino como feito, porque agora essa
 // ação sincroniza de verdade com o servidor (corrigido na auditoria).
 // ══════════════════════════════════════════════════════════════════════
-function admAbrirFrequencia(email){
-  const u = admGetAluno(email);
-  if(!u){ fqToast('Aluno não encontrado.','warn'); return; }
-  const nomeEl=document.getElementById('freq-aluno-nome'); if(nomeEl) nomeEl.textContent=u.name||email;
-
+// ══════════════════════════════════════════════════════════════════════
+// ══ RELATÓRIO DO ALUNO — v2, mais completo ══
+// A versão anterior (v278) só mostrava frequência. Essa reconstrói a tela
+// inteira com: aderência ao plano desta semana (fez quantos dos treinos
+// previstos), cargas recentes por exercício (tiradas do retrato que cada
+// treino concluído já guarda em workoutHistory — não precisa de dado
+// novo nenhum), e um histórico mais claro, com exercícios por sessão.
+// ══════════════════════════════════════════════════════════════════════
+function admMontarDadosRelatorio(u){
   const hoje=new Date(); hoje.setHours(0,0,0,0);
   const semanas=[];
   for(let i=7;i>=0;i--){
     const fim=new Date(hoje); fim.setDate(hoje.getDate()-i*7);
     const ini=new Date(fim); ini.setDate(fim.getDate()-6);
-    semanas.push({inicio:ini,fim,count:0,datas:[]});
+    semanas.push({inicio:ini,fim,count:0});
   }
-  (u.workoutHistory||[]).forEach(h=>{
-    const m=String(h.date||'').match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/); if(!m) return;
-    const d=new Date(+m[3],+m[2]-1,+m[1]);
-    semanas.forEach(s=>{ if(d>=s.inicio && d<=s.fim){ s.count++; s.datas.push({data:h.date,dia:h.day}); } });
-  });
-  const semanaAtual=semanas[semanas.length-1];
-  const totalGeral=semanas.reduce((a,s)=>a+s.count,0);
-  const maxCount=Math.max(1,...semanas.map(s=>s.count));
+  const hist=(u.workoutHistory||[]).map(h=>{
+    const m=String(h.date||'').match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
+    return m ? {...h, dataObj:new Date(+m[3],+m[2]-1,+m[1])} : null;
+  }).filter(Boolean).sort((a,b)=>b.dataObj-a.dataObj);
 
-  // "Há quanto tempo não treina" — mesmo critério do alerta "Alunos sem treinar" já usado no painel
-  const datasOrdenadas=(u.workoutHistory||[]).map(h=>{const m=String(h.date||'').match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/); return m?new Date(+m[3],+m[2]-1,+m[1]):null;}).filter(Boolean).sort((a,b)=>b-a);
-  const ultimoTreino=datasOrdenadas[0]||null;
+  hist.forEach(h=>semanas.forEach(s=>{ if(h.dataObj>=s.inicio && h.dataObj<=s.fim) s.count++; }));
+  const semanaAtual=semanas[semanas.length-1];
+  const ultimoTreino=hist[0]?.dataObj||null;
   const diasSemTreinar=ultimoTreino?Math.floor((hoje-ultimoTreino)/86400000):null;
 
+  // Aderência: quantos dos dias PREVISTOS pra semana atual já foram feitos
+  const semanaPlano = u.aiPlan?.gym?.['Semana '+(u.gymWeek||1)];
+  const diasPrevistos = semanaPlano ? Object.keys(semanaPlano.days||{}) : [];
+  const diasFeitos = diasPrevistos.filter(d=>u.gymDone?.[`Semana ${u.gymWeek||1}_${d}`]).length;
+
+  // Cargas recentes: a última vez que cada exercício foi registrado, com
+  // o peso usado naquela sessão — olhando as sessões mais recentes primeiro.
+  const cargasPorExercicio = new Map();
+  hist.forEach(h=>{
+    (h.exercises||[]).forEach(e=>{
+      const nome = typeof e==='string' ? e : e.name;
+      const carga = typeof e==='string' ? '' : (e.load||'');
+      if(!nome || cargasPorExercicio.has(nome)) return; // já pegou a ocorrência mais recente
+      cargasPorExercicio.set(nome, {carga, data:h.date});
+    });
+  });
+
+  return {hist, semanas, semanaAtual, diasSemTreinar, diasPrevistos, diasFeitos, cargasPorExercicio};
+}
+
+// ══════════════════════════════════════════════════════════════════════
+// ══ RESUMO SEMANAL — documento curto pra mandar pro aluno toda semana ══
+// Reaproveita a mesma paleta/tipografia e os utilitários de desenho (PK.*,
+// PK_COR, fqCtxSeco) já construídos pro Pacote do Cliente — mas aqui é um
+// documento BEM mais curto, pensado pra gerar toda semana em segundos, não
+// pra configurar uma vez só no início da consultoria.
+// ══════════════════════════════════════════════════════════════════════
+function rsCabecalho(ctx,nome,semanaTxto,W){
+  const H=108;
+  ctx.fillStyle=PK_COR.black; ctx.fillRect(0,0,W,H);
+  ctx.fillStyle='rgba(225,6,0,.9)'; ctx.beginPath(); ctx.moveTo(W-180,0); ctx.lineTo(W-156,0); ctx.lineTo(W-220,H); ctx.lineTo(W-244,H); ctx.closePath(); ctx.fill();
+  PK.texto(ctx,'FIT',34,42,PK_F('800',28),'#fff');
+  ctx.font=PK_F('800',28); const wf=ctx.measureText('FIT').width;
+  PK.texto(ctx,'QUEST',34+wf,42,PK_F('800',28),PK_COR.red);
+  PK.texto(ctx,'RESUMO DA SEMANA',34,72,PK_F('800',20),'#fff');
+  PK.texto(ctx,`${nome} · ${semanaTxto}`,34,92,PK_F('400',13),'#C4C4C4');
+  return H;
+}
+function rsLayout(ctx,d,W){
+  const M=28, CW=W-2*M;
+  let y=rsCabecalho(ctx,d.nome,d.semanaTxto,W)+20;
+
+  // Cartão grande: X de Y treinos
+  const alturaCartao=96;
+  PK.rr(ctx,M,y,CW,alturaCartao,10); ctx.fillStyle=PK_COR.card; ctx.fill();
+  const txtGrande=`${d.feitos} de ${d.previstos}`;
+  PK.texto(ctx,txtGrande,M+24,y+62,PK_F('800',40),PK_COR.ink);
+  PK.texto(ctx,'treinos concluídos essa semana',M+24,y+84,PK_F('400',14),PK_COR.text);
+  const corStatus = d.previstos===0?PK_COR.mute : d.feitos>=d.previstos?'#2ecc71' : d.feitos>0?'#e8b566':PK_COR.red;
+  const txtStatus = d.previstos===0?'Sem plano' : d.feitos>=d.previstos?'✅ Semana completa':d.feitos>0?'⚠️ Parcial':'❌ Não treinou';
+  ctx.font=PK_F('800',16); const wSt=ctx.measureText(txtStatus).width;
+  PK.rr(ctx,M+CW-wSt-40,y+30,wSt+24,36,8); ctx.fillStyle=corStatus+'22'; ctx.fill();
+  PK.texto(ctx,txtStatus,M+CW-wSt-28,y+53,PK_F('800',16),corStatus);
+  y+=alturaCartao+20;
+
+  // Tabela: dia -> exercícios -> cargas (só os dias já feitos essa semana)
+  if(d.dias.length){
+    PK.painel(ctx,M,y,CW,'TREINOS DA SEMANA',null,44);
+    y+=44;
+    d.dias.forEach(dia=>{
+      const lin=PK.quebrar(ctx,dia.exercicios.join(', ')||'—',CW-150,PK_F('400',13));
+      const h=Math.max(36,lin.length*17+14);
+      PK.rr(ctx,M,y,CW,h,0); ctx.fillStyle='#fff'; ctx.fill(); ctx.strokeStyle=PK_COR.line; ctx.lineWidth=1; ctx.strokeRect(M,y,CW,h);
+      PK.texto(ctx,dia.nome,M+14,y+h/2+5,PK_F('700',13.5),PK_COR.ink);
+      PK.linhas(ctx,lin,M+140,y+h/2-(lin.length-1)*8.5+5,17,PK_F('400',13),PK_COR.text);
+      y+=h;
+    });
+    y+=16;
+  }
+  if(d.diasFaltantes.length){
+    const txt=`Não treinou: ${d.diasFaltantes.join(', ')}`;
+    const lin=PK.quebrar(ctx,txt,CW-28,PK_F('600',13));
+    const h=lin.length*18+20;
+    PK.rr(ctx,M,y,CW,h,8); ctx.fillStyle='rgba(225,6,0,.06)'; ctx.fill(); ctx.strokeStyle='rgba(225,6,0,.2)'; ctx.lineWidth=1; ctx.stroke();
+    PK.linhas(ctx,lin,M+14,y+22,18,PK_F('600',13),PK_COR.red);
+    y+=h+16;
+  }
+
+  if(d.nota){
+    const lin=PK.quebrar(ctx,d.nota,CW-32,PK_F('400',14));
+    const h=lin.length*21+28;
+    PK.rr(ctx,M,y,CW,h,10); ctx.fillStyle=PK_COR.pink; ctx.fill();
+    PK.texto(ctx,'RECADO DO SEU TREINADOR',M+16,y+22,PK_F('800',11),PK_COR.red);
+    PK.linhas(ctx,lin,M+16,y+44,21,PK_F('400',14),PK_COR.ink);
+    y+=h+16;
+  }
+
+  ctx.fillStyle=PK_COR.black; ctx.fillRect(0,y,W,38);
+  PK.texto(ctx,'FitQuest · Assessoria Fitness — Rennan Dias',W/2,y+24,PK_F('500',11),'#9A9A9A','center');
+  return y+38;
+}
+function rsDesenhar(d){
+  const W=900;
+  const m=document.createElement('canvas'); m.width=10; m.height=10;
+  const H=Math.ceil(rsLayout(fqCtxSeco(m.getContext('2d')),d,W));
+  const S=Math.max(1,Math.min(2,Math.sqrt(10e6/(W*H))));
+  const cv=document.createElement('canvas'); cv.width=Math.round(W*S); cv.height=Math.round(H*S);
+  const ctx=cv.getContext('2d'); ctx.scale(S,S);
+  ctx.fillStyle='#fff'; ctx.fillRect(0,0,W,H);
+  rsLayout(ctx,d,W);
+  return cv;
+}
+async function admGerarResumoSemanal(email){
+  const u = admGetAluno(email);
+  if(!u){ fqToast('Aluno não encontrado.','warn'); return; }
+  const dados = admMontarDadosRelatorio(u);
+  const semanaPlano = u.aiPlan?.gym?.['Semana '+(u.gymWeek||1)];
+  const diasPrevistos = semanaPlano ? Object.keys(semanaPlano.days||{}) : [];
+  const diasFeitosNomes = diasPrevistos.filter(dn=>u.gymDone?.[`Semana ${u.gymWeek||1}_${dn}`]);
+  const diasFaltantes = diasPrevistos.filter(dn=>!diasFeitosNomes.includes(dn));
+
+  // Pra cada dia feito ESSA semana, pega os exercícios+carga daquela sessão
+  // (usa o retrato salvo em workoutHistory daquela data específica, não a
+  // lista geral de "última carga de cada exercício" usada na tela anterior)
+  const diasDetalhe = dados.hist.filter(h=>{
+    const seg = h.dataObj >= dados.semanas[dados.semanas.length-1].inicio;
+    return seg && diasPrevistos.includes(h.day);
+  }).map(h=>({
+    nome:h.day,
+    exercicios:(h.exercises||[]).map(e=>{
+      const nome=typeof e==='string'?e:e.name; const carga=typeof e==='string'?'':(e.load||'');
+      return carga ? `${nome} (${carga})` : nome;
+    }).filter(Boolean)
+  }));
+
+  const inicioSemana=dados.semanas[dados.semanas.length-1].inicio;
+  const fimSemana=dados.semanas[dados.semanas.length-1].fim;
+  const fmt=dd=>`${dd.getDate()}/${dd.getMonth()+1}`;
+
+  const nota = document.getElementById('freq-nota-semanal')?.value||'';
+
+  try{
+    try{ await Promise.all(['400','500','600','700','800'].map(w=>document.fonts.load(`${w} 16px Inter`))); }catch(e){}
+    const cv = rsDesenhar({
+      nome:u.name||'Aluno(a)', semanaTxto:`${fmt(inicioSemana)} a ${fmt(fimSemana)}`,
+      feitos:diasFeitosNomes.length, previstos:diasPrevistos.length,
+      dias:diasDetalhe, diasFaltantes, nota:nota&&nota.trim()?nota.trim():null,
+    });
+    const base = `Resumo-Semana-${(u.name||'aluno').replace(/\s+/g,'-')}`;
+    const blob = await new Promise(res=>cv.toBlob(res,'image/png'));
+    if(!blob) throw new Error('canvas não gerou a imagem');
+    await fqEntregarImagem(blob, base+'.png');
+  }catch(err){
+    console.error('Erro ao gerar resumo semanal:', err);
+    fqToast('Não consegui gerar o resumo. ['+(err&&err.message?err.message:err)+']','warn',8000);
+  }
+}
+function admAbrirFrequencia(email){
+  const u = admGetAluno(email);
+  if(!u){ fqToast('Aluno não encontrado.','warn'); return; }
+  const nomeEl=document.getElementById('freq-aluno-nome'); if(nomeEl) nomeEl.textContent=u.name||email;
   const corpo=document.getElementById('freq-aluno-corpo'); if(!corpo) return;
-  if(totalGeral===0){
+
+  const d = admMontarDadosRelatorio(u);
+  if(!d.hist.length){
     corpo.innerHTML=`<div style="text-align:center;padding:30px 0;color:var(--mu);font-size:13px">Nenhum treino concluído ainda por este aluno.</div>`;
     abrirModal('modal-frequencia-aluno'); return;
   }
 
-  const barras=semanas.map((s,i)=>{
+  const maxCount=Math.max(1,...d.semanas.map(s=>s.count));
+  const barras=d.semanas.map((s,i)=>{
     const alturaPct=Math.max(6,Math.round((s.count/maxCount)*100));
-    const ehAtual=i===semanas.length-1;
+    const ehAtual=i===d.semanas.length-1;
     const rotulo=`${s.inicio.getDate()}/${s.inicio.getMonth()+1}`;
     return `<div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px">
       <div style="font-size:11px;font-weight:800;color:${s.count>0?'var(--r)':'var(--mu)'}">${s.count}</div>
@@ -14961,20 +15115,32 @@ function admAbrirFrequencia(email){
     </div>`;
   }).join('');
 
-  const corAlerta = diasSemTreinar==null?'var(--mu)' : diasSemTreinar>=5?'#e74c3c' : diasSemTreinar>=3?'#e8b566':'#2ecc71';
-  const textoAlerta = diasSemTreinar==null?'Nunca treinou' : diasSemTreinar===0?'Treinou hoje' : diasSemTreinar===1?'Treinou ontem' : `Há ${diasSemTreinar} dias sem treinar`;
+  const corAlerta = d.diasSemTreinar==null?'var(--mu)' : d.diasSemTreinar>=5?'#e74c3c' : d.diasSemTreinar>=3?'#e8b566':'#2ecc71';
+  const textoAlerta = d.diasSemTreinar==null?'Nunca treinou' : d.diasSemTreinar===0?'Treinou hoje' : d.diasSemTreinar===1?'Treinou ontem' : `Há ${d.diasSemTreinar} dias sem treinar`;
 
-  const recentes=datasOrdenadas.slice(0,6).map((d,i)=>{
-    const entry=(u.workoutHistory||[]).slice().reverse().find(h=>{const m=String(h.date||'').match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/); if(!m)return false; const dd=new Date(+m[3],+m[2]-1,+m[1]); return dd.getTime()===d.getTime();});
-    return `<div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--b);font-size:12.5px">
-      <span>${entry?.day||'Treino'}</span><span style="color:var(--mu)">${entry?.date||''}</span>
+  const pctAderencia = d.diasPrevistos.length ? Math.round((d.diasFeitos/d.diasPrevistos.length)*100) : null;
+  const corAderencia = pctAderencia==null?'var(--mu)' : pctAderencia>=100?'#2ecc71' : pctAderencia>=50?'#e8b566':'#e74c3c';
+
+  const cargasHtml = [...d.cargasPorExercicio.entries()].slice(0,8).map(([nome,info])=>`
+    <div style="display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-bottom:1px solid var(--b);font-size:12px">
+      <span style="flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;margin-right:8px">${nome}</span>
+      <span style="font-weight:800;white-space:nowrap">${info.carga||'—'}</span>
+    </div>`).join('') || `<div style="font-size:11.5px;color:var(--mu);padding:8px 0">Nenhuma carga registrada ainda.</div>`;
+
+  const recentesHtml = d.hist.slice(0,6).map(h=>{
+    const nomesEx = (h.exercises||[]).map(e=>typeof e==='string'?e:e.name).filter(Boolean);
+    return `<div style="padding:8px 0;border-bottom:1px solid var(--b)">
+      <div style="display:flex;justify-content:space-between;font-size:12.5px">
+        <span style="font-weight:700">${h.day||'Treino'}</span><span style="color:var(--mu)">${h.date||''}</span>
+      </div>
+      ${nomesEx.length?`<div style="font-size:10.5px;color:var(--mu);margin-top:3px">${nomesEx.join(' · ')}</div>`:''}
     </div>`;
   }).join('');
 
   corpo.innerHTML=`
-    <div style="display:flex;gap:10px;margin-bottom:16px">
+    <div style="display:flex;gap:10px;margin-bottom:12px">
       <div style="flex:1;background:var(--s);border:1px solid var(--b);border-radius:10px;padding:12px;text-align:center">
-        <div style="font-size:24px;font-weight:800">${semanaAtual.count}</div>
+        <div style="font-size:24px;font-weight:800">${d.semanaAtual.count}</div>
         <div style="font-size:10.5px;color:var(--mu)">treinos essa semana</div>
       </div>
       <div style="flex:1;background:var(--s);border:1px solid var(--b);border-radius:10px;padding:12px;text-align:center">
@@ -14982,10 +15148,25 @@ function admAbrirFrequencia(email){
         <div style="font-size:10.5px;color:var(--mu);margin-top:4px">último treino</div>
       </div>
     </div>
+    ${pctAderencia!==null?`
+    <div style="background:var(--s);border:1px solid var(--b);border-radius:10px;padding:12px;margin-bottom:16px">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+        <span style="font-size:11.5px;color:var(--t2)">Aderência ao plano desta semana</span>
+        <span style="font-size:13px;font-weight:800;color:${corAderencia}">${d.diasFeitos} de ${d.diasPrevistos.length}</span>
+      </div>
+      <div style="height:6px;background:var(--s2);border-radius:99px;overflow:hidden">
+        <div style="height:100%;width:${pctAderencia}%;background:${corAderencia};border-radius:99px"></div>
+      </div>
+    </div>`:''}
     <div style="font-size:11px;font-weight:800;color:var(--mu);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px">Treinos por semana · últimas 8 semanas</div>
     <div style="display:flex;gap:4px;align-items:flex-end;margin-bottom:20px">${barras}</div>
+    <div style="font-size:11px;font-weight:800;color:var(--mu);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px">Cargas mais recentes por exercício</div>
+    <div style="margin-bottom:16px">${cargasHtml}</div>
     <div style="font-size:11px;font-weight:800;color:var(--mu);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px">Últimos treinos</div>
-    ${recentes}
+    ${recentesHtml}
+    <label class="fl" style="margin-top:18px;display:block">Recado opcional pro aluno (aparece no resumo)</label>
+    <textarea id="freq-nota-semanal" placeholder="Ex: Mandou bem essa semana! Vamos aumentar a carga na próxima." style="width:100%;min-height:60px;background:var(--s2);border:1px solid var(--b);border-radius:8px;padding:9px 11px;color:#fff;font-size:12.5px;resize:vertical;margin:4px 0 10px"></textarea>
+    <button class="btn-savewk" onclick="admGerarResumoSemanal('${email}')">📄 Gerar resumo da semana (pra enviar ao aluno)</button>
   `;
   abrirModal('modal-frequencia-aluno');
 }
