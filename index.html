@@ -1388,7 +1388,7 @@ html[data-tema="claro"] .hero-banner{background:#fff;}
       <option value="es">🇪🇸 ES</option>
     </select>
   </div>
-  <div id="fq-version-badge" style="position:absolute;bottom:8px;right:12px;font-size:9px;color:#333;font-weight:700;z-index:5">v288</div>
+  <div id="fq-version-badge" style="position:absolute;bottom:8px;right:12px;font-size:9px;color:#333;font-weight:700;z-index:5">v289</div>
   <img src="https://images.unsplash.com/photo-1517836357463-d25dfeac3438?w=800&q=80" alt="Fitness" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center top;filter:brightness(.35);z-index:0"/>
   <div class="splash-glow"></div>
   <div class="splash-noise"></div>
@@ -2658,7 +2658,7 @@ html[data-tema="claro"] .hero-banner{background:#fff;}
             <span style="color:var(--mu);font-size:18px">›</span>
           </div>
         </div>
-        <div style="text-align:center;padding:20px 0 4px;font-size:11px;color:var(--mu)">FitQuest <span id="fq-version-badge-perfil">v288</span></div>
+        <div style="text-align:center;padding:20px 0 4px;font-size:11px;color:var(--mu)">FitQuest <span id="fq-version-badge-perfil">v289</span></div>
       </div>
     </div>
 
@@ -17001,16 +17001,22 @@ function saveERW(w){const users=DB.get('fq_users')||{};const u=admGetAluno(editE
 //     semana progredida — senão um valor pequeno (ex: "8 X") nunca chega a
 //     arredondar pra cima e parece que não fez nada, mesmo funcionando.
 // ══════════════════════════════════════════════════════════════════════
-// BUGFIX: antes só progredia quando o número era o PRIMEIRO caractere do
-// texto — qualquer coisa como "Rodagem 5km" (nome do treino antes da
-// distância, bem comum quando um treinador digita à mão) ficava com o
-// mesmo número pra sempre, sem erro nenhum, só silenciosamente intocado.
-// Agora acha o primeiro número EM QUALQUER LUGAR do texto e escala só ele,
-// preservando tudo em volta (prefixo, sufixo, o "~" de "~35 min" etc. —
-// como fazem parte do texto fora do número, já ficam intactos sozinhos).
+// BUGFIX (1ª rodada): antes só progredia quando o número era o PRIMEIRO
+// caractere do texto — "Rodagem 5km" (nome antes da distância) ficava
+// intocado. Corrigido pra achar o número em qualquer posição.
+//
+// BUGFIX (2ª rodada): achar "o primeiro número qualquer" ainda tinha um
+// problema — em "4x 70m" (4 repetições de 70 metros, comum em treino de
+// tiro), o primeiro número é o "4" (quantas vezes), não o "70" (a
+// distância de cada repetição). A função progredia o "4" → "5" — algo
+// mudava na tela, mas a distância real do treino ficava intocada. Agora
+// busca PRIMEIRO um número com unidade de medida colada (km, m, metros,
+// min, minutos) — isso É a distância/duração de verdade — e só cai pro
+// "primeiro número qualquer" se não achar nenhum com unidade.
 function progredirNumeroLider(texto, fator, ehDeload){
   const t = String(texto||'');
-  const m = t.match(/(\d+(?:[.,]\d+)?)(\s*)(km\b|m\b|min\b|[xX]\b)?/i);
+  let m = t.match(/(\d+(?:[.,]\d+)?)(\s*)(km\b|metros\b|m\b|minutos\b|min\b)/i);
+  if(!m) m = t.match(/(\d+(?:[.,]\d+)?)(\s*)([xX]\b)?/);
   if(!m || !m[1]) return texto; // nenhum número reconhecível no texto — não mexe
   const baseNum = parseFloat(m[1].replace(',','.'));
   const ehKm = (m[3]||'').toLowerCase()==='km';
