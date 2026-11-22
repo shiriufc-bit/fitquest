@@ -1388,7 +1388,7 @@ html[data-tema="claro"] .hero-banner{background:#fff;}
       <option value="es">🇪🇸 ES</option>
     </select>
   </div>
-  <div id="fq-version-badge" style="position:absolute;bottom:8px;right:12px;font-size:9px;color:#333;font-weight:700;z-index:5">v292</div>
+  <div id="fq-version-badge" style="position:absolute;bottom:8px;right:12px;font-size:9px;color:#333;font-weight:700;z-index:5">v293</div>
   <img src="https://images.unsplash.com/photo-1517836357463-d25dfeac3438?w=800&q=80" alt="Fitness" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center top;filter:brightness(.35);z-index:0"/>
   <div class="splash-glow"></div>
   <div class="splash-noise"></div>
@@ -2658,7 +2658,7 @@ html[data-tema="claro"] .hero-banner{background:#fff;}
             <span style="color:var(--mu);font-size:18px">›</span>
           </div>
         </div>
-        <div style="text-align:center;padding:20px 0 4px;font-size:11px;color:var(--mu)">FitQuest <span id="fq-version-badge-perfil">v292</span></div>
+        <div style="text-align:center;padding:20px 0 4px;font-size:11px;color:var(--mu)">FitQuest <span id="fq-version-badge-perfil">v293</span></div>
       </div>
     </div>
 
@@ -2887,6 +2887,20 @@ html[data-tema="claro"] .hero-banner{background:#fff;}
       <button class="btn-savewk" onclick="admGravarNovoGifExercicio()" style="margin-top:14px">🎥 Gravar novo (só pra este aluno)</button>
       <button id="gifed-btn-remover" onclick="admRemoverGifPessoal()" style="display:none;width:100%;margin-top:8px;background:rgba(225,6,0,.08);border:1px solid rgba(225,6,0,.2);border-radius:10px;padding:12px;color:var(--r);font-size:13px;font-weight:700;cursor:pointer">🗑️ Remover vídeo deste aluno</button>
       <div style="font-size:10.5px;color:var(--mu);margin-top:8px;line-height:1.4">Quer que vire a demonstração oficial pra todos? Use "🎬 Vídeos dos Alunos" no painel depois de gravar.</div>
+    </div>
+  </div>
+</div>
+<!-- Renomear exercício, a partir do editor de treino do admin — pode ser só
+     pra este aluno (apelido pessoal) ou pra todo o sistema (muda o banco) -->
+<div class="modal-ov" id="modal-renomear-ex" style="align-items:flex-start">
+  <div class="modal-bx" style="max-width:380px;width:100%;padding:0;border-radius:16px 16px 0 0;margin-top:auto">
+    <div class="modal-t"><span>✏️ Renomear exercício</span><button class="modal-cl" onclick="closeModal('modal-renomear-ex')">✕</button></div>
+    <div style="padding:16px">
+      <div class="fg"><label class="fl">Nome exibido</label><input class="fi" id="ren-ex-nome" placeholder="Nome do exercício"/></div>
+      <div style="font-size:10.5px;color:var(--mu);margin:2px 0 16px;line-height:1.5">Escolha se esse nome vale só pra este aluno (ex: um jeito mais claro de chamar, ou uma adaptação), ou pra todo mundo que tiver esse exercício no treino.</div>
+      <button class="btn-savewk" onclick="confirmarRenomearEx('aluno')" style="width:100%">👤 Só pra este aluno</button>
+      <button class="btn-addex" onclick="confirmarRenomearEx('sistema')" style="width:100%;margin-top:8px;border-color:rgba(52,152,219,.35);color:#3498db">🌐 Pra todo o sistema</button>
+      <button id="ren-ex-btn-remover" onclick="removerRenomeEx()" style="display:none;width:100%;margin-top:14px;background:none;border:none;color:var(--mu);font-size:11.5px;cursor:pointer;text-decoration:underline">Remover o apelido pessoal e voltar ao nome normal</button>
     </div>
   </div>
 </div>
@@ -6282,7 +6296,7 @@ function abrirFichaExercicio(exId){
   const ex = getExById(exId);
   if(!ex){ fqToast(t('msg.2108f509a7'),'warn'); return; }
   const u = getU();
-  const nomeExibido = exNome(ex);
+  const nomeExibido = u?.nomesPersonalizados?.[exId] || exNome(ex);
   const nomeEN = (typeof EXERCISE_NAME_EN!=='undefined' && EXERCISE_NAME_EN[exId] && fqLangAtual()!=='en') ? EXERCISE_NAME_EN[exId] : null;
 
   // Músculos: principal = primeiro do campo, secundários = resto
@@ -6476,10 +6490,10 @@ function renovarMissoesSemanais(u){
   return true;
 }
 function rowToUser(data){
-  return{id:data.id,name:data.nome,email:data.email,plano:data.plano,trialInicio:data.trial_inicio,runInicio:data.run_inicio,runAjusteLesao:!!data.run_ajuste_lesao,assinaturaStatus:data.assinatura_status||'trial',assinaturaAte:data.assinatura_ate,diaConversao:data.dia_conversao,dataConversao:data.data_conversao,planoConversao:data.plano_conversao,precoTravado:data.preco_travado,promoFundador:!!data.promo_fundador,pixFundador:!!data.pix_fundador,promoVaga:data.promo_vaga,solicitouTrocaTreino:!!data.solicitou_troca,solicitouTrocaData:data.solicitou_troca_data,solicitouTrocaTipo:data.solicitou_troca_tipo,trainApproved:data.treino_liberado,modoLivre:!!data.modo_livre,pushSubscription:data.push_subscription||null,correcoesVideo:data.correcoes_video||[],isAdmin:!!data.is_admin,aiPlan:data.ai_plan,anamnese:data.anamnese,anamneseDone:!!data.anamnese_geral,anamneseGeral:data.anamnese_geral||null,anamneseMusculacao:data.anamnese_musculacao||null,anamneseCorrida:data.anamnese_corrida||null,anamneseMuscDone:!!data.anamnese_musculacao,anamneseCorridaDone:!!data.anamnese_corrida,gymWeek:data.gym_week||1,runWeek:data.run_week||1,gymDone:data.gym_done||{},runDone:data.run_done||{},runFeedback:data.run_feedback||{},runAtividades:data.run_atividades||[],runTriagem:data.run_triagem||null,runStrength:data.run_strength||[],runStrengthDone:data.run_strength_done||{},runTestes:data.run_testes||[],runTestPace:data.run_test_pace||null,loadHistory:data.load_history||{},workoutHistory:data.workout_history||[],xp:data.xp||0,kidsXp:data.kids_xp||0,level:data.level||1,streak:data.streak||1,coins:data.coins||0,badges:data.badges||[],prs:data.prs||[],stats:data.stats||{treinos:0,distancia:0,semanas:0},purchases:data.purchases||[],pacoteEbooks:!!data.pacote_ebooks,programIntakes:data.program_intakes||{},avatar:data.avatar||null,avaliacoes:data.evals||[],avaliacoesPostural:data.avaliacoes_postural||[],estrategiaConsultoria:data.estrategia_consultoria||null,pacoteConfig:data.pacote_config||null,gifsPersonalizados:data.gifs_personalizados||{},exerciciosCustom:data.exercicios_custom||[],missions:MISSOES_PADRAO.map(m=>({...m})),createdAt:data.criado_em,lastLogin:data.ultimo_acesso};
+  return{id:data.id,name:data.nome,email:data.email,plano:data.plano,trialInicio:data.trial_inicio,runInicio:data.run_inicio,runAjusteLesao:!!data.run_ajuste_lesao,assinaturaStatus:data.assinatura_status||'trial',assinaturaAte:data.assinatura_ate,diaConversao:data.dia_conversao,dataConversao:data.data_conversao,planoConversao:data.plano_conversao,precoTravado:data.preco_travado,promoFundador:!!data.promo_fundador,pixFundador:!!data.pix_fundador,promoVaga:data.promo_vaga,solicitouTrocaTreino:!!data.solicitou_troca,solicitouTrocaData:data.solicitou_troca_data,solicitouTrocaTipo:data.solicitou_troca_tipo,trainApproved:data.treino_liberado,modoLivre:!!data.modo_livre,pushSubscription:data.push_subscription||null,correcoesVideo:data.correcoes_video||[],isAdmin:!!data.is_admin,aiPlan:data.ai_plan,anamnese:data.anamnese,anamneseDone:!!data.anamnese_geral,anamneseGeral:data.anamnese_geral||null,anamneseMusculacao:data.anamnese_musculacao||null,anamneseCorrida:data.anamnese_corrida||null,anamneseMuscDone:!!data.anamnese_musculacao,anamneseCorridaDone:!!data.anamnese_corrida,gymWeek:data.gym_week||1,runWeek:data.run_week||1,gymDone:data.gym_done||{},runDone:data.run_done||{},runFeedback:data.run_feedback||{},runAtividades:data.run_atividades||[],runTriagem:data.run_triagem||null,runStrength:data.run_strength||[],runStrengthDone:data.run_strength_done||{},runTestes:data.run_testes||[],runTestPace:data.run_test_pace||null,loadHistory:data.load_history||{},workoutHistory:data.workout_history||[],xp:data.xp||0,kidsXp:data.kids_xp||0,level:data.level||1,streak:data.streak||1,coins:data.coins||0,badges:data.badges||[],prs:data.prs||[],stats:data.stats||{treinos:0,distancia:0,semanas:0},purchases:data.purchases||[],pacoteEbooks:!!data.pacote_ebooks,programIntakes:data.program_intakes||{},avatar:data.avatar||null,avaliacoes:data.evals||[],avaliacoesPostural:data.avaliacoes_postural||[],estrategiaConsultoria:data.estrategia_consultoria||null,pacoteConfig:data.pacote_config||null,gifsPersonalizados:data.gifs_personalizados||{},exerciciosCustom:data.exercicios_custom||[],nomesPersonalizados:data.nomes_personalizados||{},missions:MISSOES_PADRAO.map(m=>({...m})),createdAt:data.criado_em,lastLogin:data.ultimo_acesso};
 }
 function userToRow(u){
-  return{id:u.id,nome:u.name,email:u.email,plano:u.plano||'free',trial_inicio:u.trialInicio||undefined,run_inicio:u.runInicio||null,run_ajuste_lesao:u.runAjusteLesao||false,treino_liberado:u.trainApproved||false,modo_livre:u.modoLivre||false,...(u.pushSubscription?{push_subscription:u.pushSubscription}:(u.pushDesativado?{push_subscription:null}:{})),...((u.correcoesVideo&&u.correcoesVideo.length)?{correcoes_video:u.correcoesVideo}:{}),ai_plan:u.aiPlan||null,anamnese:u.anamnese||null,anamnese_geral:u.anamneseGeral||null,anamnese_musculacao:u.anamneseMusculacao||null,anamnese_corrida:u.anamneseCorrida||null,gym_week:u.gymWeek||1,run_week:u.runWeek||1,gym_done:u.gymDone||{},run_done:u.runDone||{},run_feedback:u.runFeedback||{},run_atividades:u.runAtividades||[],run_triagem:u.runTriagem||null,run_strength:u.runStrength||[],run_strength_done:u.runStrengthDone||{},run_testes:u.runTestes||[],run_test_pace:u.runTestPace||null,load_history:u.loadHistory||{},workout_history:u.workoutHistory||[],xp:u.xp||0,kids_xp:u.kidsXp||0,level:u.level||1,streak:u.streak||1,coins:u.coins||0,badges:u.badges||[],prs:u.prs||[],stats:u.stats||{treinos:0,distancia:0,semanas:0},avatar:u.avatar||null,evals:u.avaliacoes||[],...((u.avaliacoesPostural&&u.avaliacoesPostural.length)?{avaliacoes_postural:u.avaliacoesPostural}:{}),...(u.estrategiaConsultoria?{estrategia_consultoria:u.estrategiaConsultoria}:{}),...(u.pacoteConfig?{pacote_config:u.pacoteConfig}:{}),program_intakes:u.programIntakes||{},gifs_personalizados:u.gifsPersonalizados||{},exercicios_custom:u.exerciciosCustom||[],ultimo_acesso:new Date().toISOString(),updated_at:new Date().toISOString()};
+  return{id:u.id,nome:u.name,email:u.email,plano:u.plano||'free',trial_inicio:u.trialInicio||undefined,run_inicio:u.runInicio||null,run_ajuste_lesao:u.runAjusteLesao||false,treino_liberado:u.trainApproved||false,modo_livre:u.modoLivre||false,...(u.pushSubscription?{push_subscription:u.pushSubscription}:(u.pushDesativado?{push_subscription:null}:{})),...((u.correcoesVideo&&u.correcoesVideo.length)?{correcoes_video:u.correcoesVideo}:{}),ai_plan:u.aiPlan||null,anamnese:u.anamnese||null,anamnese_geral:u.anamneseGeral||null,anamnese_musculacao:u.anamneseMusculacao||null,anamnese_corrida:u.anamneseCorrida||null,gym_week:u.gymWeek||1,run_week:u.runWeek||1,gym_done:u.gymDone||{},run_done:u.runDone||{},run_feedback:u.runFeedback||{},run_atividades:u.runAtividades||[],run_triagem:u.runTriagem||null,run_strength:u.runStrength||[],run_strength_done:u.runStrengthDone||{},run_testes:u.runTestes||[],run_test_pace:u.runTestPace||null,load_history:u.loadHistory||{},workout_history:u.workoutHistory||[],xp:u.xp||0,kids_xp:u.kidsXp||0,level:u.level||1,streak:u.streak||1,coins:u.coins||0,badges:u.badges||[],prs:u.prs||[],stats:u.stats||{treinos:0,distancia:0,semanas:0},avatar:u.avatar||null,evals:u.avaliacoes||[],...((u.avaliacoesPostural&&u.avaliacoesPostural.length)?{avaliacoes_postural:u.avaliacoesPostural}:{}),...(u.estrategiaConsultoria?{estrategia_consultoria:u.estrategiaConsultoria}:{}),...(u.pacoteConfig?{pacote_config:u.pacoteConfig}:{}),program_intakes:u.programIntakes||{},gifs_personalizados:u.gifsPersonalizados||{},exercicios_custom:u.exerciciosCustom||[],nomes_personalizados:u.nomesPersonalizados||{},ultimo_acesso:new Date().toISOString(),updated_at:new Date().toISOString()};
   // Obs.: purchases/pacote_ebooks/is_admin/plano NÃO são enviados pelo aluno — são protegidos no banco e só mudam via webhook de pagamento ou admin.
 }
 // ══ GRAVAÇÃO RESILIENTE ══
@@ -6488,7 +6502,7 @@ function userToRow(u){
 // rodado. Se uma delas faltar, o Supabase recusa a linha INTEIRA — e nenhum
 // dado do aluno (nem um cadastro novo) seria salvo. Aqui, se o erro for de
 // coluna ausente, regrava sem os campos opcionais: o essencial sempre salva.
-const FQ_COLUNAS_OPCIONAIS=['push_subscription','correcoes_video','avaliacoes_postural','estrategia_consultoria','pacote_config','modo_livre'];
+const FQ_COLUNAS_OPCIONAIS=['push_subscription','correcoes_video','avaliacoes_postural','estrategia_consultoria','pacote_config','modo_livre','nomes_personalizados'];
 function fqErroColunaAusente(err){
   return !!err && (err.code==='PGRST204' || /could not find the .* column|schema cache|column .* does not exist/i.test(err.message||''));
 }
@@ -12995,6 +13009,9 @@ function renderGymDay(w,d,u){
     const combTopo = ed.comboId && exs[i+1] && exs[i+1].comboId===ed.comboId;
     const combBase = ed.comboId && exs[i-1] && exs[i-1].comboId===ed.comboId;
     const proximo = (!combTopo && exs[i+1]) ? getExById(exs[i+1].id) : null;
+    // Apelido pessoal (ver admAbrirRenomearEx) tem prioridade sobre o nome
+    // normal do banco — só muda a exibição pra ESTE aluno, nunca o resto.
+    const nomeEx = u.nomesPersonalizados?.[ex.id] || exNome(ex);
     const estiloCombo = combTopo ? 'border-bottom:none;border-radius:14px 14px 0 0;margin-bottom:0;border-color:rgba(52,152,219,.45)!important'
                        : combBase ? 'border-top:none;border-radius:0 0 14px 14px;margin-top:-1px;border-color:rgba(52,152,219,.45)!important' : '';
     let exConcl=true; for(let s=0;s<(ed.sets||1);s++){ if(!(u.gymDone&&u.gymDone[`${w}_${d}_${i}_s${s}`])) { exConcl=false; break; } }
@@ -13002,7 +13019,7 @@ function renderGymDay(w,d,u){
       <div class="ep-header" onclick="togEp(${i})">
         <div class="ep-drag-handle" style="display:flex;align-items:center;justify-content:center;flex-shrink:0;width:18px;color:var(--mu);font-size:14px;letter-spacing:-1px;margin-right:2px" title="Segure e arraste pra reordenar">⠿</div>
         <div class="ep-num ${(dayDone||exConcl)?'done':''}">${(dayDone||exConcl)?'✓':i+1}</div>
-        <div class="ep-info"><div class="ep-title">${exNome(ex)} <button onclick="event.stopPropagation();abrirFichaExercicio('${ex.id}')" style="background:rgba(255,255,255,.08);border:1px solid var(--b);color:var(--t2);border-radius:50%;width:20px;height:20px;font-size:11px;cursor:pointer;vertical-align:middle;margin-left:4px;padding:0;line-height:1" title="Ver ficha completa">ℹ️</button></div><div class="ep-sub">${ex.muscle} · ${ex.equipment}</div></div>
+        <div class="ep-info"><div class="ep-title">${nomeEx} <button onclick="event.stopPropagation();abrirFichaExercicio('${ex.id}')" style="background:rgba(255,255,255,.08);border:1px solid var(--b);color:var(--t2);border-radius:50%;width:20px;height:20px;font-size:11px;cursor:pointer;vertical-align:middle;margin-left:4px;padding:0;line-height:1" title="Ver ficha completa">ℹ️</button></div><div class="ep-sub">${ex.muscle} · ${ex.equipment}</div></div>
         <div class="ep-chips">${ed.comboId?`<span class="ep-chip" style="background:rgba(52,152,219,.18);color:#5dade2;border:1px solid rgba(52,152,219,.4)">🔗 Bi-set</span>`:''}<span class="ep-chip">${ed.sets}×${ed.reps}</span><span class="ep-chip">⏱${ed.rest||60}s</span>${ed.tecnica?`<span class="ep-chip" style="background:${ed.turbo?'rgba(46,204,113,.18)':'rgba(225,6,0,.18)'};color:${ed.turbo?'#2ecc71':'#ff5a63'};border:1px solid ${ed.turbo?'rgba(46,204,113,.4)':'rgba(225,6,0,.35)'}">${ed.turbo?'⚡':'🔥'} ${ed.tecnica}</span>`:''}</div>
         <span class="ep-chv">▾</span>
       </div>
@@ -13031,8 +13048,8 @@ function renderGymDay(w,d,u){
             </div>`;
           }).join('')}
         </div>
-        ${combTopo?`<div class="proximo-ex-preview" style="background:rgba(52,152,219,.1);border:1px solid rgba(52,152,219,.3)"><span style="opacity:.8;color:#5dade2;font-weight:700">🔗 Sem descanso — continue direto com:</span><span style="font-weight:700;color:var(--text-primary)">${exNome(getExById(exs[i+1].id))}</span><span style="opacity:.7">${exs[i+1].sets}×${exs[i+1].reps}</span></div>`
-        :proximo?`<div class="proximo-ex-preview"><span style="opacity:.6">${t('ui.f9dbeb6d7d')}</span><span style="font-weight:700;color:var(--text-primary)">${exNome(proximo)}</span><span style="opacity:.7">${exs[i+1].sets}×${exs[i+1].reps}</span></div>`:''}
+        ${combTopo?`<div class="proximo-ex-preview" style="background:rgba(52,152,219,.1);border:1px solid rgba(52,152,219,.3)"><span style="opacity:.8;color:#5dade2;font-weight:700">🔗 Sem descanso — continue direto com:</span><span style="font-weight:700;color:var(--text-primary)">${u.nomesPersonalizados?.[exs[i+1].id]||exNome(getExById(exs[i+1].id))}</span><span style="opacity:.7">${exs[i+1].sets}×${exs[i+1].reps}</span></div>`
+        :proximo?`<div class="proximo-ex-preview"><span style="opacity:.6">${t('ui.f9dbeb6d7d')}</span><span style="font-weight:700;color:var(--text-primary)">${u.nomesPersonalizados?.[exs[i+1].id]||exNome(proximo)}</span><span style="opacity:.7">${exs[i+1].sets}×${exs[i+1].reps}</span></div>`:''}
       </div>
     </div>${combTopo?`<div style="text-align:center;font-size:9.5px;font-weight:800;color:#5dade2;background:rgba(52,152,219,.1);border-left:1px solid rgba(52,152,219,.4);border-right:1px solid rgba(52,152,219,.4);padding:3px 0;letter-spacing:.3px;margin:-1px 0 0">🔗 BI-SET — sem descanso entre os dois</div>`:''}`;
   }).join('');
@@ -16850,6 +16867,11 @@ function renderEGW(w,u){
     }
     h+=`<div id="egw-ex-list-${dayIdx}">`;
     prog.days[day].forEach((ed,ei)=>{const ex=getExById(ed.id,u);
+      // Nome exibido pra ESTE aluno: se ele tem um apelido/renome pessoal pra
+      // esse exercício (ver admAbrirRenomearEx), usa ele; senão o nome normal
+      // do banco. admSeletorTecnica/admSeletorCombo continuam usando ex.name
+      // puro (são sobre o exercício em si, não sobre como ele é chamado aqui).
+      const nomeExibido = u.nomesPersonalizados?.[ed.id] || (ex?ex.name:ed.id);
       // Bi-set: os dois exercícios combinados ficam sempre um embaixo do
       // outro (admDefinirCombo garante isso ao combinar) — então basta
       // checar o vizinho imediato pra saber se este card é o topo ou a base
@@ -16862,9 +16884,10 @@ function renderEGW(w,u){
       <div class="egw-drag-handle" style="display:flex;align-items:center;justify-content:center;flex-shrink:0;width:20px;height:24px;color:var(--mu);font-size:14px;cursor:grab;letter-spacing:-1px" title="Segure e arraste pra reordenar">⠿</div>
       <div style="background:var(--r);color:#fff;border-radius:5px;min-width:20px;height:20px;display:flex;align-items:center;justify-content:center;font-size:9.5px;font-weight:900;flex-shrink:0">${ei+1}</div>
       ${egwThumbGif(ed.id,u)}
-      <div style="font-size:12px;font-weight:700;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${ex?ex.name:ed.id}${ed.comboId?' 🔗':''}</div>
+      <div style="font-size:12px;font-weight:700;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${nomeExibido}${u.nomesPersonalizados?.[ed.id]?' 👤':''}${ed.comboId?' 🔗':''}</div>
+      <button onclick="admAbrirRenomearEx('${ed.id}')" title="Renomear exercício" style="background:rgba(255,255,255,.05);border:1px solid var(--b);border-radius:4px;padding:2px 7px;color:var(--t2);font-size:9px;cursor:pointer;flex-shrink:0">✏️</button>
       <button onclick="remSEx('${w}','${day}',${ei})" style="background:rgba(225,6,0,.08);border:1px solid rgba(225,6,0,.15);border-radius:4px;padding:2px 7px;color:var(--r);font-size:9px;cursor:pointer;flex-shrink:0">✕</button></div>
-      <div class="exer-g"><div><div class="ml2">Exercício</div><button type="button" onclick="abrirBuscaExercicio('${w}','${day}',${ei})" style="width:100%;text-align:left;background:var(--s2);border:1px solid var(--b);border-radius:8px;padding:8px 10px;color:#fff;font-size:12.5px;cursor:pointer;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${ex?ex.name:ed.id}${(u.exerciciosCustom||[]).some(c=>c.id===ed.id)?' 🎬':''} ▾</button></div><div><div class="ml2">Séries</div><input class="mi" type="number" data-day="${day}" data-idx="${ei}" data-field="sets" value="${ed.sets}"/></div><div><div class="ml2">Reps</div><input class="mi" data-day="${day}" data-idx="${ei}" data-field="reps" value="${ed.reps}"/></div></div>
+      <div class="exer-g"><div><div class="ml2">Exercício</div><button type="button" onclick="abrirBuscaExercicio('${w}','${day}',${ei})" style="width:100%;text-align:left;background:var(--s2);border:1px solid var(--b);border-radius:8px;padding:8px 10px;color:#fff;font-size:12.5px;cursor:pointer;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${nomeExibido}${(u.exerciciosCustom||[]).some(c=>c.id===ed.id)?' 🎬':''} ▾</button></div><div><div class="ml2">Séries</div><input class="mi" type="number" data-day="${day}" data-idx="${ei}" data-field="sets" value="${ed.sets}"/></div><div><div class="ml2">Reps</div><input class="mi" data-day="${day}" data-idx="${ei}" data-field="reps" value="${ed.reps}"/></div></div>
       <div class="exer-g"><div><div class="ml2">Carga</div><input class="mi" data-day="${day}" data-idx="${ei}" data-field="load" value="${ed.load||''}"/></div><div><div class="ml2">Descanso(s)</div><input class="mi" type="number" data-day="${day}" data-idx="${ei}" data-field="rest" value="${ed.rest||60}"/></div></div>
       ${admSeletorTecnica(w,day,ei,ed)}
       ${admSeletorCombo(w,day,ei,ed,prog.days[day],u)}</div>`;
@@ -17000,6 +17023,63 @@ function admDefinirCombo(w,day,ei,valStr){
   DB.set('fq_users',users);
   renderEGW(w,u);
   syncAlunoAdmin(u).catch(()=>{ fqToast('⚠️ Salvo aqui, mas não sincronizou. Confira a internet.','warn',6000); });
+}
+// ══════════════════════════════════════════════════════════════════════
+// ══ RENOMEAR EXERCÍCIO — só pra este aluno, ou pra todo o sistema ══
+// "Só pra este aluno": fica em u.nomesPersonalizados (igual aos gifs
+// pessoais) — não toca no banco, só muda como ESTE aluno vê o exercício.
+// "Pra todo o sistema": edita o nome de verdade no EXERCISE_BANK e salva em
+// exercicios_extras — a partir daí todo mundo que tiver esse exercício
+// (incluindo quem já tinha um apelido pessoal nele) vê o nome novo.
+// ══════════════════════════════════════════════════════════════════════
+let renExAlvo=null;
+function admAbrirRenomearEx(exId){
+  const u = admGetAluno(editEmail); if(!u){ fqToast('Aluno não encontrado.','warn'); return; }
+  const ex = getExById(exId,u); if(!ex){ fqToast('Exercício não encontrado.','warn'); return; }
+  renExAlvo = exId;
+  const apelido = u.nomesPersonalizados?.[exId];
+  const inp=document.getElementById('ren-ex-nome'); if(inp) inp.value = apelido || ex.name;
+  const btnRem=document.getElementById('ren-ex-btn-remover'); if(btnRem) btnRem.style.display = apelido ? 'block' : 'none';
+  abrirModal('modal-renomear-ex');
+}
+async function confirmarRenomearEx(escopo){
+  const exId = renExAlvo; if(!exId) return;
+  const novoNome = (document.getElementById('ren-ex-nome').value||'').trim();
+  if(!novoNome){ fqToast('Digite um nome.','warn'); return; }
+  const u = admGetAluno(editEmail); if(!u){ fqToast('Aluno não encontrado.','warn'); return; }
+  closeModal('modal-renomear-ex');
+  if(escopo==='aluno'){
+    const users=DB.get('fq_users')||{}; users[editEmail]=u;
+    if(!u.nomesPersonalizados) u.nomesPersonalizados={};
+    u.nomesPersonalizados[exId]=novoNome;
+    DB.set('fq_users',users);
+    renderEGW(editGW,u);
+    fqToast(`✏️ Renomeado só pra ${u.name||'este aluno'}.`,'ok',3500);
+    await syncAlunoAdmin(u).catch(()=>{ fqToast('⚠️ Salvo aqui, mas não sincronizou. Confira a internet.','warn',6000); });
+  } else {
+    const ex = EXERCISE_BANK.find(e=>e.id===exId);
+    if(!ex){ fqToast('Esse exercício não está no banco (é um exercício privado do próprio aluno) — só dá pra renomear "pra este aluno".','warn',7000); return; }
+    ex.name = novoNome;
+    renderEGW(editGW,u);
+    if(typeof renderBank==='function' && document.getElementById('exercise-bank-list')) renderBank();
+    fqToast('🌐 Renomeado pra todo o sistema!','ok',3500);
+    if(!sb) return;
+    try{
+      const{error}=await sb.from('exercicios_extras').upsert({id:ex.id,name:ex.name,muscle:ex.muscle,equipment:ex.equipment,emoji:ex.emoji,obs:ex.obs,dica:ex.dica,atualizado_em:new Date().toISOString()});
+      if(error){ console.warn('Não deu pra salvar o novo nome pra todo o sistema (tabela exercicios_extras existe?):', error.message); fqToast('⚠️ Renomeado aqui, mas não ficou salvo pra todo o sistema — confira se a tabela exercicios_extras existe.','warn',7000); return; }
+      EXERCICIOS_EXTRAS_IDS.add(ex.id);
+    }catch(e){ console.warn('Erro ao salvar novo nome:', e); }
+  }
+}
+async function removerRenomeEx(){
+  const exId = renExAlvo; if(!exId) return;
+  const u = admGetAluno(editEmail); if(!u){ fqToast('Aluno não encontrado.','warn'); return; }
+  closeModal('modal-renomear-ex');
+  if(u.nomesPersonalizados) delete u.nomesPersonalizados[exId];
+  const users=DB.get('fq_users')||{}; users[editEmail]=u; DB.set('fq_users',users);
+  renderEGW(editGW,u);
+  fqToast('Apelido removido — voltou ao nome normal.','ok',3000);
+  await syncAlunoAdmin(u).catch(()=>{ fqToast('⚠️ Salvo aqui, mas não sincronizou. Confira a internet.','warn',6000); });
 }
 function limparTreinoDia(w,day){
   const u=admGetAluno(editEmail);if(!u)return;
