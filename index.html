@@ -1388,7 +1388,7 @@ html[data-tema="claro"] .hero-banner{background:#fff;}
       <option value="es">🇪🇸 ES</option>
     </select>
   </div>
-  <div id="fq-version-badge" style="position:absolute;bottom:8px;right:12px;font-size:9px;color:#333;font-weight:700;z-index:5">v290</div>
+  <div id="fq-version-badge" style="position:absolute;bottom:8px;right:12px;font-size:9px;color:#333;font-weight:700;z-index:5">v291</div>
   <img src="https://images.unsplash.com/photo-1517836357463-d25dfeac3438?w=800&q=80" alt="Fitness" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center top;filter:brightness(.35);z-index:0"/>
   <div class="splash-glow"></div>
   <div class="splash-noise"></div>
@@ -2658,7 +2658,7 @@ html[data-tema="claro"] .hero-banner{background:#fff;}
             <span style="color:var(--mu);font-size:18px">›</span>
           </div>
         </div>
-        <div style="text-align:center;padding:20px 0 4px;font-size:11px;color:var(--mu)">FitQuest <span id="fq-version-badge-perfil">v290</span></div>
+        <div style="text-align:center;padding:20px 0 4px;font-size:11px;color:var(--mu)">FitQuest <span id="fq-version-badge-perfil">v291</span></div>
       </div>
     </div>
 
@@ -12989,14 +12989,21 @@ function renderGymDay(w,d,u){
   document.getElementById('gym-exercises').innerHTML=cabecalhoProgresso+exs.map((ed,i)=>{
     const ex=getExById(ed.id);if(!ex)return '';
     const lk=`${w}_${d}_${ex.id}`;const sl=(u.loadHistory&&u.loadHistory[lk])||ed.load||'';
-    const proximo=exs[i+1]?getExById(exs[i+1].id):null;
+    // Bi-set combinado (ver admDefinirCombo, no editor do admin): os dois
+    // exercícios da dupla já ficam sempre adjacentes, então basta olhar o
+    // vizinho imediato pra saber se este card é o topo ou a base do par.
+    const combTopo = ed.comboId && exs[i+1] && exs[i+1].comboId===ed.comboId;
+    const combBase = ed.comboId && exs[i-1] && exs[i-1].comboId===ed.comboId;
+    const proximo = (!combTopo && exs[i+1]) ? getExById(exs[i+1].id) : null;
+    const estiloCombo = combTopo ? 'border-bottom:none;border-radius:14px 14px 0 0;margin-bottom:0;border-color:rgba(52,152,219,.45)!important'
+                       : combBase ? 'border-top:none;border-radius:0 0 14px 14px;margin-top:-1px;border-color:rgba(52,152,219,.45)!important' : '';
     let exConcl=true; for(let s=0;s<(ed.sets||1);s++){ if(!(u.gymDone&&u.gymDone[`${w}_${d}_${i}_s${s}`])) { exConcl=false; break; } }
-    return `<div class="ep-card ${ed.turbo?'ep-turbo':''} ${i===idxAtivo?'ep-ativo open':''}" id="ep-${i}" data-idx="${i}">
+    return `<div class="ep-card ${ed.turbo?'ep-turbo':''} ${i===idxAtivo?'ep-ativo open':''}" id="ep-${i}" data-idx="${i}" style="${estiloCombo}">
       <div class="ep-header" onclick="togEp(${i})">
         <div class="ep-drag-handle" style="display:flex;align-items:center;justify-content:center;flex-shrink:0;width:18px;color:var(--mu);font-size:14px;letter-spacing:-1px;margin-right:2px" title="Segure e arraste pra reordenar">⠿</div>
         <div class="ep-num ${(dayDone||exConcl)?'done':''}">${(dayDone||exConcl)?'✓':i+1}</div>
         <div class="ep-info"><div class="ep-title">${exNome(ex)} <button onclick="event.stopPropagation();abrirFichaExercicio('${ex.id}')" style="background:rgba(255,255,255,.08);border:1px solid var(--b);color:var(--t2);border-radius:50%;width:20px;height:20px;font-size:11px;cursor:pointer;vertical-align:middle;margin-left:4px;padding:0;line-height:1" title="Ver ficha completa">ℹ️</button></div><div class="ep-sub">${ex.muscle} · ${ex.equipment}</div></div>
-        <div class="ep-chips"><span class="ep-chip">${ed.sets}×${ed.reps}</span><span class="ep-chip">⏱${ed.rest||60}s</span>${ed.tecnica?`<span class="ep-chip" style="background:${ed.turbo?'rgba(46,204,113,.18)':'rgba(225,6,0,.18)'};color:${ed.turbo?'#2ecc71':'#ff5a63'};border:1px solid ${ed.turbo?'rgba(46,204,113,.4)':'rgba(225,6,0,.35)'}">${ed.turbo?'⚡':'🔥'} ${ed.tecnica}</span>`:''}</div>
+        <div class="ep-chips">${ed.comboId?`<span class="ep-chip" style="background:rgba(52,152,219,.18);color:#5dade2;border:1px solid rgba(52,152,219,.4)">🔗 Bi-set</span>`:''}<span class="ep-chip">${ed.sets}×${ed.reps}</span><span class="ep-chip">⏱${ed.rest||60}s</span>${ed.tecnica?`<span class="ep-chip" style="background:${ed.turbo?'rgba(46,204,113,.18)':'rgba(225,6,0,.18)'};color:${ed.turbo?'#2ecc71':'#ff5a63'};border:1px solid ${ed.turbo?'rgba(46,204,113,.4)':'rgba(225,6,0,.35)'}">${ed.turbo?'⚡':'🔥'} ${ed.tecnica}</span>`:''}</div>
         <span class="ep-chv">▾</span>
       </div>
       <div class="ep-body">
@@ -13024,9 +13031,10 @@ function renderGymDay(w,d,u){
             </div>`;
           }).join('')}
         </div>
-        ${proximo?`<div class="proximo-ex-preview"><span style="opacity:.6">${t('ui.f9dbeb6d7d')}</span><span style="font-weight:700;color:var(--text-primary)">${exNome(proximo)}</span><span style="opacity:.7">${exs[i+1].sets}×${exs[i+1].reps}</span></div>`:''}
+        ${combTopo?`<div class="proximo-ex-preview" style="background:rgba(52,152,219,.1);border:1px solid rgba(52,152,219,.3)"><span style="opacity:.8;color:#5dade2;font-weight:700">🔗 Sem descanso — continue direto com:</span><span style="font-weight:700;color:var(--text-primary)">${exNome(getExById(exs[i+1].id))}</span><span style="opacity:.7">${exs[i+1].sets}×${exs[i+1].reps}</span></div>`
+        :proximo?`<div class="proximo-ex-preview"><span style="opacity:.6">${t('ui.f9dbeb6d7d')}</span><span style="font-weight:700;color:var(--text-primary)">${exNome(proximo)}</span><span style="opacity:.7">${exs[i+1].sets}×${exs[i+1].reps}</span></div>`:''}
       </div>
-    </div>`;
+    </div>${combTopo?`<div style="text-align:center;font-size:9.5px;font-weight:800;color:#5dade2;background:rgba(52,152,219,.1);border-left:1px solid rgba(52,152,219,.4);border-right:1px solid rgba(52,152,219,.4);padding:3px 0;letter-spacing:.3px;margin:-1px 0 0">🔗 BI-SET — sem descanso entre os dois</div>`:''}`;
   }).join('');
   initGifCanvases(document.getElementById('gym-exercises'));
   // liga o arrastar-pra-reordenar nos cards recém-desenhados
@@ -16822,15 +16830,25 @@ function renderEGW(w,u){
     }
     h+=`<div id="egw-ex-list-${dayIdx}">`;
     prog.days[day].forEach((ed,ei)=>{const ex=getExById(ed.id,u);
-      h+=`<div class="exer" style="position:relative"><div class="exer-t" style="display:flex;align-items:center;gap:6px">
+      // Bi-set: os dois exercícios combinados ficam sempre um embaixo do
+      // outro (admDefinirCombo garante isso ao combinar) — então basta
+      // checar o vizinho imediato pra saber se este card é o topo ou a base
+      // do par, e desenhar os dois "colados" com uma faixa de ligação.
+      const combTopo = ed.comboId && prog.days[day][ei+1] && prog.days[day][ei+1].comboId===ed.comboId;
+      const combBase = ed.comboId && prog.days[day][ei-1] && prog.days[day][ei-1].comboId===ed.comboId;
+      const estiloCombo = combTopo ? 'border-bottom:none;border-radius:10px 10px 0 0;margin-bottom:0;border-color:rgba(52,152,219,.4)'
+                         : combBase ? 'border-top:none;border-radius:0 0 10px 10px;margin-top:-1px;border-color:rgba(52,152,219,.4)' : '';
+      h+=`<div class="exer" style="position:relative;${estiloCombo}"><div class="exer-t" style="display:flex;align-items:center;gap:6px">
       <div class="egw-drag-handle" style="display:flex;align-items:center;justify-content:center;flex-shrink:0;width:20px;height:24px;color:var(--mu);font-size:14px;cursor:grab;letter-spacing:-1px" title="Segure e arraste pra reordenar">⠿</div>
       <div style="background:var(--r);color:#fff;border-radius:5px;min-width:20px;height:20px;display:flex;align-items:center;justify-content:center;font-size:9.5px;font-weight:900;flex-shrink:0">${ei+1}</div>
       ${egwThumbGif(ed.id,u)}
-      <div style="font-size:12px;font-weight:700;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${ex?ex.name:ed.id}</div>
+      <div style="font-size:12px;font-weight:700;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${ex?ex.name:ed.id}${ed.comboId?' 🔗':''}</div>
       <button onclick="remSEx('${w}','${day}',${ei})" style="background:rgba(225,6,0,.08);border:1px solid rgba(225,6,0,.15);border-radius:4px;padding:2px 7px;color:var(--r);font-size:9px;cursor:pointer;flex-shrink:0">✕</button></div>
       <div class="exer-g"><div><div class="ml2">Exercício</div><button type="button" onclick="abrirBuscaExercicio('${w}','${day}',${ei})" style="width:100%;text-align:left;background:var(--s2);border:1px solid var(--b);border-radius:8px;padding:8px 10px;color:#fff;font-size:12.5px;cursor:pointer;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${ex?ex.name:ed.id}${(u.exerciciosCustom||[]).some(c=>c.id===ed.id)?' 🎬':''} ▾</button></div><div><div class="ml2">Séries</div><input class="mi" type="number" data-day="${day}" data-idx="${ei}" data-field="sets" value="${ed.sets}"/></div><div><div class="ml2">Reps</div><input class="mi" data-day="${day}" data-idx="${ei}" data-field="reps" value="${ed.reps}"/></div></div>
       <div class="exer-g"><div><div class="ml2">Carga</div><input class="mi" data-day="${day}" data-idx="${ei}" data-field="load" value="${ed.load||''}"/></div><div><div class="ml2">Descanso(s)</div><input class="mi" type="number" data-day="${day}" data-idx="${ei}" data-field="rest" value="${ed.rest||60}"/></div></div>
-      ${admSeletorTecnica(w,day,ei,ed)}</div>`;
+      ${admSeletorTecnica(w,day,ei,ed)}
+      ${admSeletorCombo(w,day,ei,ed,prog.days[day],u)}</div>`;
+      if(combTopo) h+=`<div style="text-align:center;font-size:9.5px;font-weight:800;color:#5dade2;background:rgba(52,152,219,.1);border-left:1px solid rgba(52,152,219,.4);border-right:1px solid rgba(52,152,219,.4);padding:3px 0;letter-spacing:.3px">🔗 BI-SET — sem descanso entre os dois</div>`;
     });
     h+=`</div>`;
     if(prog.days[day].length>1) h+=`<div style="text-align:center;font-size:10px;color:var(--mu);margin:2px 0 10px">Segure num exercício pra arrastar e reordenar</div>`;
@@ -16905,6 +16923,63 @@ async function admDefinirTecnica(w,day,ei,idxStr){
   DB.set('fq_users',users);
   renderEGW(w,u);
   await syncAlunoAdmin(u).catch(()=>{ fqToast('⚠️ Salvo aqui, mas não sincronizou. Confira a internet.','warn',6000); });
+}
+// ══════════════════════════════════════════════════════════════════════
+// ══ BI-SET — combinar dois exercícios do mesmo dia (igual ao MFIT) ══
+// Os dois ficam marcados com o mesmo comboId e, pra fazer sentido na hora
+// de treinar (tem que ser em sequência, sem descansar entre eles), sempre
+// ficam um embaixo do outro na lista — combinar já reordena pra isso.
+// Puramente informativo aqui: não muda o cronômetro de descanso nem como
+// as séries são marcadas, só avisa visualmente os dois exercícios da dupla.
+// ══════════════════════════════════════════════════════════════════════
+function admSeletorCombo(w,day,ei,ed,lista,u){
+  if(lista.length<2) return ''; // só faz sentido combinar se tiver outro exercício no dia
+  const ativo = !!ed.comboId;
+  const parceiroIdx = ativo ? lista.findIndex((e,j)=>j!==ei && e.comboId===ed.comboId) : -1;
+  const opcoes = lista.map((e,j)=>{
+    if(j===ei) return '';
+    const exx=getExById(e.id,u);
+    return `<option value="${j}" ${parceiroIdx===j?'selected':''}>${exx?exx.name:e.id}</option>`;
+  }).join('');
+  const nomeParceiro = parceiroIdx>=0 ? (getExById(lista[parceiroIdx].id,u)?.name || lista[parceiroIdx].id) : '';
+  return `<div style="margin-top:7px;padding:8px 9px;border-radius:8px;${ativo?'background:rgba(52,152,219,.08);border:1px solid rgba(52,152,219,.3)':'background:var(--s2);border:1px solid var(--b)'}">
+    <div style="display:flex;align-items:center;gap:7px">
+      <span style="font-size:10.5px;color:${ativo?'#3498db':'var(--mu)'};white-space:nowrap;font-weight:700">🔗 Bi-set</span>
+      <select onchange="admDefinirCombo('${w}','${day}',${ei},this.value)" style="flex:1;background:var(--bg,#0d0d0d);border:1px solid var(--b);border-radius:6px;padding:5px 7px;color:#fff;font-size:11px">
+        <option value="">Nenhum (exercício solo)</option>
+        ${opcoes}
+      </select>
+    </div>
+    ${ativo&&parceiroIdx>=0?`<div style="font-size:10px;color:#5dade2;margin-top:6px;line-height:1.5">Combinado com "${nomeParceiro}" — ficam um embaixo do outro na lista; o aluno faz os dois em sequência, sem descansar entre eles.</div>`:''}
+  </div>`;
+}
+function admDefinirCombo(w,day,ei,valStr){
+  const u = admGetAluno(editEmail); if(!u){ fqToast('Aluno não encontrado.','warn'); return; }
+  const lista = u.aiPlan?.gym?.[w]?.days?.[day];
+  const entradaA = lista?.[ei];
+  if(!entradaA){ fqToast('Exercício não encontrado.','warn'); return; }
+  const users = DB.get('fq_users')||{}; users[editEmail]=u;
+  // Desfaz o combo antigo de A (nos dois lados), se tinha um.
+  if(entradaA.comboId){ const velho=entradaA.comboId; lista.forEach(e=>{ if(e.comboId===velho) delete e.comboId; }); }
+  if(valStr!==''){
+    const entradaB = lista[parseInt(valStr,10)];
+    if(entradaB && entradaB!==entradaA){
+      // Desfaz o combo antigo de B também, se já tinha outro parceiro.
+      if(entradaB.comboId){ const velho=entradaB.comboId; lista.forEach(e=>{ if(e.comboId===velho) delete e.comboId; }); }
+      // Bi-set só faz sentido em sequência — reordena pra deixar os dois
+      // adjacentes, com A primeiro. Usa a posição ATUAL de cada objeto (não
+      // o índice recebido), pra não errar a conta depois do splice.
+      const jAtual = lista.indexOf(entradaB);
+      lista.splice(jAtual,1);
+      const eiDepoisRemover = lista.indexOf(entradaA);
+      lista.splice(eiDepoisRemover+1,0,entradaB);
+      const novoId = 'combo_'+Date.now();
+      entradaA.comboId = novoId; entradaB.comboId = novoId;
+    }
+  }
+  DB.set('fq_users',users);
+  renderEGW(w,u);
+  syncAlunoAdmin(u).catch(()=>{ fqToast('⚠️ Salvo aqui, mas não sincronizou. Confira a internet.','warn',6000); });
 }
 function limparTreinoDia(w,day){
   const u=admGetAluno(editEmail);if(!u)return;
@@ -17218,7 +17293,10 @@ async function admAplicarProgressaoCorrida(w){
   fqToast(`📈 Progressão de corrida aplicada em ${proximasSemanas.length} semana(s) — já enviado pro aluno.`,'ok',5000);
 }
 function addSEx(w,d){const users=DB.get('fq_users')||{};const u=admGetAluno(editEmail);if(!u)return;users[editEmail]=u;ensureAP(u);u.aiPlan.gym[w].days[d].push({id:EXERCISE_BANK[0]?.id||'e001',sets:3,reps:'12',load:'Moderada',rest:60});DB.set('fq_users',users);renderEGW(w,u);}
-function remSEx(w,d,i){const users=DB.get('fq_users')||{};const u=admGetAluno(editEmail);if(!u)return;users[editEmail]=u;u.aiPlan.gym[w].days[d].splice(i,1);DB.set('fq_users',users);renderEGW(w,u);}
+function remSEx(w,d,i){const users=DB.get('fq_users')||{};const u=admGetAluno(editEmail);if(!u)return;users[editEmail]=u;
+  const lista=u.aiPlan.gym[w].days[d];const removido=lista[i];
+  if(removido && removido.comboId){ const g=removido.comboId; lista.forEach(e=>{ if(e!==removido && e.comboId===g) delete e.comboId; }); }
+  lista.splice(i,1);DB.set('fq_users',users);renderEGW(w,u);}
 // ── Aplica um pacote de treino pronto (TREINOS_PRONTOS) na semana em edição ──
 // Cria um novo dia com o nome do pacote (ou reaproveita se já existir um dia
 // com esse nome nessa semana) e copia os exercícios pra dentro. Sincroniza
