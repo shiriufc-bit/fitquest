@@ -1388,7 +1388,7 @@ html[data-tema="claro"] .hero-banner{background:#fff;}
       <option value="es">🇪🇸 ES</option>
     </select>
   </div>
-  <div id="fq-version-badge" style="position:absolute;bottom:8px;right:12px;font-size:9px;color:#333;font-weight:700;z-index:5">v289</div>
+  <div id="fq-version-badge" style="position:absolute;bottom:8px;right:12px;font-size:9px;color:#333;font-weight:700;z-index:5">v290</div>
   <img src="https://images.unsplash.com/photo-1517836357463-d25dfeac3438?w=800&q=80" alt="Fitness" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center top;filter:brightness(.35);z-index:0"/>
   <div class="splash-glow"></div>
   <div class="splash-noise"></div>
@@ -2658,7 +2658,7 @@ html[data-tema="claro"] .hero-banner{background:#fff;}
             <span style="color:var(--mu);font-size:18px">›</span>
           </div>
         </div>
-        <div style="text-align:center;padding:20px 0 4px;font-size:11px;color:var(--mu)">FitQuest <span id="fq-version-badge-perfil">v289</span></div>
+        <div style="text-align:center;padding:20px 0 4px;font-size:11px;color:var(--mu)">FitQuest <span id="fq-version-badge-perfil">v290</span></div>
       </div>
     </div>
 
@@ -2843,6 +2843,8 @@ html[data-tema="claro"] .hero-banner{background:#fff;}
         <div style="display:flex;align-items:center;gap:8px;margin:12px 0;color:var(--mu);font-size:10.5px"><div style="flex:1;height:1px;background:var(--b)"></div>ou<div style="flex:1;height:1px;background:var(--b)"></div></div>
         <input type="file" accept="video/*" id="gv-input-arquivo" style="display:none" onchange="gvVideoSelecionado(this)"/>
         <button class="btn-addex" onclick="document.getElementById('gv-input-arquivo').click()" style="width:100%;background:var(--s2);border-color:var(--b2)">📁 Escolher vídeo do celular</button>
+        <input type="file" accept="image/*" id="gv-input-foto" style="display:none" onchange="gvFotoSelecionada(this)"/>
+        <button class="btn-addex" onclick="document.getElementById('gv-input-foto').click()" style="width:100%;margin-top:8px;background:var(--s2);border-color:var(--b2)">📷 Escolher foto</button>
       </div>
       <!-- Vídeo escolhido da galeria é mais longo que 8s: escolher o trecho -->
       <div id="gv-cortar-wrap" style="display:none;text-align:center">
@@ -3442,18 +3444,49 @@ let sb=null;
 // pública do Supabase — assim TODOS os alunos passam a ver essa gravação
 // como a demonstração oficial, não só você. Carregada uma vez, em cache.
 let GIFS_EXTRAS_CACHE = {};
+// Normaliza um valor guardado de mídia (gif pessoal ou demonstração oficial),
+// que pode vir em dois formatos: string antiga (só a url, sempre gif) ou
+// objeto novo {url,tipo} — tipo 'gif' (padrão) ou 'foto'. Usar sempre essa
+// função pra ler em vez de acessar o valor direto, assim o app continua
+// entendendo gravações feitas antes dessa funcionalidade existir.
+function mfInfo(v){
+  if(!v) return null;
+  if(typeof v==='string') return {url:v, tipo:'gif'};
+  return {url:v.url||null, tipo:v.tipo||'gif'};
+}
 async function fqCarregarGifsExtras(){
   if(!sb) return;
   try{
-    const{data,error}=await sb.from('gifs_extras').select('exercicio_id,url');
+    const{data,error}=await sb.from('gifs_extras').select('exercicio_id,url,tipo');
     if(error){ console.warn('gifs_extras indisponível ainda (provavelmente falta criar a tabela):', error.message); return; }
-    (data||[]).forEach(row=>{ if(row.exercicio_id && row.url) GIFS_EXTRAS_CACHE[row.exercicio_id]=row.url; });
+    (data||[]).forEach(row=>{ if(row.exercicio_id && row.url) GIFS_EXTRAS_CACHE[row.exercicio_id]={url:row.url, tipo:row.tipo||'gif'}; });
   }catch(e){ console.warn('Erro ao carregar gifs_extras:', e); }
+}
+// Exercícios criados pelo admin (fora da lista fixa do app) ficam numa
+// tabela própria e são somados ao EXERCISE_BANK assim que carregam — depois
+// disso o resto do app (ficha, treino, busca) trata eles como qualquer outro
+// exercício do banco, sem precisar saber que vieram de fora.
+let EXERCICIOS_EXTRAS_IDS = new Set();
+async function fqCarregarExerciciosExtras(){
+  if(!sb) return;
+  try{
+    const{data,error}=await sb.from('exercicios_extras').select('*');
+    if(error){ console.warn('exercicios_extras indisponível ainda (provavelmente falta criar a tabela):', error.message); return; }
+    (data||[]).forEach(row=>{
+      if(!row.id) return;
+      EXERCICIOS_EXTRAS_IDS.add(row.id);
+      const idx=EXERCISE_BANK.findIndex(e=>e.id===row.id);
+      const obj={id:row.id,name:row.name||'',muscle:row.muscle||'',equipment:row.equipment||'—',emoji:row.emoji||'🏋️',obs:row.obs||'',dica:row.dica||''};
+      if(idx>=0) EXERCISE_BANK[idx]=obj; else EXERCISE_BANK.push(obj);
+    });
+    if(typeof renderBank==='function' && document.getElementById('exercise-bank-list')) renderBank();
+  }catch(e){ console.warn('Erro ao carregar exercicios_extras:', e); }
 }
 try{
   if(typeof supabase!=='undefined' && supabase.createClient){
     sb=supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
     fqCarregarGifsExtras(); // não precisa esperar — carrega em paralelo, fica pronto quando o primeiro exercício abrir
+    fqCarregarExerciciosExtras();
     console.log('Supabase connected');
   }
 }catch(e){console.warn('Supabase init failed, running offline:',e.message);}
@@ -11497,7 +11530,8 @@ const GIF_SEARCH_PATHS=['exercicios/','assets/gifs/',''];
 // senão cai no gif padrão do banco (comportamento de sempre).
 function getExGif(exId){
   const u = (typeof getU==='function') ? getU() : null;
-  if(u?.gifsPersonalizados?.[exId]) return u.gifsPersonalizados[exId];
+  const info = mfInfo(u?.gifsPersonalizados?.[exId]);
+  if(info) return info.url;
   return GIF_SEARCH_PATHS[0]+exId+'.gif';
 }
 function gifFallback(imgEl,exId,containerSelector){
@@ -11520,7 +11554,14 @@ function gifCanvasHTML(exId, style, containerSelector){
   const u = (typeof getU==='function') ? getU() : null;
   // Prioridade: gif pessoal do aluno (se gravou um) > demonstração extra
   // (admin preencheu a lacuna) > caminho padrão do repositório.
-  const urlPersonal = u?.gifsPersonalizados?.[exId] || GIFS_EXTRAS_CACHE[exId] || null;
+  const info = mfInfo(u?.gifsPersonalizados?.[exId]) || mfInfo(GIFS_EXTRAS_CACHE[exId]);
+  // Foto estática não anima — não tem por quê passar pelo canvas/gifler
+  // (isso é só pra WebViews não animarem <img src=".gif">; uma foto já
+  // funciona normal em qualquer <img>).
+  if(info && info.tipo==='foto'){
+    return `<img src="${info.url}" alt="" loading="lazy" style="${style}" onerror="this.closest('${containerSelector}') && (this.closest('${containerSelector}').innerHTML=renderExThumbFallback('${exId}'))"/>`;
+  }
+  const urlPersonal = info ? info.url : null;
   return `<canvas class="gif-cv" data-gif="${urlPersonal||(GIF_SEARCH_PATHS[0]+exId+'.gif')}" data-personalizado="${urlPersonal?'1':'0'}" data-exid="${exId}" data-fallback="${containerSelector}" data-attempt="0" style="${style}"></canvas>`;
 }
 function gifCanvasTentar(cv, exId, containerSelector, tentativa){
@@ -11609,6 +11650,10 @@ function renderExThumbFallback(exId){
 // resultado sobe pro bucket 'exercicios-midia' do Supabase Storage.
 // ══════════════════════════════════════════════════════════════════════
 let gvStream=null, gvExIdAlvo=null, gvModoNovoExercicio=false, gvGifBlobPronto=null, gvIntervaloCaptura=null, gvCanvasOff=null, gvCtxOff=null;
+// 'gif' (padrão, vídeo convertido) ou 'foto' (imagem estática escolhida da
+// galeria) — decide extensão/content-type no upload e como o resto do app
+// vai renderizar essa demonstração depois.
+let gvTipoMidia='gif';
 
 function gvSetEstado(nome){
   ['gv-form-novo','gv-camera-wrap','gv-cortar-wrap','gv-processando','gv-resultado-wrap'].forEach(id=>{
@@ -11617,7 +11662,7 @@ function gvSetEstado(nome){
 }
 let gvModoEditorAdmin=false;
 function gvAbrirParaExercicio(exId){
-  gvExIdAlvo = exId; gvModoNovoExercicio = false; gvGifBlobPronto = null;
+  gvExIdAlvo = exId; gvModoNovoExercicio = false; gvGifBlobPronto = null; gvTipoMidia='gif';
   gvCancelarArquivo(); // limpa seleção de arquivo de uma vez anterior, se houver
   const btn=document.getElementById('gv-btn-gravar'); if(btn){ btn.disabled=false; btn.style.opacity='1'; btn.textContent='⏺ Gravar (8s)'; }
   document.getElementById('gv-titulo').textContent = '🎥 Gravar meu vídeo';
@@ -11626,7 +11671,7 @@ function gvAbrirParaExercicio(exId){
   gvIniciarCamera();
 }
 function gvAbrirNovoExercicio(){
-  gvExIdAlvo = null; gvModoNovoExercicio = true; gvGifBlobPronto = null;
+  gvExIdAlvo = null; gvModoNovoExercicio = true; gvGifBlobPronto = null; gvTipoMidia='gif';
   document.getElementById('gv-titulo').textContent = '🎬 Criar meu exercício';
   const inpNome=document.getElementById('gv-nome'); if(inpNome) inpNome.value='';
   abrirModal('modal-gravar-video');
@@ -11818,10 +11863,39 @@ function gvComecarGravacao(){
   }, 1000/FPS);
 }
 function gvRegravar(){
-  gvGifBlobPronto=null;
+  gvGifBlobPronto=null; gvTipoMidia='gif';
   gvSetEstado('gv-camera-wrap');
   const btn=document.getElementById('gv-btn-gravar'); if(btn){btn.disabled=false;btn.style.opacity='1';}
   if(!gvStream) gvIniciarCamera();
+}
+// Foto escolhida da galeria: recorta um quadrado central (igual ao gif, pra
+// ficar consistente na ficha do exercício) e vira direto uma imagem — sem
+// passar pelo gif.js, que não serve pra uma imagem só.
+function gvFotoSelecionada(input){
+  const arquivo=input.files?.[0];
+  if(!arquivo) return;
+  if(!arquivo.type.startsWith('image/')){ fqToast('Escolha um arquivo de imagem.','warn'); input.value=''; return; }
+  const urlTemp=URL.createObjectURL(arquivo);
+  const img=new Image();
+  img.onload=()=>{
+    URL.revokeObjectURL(urlTemp);
+    const TAMANHO=480;
+    const cv=document.createElement('canvas'); cv.width=TAMANHO; cv.height=TAMANHO;
+    const ctx=cv.getContext('2d');
+    const iw=img.naturalWidth||TAMANHO, ih=img.naturalHeight||TAMANHO, lado=Math.min(iw,ih);
+    const sx=(iw-lado)/2, sy=(ih-lado)/2;
+    ctx.drawImage(img, sx, sy, lado, lado, 0, 0, TAMANHO, TAMANHO);
+    cv.toBlob(blob=>{
+      input.value='';
+      if(!blob){ fqToast('Não consegui processar essa foto. Tenta outra.','warn'); return; }
+      gvTipoMidia='foto';
+      gvGifBlobPronto=blob;
+      document.getElementById('gv-resultado-img').src=URL.createObjectURL(blob);
+      gvSetEstado('gv-resultado-wrap');
+    }, 'image/jpeg', 0.85);
+  };
+  img.onerror=()=>{ URL.revokeObjectURL(urlTemp); fqToast('Não consegui abrir essa foto. Tenta outra.','warn'); input.value=''; };
+  img.src=urlTemp;
 }
 async function gvSalvarResultado(){
   if(!gvGifBlobPronto){ fqToast('Nada gravado ainda.','warn'); return; }
@@ -11844,18 +11918,20 @@ async function gvSalvarResultado(){
     if(!sb){ fqToast('Sem conexão com o servidor agora — tente de novo com internet.','warn'); return; }
     fqToast('Enviando...','ok',2000);
     const timestamp=Date.now();
-    const caminho = `${alunoAlvo.email}/${gvExIdAlvo}_${timestamp}.gif`;
+    const ext = gvTipoMidia==='foto' ? 'jpg' : 'gif';
+    const tipoConteudo = gvTipoMidia==='foto' ? 'image/jpeg' : 'image/gif';
+    const caminho = `${alunoAlvo.email}/${gvExIdAlvo}_${timestamp}.${ext}`;
     try{
-      const{error:erroUpload}=await sb.storage.from('exercicios-midia').upload(caminho, gvGifBlobPronto, {contentType:'image/gif', upsert:true});
-      if(erroUpload){ fqToast('Erro ao enviar o vídeo: '+erroUpload.message,'warn',5000); return; }
+      const{error:erroUpload}=await sb.storage.from('exercicios-midia').upload(caminho, gvGifBlobPronto, {contentType:tipoConteudo, upsert:true});
+      if(erroUpload){ fqToast('Erro ao enviar: '+erroUpload.message,'warn',5000); return; }
       const{data:pub}=sb.storage.from('exercicios-midia').getPublicUrl(caminho);
       const url=pub?.publicUrl;
-      if(!url){ fqToast('Erro ao gerar o link do vídeo.','warn'); return; }
+      if(!url){ fqToast('Erro ao gerar o link.','warn'); return; }
       if(!alunoAlvo.gifsPersonalizados) alunoAlvo.gifsPersonalizados={};
-      alunoAlvo.gifsPersonalizados[gvExIdAlvo]=url;
+      alunoAlvo.gifsPersonalizados[gvExIdAlvo]={url, tipo:gvTipoMidia};
       const users=DB.get('fq_users')||{}; users[alunoAlvo.email]=alunoAlvo; DB.set('fq_users',users);
       await syncAlunoAdmin(alunoAlvo).catch(()=>{ fqToast('⚠️ Salvo aqui, mas não sincronizou. Confira a internet.','warn',6000); });
-      fqToast(`🎉 Vídeo salvo — só ${alunoAlvo.name||'esse aluno'} vai ver essa demonstração.`,'ok',4000);
+      fqToast(`🎉 ${gvTipoMidia==='foto'?'Foto':'Vídeo'} salvo — só ${alunoAlvo.name||'esse aluno'} vai ver essa demonstração.`,'ok',4000);
     }catch(e){
       console.error('Erro ao gravar gif pelo editor do admin:',e);
       fqToast('Algo deu errado ao enviar.','warn',5000);
@@ -11868,13 +11944,15 @@ async function gvSalvarResultado(){
   fqToast('Enviando...','ok',2000);
   const timestamp=Date.now();
   const exIdFinal = gvModoNovoExercicio ? `custom_${timestamp}` : gvExIdAlvo;
-  const caminho = `${u.email}/${exIdFinal}_${timestamp}.gif`;
+  const ext = gvTipoMidia==='foto' ? 'jpg' : 'gif';
+  const tipoConteudo = gvTipoMidia==='foto' ? 'image/jpeg' : 'image/gif';
+  const caminho = `${u.email}/${exIdFinal}_${timestamp}.${ext}`;
   try{
-    const{error:erroUpload}=await sb.storage.from('exercicios-midia').upload(caminho, gvGifBlobPronto, {contentType:'image/gif', upsert:true});
-    if(erroUpload){ fqToast('Erro ao enviar o vídeo: '+erroUpload.message,'warn',5000); return; }
+    const{error:erroUpload}=await sb.storage.from('exercicios-midia').upload(caminho, gvGifBlobPronto, {contentType:tipoConteudo, upsert:true});
+    if(erroUpload){ fqToast('Erro ao enviar: '+erroUpload.message,'warn',5000); return; }
     const{data:pub}=sb.storage.from('exercicios-midia').getPublicUrl(caminho);
     const url=pub?.publicUrl;
-    if(!url){ fqToast('Erro ao gerar o link do vídeo.','warn'); return; }
+    if(!url){ fqToast('Erro ao gerar o link.','warn'); return; }
 
     const users=DB.get('fq_users')||{};
     if(gvModoNovoExercicio){
@@ -11883,10 +11961,10 @@ async function gvSalvarResultado(){
       if(!u.exerciciosCustom) u.exerciciosCustom=[];
       u.exerciciosCustom.push({id:exIdFinal,name:nome,muscle:musculo,equipment:'—',emoji:'🎬',obs:'Exercício criado por você.',gifUrl:url,criadoEm:new Date().toISOString()});
       if(!u.gifsPersonalizados) u.gifsPersonalizados={};
-      u.gifsPersonalizados[exIdFinal]=url;
+      u.gifsPersonalizados[exIdFinal]={url, tipo:gvTipoMidia};
     } else {
       if(!u.gifsPersonalizados) u.gifsPersonalizados={};
-      u.gifsPersonalizados[exIdFinal]=url;
+      u.gifsPersonalizados[exIdFinal]={url, tipo:gvTipoMidia};
     }
     users[u.email]=u; DB.set('fq_users',users);
     await syncU(u).catch(()=>{});
@@ -11898,13 +11976,13 @@ async function gvSalvarResultado(){
     let viroiOficial=false;
     if(u.isAdmin && !gvModoNovoExercicio){
       try{
-        const{error:erroExtra}=await sb.from('gifs_extras').upsert({exercicio_id:exIdFinal, url, atualizado_em:new Date().toISOString()});
-        if(!erroExtra){ GIFS_EXTRAS_CACHE[exIdFinal]=url; viroiOficial=true; }
+        const{error:erroExtra}=await sb.from('gifs_extras').upsert({exercicio_id:exIdFinal, url, tipo:gvTipoMidia, atualizado_em:new Date().toISOString()});
+        if(!erroExtra){ GIFS_EXTRAS_CACHE[exIdFinal]={url, tipo:gvTipoMidia}; viroiOficial=true; }
         else console.warn('Não deu pra salvar como demonstração oficial (tabela gifs_extras existe?):', erroExtra.message);
       }catch(e){ console.warn('Erro ao salvar gif extra:', e); }
     }
 
-    fqToast(gvModoNovoExercicio?'🎉 Exercício criado!':(viroiOficial?'🎉 Virou a demonstração oficial pra todos os alunos!':'🎉 Seu vídeo foi salvo!'),'ok',3500);
+    fqToast(gvModoNovoExercicio?'🎉 Exercício criado!':(viroiOficial?'🎉 Virou a demonstração oficial pra todos os alunos!':`🎉 Sua ${gvTipoMidia==='foto'?'foto':'vídeo'} foi salva!`),'ok',3500);
     closeModal('modal-gravar-video');
     // Se veio do editor de treino do admin, volta pro editor (com a miniatura
     // já atualizada) em vez de navegar pra ficha — o admin estava editando o
@@ -14807,16 +14885,18 @@ function admAbrirVideosAluno(email){
   const emailHidden=document.getElementById('videos-aluno-email'); if(emailHidden) emailHidden.value=email;
 
   const gifs = Object.entries(u.gifsPersonalizados||{});
-  const gifsHtml = gifs.length ? gifs.map(([exId,url])=>{
+  const gifsHtml = gifs.length ? gifs.map(([exId,raw])=>{
+    const {url,tipo} = mfInfo(raw);
     const ex = (typeof getExById==='function') ? getExById(exId) : null;
     const nome = ex?.name || exId;
-    const jaEhOficial = EXERCICIOS_COM_GIF.has(exId) || GIFS_EXTRAS_CACHE[exId]===url;
+    const oficial = mfInfo(GIFS_EXTRAS_CACHE[exId]);
+    const jaEhOficial = EXERCICIOS_COM_GIF.has(exId) || (oficial && oficial.url===url);
     return `<div style="background:var(--s2);border:1px solid var(--b);border-radius:10px;padding:10px;margin-bottom:8px">
       <div style="display:flex;gap:10px;align-items:center">
         <img src="${url}" style="width:64px;height:64px;object-fit:cover;border-radius:8px;background:#000;flex-shrink:0"/>
         <div style="flex:1;min-width:0">
           <div style="font-size:12.5px;font-weight:700">${nome}</div>
-          <div style="font-size:10.5px;color:var(--mu);margin-top:2px">GIF pessoal · sem áudio</div>
+          <div style="font-size:10.5px;color:var(--mu);margin-top:2px">${tipo==='foto'?'📷 Foto pessoal':'GIF pessoal · sem áudio'}</div>
         </div>
       </div>
       <div style="display:flex;gap:6px;margin-top:8px">
@@ -14849,12 +14929,13 @@ function admAbrirVideosAluno(email){
 async function admUsarGifComoOficial(email, exId){
   const u = admGetAluno(email);
   if(!u){ fqToast('Aluno não encontrado.','warn'); return; }
-  const url = u.gifsPersonalizados?.[exId];
-  if(!url){ fqToast('Vídeo não encontrado.','warn'); return; }
+  const info = mfInfo(u.gifsPersonalizados?.[exId]);
+  if(!info){ fqToast('Vídeo não encontrado.','warn'); return; }
+  const {url, tipo} = info;
   try{
-    const{error}=await sb.from('gifs_extras').upsert({exercicio_id:exId, url, atualizado_em:new Date().toISOString()});
+    const{error}=await sb.from('gifs_extras').upsert({exercicio_id:exId, url, tipo, atualizado_em:new Date().toISOString()});
     if(error){ console.warn('Não deu pra salvar como oficial (tabela gifs_extras existe?):', error.message); fqToast('Não consegui salvar — confira se a tabela gifs_extras existe (GUIA_GIFS_OFICIAIS.md).','warn',7000); return; }
-    GIFS_EXTRAS_CACHE[exId]=url;
+    GIFS_EXTRAS_CACHE[exId]={url, tipo};
     fqToast('🎉 Virou a demonstração oficial pra todos os alunos!','ok',3500);
     admAbrirVideosAluno(email); // re-renderiza o modal com o botão já marcado
     renderDemonstracoesOficiais(); // e a lista de oficiais no painel, se estiver visível
@@ -15138,13 +15219,14 @@ function renderDemonstracoesOficiais(){
     el.innerHTML = `<div class="adm-empty"><div class="adm-empty-icon">⭐</div><div>Nenhuma demonstração oficial customizada ainda</div></div>`;
     return;
   }
-  el.innerHTML = entradas.map(([exId,url])=>{
+  el.innerHTML = entradas.map(([exId,raw])=>{
+    const {url,tipo} = mfInfo(raw);
     const ex = (typeof getExById==='function') ? getExById(exId) : null;
     const nome = ex?.name || exId;
     return `<div style="display:flex;align-items:center;gap:12px;background:var(--s);border:1px solid var(--b);border-radius:10px;padding:10px;margin-bottom:8px">
       <img src="${url}" style="width:48px;height:48px;object-fit:cover;border-radius:8px;background:#000;flex-shrink:0"/>
       <div style="flex:1;min-width:0"><div style="font-size:12.5px;font-weight:700">${nome}</div>
-        <div style="font-size:10.5px;color:var(--mu)">Demonstração oficial — vale pra todos os alunos</div></div>
+        <div style="font-size:10.5px;color:var(--mu)">Demonstração oficial${tipo==='foto'?' · 📷 foto':''} — vale pra todos os alunos</div></div>
       <button onclick="admRemoverGifOficial('${exId}')" style="background:rgba(225,6,0,.12);color:var(--r);border:none;border-radius:8px;padding:8px 12px;font-size:11.5px;font-weight:800;cursor:pointer;flex-shrink:0">🗑️ Remover</button>
     </div>`;
   }).join('');
@@ -16381,23 +16463,50 @@ function renderBank(){
   const muscles=[...new Set(EXERCISE_BANK.map(e=>e.muscle))].sort();
   document.getElementById('muscle-filters').innerHTML=`<button onclick="muscF='';renderBank()" style="padding:5px 10px;border-radius:4px;border:none;background:${!muscF?'var(--r)':'rgba(255,255,255,.05)'};color:${!muscF?'#fff':'var(--mu)'};font-size:10px;font-weight:700;cursor:pointer" data-i18n="ui.32630ca913">Todos</button>`+muscles.map(m=>`<button onclick="muscF='${m}';renderBank()" style="padding:5px 10px;border-radius:4px;border:none;background:${muscF===m?'var(--r)':'rgba(255,255,255,.05)'};color:${muscF===m?'#fff':'var(--mu)'};font-size:10px;font-weight:700;cursor:pointer">${m}</button>`).join('');
   const filt=EXERCISE_BANK.filter(e=>(!bankF||e.name.toLowerCase().includes(bankF.toLowerCase()))&&(!muscF||e.muscle===muscF));
-  document.getElementById('exercise-bank-list').innerHTML=filt.map(e=>`<div style="background:var(--s);border:1px solid var(--b);border-radius:8px;padding:12px;margin-bottom:8px"><div style="display:flex;align-items:center;gap:10px;margin-bottom:8px"><div style="width:36px;height:36px;border-radius:6px;background:rgba(225,6,0,.1);display:flex;align-items:center;justify-content:center;font-size:18px">${e.emoji||'🏋️'}</div><div style="flex:1"><div style="font-size:13px;font-weight:800">${exNome(e)}</div><div style="font-size:10px;color:var(--mu)">${e.muscle} · ${e.equipment}</div></div><div style="display:flex;gap:5px"><button class="btn-sm btn-ed" onclick="openAddEx('${e.id}')">✏️</button><button class="btn-sm btn-dl" onclick="delEx('${e.id}')">🗑️</button></div></div><div style="font-size:10px;color:var(--t2);background:rgba(255,255,255,.03);border-radius:6px;padding:6px 8px">💡 ${exObs(e)}</div></div>`).join('');
+  document.getElementById('exercise-bank-list').innerHTML=filt.map(e=>`<div style="background:var(--s);border:1px solid var(--b);border-radius:8px;padding:12px;margin-bottom:8px"><div style="display:flex;align-items:center;gap:10px;margin-bottom:8px"><div style="width:36px;height:36px;border-radius:6px;background:rgba(225,6,0,.1);display:flex;align-items:center;justify-content:center;font-size:18px">${e.emoji||'🏋️'}</div><div style="flex:1"><div style="font-size:13px;font-weight:800">${exNome(e)}</div><div style="font-size:10px;color:var(--mu)">${e.muscle} · ${e.equipment}</div></div><div style="display:flex;gap:5px"><button class="btn-sm" onclick="gvAbrirParaExercicio('${e.id}')" title="Foto ou vídeo de demonstração" style="background:var(--s2);border:1px solid var(--b2);border-radius:6px;color:#fff">📷</button><button class="btn-sm btn-ed" onclick="openAddEx('${e.id}')">✏️</button><button class="btn-sm btn-dl" onclick="delEx('${e.id}')">🗑️</button></div></div><div style="font-size:10px;color:var(--t2);background:rgba(255,255,255,.03);border-radius:6px;padding:6px 8px">💡 ${exObs(e)}</div></div>`).join('');
 }
 function filterBank(){bankF=document.getElementById('bank-search').value;renderBank();}
 function openAddEx(id=null){
-  const ex=id?EXERCISE_BANK.find(e=>e.id===id):{id:'e'+String(EXERCISE_BANK.length+1).padStart(3,'0'),name:'',muscle:'',equipment:'',emoji:'🏋️',obs:'',dica:''};
+  const ex=id?EXERCISE_BANK.find(e=>e.id===id):{id:'ex_'+Date.now(),name:'',muscle:'',equipment:'',emoji:'🏋️',obs:'',dica:''};
   document.getElementById('modal-ex-title').textContent=id?'✏️ Editar':'➕ Novo Exercício';
   document.getElementById('modal-ex-content').innerHTML=`<div class="fg"><label class="fl">Nome</label><input class="fi" id="ex-name" value="${ex.name}" placeholder="Ex: Supino Plano"/></div><div class="fr"><div class="fg"><label class="fl">Músculo</label><input class="fi" id="ex-muscle" value="${ex.muscle}" placeholder="Peito"/></div><div class="fg"><label class="fl">Equipamento</label><input class="fi" id="ex-equip" value="${ex.equipment}" placeholder="Barra"/></div></div><div class="fr"><div class="fg"><label class="fl">Emoji</label><input class="fi" id="ex-emoji" value="${ex.emoji||'🏋️'}" placeholder="🏋️"/></div></div><div class="fg"><label class="fl">Dica de execução (técnica)</label><textarea class="fi" id="ex-obs" placeholder="Descreva...">${ex.obs}</textarea></div><div class="fg"><label class="fl">💬 Dica do treinador <span style="font-weight:400;color:var(--mu)">(opcional — aparece na ficha do exercício como sua fala pessoal)</span></label><textarea class="fi" id="ex-dica" placeholder="Ex: Cuidado pra não deixar o cotovelo passar do ombro...">${ex.dica||''}</textarea></div><button class="btn-p" onclick="saveEx('${ex.id}')">💾 Salvar</button>`;
   abrirModal('modal-adm-ex');
 }
-function saveEx(id){
+// Exercícios novos (ou que já vieram de fora da lista fixa) ficam salvos no
+// Supabase (tabela exercicios_extras) — assim aparecem pra TODOS os alunos e
+// sobrevivem a um recarregar da página, não só nesta sessão. Editar um
+// exercício original da lista fixa continua só na sessão, como sempre foi.
+async function saveEx(id){
   const name=document.getElementById('ex-name').value.trim();const muscle=document.getElementById('ex-muscle').value.trim();
   if(!name||!muscle){fqToast(t('msg.413f243876'),'warn');return;}
   const obj={id,name,muscle,equipment:document.getElementById('ex-equip').value.trim(),emoji:document.getElementById('ex-emoji').value.trim()||'🏋️',obs:document.getElementById('ex-obs').value.trim(),dica:document.getElementById('ex-dica').value.trim()};
-  const idx=EXERCISE_BANK.findIndex(e=>e.id===id);if(idx>=0)EXERCISE_BANK[idx]=obj;else EXERCISE_BANK.push(obj);
+  const idx=EXERCISE_BANK.findIndex(e=>e.id===id);
+  const ehNovo = idx<0;
+  if(idx>=0)EXERCISE_BANK[idx]=obj;else EXERCISE_BANK.push(obj);
   closeModal('modal-adm-ex');renderBank();fqToast(t('msg.07e5342dd0'),'ok');
+  if((ehNovo || EXERCICIOS_EXTRAS_IDS.has(id)) && sb){
+    try{
+      const{error}=await sb.from('exercicios_extras').upsert({id:obj.id,name:obj.name,muscle:obj.muscle,equipment:obj.equipment,emoji:obj.emoji,obs:obj.obs,dica:obj.dica,atualizado_em:new Date().toISOString()});
+      if(error){ console.warn('Não deu pra salvar o exercício pra todos (tabela exercicios_extras existe?):', error.message); fqToast('⚠️ Salvo aqui, mas não ficou oficial pra todos os alunos — confira se a tabela exercicios_extras existe.','warn',7000); return; }
+      EXERCICIOS_EXTRAS_IDS.add(obj.id);
+      if(ehNovo){
+        const quer = await fqConfirm('Exercício criado! 🎉','Quer adicionar uma foto ou vídeo de demonstração agora?','Adicionar','📷');
+        if(quer) gvAbrirParaExercicio(obj.id);
+      }
+    }catch(e){ console.warn('Erro ao salvar exercicio_extra:', e); }
+  }
 }
-async function delEx(id){if(!await fqConfirm(t('msg.23266802e4'),t('msg.bdc10d098a'),'Excluir','🗑️'))return;const i=EXERCISE_BANK.findIndex(e=>e.id===id);if(i>=0)EXERCISE_BANK.splice(i,1);renderBank();}
+async function delEx(id){
+  if(!await fqConfirm(t('msg.23266802e4'),t('msg.bdc10d098a'),'Excluir','🗑️'))return;
+  const i=EXERCISE_BANK.findIndex(e=>e.id===id);if(i>=0)EXERCISE_BANK.splice(i,1);
+  renderBank();
+  if(EXERCICIOS_EXTRAS_IDS.has(id) && sb){
+    try{ await sb.from('exercicios_extras').delete().eq('id',id); EXERCICIOS_EXTRAS_IDS.delete(id); }catch(e){ console.warn('Erro ao remover exercicio_extra:',e); }
+  }
+  if(sb){
+    try{ await sb.from('gifs_extras').delete().eq('exercicio_id',id); delete GIFS_EXTRAS_CACHE[id]; }catch(e){ console.warn('Erro ao remover gif_extra do exercício excluído:',e); }
+  }
+}
 
 // EDIT STUDENT
 let editEmail=null;let editGW='Semana 1';let editRW='Semana 1';
@@ -16622,7 +16731,8 @@ function selERW(w,el){editRW=w;document.querySelectorAll('#erw-tabs .wsb').forEa
 // pesado demais pra várias miniaturas ao mesmo tempo numa lista. Toque
 // abre o modal de ver/trocar.
 function egwThumbGif(exId,u){
-  const url = u?.gifsPersonalizados?.[exId] || GIFS_EXTRAS_CACHE[exId] || (EXERCICIOS_COM_GIF.has(exId)?(GIF_SEARCH_PATHS[0]+exId+'.gif'):null);
+  const info = mfInfo(u?.gifsPersonalizados?.[exId]) || mfInfo(GIFS_EXTRAS_CACHE[exId]);
+  const url = info ? info.url : (EXERCICIOS_COM_GIF.has(exId)?(GIF_SEARCH_PATHS[0]+exId+'.gif'):null);
   if(url){
     return `<img src="${url}" onclick="admEditarGifExercicio('${exId}')" onerror="this.replaceWith(Object.assign(document.createElement('button'),{innerHTML:'📷',onclick:()=>admEditarGifExercicio('${exId}')}))" style="width:34px;height:34px;border-radius:7px;object-fit:cover;flex-shrink:0;cursor:pointer;background:#000;border:1px solid var(--b)" title="Toque pra ver ou trocar o gif"/>`;
   }
@@ -16632,7 +16742,8 @@ function admEditarGifExercicio(exId){
   const u = admGetAluno(editEmail);
   const ex = getExById(exId,u);
   const temPessoal = !!u?.gifsPersonalizados?.[exId];
-  const url = u?.gifsPersonalizados?.[exId] || GIFS_EXTRAS_CACHE[exId] || (EXERCICIOS_COM_GIF.has(exId)?(GIF_SEARCH_PATHS[0]+exId+'.gif'):null);
+  const infoEd = mfInfo(u?.gifsPersonalizados?.[exId]) || mfInfo(GIFS_EXTRAS_CACHE[exId]);
+  const url = infoEd ? infoEd.url : (EXERCICIOS_COM_GIF.has(exId)?(GIF_SEARCH_PATHS[0]+exId+'.gif'):null);
   const nomeEl=document.getElementById('gifed-nome'); if(nomeEl) nomeEl.textContent = ex?.name || exId;
   const img=document.getElementById('gifed-preview'), vazio=document.getElementById('gifed-sem-gif');
   if(url){ img.src=url; img.style.display='block'; vazio.style.display='none'; }
