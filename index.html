@@ -1388,7 +1388,7 @@ html[data-tema="claro"] .hero-banner{background:#fff;}
       <option value="es">🇪🇸 ES</option>
     </select>
   </div>
-  <div id="fq-version-badge" style="position:absolute;bottom:8px;right:12px;font-size:9px;color:#333;font-weight:700;z-index:5">v291</div>
+  <div id="fq-version-badge" style="position:absolute;bottom:8px;right:12px;font-size:9px;color:#333;font-weight:700;z-index:5">v292</div>
   <img src="https://images.unsplash.com/photo-1517836357463-d25dfeac3438?w=800&q=80" alt="Fitness" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center top;filter:brightness(.35);z-index:0"/>
   <div class="splash-glow"></div>
   <div class="splash-noise"></div>
@@ -2658,7 +2658,7 @@ html[data-tema="claro"] .hero-banner{background:#fff;}
             <span style="color:var(--mu);font-size:18px">›</span>
           </div>
         </div>
-        <div style="text-align:center;padding:20px 0 4px;font-size:11px;color:var(--mu)">FitQuest <span id="fq-version-badge-perfil">v291</span></div>
+        <div style="text-align:center;padding:20px 0 4px;font-size:11px;color:var(--mu)">FitQuest <span id="fq-version-badge-perfil">v292</span></div>
       </div>
     </div>
 
@@ -6476,10 +6476,10 @@ function renovarMissoesSemanais(u){
   return true;
 }
 function rowToUser(data){
-  return{id:data.id,name:data.nome,email:data.email,plano:data.plano,trialInicio:data.trial_inicio,runInicio:data.run_inicio,runAjusteLesao:!!data.run_ajuste_lesao,assinaturaStatus:data.assinatura_status||'trial',assinaturaAte:data.assinatura_ate,diaConversao:data.dia_conversao,dataConversao:data.data_conversao,planoConversao:data.plano_conversao,precoTravado:data.preco_travado,promoFundador:!!data.promo_fundador,pixFundador:!!data.pix_fundador,promoVaga:data.promo_vaga,solicitouTrocaTreino:!!data.solicitou_troca,solicitouTrocaData:data.solicitou_troca_data,solicitouTrocaTipo:data.solicitou_troca_tipo,trainApproved:data.treino_liberado,pushSubscription:data.push_subscription||null,correcoesVideo:data.correcoes_video||[],isAdmin:!!data.is_admin,aiPlan:data.ai_plan,anamnese:data.anamnese,anamneseDone:!!data.anamnese_geral,anamneseGeral:data.anamnese_geral||null,anamneseMusculacao:data.anamnese_musculacao||null,anamneseCorrida:data.anamnese_corrida||null,anamneseMuscDone:!!data.anamnese_musculacao,anamneseCorridaDone:!!data.anamnese_corrida,gymWeek:data.gym_week||1,runWeek:data.run_week||1,gymDone:data.gym_done||{},runDone:data.run_done||{},runFeedback:data.run_feedback||{},runAtividades:data.run_atividades||[],runTriagem:data.run_triagem||null,runStrength:data.run_strength||[],runStrengthDone:data.run_strength_done||{},runTestes:data.run_testes||[],runTestPace:data.run_test_pace||null,loadHistory:data.load_history||{},workoutHistory:data.workout_history||[],xp:data.xp||0,kidsXp:data.kids_xp||0,level:data.level||1,streak:data.streak||1,coins:data.coins||0,badges:data.badges||[],prs:data.prs||[],stats:data.stats||{treinos:0,distancia:0,semanas:0},purchases:data.purchases||[],pacoteEbooks:!!data.pacote_ebooks,programIntakes:data.program_intakes||{},avatar:data.avatar||null,avaliacoes:data.evals||[],avaliacoesPostural:data.avaliacoes_postural||[],estrategiaConsultoria:data.estrategia_consultoria||null,pacoteConfig:data.pacote_config||null,gifsPersonalizados:data.gifs_personalizados||{},exerciciosCustom:data.exercicios_custom||[],missions:MISSOES_PADRAO.map(m=>({...m})),createdAt:data.criado_em,lastLogin:data.ultimo_acesso};
+  return{id:data.id,name:data.nome,email:data.email,plano:data.plano,trialInicio:data.trial_inicio,runInicio:data.run_inicio,runAjusteLesao:!!data.run_ajuste_lesao,assinaturaStatus:data.assinatura_status||'trial',assinaturaAte:data.assinatura_ate,diaConversao:data.dia_conversao,dataConversao:data.data_conversao,planoConversao:data.plano_conversao,precoTravado:data.preco_travado,promoFundador:!!data.promo_fundador,pixFundador:!!data.pix_fundador,promoVaga:data.promo_vaga,solicitouTrocaTreino:!!data.solicitou_troca,solicitouTrocaData:data.solicitou_troca_data,solicitouTrocaTipo:data.solicitou_troca_tipo,trainApproved:data.treino_liberado,modoLivre:!!data.modo_livre,pushSubscription:data.push_subscription||null,correcoesVideo:data.correcoes_video||[],isAdmin:!!data.is_admin,aiPlan:data.ai_plan,anamnese:data.anamnese,anamneseDone:!!data.anamnese_geral,anamneseGeral:data.anamnese_geral||null,anamneseMusculacao:data.anamnese_musculacao||null,anamneseCorrida:data.anamnese_corrida||null,anamneseMuscDone:!!data.anamnese_musculacao,anamneseCorridaDone:!!data.anamnese_corrida,gymWeek:data.gym_week||1,runWeek:data.run_week||1,gymDone:data.gym_done||{},runDone:data.run_done||{},runFeedback:data.run_feedback||{},runAtividades:data.run_atividades||[],runTriagem:data.run_triagem||null,runStrength:data.run_strength||[],runStrengthDone:data.run_strength_done||{},runTestes:data.run_testes||[],runTestPace:data.run_test_pace||null,loadHistory:data.load_history||{},workoutHistory:data.workout_history||[],xp:data.xp||0,kidsXp:data.kids_xp||0,level:data.level||1,streak:data.streak||1,coins:data.coins||0,badges:data.badges||[],prs:data.prs||[],stats:data.stats||{treinos:0,distancia:0,semanas:0},purchases:data.purchases||[],pacoteEbooks:!!data.pacote_ebooks,programIntakes:data.program_intakes||{},avatar:data.avatar||null,avaliacoes:data.evals||[],avaliacoesPostural:data.avaliacoes_postural||[],estrategiaConsultoria:data.estrategia_consultoria||null,pacoteConfig:data.pacote_config||null,gifsPersonalizados:data.gifs_personalizados||{},exerciciosCustom:data.exercicios_custom||[],missions:MISSOES_PADRAO.map(m=>({...m})),createdAt:data.criado_em,lastLogin:data.ultimo_acesso};
 }
 function userToRow(u){
-  return{id:u.id,nome:u.name,email:u.email,plano:u.plano||'free',trial_inicio:u.trialInicio||undefined,run_inicio:u.runInicio||null,run_ajuste_lesao:u.runAjusteLesao||false,treino_liberado:u.trainApproved||false,...(u.pushSubscription?{push_subscription:u.pushSubscription}:(u.pushDesativado?{push_subscription:null}:{})),...((u.correcoesVideo&&u.correcoesVideo.length)?{correcoes_video:u.correcoesVideo}:{}),ai_plan:u.aiPlan||null,anamnese:u.anamnese||null,anamnese_geral:u.anamneseGeral||null,anamnese_musculacao:u.anamneseMusculacao||null,anamnese_corrida:u.anamneseCorrida||null,gym_week:u.gymWeek||1,run_week:u.runWeek||1,gym_done:u.gymDone||{},run_done:u.runDone||{},run_feedback:u.runFeedback||{},run_atividades:u.runAtividades||[],run_triagem:u.runTriagem||null,run_strength:u.runStrength||[],run_strength_done:u.runStrengthDone||{},run_testes:u.runTestes||[],run_test_pace:u.runTestPace||null,load_history:u.loadHistory||{},workout_history:u.workoutHistory||[],xp:u.xp||0,kids_xp:u.kidsXp||0,level:u.level||1,streak:u.streak||1,coins:u.coins||0,badges:u.badges||[],prs:u.prs||[],stats:u.stats||{treinos:0,distancia:0,semanas:0},avatar:u.avatar||null,evals:u.avaliacoes||[],...((u.avaliacoesPostural&&u.avaliacoesPostural.length)?{avaliacoes_postural:u.avaliacoesPostural}:{}),...(u.estrategiaConsultoria?{estrategia_consultoria:u.estrategiaConsultoria}:{}),...(u.pacoteConfig?{pacote_config:u.pacoteConfig}:{}),program_intakes:u.programIntakes||{},gifs_personalizados:u.gifsPersonalizados||{},exercicios_custom:u.exerciciosCustom||[],ultimo_acesso:new Date().toISOString(),updated_at:new Date().toISOString()};
+  return{id:u.id,nome:u.name,email:u.email,plano:u.plano||'free',trial_inicio:u.trialInicio||undefined,run_inicio:u.runInicio||null,run_ajuste_lesao:u.runAjusteLesao||false,treino_liberado:u.trainApproved||false,modo_livre:u.modoLivre||false,...(u.pushSubscription?{push_subscription:u.pushSubscription}:(u.pushDesativado?{push_subscription:null}:{})),...((u.correcoesVideo&&u.correcoesVideo.length)?{correcoes_video:u.correcoesVideo}:{}),ai_plan:u.aiPlan||null,anamnese:u.anamnese||null,anamnese_geral:u.anamneseGeral||null,anamnese_musculacao:u.anamneseMusculacao||null,anamnese_corrida:u.anamneseCorrida||null,gym_week:u.gymWeek||1,run_week:u.runWeek||1,gym_done:u.gymDone||{},run_done:u.runDone||{},run_feedback:u.runFeedback||{},run_atividades:u.runAtividades||[],run_triagem:u.runTriagem||null,run_strength:u.runStrength||[],run_strength_done:u.runStrengthDone||{},run_testes:u.runTestes||[],run_test_pace:u.runTestPace||null,load_history:u.loadHistory||{},workout_history:u.workoutHistory||[],xp:u.xp||0,kids_xp:u.kidsXp||0,level:u.level||1,streak:u.streak||1,coins:u.coins||0,badges:u.badges||[],prs:u.prs||[],stats:u.stats||{treinos:0,distancia:0,semanas:0},avatar:u.avatar||null,evals:u.avaliacoes||[],...((u.avaliacoesPostural&&u.avaliacoesPostural.length)?{avaliacoes_postural:u.avaliacoesPostural}:{}),...(u.estrategiaConsultoria?{estrategia_consultoria:u.estrategiaConsultoria}:{}),...(u.pacoteConfig?{pacote_config:u.pacoteConfig}:{}),program_intakes:u.programIntakes||{},gifs_personalizados:u.gifsPersonalizados||{},exercicios_custom:u.exerciciosCustom||[],ultimo_acesso:new Date().toISOString(),updated_at:new Date().toISOString()};
   // Obs.: purchases/pacote_ebooks/is_admin/plano NÃO são enviados pelo aluno — são protegidos no banco e só mudam via webhook de pagamento ou admin.
 }
 // ══ GRAVAÇÃO RESILIENTE ══
@@ -6488,7 +6488,7 @@ function userToRow(u){
 // rodado. Se uma delas faltar, o Supabase recusa a linha INTEIRA — e nenhum
 // dado do aluno (nem um cadastro novo) seria salvo. Aqui, se o erro for de
 // coluna ausente, regrava sem os campos opcionais: o essencial sempre salva.
-const FQ_COLUNAS_OPCIONAIS=['push_subscription','correcoes_video','avaliacoes_postural','estrategia_consultoria','pacote_config'];
+const FQ_COLUNAS_OPCIONAIS=['push_subscription','correcoes_video','avaliacoes_postural','estrategia_consultoria','pacote_config','modo_livre'];
 function fqErroColunaAusente(err){
   return !!err && (err.code==='PGRST204' || /could not find the .* column|schema cache|column .* does not exist/i.test(err.message||''));
 }
@@ -12860,7 +12860,7 @@ function renderGym(u){
   document.getElementById('gym-hero-sub').textContent=`${u.gymWeek||1} de ${wks.length} semanas completas`;
   document.getElementById('gym-prog-bar').style.width=Math.round(((u.gymWeek||1)/wks.length)*100)+'%';
   // Week tabs
-  document.getElementById('gym-wtabs').innerHTML=wks.map(w=>{const wn=parseInt(w.split(' ')[1]);const lk=wn>(u.gymWeek||1);const dn=wn<(u.gymWeek||1);return `<div class="wk-week-btn ${w===curGymWeek?'active':''}" onclick="${lk?'':'selGW(\''+w+'\')' }" style="${lk?'opacity:.3;cursor:not-allowed':''}">${dn?'✅ ':lk?'🔒 ':''}${w}</div>`;}).join('');
+  document.getElementById('gym-wtabs').innerHTML=wks.map(w=>{const wn=parseInt(w.split(' ')[1]);const lk=!u.modoLivre && wn>(u.gymWeek||1);const dn=wn<(u.gymWeek||1);return `<div class="wk-week-btn ${w===curGymWeek?'active':''}" onclick="${lk?'':'selGW(\''+w+'\')' }" style="${lk?'opacity:.3;cursor:not-allowed':''}">${dn?'✅ ':lk?'🔒 ':''}${w}</div>`;}).join('');
   renderGymWeek(curGymWeek,u);
   renderBotaoTrocaTreino(u,'gym');
 }
@@ -13331,7 +13331,7 @@ function renderRun(u){
   document.getElementById('run-sub').textContent=`Semana ${u.runWeek||1} de ${wks.length}`;
   document.getElementById('run-prog').style.width=Math.round(((u.runWeek||1)/wks.length)*100)+'%';
   const liberadaAte=runSemanaLiberada(u);
-  document.getElementById('run-wtabs').innerHTML=wks.map(w=>{const wn=parseInt(w.split(' ')[1]);const lk=wn>liberadaAte;const dn=wn<(u.runWeek||1);return `<div class="wk-week-btn ${w===cw?'active':''}" onclick="${lk?'':'selRW(\''+w+'\')' }" style="${lk?'opacity:.3;cursor:not-allowed':''}">${dn?'✅ ':lk?'🔒 ':''}${w}</div>`;}).join('');
+  document.getElementById('run-wtabs').innerHTML=wks.map(w=>{const wn=parseInt(w.split(' ')[1]);const lk=!u.modoLivre && wn>liberadaAte;const dn=wn<(u.runWeek||1);return `<div class="wk-week-btn ${w===cw?'active':''}" onclick="${lk?'':'selRW(\''+w+'\')' }" style="${lk?'opacity:.3;cursor:not-allowed':''}">${dn?'✅ ':lk?'🔒 ':''}${w}</div>`;}).join('');
   // Aviso de quando a próxima semana abre (só se ainda houver semana bloqueada)
   const elAviso=document.getElementById('run-unlock-info');
   if(elAviso){
@@ -13344,7 +13344,7 @@ function renderRun(u){
       const sugestao=av.distanciaSugerida?` Pelo prazo que você tem, ${av.distanciaSugerida} é a distância mais segura pra chegar bem preparado(a).`:' Considere adiar a prova ou entrar em contato pra ajustarmos juntos.';
       avisos+=`<div style="background:rgba(243,156,18,.08);border:1px solid rgba(243,156,18,.3);border-radius:8px;padding:10px 12px;margin:0 20px 8px;font-size:11.5px;color:#f39c12;line-height:1.5">⚠️ A data da prova que você informou dá só ${av.semanasDisponiveis} semana${av.semanasDisponiveis===1?'':'s'} de preparo — o ideal pra ${av.distanciaPedida} é pelo menos ${av.minimoNecessario} semanas. Montamos seu plano com ${av.minimoNecessario} semanas mesmo assim.${sugestao}</div>`;
     }
-    if(liberadaAte < wks.length){
+    if(!u.modoLivre && liberadaAte < wks.length){
       const d=runDiasProxSemana(u);
       avisos+=`<div style="background:rgba(255,255,255,.04);border:1px solid var(--b);border-radius:8px;padding:10px 12px;margin:0 20px 12px;font-size:11.5px;color:var(--t2);line-height:1.5">🔒 A <strong style="color:#fff">Semana ${liberadaAte+1}</strong> abre em ${d} ${d===1?'dia':'dias'} — a recuperação entre semanas faz parte do treino.</div>`;
     }
@@ -16314,6 +16314,7 @@ function admStudentCard(u, compact=false){
     <div class="st-actions" data-cat-group="treino">
       <button class="st-btn edit" onclick="openEditSt('${u.email}')">✏️ Editar</button>
       <button class="st-btn" onclick="admAtalhoProgressao('${u.email}')" style="background:rgba(46,204,113,.12);color:#2ecc71;border:1px solid rgba(46,204,113,.3)">📈 Progredir treino</button>
+      <button class="st-btn" onclick="admToggleModoLivre('${u.email}')" style="background:${u.modoLivre?'rgba(52,152,219,.18)':'rgba(255,255,255,.05)'};color:${u.modoLivre?'#3498db':'var(--t2)'};border:1px solid ${u.modoLivre?'rgba(52,152,219,.4)':'var(--b)'}" title="Com o treino livre, o aluno navega entre qualquer semana sem precisar completar as anteriores">${u.modoLivre?'🔓 Treino livre: ON':'🔒 Treino livre: OFF'}</button>
       <button class="st-btn" onclick="ctAbrir('${u.email}')" style="background:rgba(52,152,219,.12);color:#3498db;border:1px solid rgba(52,152,219,.3)">📋 Copiar treino</button>
       <button class="st-btn" onclick="openEditRun('${u.email}')" style="background:rgba(46,204,113,.12);color:#2ecc71;border:1px solid rgba(46,204,113,.3)">🏃 Editar corrida</button>
       <button class="st-btn" onclick="openRunFeedback('${u.email}')" style="background:rgba(155,89,182,.12);color:#9b59b6;border:1px solid rgba(155,89,182,.3)">💬 Feedback corrida</button>
@@ -16445,6 +16446,25 @@ async function admRevoke(e){
     if(error){ console.error('Erro ao revogar aluno:',error.message,error); fqToast('⚠️ Não foi salvo no servidor: '+error.message,'warn',6000); return; }
   }
   const users=DB.get('fq_users')||{};if(users[e]){users[e].trainApproved=false;DB.set('fq_users',users);}await loadAdmin();
+}
+// ── TREINO LIVRE — pro aluno que não precisa (ou não quer) seguir a
+// progressão semana-a-semana do app. Com isso ligado, TODAS as semanas do
+// plano (musculação e corrida) ficam destravadas pra ele navegar como
+// quiser, sem precisar completar a semana atual pra ver a próxima. Marcar
+// séries/dias como feitos continua funcionando normal (XP, streak, etc.)
+// — só não é mais exigido pra avançar. ──
+async function admToggleModoLivre(email){
+  const users=DB.get('fq_users')||{}; const u=users[email];
+  if(!u){ fqToast('Aluno não encontrado.','warn'); return; }
+  const novoValor = !u.modoLivre;
+  if(sb){
+    const{error}=await sb.from('alunos').update({modo_livre:novoValor}).eq('email',email);
+    if(error){ console.warn('Não deu pra salvar treino livre (coluna modo_livre existe?):', error.message); fqToast('⚠️ Não consegui salvar no servidor — confira se a coluna modo_livre existe (rode a migração).','warn',7000); return; }
+  }
+  u.modoLivre = novoValor;
+  DB.set('fq_users',users);
+  await loadAdmin();
+  fqToast(novoValor?'🔓 Treino livre ativado — todas as semanas destravadas pra esse aluno.':'🔒 Treino livre desativado — volta a travar semana por semana.','ok',4000);
 }
 async function admDel(e){
   if(!await fqConfirm('Excluir aluno',`Excluir ${e} definitivamente? Os dados de treino serão perdidos.`,'Excluir','🗑️'))return;
