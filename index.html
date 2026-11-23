@@ -1127,6 +1127,7 @@ html[data-tema="claro"] .movie-poster-nome{color:#fff;}
 .checkin-btn{background:linear-gradient(135deg,var(--r),#ff6b35);border:none;border-radius:12px;padding:14px;color:#fff;font-size:14px;font-weight:900;cursor:pointer;width:100%;box-shadow:0 4px 16px rgba(225,6,0,.3)}
 .checkin-btn:active{transform:scale(.98)}
 .checkin-btn:disabled{opacity:.5;box-shadow:none}
+.pr-opt.active{background:rgba(225,6,0,.18)!important;border-color:var(--r)!important;color:#fff!important}
 .mapa-wrap{background:var(--s);border:1px solid var(--b);border-radius:14px;padding:14px;margin:0 20px 12px}
 .local-row{margin-bottom:10px}
 .local-row-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:4px}
@@ -1388,7 +1389,7 @@ html[data-tema="claro"] .hero-banner{background:#fff;}
       <option value="es">🇪🇸 ES</option>
     </select>
   </div>
-  <div id="fq-version-badge" style="position:absolute;bottom:8px;right:12px;font-size:9px;color:#333;font-weight:700;z-index:5">v293</div>
+  <div id="fq-version-badge" style="position:absolute;bottom:8px;right:12px;font-size:9px;color:#333;font-weight:700;z-index:5">v296</div>
   <img src="https://images.unsplash.com/photo-1517836357463-d25dfeac3438?w=800&q=80" alt="Fitness" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center top;filter:brightness(.35);z-index:0"/>
   <div class="splash-glow"></div>
   <div class="splash-noise"></div>
@@ -2076,6 +2077,7 @@ html[data-tema="claro"] .hero-banner{background:#fff;}
           <div class="wk-weeks" id="gym-wtabs"></div>
           <div class="wk-day-btns" id="gym-day-btns"></div>
           <div id="gym-turbo-btn" style="margin:0 16px 14px"></div>
+          <div id="gym-express-btn" style="margin:0 16px 14px"></div>
           <div id="gym-exercises"></div>
           <div id="gym-complete-btn"></div>
         </div>
@@ -2625,6 +2627,14 @@ html[data-tema="claro"] .hero-banner{background:#fff;}
             </div>
             <span style="color:var(--mu);font-size:18px">›</span>
           </div>
+          <div onclick="abrirProntidao()" style="padding:14px 16px;display:flex;align-items:center;gap:12px;cursor:pointer;border-bottom:1px solid var(--b)">
+            <span style="font-size:20px">📋</span>
+            <div style="flex:1">
+              <div style="font-size:13px;font-weight:700">Check-in de hoje</div>
+              <div style="font-size:10px;color:var(--mu)" id="prontidao-resumo-perfil">Sono, dor e disposição</div>
+            </div>
+            <span style="color:var(--mu);font-size:18px">›</span>
+          </div>
           <div onclick="fqAlternarTema()" style="padding:14px 16px;display:flex;align-items:center;gap:12px;cursor:pointer;border-bottom:1px solid var(--b)">
             <span style="font-size:20px" id="tema-icone">🌙</span>
             <div style="flex:1">
@@ -2658,7 +2668,7 @@ html[data-tema="claro"] .hero-banner{background:#fff;}
             <span style="color:var(--mu);font-size:18px">›</span>
           </div>
         </div>
-        <div style="text-align:center;padding:20px 0 4px;font-size:11px;color:var(--mu)">FitQuest <span id="fq-version-badge-perfil">v293</span></div>
+        <div style="text-align:center;padding:20px 0 4px;font-size:11px;color:var(--mu)">FitQuest <span id="fq-version-badge-perfil">v296</span></div>
       </div>
     </div>
 
@@ -2901,6 +2911,39 @@ html[data-tema="claro"] .hero-banner{background:#fff;}
       <button class="btn-savewk" onclick="confirmarRenomearEx('aluno')" style="width:100%">👤 Só pra este aluno</button>
       <button class="btn-addex" onclick="confirmarRenomearEx('sistema')" style="width:100%;margin-top:8px;border-color:rgba(52,152,219,.35);color:#3498db">🌐 Pra todo o sistema</button>
       <button id="ren-ex-btn-remover" onclick="removerRenomeEx()" style="display:none;width:100%;margin-top:14px;background:none;border:none;color:var(--mu);font-size:11.5px;cursor:pointer;text-decoration:underline">Remover o apelido pessoal e voltar ao nome normal</button>
+    </div>
+  </div>
+</div>
+<!-- Check-in de prontidão — sono, dor muscular e disposição, antes do treino -->
+<div class="modal-ov" id="modal-prontidao" style="align-items:flex-start">
+  <div class="modal-bx" style="max-width:380px;width:100%;padding:0;border-radius:16px 16px 0 0;margin-top:auto">
+    <div class="modal-t"><span>📋 Como você está hoje?</span><button class="modal-cl" onclick="closeModal('modal-prontidao')">✕</button></div>
+    <div style="padding:16px">
+      <div style="font-size:10.5px;color:var(--mu);margin-bottom:16px;line-height:1.5">Leva 10 segundos — ajuda seu personal a ajustar o treino de hoje pra você.</div>
+
+      <div style="font-size:11px;font-weight:800;color:var(--t2);margin-bottom:8px">😴 Como foi seu sono?</div>
+      <div style="display:flex;gap:6px;margin-bottom:18px">
+        <button class="pr-opt" data-grupo="sono" data-valor="1" onclick="prSelecionar('sono',1,this)" style="flex:1;padding:10px 4px;background:var(--s2);border:1px solid var(--b);border-radius:8px;color:var(--t2);font-size:11px;cursor:pointer;text-align:center;line-height:1.6">😩<br>Mal</button>
+        <button class="pr-opt" data-grupo="sono" data-valor="2" onclick="prSelecionar('sono',2,this)" style="flex:1;padding:10px 4px;background:var(--s2);border:1px solid var(--b);border-radius:8px;color:var(--t2);font-size:11px;cursor:pointer;text-align:center;line-height:1.6">😐<br>OK</button>
+        <button class="pr-opt" data-grupo="sono" data-valor="3" onclick="prSelecionar('sono',3,this)" style="flex:1;padding:10px 4px;background:var(--s2);border:1px solid var(--b);border-radius:8px;color:var(--t2);font-size:11px;cursor:pointer;text-align:center;line-height:1.6">😃<br>Bem</button>
+      </div>
+
+      <div style="font-size:11px;font-weight:800;color:var(--t2);margin-bottom:8px">💪 Dor ou cansaço muscular?</div>
+      <div style="display:flex;gap:6px;margin-bottom:18px">
+        <button class="pr-opt" data-grupo="dor" data-valor="1" onclick="prSelecionar('dor',1,this)" style="flex:1;padding:10px 4px;background:var(--s2);border:1px solid var(--b);border-radius:8px;color:var(--t2);font-size:11px;cursor:pointer;text-align:center;line-height:1.6">😣<br>Dolorido</button>
+        <button class="pr-opt" data-grupo="dor" data-valor="2" onclick="prSelecionar('dor',2,this)" style="flex:1;padding:10px 4px;background:var(--s2);border:1px solid var(--b);border-radius:8px;color:var(--t2);font-size:11px;cursor:pointer;text-align:center;line-height:1.6">😐<br>Leve</button>
+        <button class="pr-opt" data-grupo="dor" data-valor="3" onclick="prSelecionar('dor',3,this)" style="flex:1;padding:10px 4px;background:var(--s2);border:1px solid var(--b);border-radius:8px;color:var(--t2);font-size:11px;cursor:pointer;text-align:center;line-height:1.6">✅<br>Sem dor</button>
+      </div>
+
+      <div style="font-size:11px;font-weight:800;color:var(--t2);margin-bottom:8px">🔥 Disposição pra treinar?</div>
+      <div style="display:flex;gap:6px;margin-bottom:20px">
+        <button class="pr-opt" data-grupo="humor" data-valor="1" onclick="prSelecionar('humor',1,this)" style="flex:1;padding:10px 4px;background:var(--s2);border:1px solid var(--b);border-radius:8px;color:var(--t2);font-size:11px;cursor:pointer;text-align:center;line-height:1.6">😴<br>Baixa</button>
+        <button class="pr-opt" data-grupo="humor" data-valor="2" onclick="prSelecionar('humor',2,this)" style="flex:1;padding:10px 4px;background:var(--s2);border:1px solid var(--b);border-radius:8px;color:var(--t2);font-size:11px;cursor:pointer;text-align:center;line-height:1.6">😐<br>Média</button>
+        <button class="pr-opt" data-grupo="humor" data-valor="3" onclick="prSelecionar('humor',3,this)" style="flex:1;padding:10px 4px;background:var(--s2);border:1px solid var(--b);border-radius:8px;color:var(--t2);font-size:11px;cursor:pointer;text-align:center;line-height:1.6">🔥<br>Alta</button>
+      </div>
+
+      <button id="pr-btn-salvar" class="btn-savewk" disabled onclick="salvarProntidao()" style="width:100%">Salvar e continuar</button>
+      <button onclick="pularProntidao()" style="width:100%;margin-top:10px;background:none;border:none;color:var(--mu);font-size:11.5px;cursor:pointer;text-decoration:underline">Pular por hoje</button>
     </div>
   </div>
 </div>
@@ -6490,10 +6533,10 @@ function renovarMissoesSemanais(u){
   return true;
 }
 function rowToUser(data){
-  return{id:data.id,name:data.nome,email:data.email,plano:data.plano,trialInicio:data.trial_inicio,runInicio:data.run_inicio,runAjusteLesao:!!data.run_ajuste_lesao,assinaturaStatus:data.assinatura_status||'trial',assinaturaAte:data.assinatura_ate,diaConversao:data.dia_conversao,dataConversao:data.data_conversao,planoConversao:data.plano_conversao,precoTravado:data.preco_travado,promoFundador:!!data.promo_fundador,pixFundador:!!data.pix_fundador,promoVaga:data.promo_vaga,solicitouTrocaTreino:!!data.solicitou_troca,solicitouTrocaData:data.solicitou_troca_data,solicitouTrocaTipo:data.solicitou_troca_tipo,trainApproved:data.treino_liberado,modoLivre:!!data.modo_livre,pushSubscription:data.push_subscription||null,correcoesVideo:data.correcoes_video||[],isAdmin:!!data.is_admin,aiPlan:data.ai_plan,anamnese:data.anamnese,anamneseDone:!!data.anamnese_geral,anamneseGeral:data.anamnese_geral||null,anamneseMusculacao:data.anamnese_musculacao||null,anamneseCorrida:data.anamnese_corrida||null,anamneseMuscDone:!!data.anamnese_musculacao,anamneseCorridaDone:!!data.anamnese_corrida,gymWeek:data.gym_week||1,runWeek:data.run_week||1,gymDone:data.gym_done||{},runDone:data.run_done||{},runFeedback:data.run_feedback||{},runAtividades:data.run_atividades||[],runTriagem:data.run_triagem||null,runStrength:data.run_strength||[],runStrengthDone:data.run_strength_done||{},runTestes:data.run_testes||[],runTestPace:data.run_test_pace||null,loadHistory:data.load_history||{},workoutHistory:data.workout_history||[],xp:data.xp||0,kidsXp:data.kids_xp||0,level:data.level||1,streak:data.streak||1,coins:data.coins||0,badges:data.badges||[],prs:data.prs||[],stats:data.stats||{treinos:0,distancia:0,semanas:0},purchases:data.purchases||[],pacoteEbooks:!!data.pacote_ebooks,programIntakes:data.program_intakes||{},avatar:data.avatar||null,avaliacoes:data.evals||[],avaliacoesPostural:data.avaliacoes_postural||[],estrategiaConsultoria:data.estrategia_consultoria||null,pacoteConfig:data.pacote_config||null,gifsPersonalizados:data.gifs_personalizados||{},exerciciosCustom:data.exercicios_custom||[],nomesPersonalizados:data.nomes_personalizados||{},missions:MISSOES_PADRAO.map(m=>({...m})),createdAt:data.criado_em,lastLogin:data.ultimo_acesso};
+  return{id:data.id,name:data.nome,email:data.email,plano:data.plano,trialInicio:data.trial_inicio,runInicio:data.run_inicio,runAjusteLesao:!!data.run_ajuste_lesao,assinaturaStatus:data.assinatura_status||'trial',assinaturaAte:data.assinatura_ate,diaConversao:data.dia_conversao,dataConversao:data.data_conversao,planoConversao:data.plano_conversao,precoTravado:data.preco_travado,promoFundador:!!data.promo_fundador,pixFundador:!!data.pix_fundador,promoVaga:data.promo_vaga,solicitouTrocaTreino:!!data.solicitou_troca,solicitouTrocaData:data.solicitou_troca_data,solicitouTrocaTipo:data.solicitou_troca_tipo,trainApproved:data.treino_liberado,modoLivre:!!data.modo_livre,pushSubscription:data.push_subscription||null,correcoesVideo:data.correcoes_video||[],isAdmin:!!data.is_admin,aiPlan:data.ai_plan,anamnese:data.anamnese,anamneseDone:!!data.anamnese_geral,anamneseGeral:data.anamnese_geral||null,anamneseMusculacao:data.anamnese_musculacao||null,anamneseCorrida:data.anamnese_corrida||null,anamneseMuscDone:!!data.anamnese_musculacao,anamneseCorridaDone:!!data.anamnese_corrida,gymWeek:data.gym_week||1,runWeek:data.run_week||1,gymDone:data.gym_done||{},runDone:data.run_done||{},runFeedback:data.run_feedback||{},runAtividades:data.run_atividades||[],runTriagem:data.run_triagem||null,runStrength:data.run_strength||[],runStrengthDone:data.run_strength_done||{},runTestes:data.run_testes||[],runTestPace:data.run_test_pace||null,loadHistory:data.load_history||{},workoutHistory:data.workout_history||[],xp:data.xp||0,kidsXp:data.kids_xp||0,level:data.level||1,streak:data.streak||1,coins:data.coins||0,badges:data.badges||[],prs:data.prs||[],stats:data.stats||{treinos:0,distancia:0,semanas:0},purchases:data.purchases||[],pacoteEbooks:!!data.pacote_ebooks,programIntakes:data.program_intakes||{},avatar:data.avatar||null,avaliacoes:data.evals||[],avaliacoesPostural:data.avaliacoes_postural||[],estrategiaConsultoria:data.estrategia_consultoria||null,pacoteConfig:data.pacote_config||null,gifsPersonalizados:data.gifs_personalizados||{},exerciciosCustom:data.exercicios_custom||[],nomesPersonalizados:data.nomes_personalizados||{},prontidao:data.prontidao||{},missions:MISSOES_PADRAO.map(m=>({...m})),createdAt:data.criado_em,lastLogin:data.ultimo_acesso};
 }
 function userToRow(u){
-  return{id:u.id,nome:u.name,email:u.email,plano:u.plano||'free',trial_inicio:u.trialInicio||undefined,run_inicio:u.runInicio||null,run_ajuste_lesao:u.runAjusteLesao||false,treino_liberado:u.trainApproved||false,modo_livre:u.modoLivre||false,...(u.pushSubscription?{push_subscription:u.pushSubscription}:(u.pushDesativado?{push_subscription:null}:{})),...((u.correcoesVideo&&u.correcoesVideo.length)?{correcoes_video:u.correcoesVideo}:{}),ai_plan:u.aiPlan||null,anamnese:u.anamnese||null,anamnese_geral:u.anamneseGeral||null,anamnese_musculacao:u.anamneseMusculacao||null,anamnese_corrida:u.anamneseCorrida||null,gym_week:u.gymWeek||1,run_week:u.runWeek||1,gym_done:u.gymDone||{},run_done:u.runDone||{},run_feedback:u.runFeedback||{},run_atividades:u.runAtividades||[],run_triagem:u.runTriagem||null,run_strength:u.runStrength||[],run_strength_done:u.runStrengthDone||{},run_testes:u.runTestes||[],run_test_pace:u.runTestPace||null,load_history:u.loadHistory||{},workout_history:u.workoutHistory||[],xp:u.xp||0,kids_xp:u.kidsXp||0,level:u.level||1,streak:u.streak||1,coins:u.coins||0,badges:u.badges||[],prs:u.prs||[],stats:u.stats||{treinos:0,distancia:0,semanas:0},avatar:u.avatar||null,evals:u.avaliacoes||[],...((u.avaliacoesPostural&&u.avaliacoesPostural.length)?{avaliacoes_postural:u.avaliacoesPostural}:{}),...(u.estrategiaConsultoria?{estrategia_consultoria:u.estrategiaConsultoria}:{}),...(u.pacoteConfig?{pacote_config:u.pacoteConfig}:{}),program_intakes:u.programIntakes||{},gifs_personalizados:u.gifsPersonalizados||{},exercicios_custom:u.exerciciosCustom||[],nomes_personalizados:u.nomesPersonalizados||{},ultimo_acesso:new Date().toISOString(),updated_at:new Date().toISOString()};
+  return{id:u.id,nome:u.name,email:u.email,plano:u.plano||'free',trial_inicio:u.trialInicio||undefined,run_inicio:u.runInicio||null,run_ajuste_lesao:u.runAjusteLesao||false,treino_liberado:u.trainApproved||false,modo_livre:u.modoLivre||false,...(u.pushSubscription?{push_subscription:u.pushSubscription}:(u.pushDesativado?{push_subscription:null}:{})),...((u.correcoesVideo&&u.correcoesVideo.length)?{correcoes_video:u.correcoesVideo}:{}),ai_plan:u.aiPlan||null,anamnese:u.anamnese||null,anamnese_geral:u.anamneseGeral||null,anamnese_musculacao:u.anamneseMusculacao||null,anamnese_corrida:u.anamneseCorrida||null,gym_week:u.gymWeek||1,run_week:u.runWeek||1,gym_done:u.gymDone||{},run_done:u.runDone||{},run_feedback:u.runFeedback||{},run_atividades:u.runAtividades||[],run_triagem:u.runTriagem||null,run_strength:u.runStrength||[],run_strength_done:u.runStrengthDone||{},run_testes:u.runTestes||[],run_test_pace:u.runTestPace||null,load_history:u.loadHistory||{},workout_history:u.workoutHistory||[],xp:u.xp||0,kids_xp:u.kidsXp||0,level:u.level||1,streak:u.streak||1,coins:u.coins||0,badges:u.badges||[],prs:u.prs||[],stats:u.stats||{treinos:0,distancia:0,semanas:0},avatar:u.avatar||null,evals:u.avaliacoes||[],...((u.avaliacoesPostural&&u.avaliacoesPostural.length)?{avaliacoes_postural:u.avaliacoesPostural}:{}),...(u.estrategiaConsultoria?{estrategia_consultoria:u.estrategiaConsultoria}:{}),...(u.pacoteConfig?{pacote_config:u.pacoteConfig}:{}),program_intakes:u.programIntakes||{},gifs_personalizados:u.gifsPersonalizados||{},exercicios_custom:u.exerciciosCustom||[],nomes_personalizados:u.nomesPersonalizados||{},prontidao:u.prontidao||{},ultimo_acesso:new Date().toISOString(),updated_at:new Date().toISOString()};
   // Obs.: purchases/pacote_ebooks/is_admin/plano NÃO são enviados pelo aluno — são protegidos no banco e só mudam via webhook de pagamento ou admin.
 }
 // ══ GRAVAÇÃO RESILIENTE ══
@@ -6502,7 +6545,7 @@ function userToRow(u){
 // rodado. Se uma delas faltar, o Supabase recusa a linha INTEIRA — e nenhum
 // dado do aluno (nem um cadastro novo) seria salvo. Aqui, se o erro for de
 // coluna ausente, regrava sem os campos opcionais: o essencial sempre salva.
-const FQ_COLUNAS_OPCIONAIS=['push_subscription','correcoes_video','avaliacoes_postural','estrategia_consultoria','pacote_config','modo_livre','nomes_personalizados'];
+const FQ_COLUNAS_OPCIONAIS=['push_subscription','correcoes_video','avaliacoes_postural','estrategia_consultoria','pacote_config','modo_livre','nomes_personalizados','prontidao'];
 function fqErroColunaAusente(err){
   return !!err && (err.code==='PGRST204' || /could not find the .* column|schema cache|column .* does not exist/i.test(err.message||''));
 }
@@ -7972,6 +8015,7 @@ const RD_TECNICAS_FLAT = (()=>{
 })();
 // O aluno ligou o modo turbo?
 function fqTurboOn(){ const u=getU(); return !!(u && u.turboOn); }
+function fqExpressOn(){ const u=getU(); return !!(u && u.expressOn); }
 
 // Decide se um exercício é elegível pra levar técnica de intensidade
 // (evita comprometer composto pesado, cardio, pliometria e isometria)
@@ -11513,6 +11557,8 @@ function renderPerfil(u){
   const pxbEl=document.getElementById('perfil-xpbar');if(pxbEl)pxbEl.style.width=Math.min(((u.xp||0)/xpN)*100,100)+'%';
   // Avatar via updateAvatarDisplays
   updateAvatarDisplays(u);
+  // Check-in de prontidão (sono/dor/disposição) — resumo de hoje
+  fqAtualizarProntidaoPerfil(u);
   // Badges row
   const br=document.getElementById('perfil-badges-row');
   if(br){
@@ -12988,27 +13034,54 @@ function renderGymDay(w,d,u){
     <div style="font-size:10.5px;color:var(--mu);text-align:center;margin-top:6px;line-height:1.5">${turbo?(turboAplicados?t('turbo.desc.on'):t('turbo.desc.none')):t('turbo.desc.off')}</div>`;
   }
 
-  const {feitos:exFeitos,total:exTotal}=(typeof progressoDia==='function')?progressoDia(u,w,d):{feitos:0,total:exs.length};
+  // ── TREINO EXPRESS ──
+  // Opcional (o aluno liga só se quiser) — pensado pra dia de pouco tempo ou
+  // disposição baixa: em vez de pular o treino inteiro, mostra só os
+  // exercícios principais (os primeiros da lista — normalmente os compostos,
+  // que o próprio Rennan já organiza primeiro). NUNCA toca em u.aiPlan (só
+  // filtra o que é EXIBIDO agora) — os exercícios "cortados" continuam lá,
+  // intactos, pra próxima vez que o modo Express estiver desligado.
+  const expressOn = fqExpressOn();
+  const exsTodos = exs;
+  const exsExibidos = expressOn ? exsTodos.slice(0, Math.max(1, Math.ceil(exsTodos.length*0.6))) : exsTodos;
+  const cortados = exsTodos.length - exsExibidos.length;
+  const btnExpress = document.getElementById('gym-express-btn');
+  if(btnExpress){
+    btnExpress.innerHTML = `<button onclick="toggleExpress()" style="width:100%;background:${expressOn?'linear-gradient(135deg,#f39c12,#e67e22)':'var(--s)'};color:${expressOn?'#fff':'var(--t2)'};border:1px solid ${expressOn?'transparent':'var(--b)'};border-radius:12px;padding:13px;font-size:13.5px;font-weight:800;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px">
+      <span style="font-size:16px">⏱️</span>
+      <span>${expressOn?'Treino Express: ON':'Treino Express'}</span>
+      ${expressOn&&cortados>0?`<span style="background:rgba(0,0,0,.2);border-radius:99px;padding:2px 8px;font-size:10px">-${cortados} ${cortados===1?'exercício':'exercícios'}</span>`:''}
+    </button>
+    <div style="font-size:10.5px;color:var(--mu);text-align:center;margin-top:6px;line-height:1.5">${expressOn?'Mostrando só os exercícios principais de hoje — sem culpa, melhor treinar reduzido do que não treinar.':'Pouco tempo ou pouca disposição hoje? Reduz o treino pros exercícios principais, sem pular o dia.'}</div>`;
+  }
+
+  let exFeitos, exTotal;
+  if(expressOn){
+    exTotal = exsExibidos.length;
+    exFeitos = exsExibidos.filter((ed,ei)=>{ for(let s=0;s<(ed.sets||1);s++){ if(!(u.gymDone&&u.gymDone[`${w}_${d}_${ei}_s${s}`])) return false; } return true; }).length;
+  } else {
+    ({feitos:exFeitos,total:exTotal} = (typeof progressoDia==='function')?progressoDia(u,w,d):{feitos:0,total:exs.length});
+  }
   const pctDia=exTotal>0?Math.round((exFeitos/exTotal)*100):0;
   const cabecalhoProgresso=`
     <div class="fq2-card" style="margin-bottom:14px">
-      <div class="fq2-secundario" style="margin-bottom:2px">${d}</div>
+      <div class="fq2-secundario" style="margin-bottom:2px">${d}${expressOn?' · ⏱️ Express':''}</div>
       <div class="fq2-h2" style="margin-bottom:8px">${exFeitos} de ${exTotal} exercícios concluídos</div>
       <div style="height:5px;background:var(--surface-hover);border-radius:99px;overflow:hidden">
         <div style="height:100%;width:${pctDia}%;background:var(--primary);border-radius:99px;transition:width .3s"></div>
       </div>
     </div>`;
 
-  const idxAtivo=exs.findIndex((e,ii)=>{ for(let s=0;s<(e.sets||1);s++){ if(!(u.gymDone&&u.gymDone[`${w}_${d}_${ii}_s${s}`])) return true; } return false; });
-  document.getElementById('gym-exercises').innerHTML=cabecalhoProgresso+exs.map((ed,i)=>{
+  const idxAtivo=exsExibidos.findIndex((e,ii)=>{ for(let s=0;s<(e.sets||1);s++){ if(!(u.gymDone&&u.gymDone[`${w}_${d}_${ii}_s${s}`])) return true; } return false; });
+  document.getElementById('gym-exercises').innerHTML=cabecalhoProgresso+exsExibidos.map((ed,i)=>{
     const ex=getExById(ed.id);if(!ex)return '';
     const lk=`${w}_${d}_${ex.id}`;const sl=(u.loadHistory&&u.loadHistory[lk])||ed.load||'';
     // Bi-set combinado (ver admDefinirCombo, no editor do admin): os dois
     // exercícios da dupla já ficam sempre adjacentes, então basta olhar o
     // vizinho imediato pra saber se este card é o topo ou a base do par.
-    const combTopo = ed.comboId && exs[i+1] && exs[i+1].comboId===ed.comboId;
-    const combBase = ed.comboId && exs[i-1] && exs[i-1].comboId===ed.comboId;
-    const proximo = (!combTopo && exs[i+1]) ? getExById(exs[i+1].id) : null;
+    const combTopo = ed.comboId && exsExibidos[i+1] && exsExibidos[i+1].comboId===ed.comboId;
+    const combBase = ed.comboId && exsExibidos[i-1] && exsExibidos[i-1].comboId===ed.comboId;
+    const proximo = (!combTopo && exsExibidos[i+1]) ? getExById(exsExibidos[i+1].id) : null;
     // Apelido pessoal (ver admAbrirRenomearEx) tem prioridade sobre o nome
     // normal do banco — só muda a exibição pra ESTE aluno, nunca o resto.
     const nomeEx = u.nomesPersonalizados?.[ex.id] || exNome(ex);
@@ -13048,8 +13121,8 @@ function renderGymDay(w,d,u){
             </div>`;
           }).join('')}
         </div>
-        ${combTopo?`<div class="proximo-ex-preview" style="background:rgba(52,152,219,.1);border:1px solid rgba(52,152,219,.3)"><span style="opacity:.8;color:#5dade2;font-weight:700">🔗 Sem descanso — continue direto com:</span><span style="font-weight:700;color:var(--text-primary)">${u.nomesPersonalizados?.[exs[i+1].id]||exNome(getExById(exs[i+1].id))}</span><span style="opacity:.7">${exs[i+1].sets}×${exs[i+1].reps}</span></div>`
-        :proximo?`<div class="proximo-ex-preview"><span style="opacity:.6">${t('ui.f9dbeb6d7d')}</span><span style="font-weight:700;color:var(--text-primary)">${u.nomesPersonalizados?.[exs[i+1].id]||exNome(proximo)}</span><span style="opacity:.7">${exs[i+1].sets}×${exs[i+1].reps}</span></div>`:''}
+        ${combTopo?`<div class="proximo-ex-preview" style="background:rgba(52,152,219,.1);border:1px solid rgba(52,152,219,.3)"><span style="opacity:.8;color:#5dade2;font-weight:700">🔗 Sem descanso — continue direto com:</span><span style="font-weight:700;color:var(--text-primary)">${u.nomesPersonalizados?.[exsExibidos[i+1].id]||exNome(getExById(exsExibidos[i+1].id))}</span><span style="opacity:.7">${exsExibidos[i+1].sets}×${exsExibidos[i+1].reps}</span></div>`
+        :proximo?`<div class="proximo-ex-preview"><span style="opacity:.6">${t('ui.f9dbeb6d7d')}</span><span style="font-weight:700;color:var(--text-primary)">${u.nomesPersonalizados?.[exsExibidos[i+1].id]||exNome(proximo)}</span><span style="opacity:.7">${exsExibidos[i+1].sets}×${exsExibidos[i+1].reps}</span></div>`:''}
       </div>
     </div>${combTopo?`<div style="text-align:center;font-size:9.5px;font-weight:800;color:#5dade2;background:rgba(52,152,219,.1);border-left:1px solid rgba(52,152,219,.4);border-right:1px solid rgba(52,152,219,.4);padding:3px 0;letter-spacing:.3px;margin:-1px 0 0">🔗 BI-SET — sem descanso entre os dois</div>`:''}`;
   }).join('');
@@ -13084,6 +13157,35 @@ async function toggleTurbo(){
     DB.set('fq_users',users);
   if(typeof syncU==='function') syncU(u).catch(()=>{});
     fqToast('Modo Turbo desativado.','info');
+  }
+  if(typeof renderGym==='function')renderGym(u);
+}
+// ══ TREINO EXPRESS — liga/desliga ══
+// Mesmo padrão do Turbo: guarda só no localStorage (não sincroniza com
+// Supabase — a tabela alunos não tem essa coluna). É só uma preferência de
+// EXIBIÇÃO do dia atual, nunca altera o plano que o Rennan montou.
+async function toggleExpress(){
+  const email=DB.get('fq_cur');const users=DB.get('fq_users')||{};const u=users[email];
+  if(!u)return;
+  if(!u.expressOn){
+    if(!u.expressAvisado){
+      const ok=await fqConfirm(
+        '⏱️ Treino Express',
+        'Em dias de pouco tempo ou disposição baixa, o Express mostra só os exercícios principais do treino de hoje (os primeiros da lista) — pra você treinar reduzido em vez de pular o dia inteiro.\n\nOs exercícios "escondidos" não somem do seu plano — é só por hoje. Desligue quando quiser.',
+        'Ativar Express','⏱️'
+      );
+      if(!ok)return;
+      u.expressAvisado=true;
+    }
+    u.expressOn=true;
+    DB.set('fq_users',users);
+    if(typeof syncU==='function') syncU(u).catch(()=>{});
+    fqToast('⏱️ Treino Express ativado!','ok');
+  } else {
+    u.expressOn=false;
+    DB.set('fq_users',users);
+    if(typeof syncU==='function') syncU(u).catch(()=>{});
+    fqToast('Treino Express desativado.','info');
   }
   if(typeof renderGym==='function')renderGym(u);
 }
@@ -13272,7 +13374,7 @@ function completeWk(w,d){
   try{
     const P=getGP(u);const exs=P[w].days[d];
     if(!u.workoutHistory)u.workoutHistory=[];
-    u.workoutHistory.push({week:w,day:d,date:new Date().toLocaleDateString('pt-BR'),exercises:exs.map(e=>{const ex=getExById(e.id);return{name:ex?.name||e.id,load:u.loadHistory?.[`${w}_${d}_${e.id}_s0`]||u.loadHistory?.[`${w}_${d}_${e.id}`]||''};})});
+    u.workoutHistory.push({week:w,day:d,date:new Date().toLocaleDateString('pt-BR'),express:!!u.expressOn,exercises:exs.map(e=>{const ex=getExById(e.id);return{name:ex?.name||e.id,load:u.loadHistory?.[`${w}_${d}_${e.id}_s0`]||u.loadHistory?.[`${w}_${d}_${e.id}`]||''};})});
     const allDays=Object.keys(P[w].days);const tw=Object.keys(P).length;
     if(allDays.every(dd=>u.gymDone[`${w}_${dd}`])){const wn=parseInt(w.split(' ')[1]);if(wn===(u.gymWeek||1)&&(u.gymWeek||1)<tw){u.gymWeek=(u.gymWeek||1)+1;u.xp+=200;u.coins+=50;u.stats.semanas=(u.stats.semanas||0)+1;}}
   }catch(e){ console.error('Erro ao montar histórico do treino (treino continua contabilizado):',e); }
@@ -15190,7 +15292,7 @@ function admAbrirFrequencia(email){
     const nomesEx = (h.exercises||[]).map(e=>typeof e==='string'?e:e.name).filter(Boolean);
     return `<div style="padding:8px 0;border-bottom:1px solid var(--b)">
       <div style="display:flex;justify-content:space-between;font-size:12.5px">
-        <span style="font-weight:700">${h.day||'Treino'}</span><span style="color:var(--mu)">${h.date||''}</span>
+        <span style="font-weight:700">${h.day||'Treino'}${h.express?' <span style="background:rgba(243,156,18,.18);color:#f39c12;border:1px solid rgba(243,156,18,.4);border-radius:5px;padding:1px 6px;font-size:9px;font-weight:800;margin-left:5px">⏱️ Express</span>':''}</span><span style="color:var(--mu)">${h.date||''}</span>
       </div>
       ${nomesEx.length?`<div style="font-size:10.5px;color:var(--mu);margin-top:3px">${nomesEx.join(' · ')}</div>`:''}
     </div>`;
@@ -16312,6 +16414,8 @@ function admStudentCard(u, compact=false){
       <div style="font-size:9px;color:var(--mu)">🎯 Semana ${u.gymWeek||1}</div>
       <div style="font-size:9px;color:var(--mu)">📅 ${lastSeen}</div>
     </div>`:''}
+    <!-- Check-in de prontidão de hoje (sono/dor/disposição) -->
+    ${admResumoProntidaoCard(u)}
     <!-- Alerta de saúde — condições, medicamentos e cirurgias (antes invisível para o admin) -->
     ${admAlertaSaude(u.anamnese)}
     ${admAlertaCorrida(u)}
@@ -17080,6 +17184,81 @@ async function removerRenomeEx(){
   renderEGW(editGW,u);
   fqToast('Apelido removido — voltou ao nome normal.','ok',3000);
   await syncAlunoAdmin(u).catch(()=>{ fqToast('⚠️ Salvo aqui, mas não sincronizou. Confira a internet.','warn',6000); });
+}
+// ══════════════════════════════════════════════════════════════════════
+// CHECK-IN DE PRONTIDÃO — 3 perguntas rápidas (sono, dor, disposição) que
+// o próprio aluno responde, uma vez por dia, antes do treino. Guardado em
+// u.prontidao[AAAA-MM-DD] = {sono,dor,humor,ts} (ou {pulado:true,ts} se o
+// aluno preferir não responder hoje). O admin vê o resumo no card do aluno,
+// pra decidir se ajusta o treino do dia (ex: reduzir carga se dor alta).
+// ══════════════════════════════════════════════════════════════════════
+const PRONTIDAO_EMOJI={sono:['','😩','😐','😃'],dor:['','😣','😐','✅'],humor:['','😴','😐','🔥']};
+const PRONTIDAO_LABEL={sono:['','Sono mal','Sono OK','Sono bem'],dor:['','Dolorido','Dor leve','Sem dor'],humor:['','Disposição baixa','Disposição média','Disposição alta']};
+function fqHojeStr(){ return new Date().toISOString().slice(0,10); }
+let prontidaoResp={sono:null,dor:null,humor:null};
+function fqResumoProntidaoTxt(reg){
+  if(!reg) return null;
+  if(reg.pulado) return 'Check-in pulado hoje';
+  return ['sono','dor','humor'].map(g=>PRONTIDAO_EMOJI[g][reg[g]]+' '+PRONTIDAO_LABEL[g][reg[g]]).join(' · ');
+}
+function abrirProntidao(){
+  const u=getU(); if(!u) return;
+  const hoje=fqHojeStr();
+  const reg=u.prontidao?.[hoje];
+  prontidaoResp={sono:(reg&&!reg.pulado)?reg.sono:null,dor:(reg&&!reg.pulado)?reg.dor:null,humor:(reg&&!reg.pulado)?reg.humor:null};
+  document.querySelectorAll('#modal-prontidao .pr-opt').forEach(b=>{
+    const g=b.getAttribute('data-grupo'),v=+b.getAttribute('data-valor');
+    b.classList.toggle('active', prontidaoResp[g]===v);
+  });
+  const btnSalvar=document.getElementById('pr-btn-salvar'); if(btnSalvar) btnSalvar.disabled=!(prontidaoResp.sono&&prontidaoResp.dor&&prontidaoResp.humor);
+  abrirModal('modal-prontidao');
+}
+function prSelecionar(grupo,valor,btn){
+  prontidaoResp[grupo]=valor;
+  document.querySelectorAll(`#modal-prontidao .pr-opt[data-grupo="${grupo}"]`).forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  const btnSalvar=document.getElementById('pr-btn-salvar'); if(btnSalvar) btnSalvar.disabled=!(prontidaoResp.sono&&prontidaoResp.dor&&prontidaoResp.humor);
+}
+async function salvarProntidao(){
+  const u=getU(); if(!u) return;
+  if(!(prontidaoResp.sono&&prontidaoResp.dor&&prontidaoResp.humor)) return;
+  const hoje=fqHojeStr();
+  if(!u.prontidao) u.prontidao={};
+  u.prontidao[hoje]={sono:prontidaoResp.sono,dor:prontidaoResp.dor,humor:prontidaoResp.humor,ts:new Date().toISOString()};
+  const users=DB.get('fq_users')||{}; users[u.email]=u; DB.set('fq_users',users);
+  closeModal('modal-prontidao');
+  fqToast('📋 Check-in salvo! Bom treino 💪','ok');
+  fqAtualizarProntidaoPerfil(u);
+  if(sb) await syncU(u);
+}
+function pularProntidao(){
+  const u=getU(); if(!u) return;
+  const hoje=fqHojeStr();
+  if(!u.prontidao) u.prontidao={};
+  if(!u.prontidao[hoje]) u.prontidao[hoje]={pulado:true,ts:new Date().toISOString()};
+  const users=DB.get('fq_users')||{}; users[u.email]=u; DB.set('fq_users',users);
+  closeModal('modal-prontidao');
+  fqAtualizarProntidaoPerfil(u);
+  if(sb) syncU(u).catch(()=>{});
+}
+function fqAtualizarProntidaoPerfil(u){
+  const el=document.getElementById('prontidao-resumo-perfil'); if(!el||!u) return;
+  const reg=u.prontidao?.[fqHojeStr()];
+  el.textContent = reg ? (fqResumoProntidaoTxt(reg)||'Sono, dor e disposição') : 'Ainda não respondido hoje — toque aqui';
+}
+// Resumo compacto pro ADMIN ver no card do aluno, sem precisar abrir nada.
+function admResumoProntidaoCard(u){
+  const hoje=fqHojeStr();
+  const reg=u.prontidao?.[hoje];
+  if(!reg||reg.pulado){
+    return `<div style="padding:8px 14px;border-bottom:1px solid rgba(255,255,255,.04);font-size:10px;color:var(--mu)">📋 ${reg&&reg.pulado?'Check-in pulado hoje':'Sem check-in hoje'}</div>`;
+  }
+  return `<div style="padding:8px 14px;border-bottom:1px solid rgba(255,255,255,.04);display:flex;gap:10px;flex-wrap:wrap;font-size:10px;color:var(--t2)">
+    <span>📋 Hoje:</span>
+    <span>${PRONTIDAO_EMOJI.sono[reg.sono]} ${PRONTIDAO_LABEL.sono[reg.sono]}</span>
+    <span>${PRONTIDAO_EMOJI.dor[reg.dor]} ${PRONTIDAO_LABEL.dor[reg.dor]}</span>
+    <span>${PRONTIDAO_EMOJI.humor[reg.humor]} ${PRONTIDAO_LABEL.humor[reg.humor]}</span>
+  </div>`;
 }
 function limparTreinoDia(w,day){
   const u=admGetAluno(editEmail);if(!u)return;
