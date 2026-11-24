@@ -1389,7 +1389,7 @@ html[data-tema="claro"] .hero-banner{background:#fff;}
       <option value="es">🇪🇸 ES</option>
     </select>
   </div>
-  <div id="fq-version-badge" style="position:absolute;bottom:8px;right:12px;font-size:9px;color:#333;font-weight:700;z-index:5">v298</div>
+  <div id="fq-version-badge" style="position:absolute;bottom:8px;right:12px;font-size:9px;color:#333;font-weight:700;z-index:5">v299</div>
   <img src="https://images.unsplash.com/photo-1517836357463-d25dfeac3438?w=800&q=80" alt="Fitness" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center top;filter:brightness(.35);z-index:0"/>
   <div class="splash-glow"></div>
   <div class="splash-noise"></div>
@@ -2635,6 +2635,14 @@ html[data-tema="claro"] .hero-banner{background:#fff;}
             </div>
             <span style="color:var(--mu);font-size:18px">›</span>
           </div>
+          <div onclick="abrirBemEstar()" style="padding:14px 16px;display:flex;align-items:center;gap:12px;cursor:pointer;border-bottom:1px solid var(--b)">
+            <span style="font-size:20px">💭</span>
+            <div style="flex:1">
+              <div style="font-size:13px;font-weight:700">Como foi sua semana?</div>
+              <div style="font-size:10px;color:var(--mu)" id="bemestar-resumo-perfil">Estresse e disposição geral</div>
+            </div>
+            <span style="color:var(--mu);font-size:18px">›</span>
+          </div>
           <div onclick="fqAlternarTema()" style="padding:14px 16px;display:flex;align-items:center;gap:12px;cursor:pointer;border-bottom:1px solid var(--b)">
             <span style="font-size:20px" id="tema-icone">🌙</span>
             <div style="flex:1">
@@ -2668,7 +2676,7 @@ html[data-tema="claro"] .hero-banner{background:#fff;}
             <span style="color:var(--mu);font-size:18px">›</span>
           </div>
         </div>
-        <div style="text-align:center;padding:20px 0 4px;font-size:11px;color:var(--mu)">FitQuest <span id="fq-version-badge-perfil">v298</span></div>
+        <div style="text-align:center;padding:20px 0 4px;font-size:11px;color:var(--mu)">FitQuest <span id="fq-version-badge-perfil">v299</span></div>
       </div>
     </div>
 
@@ -2944,6 +2952,29 @@ html[data-tema="claro"] .hero-banner{background:#fff;}
 
       <button id="pr-btn-salvar" class="btn-savewk" disabled onclick="salvarProntidao()" style="width:100%">Salvar e continuar</button>
       <button onclick="pularProntidao()" style="width:100%;margin-top:10px;background:none;border:none;color:var(--mu);font-size:11.5px;cursor:pointer;text-decoration:underline">Pular por hoje</button>
+    </div>
+  </div>
+</div>
+<!-- Bem-estar semanal — nível de estresse/disposição + nota opcional, 1x por semana -->
+<div class="modal-ov" id="modal-bemestar" style="align-items:flex-start">
+  <div class="modal-bx" style="max-width:380px;width:100%;padding:0;border-radius:16px 16px 0 0;margin-top:auto">
+    <div class="modal-t"><span>💭 Como foi sua semana?</span><button class="modal-cl" onclick="closeModal('modal-bemestar')">✕</button></div>
+    <div style="padding:16px">
+      <div style="font-size:10.5px;color:var(--mu);margin-bottom:16px;line-height:1.5">Leva 10 segundos — ajuda seu personal a entender como a vida fora do treino está pesando (ou não) essa semana.</div>
+
+      <div style="display:flex;gap:6px;margin-bottom:14px">
+        <button class="pr-opt" data-valor="1" onclick="beSelecionarNivel(1,this)" style="flex:1;padding:10px 2px;background:var(--s2);border:1px solid var(--b);border-radius:8px;color:var(--t2);font-size:10px;cursor:pointer;text-align:center;line-height:1.6">😌<br>Tranquila</button>
+        <button class="pr-opt" data-valor="2" onclick="beSelecionarNivel(2,this)" style="flex:1;padding:10px 2px;background:var(--s2);border:1px solid var(--b);border-radius:8px;color:var(--t2);font-size:10px;cursor:pointer;text-align:center;line-height:1.6">🙂<br>Bem</button>
+        <button class="pr-opt" data-valor="3" onclick="beSelecionarNivel(3,this)" style="flex:1;padding:10px 2px;background:var(--s2);border:1px solid var(--b);border-radius:8px;color:var(--t2);font-size:10px;cursor:pointer;text-align:center;line-height:1.6">😐<br>Normal</button>
+        <button class="pr-opt" data-valor="4" onclick="beSelecionarNivel(4,this)" style="flex:1;padding:10px 2px;background:var(--s2);border:1px solid var(--b);border-radius:8px;color:var(--t2);font-size:10px;cursor:pointer;text-align:center;line-height:1.6">😟<br>Puxada</button>
+        <button class="pr-opt" data-valor="5" onclick="beSelecionarNivel(5,this)" style="flex:1;padding:10px 2px;background:var(--s2);border:1px solid var(--b);border-radius:8px;color:var(--t2);font-size:10px;cursor:pointer;text-align:center;line-height:1.6">😫<br>Difícil</button>
+      </div>
+
+      <div style="font-size:11px;font-weight:800;color:var(--t2);margin-bottom:6px">Quer contar mais alguma coisa? (opcional)</div>
+      <textarea id="be-nota" maxlength="280" placeholder="Ex: semana puxada no trabalho, dormi pouco..." style="width:100%;min-height:64px;background:var(--s2);border:1px solid var(--b);border-radius:8px;padding:10px;color:var(--t);font-size:12px;resize:vertical;margin-bottom:18px;font-family:inherit;box-sizing:border-box"></textarea>
+
+      <button id="be-btn-salvar" class="btn-savewk" disabled onclick="salvarBemEstar()" style="width:100%">Salvar</button>
+      <button onclick="pularBemEstar()" style="width:100%;margin-top:10px;background:none;border:none;color:var(--mu);font-size:11.5px;cursor:pointer;text-decoration:underline">Pular essa semana</button>
     </div>
   </div>
 </div>
@@ -6533,10 +6564,10 @@ function renovarMissoesSemanais(u){
   return true;
 }
 function rowToUser(data){
-  return{id:data.id,name:data.nome,email:data.email,plano:data.plano,trialInicio:data.trial_inicio,runInicio:data.run_inicio,runAjusteLesao:!!data.run_ajuste_lesao,assinaturaStatus:data.assinatura_status||'trial',assinaturaAte:data.assinatura_ate,diaConversao:data.dia_conversao,dataConversao:data.data_conversao,planoConversao:data.plano_conversao,precoTravado:data.preco_travado,promoFundador:!!data.promo_fundador,pixFundador:!!data.pix_fundador,promoVaga:data.promo_vaga,solicitouTrocaTreino:!!data.solicitou_troca,solicitouTrocaData:data.solicitou_troca_data,solicitouTrocaTipo:data.solicitou_troca_tipo,trainApproved:data.treino_liberado,modoLivre:!!data.modo_livre,pushSubscription:data.push_subscription||null,correcoesVideo:data.correcoes_video||[],isAdmin:!!data.is_admin,aiPlan:data.ai_plan,anamnese:data.anamnese,anamneseDone:!!data.anamnese_geral,anamneseGeral:data.anamnese_geral||null,anamneseMusculacao:data.anamnese_musculacao||null,anamneseCorrida:data.anamnese_corrida||null,anamneseMuscDone:!!data.anamnese_musculacao,anamneseCorridaDone:!!data.anamnese_corrida,gymWeek:data.gym_week||1,runWeek:data.run_week||1,gymDone:data.gym_done||{},runDone:data.run_done||{},runFeedback:data.run_feedback||{},runAtividades:data.run_atividades||[],runTriagem:data.run_triagem||null,runStrength:data.run_strength||[],runStrengthDone:data.run_strength_done||{},runTestes:data.run_testes||[],runTestPace:data.run_test_pace||null,loadHistory:data.load_history||{},workoutHistory:data.workout_history||[],xp:data.xp||0,kidsXp:data.kids_xp||0,level:data.level||1,streak:data.streak||1,coins:data.coins||0,badges:data.badges||[],prs:data.prs||[],stats:data.stats||{treinos:0,distancia:0,semanas:0},purchases:data.purchases||[],pacoteEbooks:!!data.pacote_ebooks,programIntakes:data.program_intakes||{},avatar:data.avatar||null,avaliacoes:data.evals||[],avaliacoesPostural:data.avaliacoes_postural||[],estrategiaConsultoria:data.estrategia_consultoria||null,pacoteConfig:data.pacote_config||null,gifsPersonalizados:data.gifs_personalizados||{},exerciciosCustom:data.exercicios_custom||[],nomesPersonalizados:data.nomes_personalizados||{},prontidao:data.prontidao||{},missions:MISSOES_PADRAO.map(m=>({...m})),createdAt:data.criado_em,lastLogin:data.ultimo_acesso};
+  return{id:data.id,name:data.nome,email:data.email,plano:data.plano,trialInicio:data.trial_inicio,runInicio:data.run_inicio,runAjusteLesao:!!data.run_ajuste_lesao,assinaturaStatus:data.assinatura_status||'trial',assinaturaAte:data.assinatura_ate,diaConversao:data.dia_conversao,dataConversao:data.data_conversao,planoConversao:data.plano_conversao,precoTravado:data.preco_travado,promoFundador:!!data.promo_fundador,pixFundador:!!data.pix_fundador,promoVaga:data.promo_vaga,solicitouTrocaTreino:!!data.solicitou_troca,solicitouTrocaData:data.solicitou_troca_data,solicitouTrocaTipo:data.solicitou_troca_tipo,trainApproved:data.treino_liberado,modoLivre:!!data.modo_livre,pushSubscription:data.push_subscription||null,correcoesVideo:data.correcoes_video||[],isAdmin:!!data.is_admin,aiPlan:data.ai_plan,anamnese:data.anamnese,anamneseDone:!!data.anamnese_geral,anamneseGeral:data.anamnese_geral||null,anamneseMusculacao:data.anamnese_musculacao||null,anamneseCorrida:data.anamnese_corrida||null,anamneseMuscDone:!!data.anamnese_musculacao,anamneseCorridaDone:!!data.anamnese_corrida,gymWeek:data.gym_week||1,runWeek:data.run_week||1,gymDone:data.gym_done||{},runDone:data.run_done||{},runFeedback:data.run_feedback||{},runAtividades:data.run_atividades||[],runTriagem:data.run_triagem||null,runStrength:data.run_strength||[],runStrengthDone:data.run_strength_done||{},runTestes:data.run_testes||[],runTestPace:data.run_test_pace||null,loadHistory:data.load_history||{},workoutHistory:data.workout_history||[],xp:data.xp||0,kidsXp:data.kids_xp||0,level:data.level||1,streak:data.streak||1,coins:data.coins||0,badges:data.badges||[],prs:data.prs||[],stats:data.stats||{treinos:0,distancia:0,semanas:0},purchases:data.purchases||[],pacoteEbooks:!!data.pacote_ebooks,programIntakes:data.program_intakes||{},avatar:data.avatar||null,avaliacoes:data.evals||[],avaliacoesPostural:data.avaliacoes_postural||[],estrategiaConsultoria:data.estrategia_consultoria||null,pacoteConfig:data.pacote_config||null,gifsPersonalizados:data.gifs_personalizados||{},exerciciosCustom:data.exercicios_custom||[],nomesPersonalizados:data.nomes_personalizados||{},prontidao:data.prontidao||{},bemEstar:data.bem_estar||{},missions:MISSOES_PADRAO.map(m=>({...m})),createdAt:data.criado_em,lastLogin:data.ultimo_acesso};
 }
 function userToRow(u){
-  return{id:u.id,nome:u.name,email:u.email,plano:u.plano||'free',trial_inicio:u.trialInicio||undefined,run_inicio:u.runInicio||null,run_ajuste_lesao:u.runAjusteLesao||false,treino_liberado:u.trainApproved||false,modo_livre:u.modoLivre||false,...(u.pushSubscription?{push_subscription:u.pushSubscription}:(u.pushDesativado?{push_subscription:null}:{})),...((u.correcoesVideo&&u.correcoesVideo.length)?{correcoes_video:u.correcoesVideo}:{}),ai_plan:u.aiPlan||null,anamnese:u.anamnese||null,anamnese_geral:u.anamneseGeral||null,anamnese_musculacao:u.anamneseMusculacao||null,anamnese_corrida:u.anamneseCorrida||null,gym_week:u.gymWeek||1,run_week:u.runWeek||1,gym_done:u.gymDone||{},run_done:u.runDone||{},run_feedback:u.runFeedback||{},run_atividades:u.runAtividades||[],run_triagem:u.runTriagem||null,run_strength:u.runStrength||[],run_strength_done:u.runStrengthDone||{},run_testes:u.runTestes||[],run_test_pace:u.runTestPace||null,load_history:u.loadHistory||{},workout_history:u.workoutHistory||[],xp:u.xp||0,kids_xp:u.kidsXp||0,level:u.level||1,streak:u.streak||1,coins:u.coins||0,badges:u.badges||[],prs:u.prs||[],stats:u.stats||{treinos:0,distancia:0,semanas:0},avatar:u.avatar||null,evals:u.avaliacoes||[],...((u.avaliacoesPostural&&u.avaliacoesPostural.length)?{avaliacoes_postural:u.avaliacoesPostural}:{}),...(u.estrategiaConsultoria?{estrategia_consultoria:u.estrategiaConsultoria}:{}),...(u.pacoteConfig?{pacote_config:u.pacoteConfig}:{}),program_intakes:u.programIntakes||{},gifs_personalizados:u.gifsPersonalizados||{},exercicios_custom:u.exerciciosCustom||[],nomes_personalizados:u.nomesPersonalizados||{},prontidao:u.prontidao||{},ultimo_acesso:new Date().toISOString(),updated_at:new Date().toISOString()};
+  return{id:u.id,nome:u.name,email:u.email,plano:u.plano||'free',trial_inicio:u.trialInicio||undefined,run_inicio:u.runInicio||null,run_ajuste_lesao:u.runAjusteLesao||false,treino_liberado:u.trainApproved||false,modo_livre:u.modoLivre||false,...(u.pushSubscription?{push_subscription:u.pushSubscription}:(u.pushDesativado?{push_subscription:null}:{})),...((u.correcoesVideo&&u.correcoesVideo.length)?{correcoes_video:u.correcoesVideo}:{}),ai_plan:u.aiPlan||null,anamnese:u.anamnese||null,anamnese_geral:u.anamneseGeral||null,anamnese_musculacao:u.anamneseMusculacao||null,anamnese_corrida:u.anamneseCorrida||null,gym_week:u.gymWeek||1,run_week:u.runWeek||1,gym_done:u.gymDone||{},run_done:u.runDone||{},run_feedback:u.runFeedback||{},run_atividades:u.runAtividades||[],run_triagem:u.runTriagem||null,run_strength:u.runStrength||[],run_strength_done:u.runStrengthDone||{},run_testes:u.runTestes||[],run_test_pace:u.runTestPace||null,load_history:u.loadHistory||{},workout_history:u.workoutHistory||[],xp:u.xp||0,kids_xp:u.kidsXp||0,level:u.level||1,streak:u.streak||1,coins:u.coins||0,badges:u.badges||[],prs:u.prs||[],stats:u.stats||{treinos:0,distancia:0,semanas:0},avatar:u.avatar||null,evals:u.avaliacoes||[],...((u.avaliacoesPostural&&u.avaliacoesPostural.length)?{avaliacoes_postural:u.avaliacoesPostural}:{}),...(u.estrategiaConsultoria?{estrategia_consultoria:u.estrategiaConsultoria}:{}),...(u.pacoteConfig?{pacote_config:u.pacoteConfig}:{}),program_intakes:u.programIntakes||{},gifs_personalizados:u.gifsPersonalizados||{},exercicios_custom:u.exerciciosCustom||[],nomes_personalizados:u.nomesPersonalizados||{},prontidao:u.prontidao||{},bem_estar:u.bemEstar||{},ultimo_acesso:new Date().toISOString(),updated_at:new Date().toISOString()};
   // Obs.: purchases/pacote_ebooks/is_admin/plano NÃO são enviados pelo aluno — são protegidos no banco e só mudam via webhook de pagamento ou admin.
 }
 // ══ GRAVAÇÃO RESILIENTE ══
@@ -6545,7 +6576,7 @@ function userToRow(u){
 // rodado. Se uma delas faltar, o Supabase recusa a linha INTEIRA — e nenhum
 // dado do aluno (nem um cadastro novo) seria salvo. Aqui, se o erro for de
 // coluna ausente, regrava sem os campos opcionais: o essencial sempre salva.
-const FQ_COLUNAS_OPCIONAIS=['push_subscription','correcoes_video','avaliacoes_postural','estrategia_consultoria','pacote_config','modo_livre','nomes_personalizados','prontidao'];
+const FQ_COLUNAS_OPCIONAIS=['push_subscription','correcoes_video','avaliacoes_postural','estrategia_consultoria','pacote_config','modo_livre','nomes_personalizados','prontidao','bem_estar'];
 function fqErroColunaAusente(err){
   return !!err && (err.code==='PGRST204' || /could not find the .* column|schema cache|column .* does not exist/i.test(err.message||''));
 }
@@ -11560,6 +11591,8 @@ function renderPerfil(u){
   updateAvatarDisplays(u);
   // Check-in de prontidão (sono/dor/disposição) — resumo de hoje
   fqAtualizarProntidaoPerfil(u);
+  // Bem-estar semanal (estresse/disposição geral) — resumo da semana
+  fqAtualizarBemEstarPerfil(u);
   // Badges row
   const br=document.getElementById('perfil-badges-row');
   if(br){
@@ -16417,6 +16450,8 @@ function admStudentCard(u, compact=false){
     </div>`:''}
     <!-- Check-in de prontidão de hoje (sono/dor/disposição) -->
     ${admResumoProntidaoCard(u)}
+    <!-- Bem-estar semanal (estresse/disposição geral fora do treino) -->
+    ${admResumoBemEstarCard(u)}
     <!-- Alerta de saúde — condições, medicamentos e cirurgias (antes invisível para o admin) -->
     ${admAlertaSaude(u.anamnese)}
     ${admAlertaCorrida(u)}
@@ -17260,6 +17295,89 @@ function admResumoProntidaoCard(u){
     <span>${PRONTIDAO_EMOJI.dor[reg.dor]} ${PRONTIDAO_LABEL.dor[reg.dor]}</span>
     <span>${PRONTIDAO_EMOJI.humor[reg.humor]} ${PRONTIDAO_LABEL.humor[reg.humor]}</span>
   </div>`;
+}
+// ══════════════════════════════════════════════════════════════════════
+// BEM-ESTAR SEMANAL — nível rápido de estresse/disposição geral (1x por
+// semana, opcional) + nota livre curta, se o aluno quiser contextualizar.
+// Diferente do check-in de prontidão (diário, focado no treino de hoje):
+// este é sobre a vida fora do treino, alinhado com a tendência de
+// convergência treino+bem-estar. Guardado em
+// u.bemEstar[AAAA-Www] = {nivel,nota,ts} (ou {pulado:true,ts} se o aluno
+// preferir não responder essa semana).
+// ══════════════════════════════════════════════════════════════════════
+const BEMESTAR_EMOJI=['','😌','🙂','😐','😟','😫'];
+const BEMESTAR_LABEL=['','Tranquila','Bem','Normal','Puxada','Muito difícil'];
+function fqSemanaAtualStr(d){
+  const dt=d?new Date(d):new Date();
+  const dia=(dt.getUTCDay()+6)%7; // 0=segunda
+  dt.setUTCDate(dt.getUTCDate()-dia+3); // quinta-feira dessa semana (ISO)
+  const primeiraQuinta=new Date(Date.UTC(dt.getUTCFullYear(),0,4));
+  const diffDias=(dt-primeiraQuinta)/(24*3600*1000);
+  const semana=1+Math.round(diffDias/7);
+  return `${dt.getUTCFullYear()}-W${String(semana).padStart(2,'0')}`;
+}
+let bemEstarResp={nivel:null};
+function fqResumoBemEstarTxt(reg){
+  if(!reg) return null;
+  if(reg.pulado) return 'Check-in da semana pulado';
+  return BEMESTAR_EMOJI[reg.nivel]+' '+BEMESTAR_LABEL[reg.nivel]+(reg.nota?' · "'+reg.nota+'"':'');
+}
+function abrirBemEstar(){
+  const u=getU(); if(!u) return;
+  const semana=fqSemanaAtualStr();
+  const reg=u.bemEstar?.[semana];
+  bemEstarResp={nivel:(reg&&!reg.pulado)?reg.nivel:null};
+  document.querySelectorAll('#modal-bemestar .pr-opt').forEach(b=>{
+    const v=+b.getAttribute('data-valor');
+    b.classList.toggle('active', bemEstarResp.nivel===v);
+  });
+  const notaEl=document.getElementById('be-nota'); if(notaEl) notaEl.value=(reg&&!reg.pulado&&reg.nota)?reg.nota:'';
+  const btnSalvar=document.getElementById('be-btn-salvar'); if(btnSalvar) btnSalvar.disabled=!bemEstarResp.nivel;
+  abrirModal('modal-bemestar');
+}
+function beSelecionarNivel(valor,btn){
+  bemEstarResp.nivel=valor;
+  document.querySelectorAll('#modal-bemestar .pr-opt').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  const btnSalvar=document.getElementById('be-btn-salvar'); if(btnSalvar) btnSalvar.disabled=!bemEstarResp.nivel;
+}
+async function salvarBemEstar(){
+  const u=getU(); if(!u) return;
+  if(!bemEstarResp.nivel) return;
+  const semana=fqSemanaAtualStr();
+  const notaEl=document.getElementById('be-nota');
+  const nota=(notaEl?notaEl.value:'').trim().slice(0,280);
+  if(!u.bemEstar) u.bemEstar={};
+  u.bemEstar[semana]={nivel:bemEstarResp.nivel,nota:nota||null,ts:new Date().toISOString()};
+  const users=DB.get('fq_users')||{}; users[u.email]=u; DB.set('fq_users',users);
+  closeModal('modal-bemestar');
+  fqToast('💭 Obrigado por compartilhar!','ok');
+  fqAtualizarBemEstarPerfil(u);
+  if(sb) await syncU(u);
+}
+function pularBemEstar(){
+  const u=getU(); if(!u) return;
+  const semana=fqSemanaAtualStr();
+  if(!u.bemEstar) u.bemEstar={};
+  if(!u.bemEstar[semana]) u.bemEstar[semana]={pulado:true,ts:new Date().toISOString()};
+  const users=DB.get('fq_users')||{}; users[u.email]=u; DB.set('fq_users',users);
+  closeModal('modal-bemestar');
+  fqAtualizarBemEstarPerfil(u);
+  if(sb) syncU(u).catch(()=>{});
+}
+function fqAtualizarBemEstarPerfil(u){
+  const el=document.getElementById('bemestar-resumo-perfil'); if(!el||!u) return;
+  const reg=u.bemEstar?.[fqSemanaAtualStr()];
+  el.textContent = reg ? (fqResumoBemEstarTxt(reg)||'Estresse e disposição geral') : 'Ainda não respondido essa semana — toque aqui';
+}
+// Resumo compacto pro ADMIN ver no card do aluno, sem precisar abrir nada.
+function admResumoBemEstarCard(u){
+  const semana=fqSemanaAtualStr();
+  const reg=u.bemEstar?.[semana];
+  if(!reg||reg.pulado){
+    return `<div style="padding:8px 14px;border-bottom:1px solid rgba(255,255,255,.04);font-size:10px;color:var(--mu)">💭 ${reg&&reg.pulado?'Check-in da semana pulado':'Sem check-in essa semana'}</div>`;
+  }
+  return `<div style="padding:8px 14px;border-bottom:1px solid rgba(255,255,255,.04);font-size:10px;color:var(--t2)">💭 Semana: ${BEMESTAR_EMOJI[reg.nivel]} ${BEMESTAR_LABEL[reg.nivel]}${reg.nota?` — "${escHtml(reg.nota)}"`:''}</div>`;
 }
 function limparTreinoDia(w,day){
   const u=admGetAluno(editEmail);if(!u)return;
