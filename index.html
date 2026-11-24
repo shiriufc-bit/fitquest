@@ -1389,7 +1389,7 @@ html[data-tema="claro"] .hero-banner{background:#fff;}
       <option value="es">🇪🇸 ES</option>
     </select>
   </div>
-  <div id="fq-version-badge" style="position:absolute;bottom:8px;right:12px;font-size:9px;color:#333;font-weight:700;z-index:5">v299</div>
+  <div id="fq-version-badge" style="position:absolute;bottom:8px;right:12px;font-size:9px;color:#333;font-weight:700;z-index:5">v300</div>
   <img src="https://images.unsplash.com/photo-1517836357463-d25dfeac3438?w=800&q=80" alt="Fitness" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center top;filter:brightness(.35);z-index:0"/>
   <div class="splash-glow"></div>
   <div class="splash-noise"></div>
@@ -2643,6 +2643,14 @@ html[data-tema="claro"] .hero-banner{background:#fff;}
             </div>
             <span style="color:var(--mu);font-size:18px">›</span>
           </div>
+          <div onclick="abrirCheckPostura()" style="padding:14px 16px;display:flex;align-items:center;gap:12px;cursor:pointer;border-bottom:1px solid var(--b)">
+            <span style="font-size:20px">📷</span>
+            <div style="flex:1">
+              <div style="font-size:13px;font-weight:700">Checar minha postura</div>
+              <div style="font-size:10px;color:var(--mu)">IA no agachamento — nada é gravado</div>
+            </div>
+            <span style="color:var(--mu);font-size:18px">›</span>
+          </div>
           <div onclick="fqAlternarTema()" style="padding:14px 16px;display:flex;align-items:center;gap:12px;cursor:pointer;border-bottom:1px solid var(--b)">
             <span style="font-size:20px" id="tema-icone">🌙</span>
             <div style="flex:1">
@@ -2676,7 +2684,7 @@ html[data-tema="claro"] .hero-banner{background:#fff;}
             <span style="color:var(--mu);font-size:18px">›</span>
           </div>
         </div>
-        <div style="text-align:center;padding:20px 0 4px;font-size:11px;color:var(--mu)">FitQuest <span id="fq-version-badge-perfil">v299</span></div>
+        <div style="text-align:center;padding:20px 0 4px;font-size:11px;color:var(--mu)">FitQuest <span id="fq-version-badge-perfil">v300</span></div>
       </div>
     </div>
 
@@ -2975,6 +2983,31 @@ html[data-tema="claro"] .hero-banner{background:#fff;}
 
       <button id="be-btn-salvar" class="btn-savewk" disabled onclick="salvarBemEstar()" style="width:100%">Salvar</button>
       <button onclick="pularBemEstar()" style="width:100%;margin-top:10px;background:none;border:none;color:var(--mu);font-size:11.5px;cursor:pointer;text-decoration:underline">Pular essa semana</button>
+    </div>
+  </div>
+</div>
+<!-- Checagem de postura por IA — roda 100% no navegador (MediaPipe/Google),
+     nada é gravado nem enviado a nenhum servidor. MVP cobre só agachamento. -->
+<div class="modal-ov" id="modal-ia-postura" style="align-items:flex-start">
+  <div class="modal-bx" style="max-width:420px;width:100%;padding:0;border-radius:16px 16px 0 0;margin-top:auto">
+    <div class="modal-t"><span>📷 Checar postura — Agachamento</span><button class="modal-cl" onclick="iapEncerrar()">✕</button></div>
+    <div style="padding:16px">
+      <div style="font-size:10.5px;color:var(--mu);margin-bottom:14px;line-height:1.5">Fique de <b>lado</b> pra câmera, com o corpo inteiro visível, e desça num agachamento normal. É uma orientação básica de IA — não substitui a avaliação do seu personal. <b>Nada é gravado nem enviado</b> — tudo roda aqui no seu aparelho.</div>
+
+      <div id="iap-camera-wrap" style="display:none;margin-bottom:12px">
+        <div id="iap-wrap-preview" style="position:relative;width:100%;border-radius:10px;overflow:hidden;background:#000">
+          <video id="iap-video" autoplay playsinline muted style="width:100%;display:block"></video>
+          <canvas id="iap-canvas" style="position:absolute;top:0;left:0;width:100%;height:100%"></canvas>
+        </div>
+        <button onclick="iapTrocarCamera()" style="margin-top:8px;background:none;border:none;color:var(--mu);font-size:11px;cursor:pointer;text-decoration:underline">🔄 Trocar câmera</button>
+      </div>
+
+      <div id="iap-status" style="font-size:11px;color:var(--t2);margin-bottom:12px">Toque em "Iniciar câmera" pra começar.</div>
+      <div id="iap-resultado" style="display:none;background:var(--s2);border:1px solid var(--b);border-radius:8px;padding:10px 12px;margin-bottom:14px"></div>
+
+      <button id="iap-btn-camera" class="btn-savewk" onclick="iapIniciarCamera()" style="width:100%">▶️ Iniciar câmera</button>
+      <button id="iap-btn-analisar" class="btn-savewk" disabled onclick="iapAnalisarAtual()" style="width:100%;margin-top:8px;opacity:.4">📸 Analisar posição atual</button>
+      <button onclick="iapEncerrar()" style="width:100%;margin-top:10px;background:none;border:none;color:var(--mu);font-size:11.5px;cursor:pointer;text-decoration:underline">Encerrar</button>
     </div>
   </div>
 </div>
@@ -14450,6 +14483,7 @@ document.addEventListener('click', function(e){
     if(id){
       // gvCancelar/ctCancelar etc. fazem limpeza própria (parar câmera, GPS...)
       if(id==='modal-gravar-video' && typeof gvCancelar==='function'){ gvCancelar(); return; }
+      if(id==='modal-ia-postura' && typeof iapEncerrar==='function'){ iapEncerrar(); return; }
       if(id==='modal-gps') return; // corrida em andamento: só sai pelos botões, evita perder o treino sem querer
       closeModal(id);
     }
@@ -14460,6 +14494,7 @@ document.addEventListener('keydown', function(e){
   const aberto=document.querySelector('.modal-ov.open');
   if(!aberto||!aberto.id) return;
   if(aberto.id==='modal-gravar-video' && typeof gvCancelar==='function'){ gvCancelar(); return; }
+  if(aberto.id==='modal-ia-postura' && typeof iapEncerrar==='function'){ iapEncerrar(); return; }
   if(aberto.id==='modal-gps') return;
   closeModal(aberto.id);
 });
@@ -14474,6 +14509,7 @@ window.addEventListener('popstate', function(){
   const modalAberto = document.querySelector('.modal-ov.open, [id^="modal-"].open');
   if(modalAberto){
     if(modalAberto.id==='modal-ebook') closeEbook();
+    else if(modalAberto.id==='modal-ia-postura' && typeof iapEncerrar==='function') iapEncerrar();
     else closeModal(modalAberto.id);
     _fqNavegandoViaVoltar = false;
     return;
@@ -17378,6 +17414,162 @@ function admResumoBemEstarCard(u){
     return `<div style="padding:8px 14px;border-bottom:1px solid rgba(255,255,255,.04);font-size:10px;color:var(--mu)">💭 ${reg&&reg.pulado?'Check-in da semana pulado':'Sem check-in essa semana'}</div>`;
   }
   return `<div style="padding:8px 14px;border-bottom:1px solid rgba(255,255,255,.04);font-size:10px;color:var(--t2)">💭 Semana: ${BEMESTAR_EMOJI[reg.nivel]} ${BEMESTAR_LABEL[reg.nivel]}${reg.nota?` — "${escHtml(reg.nota)}"`:''}</div>`;
+}
+// ══════════════════════════════════════════════════════════════════════
+// CHECK DE POSTURA POR IA — MVP cobre só agachamento (análise de um único
+// quadro, sob comando do aluno, não detecção contínua de repetição — mais
+// simples e mais confiável do que tentar detectar sozinho o fundo do
+// movimento). Roda 100% no navegador com o MediaPipe Pose Landmarker (da
+// Google): a biblioteca e o modelo são baixados de CDNs públicos na hora
+// de usar, mas nenhum vídeo/frame é gravado ou enviado a servidor nenhum
+// — a análise acontece inteira no aparelho do aluno. Nenhum dado fica
+// salvo (nem local, nem no Supabase): é uma ferramenta de uso pontual.
+// Versões fixas (não "latest") pra nunca quebrar sozinho se a lib mudar.
+// Modelo hospedado pela própria Google no Hugging Face (mudou de endereço
+// em algum momento de 2026 — confirmado na documentação oficial atual).
+// ══════════════════════════════════════════════════════════════════════
+const IAP_LIB_URL='https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@1.2.3/vision_bundle.mjs';
+const IAP_WASM_URL='https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@1.2.3/wasm';
+const IAP_MODELO_URL='https://huggingface.co/litert-community/MediaPipe-PoseLandmarker-Lite/resolve/main/pose_landmarker_lite.task';
+// Pares de índices (padrão de 33 pontos do MediaPipe) que formam a "cadeia"
+// ombro-quadril-joelho-tornozelo dos dois lados, pra desenhar o esqueleto.
+const IAP_CONEXOES=[[11,12],[11,23],[12,24],[23,24],[23,25],[25,27],[24,26],[26,28]];
+let iapStream=null,iapLandmarker=null,iapRafId=null,iapFacing='user',iapUltimaDeteccao=null,iapCarregando=false;
+function abrirCheckPostura(){
+  iapUltimaDeteccao=null;
+  const res=document.getElementById('iap-resultado'); if(res){ res.style.display='none'; res.innerHTML=''; }
+  const btnAnalisar=document.getElementById('iap-btn-analisar'); if(btnAnalisar) btnAnalisar.disabled=true;
+  const btnCam=document.getElementById('iap-btn-camera'); if(btnCam){ btnCam.disabled=false; btnCam.textContent='▶️ Iniciar câmera'; }
+  const wrap=document.getElementById('iap-camera-wrap'); if(wrap) wrap.style.display='none';
+  const st=document.getElementById('iap-status'); if(st) st.textContent='Toque em "Iniciar câmera" pra começar.';
+  abrirModal('modal-ia-postura');
+}
+async function iapIniciarCamera(){
+  if(!navigator.mediaDevices||!navigator.mediaDevices.getUserMedia){
+    fqToast('Seu navegador não permite usar a câmera aqui.','warn',5000);
+    return;
+  }
+  const btnCam=document.getElementById('iap-btn-camera');
+  if(btnCam){ btnCam.disabled=true; btnCam.textContent='Carregando...'; }
+  try{
+    iapStream=await navigator.mediaDevices.getUserMedia({video:{facingMode:iapFacing},audio:false});
+    const v=document.getElementById('iap-video');
+    v.srcObject=iapStream;
+    document.getElementById('iap-camera-wrap').style.display='block';
+    document.getElementById('iap-wrap-preview').style.transform = iapFacing==='user' ? 'scaleX(-1)' : 'none';
+    await new Promise(resolve=>{ v.onloadedmetadata=()=>resolve(); });
+    await v.play();
+    const canvas=document.getElementById('iap-canvas');
+    canvas.width=v.videoWidth; canvas.height=v.videoHeight;
+    const st=document.getElementById('iap-status'); if(st) st.textContent='Carregando IA de postura...';
+    await iapCarregarModelo();
+    if(st) st.textContent='Fique de lado pra câmera, corpo inteiro visível, e desça num agachamento.';
+    if(btnCam) btnCam.textContent='✅ Câmera ativa';
+    iapLoop();
+  }catch(e){
+    console.warn('Erro ao iniciar check de postura:',e);
+    fqToast('⚠️ Não consegui acessar a câmera ou carregar a IA — verifique a permissão e sua internet.','warn',6000);
+    if(btnCam){ btnCam.disabled=false; btnCam.textContent='▶️ Iniciar câmera'; }
+  }
+}
+// Alterna frontal/traseira — mesma lógica já usada em "Meus Exercícios" (gvTrocarCamera).
+async function iapTrocarCamera(){
+  iapFacing=(iapFacing==='user')?'environment':'user';
+  if(iapStream){ iapStream.getTracks().forEach(t=>t.stop()); iapStream=null; }
+  if(iapRafId){ cancelAnimationFrame(iapRafId); iapRafId=null; }
+  await iapIniciarCamera();
+}
+async function iapCarregarModelo(){
+  if(iapLandmarker||iapCarregando) return; // já carregado (ou carregando) nessa sessão de uso
+  iapCarregando=true;
+  try{
+    const mod=await import(IAP_LIB_URL);
+    const{FilesetResolver,PoseLandmarker}=mod;
+    const vision=await FilesetResolver.forVisionTasks(IAP_WASM_URL);
+    iapLandmarker=await PoseLandmarker.createFromOptions(vision,{
+      baseOptions:{modelAssetPath:IAP_MODELO_URL},
+      runningMode:'VIDEO',
+      numPoses:1
+    });
+  }finally{
+    iapCarregando=false;
+  }
+}
+function iapLoop(){
+  const v=document.getElementById('iap-video');
+  const canvas=document.getElementById('iap-canvas');
+  if(!v||!canvas||!iapLandmarker||!iapStream) return; // modal foi encerrado no meio do caminho
+  if(v.readyState>=2){
+    const resultado=iapLandmarker.detectForVideo(v,performance.now());
+    const ctx=canvas.getContext('2d');
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+    if(resultado&&resultado.landmarks&&resultado.landmarks[0]){
+      iapUltimaDeteccao=resultado.landmarks[0];
+      iapDesenharEsqueleto(ctx,iapUltimaDeteccao,canvas.width,canvas.height);
+      const btnAnalisar=document.getElementById('iap-btn-analisar');
+      if(btnAnalisar&&btnAnalisar.disabled){ btnAnalisar.disabled=false; btnAnalisar.style.opacity='1'; }
+    }
+  }
+  iapRafId=requestAnimationFrame(iapLoop);
+}
+function iapDesenharEsqueleto(ctx,pontos,w,h){
+  ctx.strokeStyle='#2ecc71'; ctx.lineWidth=3; ctx.fillStyle='#e10600';
+  IAP_CONEXOES.forEach(([i,j])=>{
+    const a=pontos[i],b=pontos[j]; if(!a||!b) return;
+    ctx.beginPath(); ctx.moveTo(a.x*w,a.y*h); ctx.lineTo(b.x*w,b.y*h); ctx.stroke();
+  });
+  [11,12,23,24,25,26,27,28].forEach(i=>{
+    const p=pontos[i]; if(!p) return;
+    ctx.beginPath(); ctx.arc(p.x*w,p.y*h,5,0,2*Math.PI); ctx.fill();
+  });
+}
+// Ângulo (em graus) no vértice B, formado pelos pontos A-B-C. Pura função de
+// geometria — não depende de câmera nem de IA, dá pra testar isolada.
+function fqAnguloEntrePontos(a,b,c){
+  const v1={x:a.x-b.x,y:a.y-b.y}, v2={x:c.x-b.x,y:c.y-b.y};
+  const mag1=Math.hypot(v1.x,v1.y), mag2=Math.hypot(v2.x,v2.y);
+  if(mag1===0||mag2===0) return null;
+  const cos=Math.max(-1,Math.min(1,(v1.x*v2.x+v1.y*v2.y)/(mag1*mag2)));
+  return Math.acos(cos)*180/Math.PI;
+}
+function iapAnalisarAtual(){
+  const p=iapUltimaDeteccao;
+  if(!p){ fqToast('Ainda não detectei seu corpo — fique visível por inteiro e tente de novo.','warn',4500); return; }
+  // Em visão de perfil um dos lados do corpo fica ocluído — escolhe o lado
+  // (esquerdo/direito) com maior visibilidade média reportada pela IA.
+  const vis=i=>(p[i]&&typeof p[i].visibility==='number')?p[i].visibility:0;
+  const visEsq=(vis(23)+vis(25)+vis(27))/3, visDir=(vis(24)+vis(26)+vis(28))/3;
+  const lado = visDir>visEsq ? {ombro:12,quadril:24,joelho:26,tornozelo:28} : {ombro:11,quadril:23,joelho:25,tornozelo:27};
+  const pOmbro=p[lado.ombro],pQuadril=p[lado.quadril],pJoelho=p[lado.joelho],pTornozelo=p[lado.tornozelo];
+  if(!pOmbro||!pQuadril||!pJoelho||!pTornozelo){
+    fqToast('Não consegui ver todas as articulações — ajuste a posição da câmera.','warn',4500);
+    return;
+  }
+  const anguloJoelho=fqAnguloEntrePontos(pQuadril,pJoelho,pTornozelo);
+  // Inclinação do tronco em relação à vertical (0°=totalmente ereto).
+  const anguloTronco=Math.abs(Math.atan2(pOmbro.x-pQuadril.x,pQuadril.y-pOmbro.y)*180/Math.PI);
+
+  let fbJoelho,corJoelho;
+  if(anguloJoelho===null){ fbJoelho='Não deu pra calcular o ângulo do joelho — tente de novo.'; corJoelho='var(--t)'; }
+  else if(anguloJoelho<=75){ fbJoelho=`✅ Boa profundidade (${Math.round(anguloJoelho)}°)`; corJoelho='#2ecc71'; }
+  else if(anguloJoelho<=100){ fbJoelho=`😐 Quase lá (${Math.round(anguloJoelho)}°) — desça mais um pouco, se conseguir com segurança`; corJoelho='#f1c40f'; }
+  else{ fbJoelho=`⬆️ Agachamento raso (${Math.round(anguloJoelho)}°) — tente descer mais`; corJoelho='#e10600'; }
+
+  let fbTronco;
+  if(anguloTronco<=35) fbTronco=`✅ Tronco bem ereto (${Math.round(anguloTronco)}°)`;
+  else if(anguloTronco<=55) fbTronco=`😐 Inclinação moderada (${Math.round(anguloTronco)}°) — normal em agachamentos mais profundos`;
+  else fbTronco=`⚠️ Tronco inclinando bastante (${Math.round(anguloTronco)}°) — tente manter o peito mais erguido`;
+
+  const el=document.getElementById('iap-resultado');
+  if(el){
+    el.style.display='block';
+    el.innerHTML=`<div style="font-weight:800;margin-bottom:4px;color:${corJoelho}">${fbJoelho}</div><div style="font-size:11.5px;color:var(--t2)">${fbTronco}</div><div style="font-size:9.5px;color:var(--mu);margin-top:8px">Isso é uma orientação básica de IA — não substitui a avaliação do seu personal.</div>`;
+  }
+}
+function iapEncerrar(){
+  if(iapStream){ iapStream.getTracks().forEach(t=>t.stop()); iapStream=null; }
+  if(iapRafId){ cancelAnimationFrame(iapRafId); iapRafId=null; }
+  closeModal('modal-ia-postura');
 }
 function limparTreinoDia(w,day){
   const u=admGetAluno(editEmail);if(!u)return;
