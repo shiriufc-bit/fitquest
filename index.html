@@ -1389,7 +1389,7 @@ html[data-tema="claro"] .hero-banner{background:#fff;}
       <option value="es">🇪🇸 ES</option>
     </select>
   </div>
-  <div id="fq-version-badge" style="position:absolute;bottom:8px;right:12px;font-size:9px;color:#333;font-weight:700;z-index:5">v300</div>
+  <div id="fq-version-badge" style="position:absolute;bottom:8px;right:12px;font-size:9px;color:#333;font-weight:700;z-index:5">v301</div>
   <img src="https://images.unsplash.com/photo-1517836357463-d25dfeac3438?w=800&q=80" alt="Fitness" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center top;filter:brightness(.35);z-index:0"/>
   <div class="splash-glow"></div>
   <div class="splash-noise"></div>
@@ -2684,7 +2684,7 @@ html[data-tema="claro"] .hero-banner{background:#fff;}
             <span style="color:var(--mu);font-size:18px">›</span>
           </div>
         </div>
-        <div style="text-align:center;padding:20px 0 4px;font-size:11px;color:var(--mu)">FitQuest <span id="fq-version-badge-perfil">v300</span></div>
+        <div style="text-align:center;padding:20px 0 4px;font-size:11px;color:var(--mu)">FitQuest <span id="fq-version-badge-perfil">v301</span></div>
       </div>
     </div>
 
@@ -17301,6 +17301,7 @@ async function salvarProntidao(){
   closeModal('modal-prontidao');
   fqToast('📋 Check-in salvo! Bom treino 💪','ok');
   fqAtualizarProntidaoPerfil(u);
+  await fqSugerirExpressSeNecessario(u,'prontidao',u.prontidao[hoje]);
   if(sb) await syncU(u);
 }
 function pularProntidao(){
@@ -17389,6 +17390,7 @@ async function salvarBemEstar(){
   closeModal('modal-bemestar');
   fqToast('💭 Obrigado por compartilhar!','ok');
   fqAtualizarBemEstarPerfil(u);
+  await fqSugerirExpressSeNecessario(u,'bemestar',u.bemEstar[semana]);
   if(sb) await syncU(u);
 }
 function pularBemEstar(){
@@ -17414,6 +17416,36 @@ function admResumoBemEstarCard(u){
     return `<div style="padding:8px 14px;border-bottom:1px solid rgba(255,255,255,.04);font-size:10px;color:var(--mu)">💭 ${reg&&reg.pulado?'Check-in da semana pulado':'Sem check-in essa semana'}</div>`;
   }
   return `<div style="padding:8px 14px;border-bottom:1px solid rgba(255,255,255,.04);font-size:10px;color:var(--t2)">💭 Semana: ${BEMESTAR_EMOJI[reg.nivel]} ${BEMESTAR_LABEL[reg.nivel]}${reg.nota?` — "${escHtml(reg.nota)}"`:''}</div>`;
+}
+// ══════════════════════════════════════════════════════════════════════
+// FECHAR O CICLO — até aqui, o check-in de prontidão e o bem-estar semanal
+// só *coletavam* dado pro personal ver depois. Isso aqui faz o app *agir*
+// na hora: se o aluno acabou de reportar dor, ou sono ruim + disposição
+// baixa juntos, ou uma semana difícil, sugere ativar o Treino Express já,
+// sem precisar esperar o personal entrar e ajustar manualmente. O aluno
+// sempre decide — isso só sugere, nunca ativa sozinho sem perguntar
+// (mesma filosofia do resto do app: nada vira automático/obrigatório).
+// ══════════════════════════════════════════════════════════════════════
+async function fqSugerirExpressSeNecessario(u,origem,reg){
+  if(!u||u.expressOn||!reg) return; // já tá ativo, ou não tem com que comparar — nada a sugerir
+  let motivo=null;
+  if(origem==='prontidao'){
+    if(reg.dor===1) motivo='Notei que você marcou dor hoje no check-in.';
+    else if(reg.sono===1&&reg.humor===1) motivo='Notei que o sono e a disposição estão baixos hoje.';
+  }else if(origem==='bemestar'){
+    if(reg.nivel===4||reg.nivel===5) motivo='Notei que essa semana está puxada.';
+  }
+  if(!motivo) return;
+  const ok=await fqConfirm(
+    '⏱️ Treino mais leve hoje?',
+    motivo+'\n\nQuer que eu ative o Treino Express pra hoje? Ele mostra só os exercícios principais do treino (os primeiros da lista) — os outros não somem do seu plano, é só por hoje. Você pode desligar quando quiser.',
+    'Ativar Express','⏱️'
+  );
+  if(!ok) return;
+  u.expressOn=true; u.expressAvisado=true;
+  const users=DB.get('fq_users')||{}; users[u.email]=u; DB.set('fq_users',users);
+  fqToast('⏱️ Treino Express ativado pra hoje!','ok');
+  if(typeof renderGym==='function') renderGym(u);
 }
 // ══════════════════════════════════════════════════════════════════════
 // CHECK DE POSTURA POR IA — MVP cobre só agachamento (análise de um único
